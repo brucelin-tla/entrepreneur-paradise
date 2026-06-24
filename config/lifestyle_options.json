@@ -148,6 +148,40 @@
       "energy_cost": -3,
       "effects": { "lifestyle_legacy": 15, "trust_structure": "basic_llc" },
       "narrative": "Signing the will felt strange — like acknowledging mortality while you're in the middle of building. But your family is protected now."
+    },
+    {
+      "id": "sleep_routine",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Optimize Your Sleep",
+      "description": "Blackout curtains, no screens after 9, consistent bedtime. The cheapest performance upgrade that exists.",
+      "cash_cost": 200,
+      "energy_cost": -15,
+      "effects": { "lifestyle_health": 10, "energy": 15, "fitness_level": 5 },
+      "narrative": "You're sleeping seven hours now instead of five. The difference isn't subtle — your decision-making is sharper, your patience is longer, and that afternoon crash is gone."
+    },
+    {
+      "id": "morning_routine",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Build a Morning Routine",
+      "description": "Wake up early. Journal, move, plan the day before the day plans you. Discipline before the inbox.",
+      "cash_cost": 0,
+      "energy_cost": -10,
+      "effects": { "lifestyle_health": 8, "energy": 10, "fitness_level": 3 },
+      "narrative": "5:30 AM. Coffee, journal, twenty minutes of movement, then the three most important tasks before anyone else is awake. You own the morning now."
+    },
+    {
+      "id": "therapy_coaching",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Start Therapy or Coaching",
+      "description": "Talk to someone who isn't your spouse, your partner, or your mirror. Process the stress before it processes you.",
+      "cash_cost": 600,
+      "energy_cost": -12,
+      "effects": { "lifestyle_health": 10, "lifestyle_relationships": 5, "energy": 12 },
+      "recurring_cost": 400,
+      "narrative": "You said things out loud you've been carrying silently for months. The therapist didn't fix anything — but naming it made it lighter."
     }
   ]
 }

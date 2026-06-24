@@ -46,7 +46,14 @@
         "lifestyle_legacy": 5,
         "revenue_capacity": 5000,
         "living_expenses": 2800,
-        "lifestyle_expenses": 0
+        "lifestyle_expenses": 0,
+        "tax_reserve": 0,
+        "tax_rate": 0.25,
+        "annual_tax_owed": 0,
+        "skill_marketing": 0,
+        "skill_operations": 0,
+        "skill_finance": 0,
+        "leads": 5
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -103,7 +110,14 @@
         "lifestyle_legacy": 5,
         "revenue_capacity": 0,
         "living_expenses": 3200,
-        "lifestyle_expenses": 0
+        "lifestyle_expenses": 0,
+        "tax_reserve": 0,
+        "tax_rate": 0.25,
+        "annual_tax_owed": 0,
+        "skill_marketing": 0,
+        "skill_operations": 0,
+        "skill_finance": 0,
+        "leads": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -160,7 +174,14 @@
         "lifestyle_legacy": 10,
         "revenue_capacity": 60000,
         "living_expenses": 5500,
-        "lifestyle_expenses": 0
+        "lifestyle_expenses": 0,
+        "tax_reserve": 0,
+        "tax_rate": 0.25,
+        "annual_tax_owed": 0,
+        "skill_marketing": 0,
+        "skill_operations": 0,
+        "skill_finance": 0,
+        "leads": 20
       },
       "stage_overrides": {
         "marketing": "leverage",

@@ -292,6 +292,37 @@
       "failure_effects": { "operating_expenses": -500, "audit_risk": 5 },
       "narrative_success": "Your effective tax rate just dropped from 32% to 21%. Everything is legal. Your CPA high-fived you.",
       "narrative_failure": "Some strategies implemented. Others need more documentation. Partial savings this year, full effect next."
+    },
+    {
+      "id": "monthly_tax_reserve",
+      "category": "finance",
+      "stage": "foundation",
+      "label": "Set Up Monthly Tax Reserve",
+      "description": "Automatically set aside a percentage of revenue each month for taxes. No more year-end surprises.",
+      "cash_cost": 0,
+      "energy_cost": 4,
+      "one_time": true,
+      "prerequisites": { "monthly_revenue_gte": 1000 },
+      "effects": {},
+      "success_rate": 0.95,
+      "failure_effects": {},
+      "narrative_success": "Tax reserve is active. Every month, a slice of revenue goes into a separate pot. Future you will be grateful.",
+      "narrative_failure": "Set up started but your bookkeeping needs cleanup first. Should be running next month."
+    },
+    {
+      "id": "tax_planning_session",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Quarterly Tax Planning Session",
+      "description": "Sit down with a tax strategist quarterly. Identify deductions, optimize entity structure, project liability.",
+      "cash_cost": 1500,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 8000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "audit_risk": -5 },
+      "success_rate": 0.8,
+      "failure_effects": {},
+      "narrative_success": "Your tax strategist found $3,000 in deductions you were missing. She projected your year-end liability — no surprises this time.",
+      "narrative_failure": "Good meeting, but the strategist needs more documentation. Recommendations next quarter."
     }
   ]
 }
