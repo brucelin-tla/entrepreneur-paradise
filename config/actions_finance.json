@@ -112,7 +112,7 @@
     {
       "id": "form_llc",
       "category": "finance",
-      "stage": "leverage",
+      "stage": "foundation",
       "one_time": true,
       "label": "Form Basic LLC",
       "description": "File a simple LLC to separate yourself from the business legally. It's fast, cheap, and the first layer of protection. You can upgrade the structure later.",
