@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "thresholds": {
+    "marketing": {
+      "foundation_to_leverage": { "monthly_revenue_gte": 5000, "customer_base_gte": 15, "brand_equity_gte": 15 },
+      "leverage_to_wealth": { "monthly_revenue_gte": 25000, "customer_base_gte": 50, "brand_equity_gte": 40 }
+    },
+    "operations": {
+      "foundation_to_leverage": { "systems_maturity_gte": 20, "team_size_gte": 1, "monthly_revenue_gte": 5000 },
+      "leverage_to_wealth": { "systems_maturity_gte": 50, "team_size_gte": 4, "key_person_dependency_lte": 40 }
+    },
+    "finance": {
+      "foundation_to_leverage": { "personal_credit_score_gte": 640, "monthly_revenue_gte": 3000, "entity_structure_not": "none" },
+      "leverage_to_wealth": { "personal_credit_score_gte": 700, "business_credit_profile": "established", "dscr_gte": 1.5, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] }
+    }
+  }
+}

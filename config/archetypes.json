@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "win_archetypes": [
+    {
+      "id": "cashflow_king",
+      "title": "Cashflow King",
+      "subtitle": "The money works for you now",
+      "requires_dominant": "passive_income",
+      "description": "You built rivers of income that flow without you lifting a finger.",
+      "epilogue": "The alarm didn't go off this morning — because you don't set one anymore. The rental properties deposited their monthly rent while you slept. The insurance policy's cash value grew another tick. The business you built runs on systems and people, not on your personal hours.\n\nYou're not retired. You're free. There's a difference.\n\nThe money comes in whether you work or not. You choose to work because you want to — on the projects that interest you, with the people you like, on your schedule. That's not wealth as a number. That's wealth as a lifestyle.\n\nYour banker smiles when you walk in now. Not because you need anything — because you don't."
+    },
+    {
+      "id": "empire_builder",
+      "title": "Empire Builder",
+      "subtitle": "You didn't build a business. You built an engine.",
+      "requires_dominant": "business_revenue",
+      "description": "Revenue, team, systems — you built something that scales.",
+      "epilogue": "The company crossed a threshold somewhere around month twenty, and you felt it — the moment it stopped being your job and started being its own thing. A machine that runs, grows, and serves people whether you're in the building or not.\n\nYour team handles the day-to-day. Your systems handle the exceptions. Your brand brings in clients you've never met. You built something bigger than yourself, and that's exactly the point.\n\nThe revenue numbers are impressive. But what really matters is that they'd stay impressive if you stepped away for a month. That's not a business. That's an empire."
+    },
+    {
+      "id": "freedom_architect",
+      "title": "Freedom Architect",
+      "subtitle": "You built a life, not just a balance sheet",
+      "requires_dominant": "lifestyle",
+      "requires_secondary": "passive_income",
+      "description": "High lifestyle score and strong passive income — the rare founder who built wealth without sacrificing life.",
+      "epilogue": "Your partner said something last week that stuck with you: 'You're here now. Like, really here.'\n\nShe's right. The business runs. The income flows. The trust protects it. And you're present — at dinner, at the gym, at the school play, at the meditation cushion, at the volunteer build site on Saturdays.\n\nYou didn't just build wealth. You built a life you don't need a vacation from. The hardest part wasn't the financial engineering — it was learning to stop when every instinct said keep going.\n\nMost founders sacrifice the life to build the business. You found the third door — the one where you build both."
+    },
+    {
+      "id": "leverage_master",
+      "title": "Leverage Master",
+      "subtitle": "Other people's money, your wealth",
+      "requires_dominant": "net_worth",
+      "description": "Net worth through strategic use of credit, real estate, and OPM.",
+      "epilogue": "Your net worth statement doesn't look like most people's. It's not a savings account — it's a portfolio of leveraged assets, each one producing income, appreciating in value, and sheltered behind entities and trusts that your attorney built like a fortress.\n\nYou used the bank's money to build your wealth. Every dollar of debt is backed by an asset worth more. Every asset is protected by a structure designed to survive anything short of an act of God.\n\nThe banker who once made you nervous now sends you deal flow. The credit score that used to feel like a cage is now a tool you wield with precision. You learned the game — and now you're winning it."
+    },
+    {
+      "id": "burnout_billionaire",
+      "title": "Burnout Billionaire",
+      "subtitle": "You won the game and lost the plot",
+      "requires_dominant": "business_revenue",
+      "requires_low": "lifestyle",
+      "description": "Big numbers, terrible lifestyle. A cautionary tale in spreadsheet form.",
+      "epilogue": "The numbers are impressive. Genuinely impressive. Revenue, net worth, tax efficiency — by every financial measure, you crushed it.\n\nBut you're reading this alone. The gym membership lapsed eighteen months ago. Your last vacation was... you can't remember. Your partner stopped fighting about your hours — which is worse than the fighting.\n\nYou built an empire and forgot to live in it. The money is real. The cost was real too. And the thing about time is that you can't buy it back, no matter how optimized your tax strategy is.\n\nThis isn't a failure. It's a warning. The next 36 months don't have to look like the last."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "dimensions": {
+    "net_worth": { "weight": 0.18, "label": "Net Worth", "description": "Assets minus liabilities, with bonus for unused qualified credit" },
+    "business_revenue": { "weight": 0.18, "label": "Business Revenue", "description": "Revenue and EBITDA, weighted by sustainability" },
+    "personal_income": { "weight": 0.15, "label": "Personal Income", "description": "Owner's pay relative to lifestyle cost" },
+    "tax_efficiency": { "weight": 0.15, "label": "Tax Efficiency", "description": "Effective tax rate vs income, penalized by audit events" },
+    "passive_income": { "weight": 0.17, "label": "Passive Income", "description": "Income requiring zero owner hours" },
+    "lifestyle": { "weight": 0.17, "label": "Lifestyle Score", "description": "Health, relationships, experiences, spiritual, philanthropy, legacy — consistency weighted" }
+  },
+  "lifestyle_sub_weights": {
+    "health": 0.20,
+    "relationships": 0.20,
+    "experiences": 0.15,
+    "spiritual": 0.15,
+    "philanthropy": 0.15,
+    "legacy": 0.15
+  }
+}

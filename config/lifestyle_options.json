@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "actions": [
+    {
+      "id": "gym_routine",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Start a Gym Routine",
+      "description": "Three days a week. Nothing heroic — just showing up consistently. Your energy and focus improve.",
+      "cash_cost": 150,
+      "energy_cost": -10,
+      "effects": { "lifestyle_health": 12, "energy": 10 },
+      "narrative": "You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."
+    },
+    {
+      "id": "annual_physical",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Get a Full Physical",
+      "description": "Blood work, stress test, the works. Know your numbers before they surprise you.",
+      "cash_cost": 500,
+      "energy_cost": -3,
+      "effects": { "lifestyle_health": 8, "energy": 5 },
+      "narrative": "The doctor said everything looks good — except your cortisol. 'You're running hot,' she said. 'Dial it back before your body does it for you.'"
+    },
+    {
+      "id": "date_night",
+      "category": "lifestyle",
+      "subcategory": "relationships",
+      "label": "Weekly Date Night",
+      "description": "Put the phone away. Be present with the person who's been watching you disappear into work.",
+      "cash_cost": 400,
+      "energy_cost": -5,
+      "effects": { "lifestyle_relationships": 12, "energy": 5 },
+      "narrative": "She laughed at dinner — really laughed — for the first time in months. You realized you'd missed the sound."
+    },
+    {
+      "id": "family_trip",
+      "category": "lifestyle",
+      "subcategory": "relationships",
+      "label": "Family Trip",
+      "description": "A real vacation. Not a 'working from the hotel' trip. Phone off, out of office on.",
+      "cash_cost": 3000,
+      "energy_cost": -20,
+      "effects": { "lifestyle_relationships": 15, "lifestyle_experiences": 10, "energy": 20 },
+      "narrative": "Your kid asked if you could do this 'every month.' You can't. But the fact that they asked means you've been gone too long."
+    },
+    {
+      "id": "adventure_trip",
+      "category": "lifestyle",
+      "subcategory": "experiences",
+      "label": "Solo Adventure",
+      "description": "Go somewhere you've never been. Alone. Remember what it feels like to be a person, not a role.",
+      "cash_cost": 2000,
+      "energy_cost": -15,
+      "effects": { "lifestyle_experiences": 15, "energy": 15, "lifestyle_spiritual": 5 },
+      "narrative": "Standing on a mountain in another state, phone dead, watching the sun go down. Your business is still running. You might be okay."
+    },
+    {
+      "id": "learn_new_skill",
+      "category": "lifestyle",
+      "subcategory": "experiences",
+      "label": "Learn Something New",
+      "description": "Take a class in something that has nothing to do with your business. Cooking, music, a language. Feed the other parts of your brain.",
+      "cash_cost": 500,
+      "energy_cost": -5,
+      "effects": { "lifestyle_experiences": 10, "energy": 5 },
+      "narrative": "Your pottery is terrible. You love it. For two hours a week, you're a beginner again — and it's the most relaxed you've been in months."
+    },
+    {
+      "id": "meditation_practice",
+      "category": "lifestyle",
+      "subcategory": "spiritual",
+      "label": "Start a Meditation Practice",
+      "description": "Ten minutes a day. Sit with the noise in your head instead of running from it.",
+      "cash_cost": 50,
+      "energy_cost": -8,
+      "effects": { "lifestyle_spiritual": 12, "energy": 8 },
+      "narrative": "You sat still for ten minutes today without reaching for your phone. It was the hardest and easiest thing you've done all month."
+    },
+    {
+      "id": "faith_community",
+      "category": "lifestyle",
+      "subcategory": "spiritual",
+      "label": "Join a Faith Community",
+      "description": "Find a church, temple, sangha, or circle. Belong to something bigger than your P&L statement.",
+      "cash_cost": 200,
+      "energy_cost": -5,
+      "effects": { "lifestyle_spiritual": 15, "lifestyle_relationships": 5, "energy": 5 },
+      "narrative": "The pastor asked how business was going. You said 'hard.' He said 'good — that means you're growing.' Simple words. They landed."
+    },
+    {
+      "id": "charity_donation",
+      "category": "lifestyle",
+      "subcategory": "philanthropy",
+      "label": "Charitable Giving",
+      "description": "Write a check to a cause that matters. Not for the tax deduction — for the reminder that money is a tool, not a scoreboard.",
+      "cash_cost": 2000,
+      "energy_cost": -2,
+      "effects": { "lifestyle_philanthropy": 12, "brand_equity": 3, "audit_risk": -2 },
+      "narrative": "The director of the food bank sent a handwritten thank-you note. It's pinned above your desk now."
+    },
+    {
+      "id": "volunteer_time",
+      "category": "lifestyle",
+      "subcategory": "philanthropy",
+      "label": "Volunteer Your Time",
+      "description": "Spend a Saturday building houses, mentoring kids, or serving meals. Get out of your head and into someone else's world.",
+      "cash_cost": 0,
+      "energy_cost": -5,
+      "effects": { "lifestyle_philanthropy": 10, "lifestyle_relationships": 3, "energy": 5 },
+      "narrative": "You spent six hours building a wheelchair ramp for a stranger. Your back hurts. Your heart doesn't."
+    },
+    {
+      "id": "mentor_others",
+      "category": "lifestyle",
+      "subcategory": "legacy",
+      "label": "Mentor a Young Entrepreneur",
+      "description": "Find someone two years behind you. Share what you've learned. Teaching clarifies your own thinking.",
+      "cash_cost": 0,
+      "energy_cost": -5,
+      "effects": { "lifestyle_legacy": 12, "lifestyle_relationships": 3, "brand_equity": 3 },
+      "narrative": "Your mentee landed her first client this month. She texted you at 11 PM. You were already asleep, and you smiled when you saw it in the morning."
+    },
+    {
+      "id": "estate_planning",
+      "category": "lifestyle",
+      "subcategory": "legacy",
+      "label": "Estate Planning Session",
+      "description": "Meet with an estate attorney. Make sure what you're building survives you and benefits the people you love.",
+      "cash_cost": 3000,
+      "energy_cost": -3,
+      "effects": { "lifestyle_legacy": 15, "trust_structure": "basic_llc" },
+      "narrative": "Signing the will felt strange — like acknowledging mortality while you're in the middle of building. But your family is protected now."
+    }
+  ]
+}
