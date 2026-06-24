@@ -10,7 +10,7 @@
       "cash_cost": 150,
       "recurring_cost": 150,
       "energy_cost": -10,
-      "effects": { "lifestyle_health": 12, "energy": 10, "fitness_level": 10 },
+      "effects": { "lifestyle_health": 15, "energy": 10, "fitness_level": 10, "lifestyle_experiences": 3 },
       "narrative": "You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."
     },
     {
@@ -33,7 +33,7 @@
       "cash_cost": 800,
       "recurring_cost": 200,
       "energy_cost": -12,
-      "effects": { "lifestyle_health": 15, "energy": 12, "fitness_level": 20 },
+      "effects": { "lifestyle_health": 20, "energy": 12, "fitness_level": 20 },
       "narrative": "The trainer doesn't care about your quarterly revenue. She cares about your deadlift form. For three hours a week, you're not a CEO — you're an athlete. And it's changing everything."
     },
     {
@@ -45,7 +45,7 @@
       "cash_cost": 400,
       "recurring_cost": 400,
       "energy_cost": -5,
-      "effects": { "lifestyle_relationships": 12, "energy": 5 },
+      "effects": { "lifestyle_relationships": 18, "energy": 5 },
       "narrative": "She laughed at dinner — really laughed — for the first time in months. You realized you'd missed the sound."
     },
     {
@@ -56,7 +56,7 @@
       "description": "A real vacation. Not a 'working from the hotel' trip. Phone off, out of office on.",
       "cash_cost": 3000,
       "energy_cost": -20,
-      "effects": { "lifestyle_relationships": 15, "lifestyle_experiences": 10, "energy": 20 },
+      "effects": { "lifestyle_relationships": 20, "lifestyle_experiences": 15, "energy": 20 },
       "narrative": "Your kid asked if you could do this 'every month.' You can't. But the fact that they asked means you've been gone too long."
     },
     {
@@ -67,7 +67,7 @@
       "description": "Go somewhere you've never been. Alone. Remember what it feels like to be a person, not a role.",
       "cash_cost": 2000,
       "energy_cost": -15,
-      "effects": { "lifestyle_experiences": 15, "energy": 15, "lifestyle_spiritual": 5 },
+      "effects": { "lifestyle_experiences": 20, "energy": 15, "lifestyle_spiritual": 5 },
       "narrative": "Standing on a mountain in another state, phone dead, watching the sun go down. Your business is still running. You might be okay."
     },
     {
@@ -90,7 +90,7 @@
       "cash_cost": 50,
       "recurring_cost": 50,
       "energy_cost": -8,
-      "effects": { "lifestyle_spiritual": 12, "energy": 8 },
+      "effects": { "lifestyle_spiritual": 18, "energy": 8, "lifestyle_health": 5 },
       "narrative": "You sat still for ten minutes today without reaching for your phone. It was the hardest and easiest thing you've done all month."
     },
     {
@@ -102,7 +102,7 @@
       "cash_cost": 200,
       "recurring_cost": 200,
       "energy_cost": -5,
-      "effects": { "lifestyle_spiritual": 15, "lifestyle_relationships": 5, "energy": 5 },
+      "effects": { "lifestyle_spiritual": 20, "lifestyle_relationships": 5, "energy": 5 },
       "narrative": "The pastor asked how business was going. You said 'hard.' He said 'good — that means you're growing.' Simple words. They landed."
     },
     {
@@ -113,7 +113,7 @@
       "description": "Write a check to a cause that matters. Not for the tax deduction — for the reminder that money is a tool, not a scoreboard.",
       "cash_cost": 2000,
       "energy_cost": -2,
-      "effects": { "lifestyle_philanthropy": 12, "brand_equity": 3, "audit_risk": -2 },
+      "effects": { "lifestyle_philanthropy": 18, "brand_equity": 3, "audit_risk": -2 },
       "narrative": "The director of the food bank sent a handwritten thank-you note. It's pinned above your desk now."
     },
     {
@@ -124,7 +124,7 @@
       "description": "Spend a Saturday building houses, mentoring kids, or serving meals. Get out of your head and into someone else's world.",
       "cash_cost": 0,
       "energy_cost": -5,
-      "effects": { "lifestyle_philanthropy": 10, "lifestyle_relationships": 3, "energy": 5 },
+      "effects": { "lifestyle_philanthropy": 15, "lifestyle_relationships": 3, "energy": 5, "lifestyle_legacy": 5 },
       "narrative": "You spent six hours building a wheelchair ramp for a stranger. Your back hurts. Your heart doesn't."
     },
     {
@@ -135,7 +135,7 @@
       "description": "Find someone two years behind you. Share what you've learned. Teaching clarifies your own thinking.",
       "cash_cost": 0,
       "energy_cost": -5,
-      "effects": { "lifestyle_legacy": 12, "lifestyle_relationships": 3, "brand_equity": 3 },
+      "effects": { "lifestyle_legacy": 18, "lifestyle_relationships": 3, "brand_equity": 3, "lifestyle_philanthropy": 5 },
       "narrative": "Your mentee landed her first client this month. She texted you at 11 PM. You were already asleep, and you smiled when you saw it in the morning."
     },
     {
@@ -146,7 +146,7 @@
       "description": "Meet with an estate attorney. Make sure what you're building survives you and benefits the people you love.",
       "cash_cost": 3000,
       "energy_cost": -3,
-      "effects": { "lifestyle_legacy": 15, "trust_structure": "basic_llc" },
+      "effects": { "lifestyle_legacy": 20, "trust_structure": "basic_llc" },
       "narrative": "Signing the will felt strange — like acknowledging mortality while you're in the middle of building. But your family is protected now."
     },
     {
@@ -157,7 +157,7 @@
       "description": "Blackout curtains, no screens after 9, consistent bedtime. The cheapest performance upgrade that exists.",
       "cash_cost": 200,
       "energy_cost": -15,
-      "effects": { "lifestyle_health": 10, "energy": 15, "fitness_level": 5 },
+      "effects": { "lifestyle_health": 15, "energy": 15, "fitness_level": 5 },
       "narrative": "You're sleeping seven hours now instead of five. The difference isn't subtle — your decision-making is sharper, your patience is longer, and that afternoon crash is gone."
     },
     {
@@ -179,7 +179,7 @@
       "description": "Talk to someone who isn't your spouse, your partner, or your mirror. Process the stress before it processes you.",
       "cash_cost": 600,
       "energy_cost": -12,
-      "effects": { "lifestyle_health": 10, "lifestyle_relationships": 5, "energy": 12 },
+      "effects": { "lifestyle_health": 15, "lifestyle_relationships": 10, "energy": 12 },
       "recurring_cost": 400,
       "narrative": "You said things out loud you've been carrying silently for months. The therapist didn't fix anything — but naming it made it lighter."
     }

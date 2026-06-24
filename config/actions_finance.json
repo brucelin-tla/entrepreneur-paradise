@@ -98,15 +98,15 @@
       "category": "finance",
       "stage": "foundation",
       "label": "Debt Restructure with Lending Expert",
-      "description": "Work with a local lending expert who knows the banks. They coach you through consolidation — getting credit utilization below 30%, qualifying for better loan terms, and restructuring payments.",
+      "description": "Work with a local lending expert who knows the banks. They help move high-utilization revolving debt into a fixed-rate loan — dropping your utilization and boosting your score. They also coach you on qualifying for better terms.",
       "cash_cost": 500,
       "energy_cost": 10,
       "prerequisites": { "total_debt_gte": 5000, "personal_credit_score_gte": 580 },
-      "effects": { "total_debt": -3000, "personal_credit_score": 15, "dscr": 0.2, "operating_expenses": -200 },
+      "effects": { "total_debt": -1000, "personal_credit_score": 18, "dscr": 0.2, "operating_expenses": -200, "available_credit": 5000 },
       "success_rate": 0.55,
       "failure_effects": { "total_debt": -500, "personal_credit_score": 3 },
-      "narrative_success": "Your lending expert knew exactly which bank to call. Two cards consolidated, utilization dropped below 30%, and your score jumped. 'That's how you build bankable credit,' she said.",
-      "narrative_failure": "One creditor negotiated. Your expert is working on the others. She says give it another month — the banks need to see the new payment pattern."
+      "narrative_success": "Your lending expert moved $8,000 from your credit line to a fixed-rate installment loan. Utilization dropped from 70% to 25%. Your score jumped overnight. 'Now you're bankable,' she said. 'Let's go get you more credit.'",
+      "narrative_failure": "One balance moved, but the installment loan terms weren't great. Your expert says wait a month for the score bump to show, then reapply for better rates."
     },
     {
       "id": "form_llc",
@@ -292,6 +292,36 @@
       "failure_effects": { "operating_expenses": -500, "audit_risk": 5 },
       "narrative_success": "Your effective tax rate just dropped from 32% to 21%. Everything is legal. Your CPA high-fived you.",
       "narrative_failure": "Some strategies implemented. Others need more documentation. Partial savings this year, full effect next."
+    },
+    {
+      "id": "qualify_more_credit",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Apply for Additional Credit Lines",
+      "description": "With your improved credit profile, apply for additional business credit lines and cards. More available credit means lower utilization and more runway.",
+      "cash_cost": 200,
+      "energy_cost": 6,
+      "prerequisites": { "personal_credit_score_gte": 650, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "monthly_revenue_gte": 5000 },
+      "effects": { "available_credit": 15000, "business_credit_profile": "building", "personal_credit_score": 5 },
+      "success_rate": 0.6,
+      "failure_effects": { "available_credit": 3000, "personal_credit_score": -2 },
+      "narrative_success": "Approved for $15,000 across two new business credit lines. Your available credit just tripled. Utilization dropped to single digits.",
+      "narrative_failure": "One card approved for $3,000, the other declined. The hard inquiry dinged your score slightly. Your expert says wait 90 days and try again."
+    },
+    {
+      "id": "business_term_loan",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Secure a Business Term Loan",
+      "description": "Apply for a fixed-rate business loan through your banking relationship. Use it to consolidate revolving debt, fund growth, or build cash reserves.",
+      "cash_cost": 500,
+      "energy_cost": 8,
+      "prerequisites": { "personal_credit_score_gte": 680, "monthly_revenue_gte": 8000, "dscr_gte": 1.25 },
+      "effects": { "cash": 25000, "total_debt": 25000, "available_credit": 10000, "personal_credit_score": 3 },
+      "success_rate": 0.55,
+      "failure_effects": { "personal_credit_score": -3 },
+      "narrative_success": "Loan approved — $25,000 at 8.5% fixed. The banker smiled when she handed you the docs. Your credit line utilization just dropped to nearly zero, and you have cash to deploy.",
+      "narrative_failure": "Declined. Revenue history is too short, or DSCR was borderline. Your lending expert says shore up three more months of financials and reapply."
     },
     {
       "id": "monthly_tax_reserve",
