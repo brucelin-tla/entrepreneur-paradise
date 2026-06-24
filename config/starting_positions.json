@@ -53,7 +53,9 @@
         "skill_marketing": 0,
         "skill_operations": 0,
         "skill_finance": 0,
-        "leads": 5
+        "leads": 5,
+        "insurance_cash_value": 0,
+        "insurance_loan_balance": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -117,7 +119,9 @@
         "skill_marketing": 0,
         "skill_operations": 0,
         "skill_finance": 0,
-        "leads": 0
+        "leads": 0,
+        "insurance_cash_value": 0,
+        "insurance_loan_balance": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -181,7 +185,9 @@
         "skill_marketing": 0,
         "skill_operations": 0,
         "skill_finance": 0,
-        "leads": 20
+        "leads": 20,
+        "insurance_cash_value": 0,
+        "insurance_loan_balance": 0
       },
       "stage_overrides": {
         "marketing": "leverage",
