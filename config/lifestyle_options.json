@@ -8,6 +8,7 @@
       "label": "Start a Gym Routine",
       "description": "Three days a week. Nothing heroic — just showing up consistently. Your energy and focus improve.",
       "cash_cost": 150,
+      "recurring_cost": 150,
       "energy_cost": -10,
       "effects": { "lifestyle_health": 12, "energy": 10, "fitness_level": 10 },
       "narrative": "You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."
@@ -30,6 +31,7 @@
       "label": "Hire a Personal Trainer",
       "description": "Three sessions a week with someone who won't let you skip. Structured training, accountability, results.",
       "cash_cost": 800,
+      "recurring_cost": 200,
       "energy_cost": -12,
       "effects": { "lifestyle_health": 15, "energy": 12, "fitness_level": 20 },
       "narrative": "The trainer doesn't care about your quarterly revenue. She cares about your deadlift form. For three hours a week, you're not a CEO — you're an athlete. And it's changing everything."
@@ -41,6 +43,7 @@
       "label": "Weekly Date Night",
       "description": "Put the phone away. Be present with the person who's been watching you disappear into work.",
       "cash_cost": 400,
+      "recurring_cost": 400,
       "energy_cost": -5,
       "effects": { "lifestyle_relationships": 12, "energy": 5 },
       "narrative": "She laughed at dinner — really laughed — for the first time in months. You realized you'd missed the sound."
@@ -85,6 +88,7 @@
       "label": "Start a Meditation Practice",
       "description": "Ten minutes a day. Sit with the noise in your head instead of running from it.",
       "cash_cost": 50,
+      "recurring_cost": 50,
       "energy_cost": -8,
       "effects": { "lifestyle_spiritual": 12, "energy": 8 },
       "narrative": "You sat still for ten minutes today without reaching for your phone. It was the hardest and easiest thing you've done all month."
@@ -96,6 +100,7 @@
       "label": "Join a Faith Community",
       "description": "Find a church, temple, sangha, or circle. Belong to something bigger than your P&L statement.",
       "cash_cost": 200,
+      "recurring_cost": 200,
       "energy_cost": -5,
       "effects": { "lifestyle_spiritual": 15, "lifestyle_relationships": 5, "energy": 5 },
       "narrative": "The pastor asked how business was going. You said 'hard.' He said 'good — that means you're growing.' Simple words. They landed."

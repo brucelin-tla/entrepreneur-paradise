@@ -66,15 +66,15 @@
     }
   ],
   "monthly_cliffhangers": [
-    "The phone rang as you were locking up. You didn't answer. The voicemail light blinks — it can wait until morning. Or can it?",
-    "An email arrived at 11:47 PM. Subject line: 'We need to talk.' You'll open it tomorrow.",
-    "The banker asked you to come in next week. She didn't say why. She sounded... careful.",
-    "Your biggest client's contract renews next month. They haven't said anything. The silence is louder than a complaint.",
-    "A competitor just launched something that looks a lot like your offer. Coincidence? Doesn't matter — the market noticed.",
-    "The quarterly tax estimate arrived. The number has an extra digit this time.",
-    "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.",
-    "You overheard two team members talking about job postings. They went quiet when you walked by.",
-    "The market report came out today. The trends are shifting. Your industry is in the crosshairs — for better or worse.",
-    "You realized today that you can't remember the last time you did something just for fun. Not networking, not 'productive rest.' Just fun."
+    { "text": "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.", "requires": { "team_size_gte": 1 } },
+    { "text": "You overheard two team members talking about job postings. They went quiet when you walked by.", "requires": { "team_size_gte": 2 } },
+    { "text": "The banker asked you to come in next week. She didn't say why. She sounded... careful.", "requires": { "total_debt_gte": 5000 } },
+    { "text": "Your biggest client's contract renews next month. They haven't said anything. The silence is louder than a complaint.", "requires": { "customer_base_gte": 5 } },
+    { "text": "A competitor just launched something that looks a lot like your offer. Coincidence? Doesn't matter — the market noticed.", "requires": { "monthly_revenue_gte": 3000 } },
+    { "text": "The quarterly tax estimate arrived. The number has an extra digit this time.", "requires": { "monthly_revenue_gte": 5000 } },
+    { "text": "The phone rang as you were locking up. You didn't answer. The voicemail light blinks — it can wait until morning. Or can it?", "requires": {} },
+    { "text": "An email arrived at 11:47 PM. Subject line: 'We need to talk.' You'll open it tomorrow.", "requires": {} },
+    { "text": "The market report came out today. The trends are shifting. Your industry is in the crosshairs — for better or worse.", "requires": {} },
+    { "text": "You realized today that you can't remember the last time you did something just for fun. Not networking, not 'productive rest.' Just fun.", "requires": { "energy_lte": 50 } }
   ]
 }

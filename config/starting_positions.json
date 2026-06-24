@@ -44,7 +44,9 @@
         "lifestyle_spiritual": 10,
         "lifestyle_philanthropy": 5,
         "lifestyle_legacy": 5,
-        "revenue_capacity": 5000
+        "revenue_capacity": 5000,
+        "living_expenses": 2800,
+        "lifestyle_expenses": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -99,7 +101,9 @@
         "lifestyle_spiritual": 30,
         "lifestyle_philanthropy": 10,
         "lifestyle_legacy": 5,
-        "revenue_capacity": 0
+        "revenue_capacity": 0,
+        "living_expenses": 3200,
+        "lifestyle_expenses": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -154,7 +158,9 @@
         "lifestyle_spiritual": 10,
         "lifestyle_philanthropy": 10,
         "lifestyle_legacy": 10,
-        "revenue_capacity": 60000
+        "revenue_capacity": 60000,
+        "living_expenses": 5500,
+        "lifestyle_expenses": 0
       },
       "stage_overrides": {
         "marketing": "leverage",
