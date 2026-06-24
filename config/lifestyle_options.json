@@ -9,7 +9,7 @@
       "description": "Three days a week. Nothing heroic — just showing up consistently. Your energy and focus improve.",
       "cash_cost": 150,
       "energy_cost": -10,
-      "effects": { "lifestyle_health": 12, "energy": 10 },
+      "effects": { "lifestyle_health": 12, "energy": 10, "fitness_level": 10 },
       "narrative": "You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."
     },
     {
@@ -20,8 +20,19 @@
       "description": "Blood work, stress test, the works. Know your numbers before they surprise you.",
       "cash_cost": 500,
       "energy_cost": -3,
-      "effects": { "lifestyle_health": 8, "energy": 5 },
+      "effects": { "lifestyle_health": 8, "energy": 5, "fitness_level": 5 },
       "narrative": "The doctor said everything looks good — except your cortisol. 'You're running hot,' she said. 'Dial it back before your body does it for you.'"
+    },
+    {
+      "id": "fitness_training",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Hire a Personal Trainer",
+      "description": "Three sessions a week with someone who won't let you skip. Structured training, accountability, results.",
+      "cash_cost": 800,
+      "energy_cost": -12,
+      "effects": { "lifestyle_health": 15, "energy": 12, "fitness_level": 20 },
+      "narrative": "The trainer doesn't care about your quarterly revenue. She cares about your deadlift form. For three hours a week, you're not a CEO — you're an athlete. And it's changing everything."
     },
     {
       "id": "date_night",

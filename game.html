@@ -93,7 +93,7 @@ body {
 }
 .stat-card {
   background: var(--surface); border-radius: var(--radius-sm); padding: 10px;
-  text-align: center;
+  text-align: center; position: relative;
 }
 .stat-card .stat-value { font-size: 1.1rem; font-weight: 700; }
 .stat-card .stat-label { font-size: 0.65rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.3px; }
@@ -102,13 +102,38 @@ body {
 .stat-warning { color: var(--gold); }
 .stat-neutral { color: var(--text); }
 
-/* Energy Bar */
-.energy-bar-wrap {
+.info-btn {
+  display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--border); color: var(--text2); font-size: 0.6rem;
+  text-align: center; line-height: 16px; cursor: pointer; margin-left: 4px;
+  vertical-align: middle; font-weight: 700;
+}
+.tooltip-popup {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; z-index: 1000; max-width: 300px; font-size: 0.85rem; line-height: 1.6;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.tooltip-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+}
+
+/* Energy/Fitness Bars */
+.bars-section {
   margin-bottom: 16px; background: var(--surface); border-radius: var(--radius-sm); padding: 10px 14px;
 }
-.energy-bar-wrap .energy-label { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; display: flex; justify-content: space-between; }
-.energy-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-.energy-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s, background 0.5s; }
+.bar-row { margin-bottom: 8px; }
+.bar-row:last-child { margin-bottom: 0; }
+.bar-label { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.bar-track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s, background 0.5s; }
+
+/* Step indicator */
+.step-indicator {
+  text-align: center; margin-bottom: 12px; font-size: 0.8rem; color: var(--text2);
+}
+.step-indicator .step-current { color: var(--accent); font-weight: 700; }
 
 /* Category Tabs */
 .category-tabs {
@@ -121,6 +146,7 @@ body {
   white-space: nowrap;
 }
 .cat-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+.cat-tab.done { background: var(--accent2); color: white; border-color: var(--accent2); opacity: 0.7; }
 
 /* Action Cards */
 .action-card {
@@ -130,10 +156,11 @@ body {
 .action-card:active { transform: scale(0.98); }
 .action-card.selected { border-color: var(--accent); background: var(--bg3); }
 .action-card.locked { opacity: 0.4; cursor: not-allowed; }
+.action-card.completed-action { opacity: 0.3; cursor: not-allowed; }
 .action-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
 .action-card p { font-size: 0.82rem; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
 .action-costs {
-  display: flex; gap: 12px; font-size: 0.75rem;
+  display: flex; gap: 12px; font-size: 0.75rem; flex-wrap: wrap;
 }
 .cost-tag {
   padding: 2px 8px; border-radius: 10px; font-weight: 600;
@@ -141,6 +168,7 @@ body {
 .cost-cash { background: rgba(239,68,68,0.15); color: var(--red); }
 .cost-energy { background: rgba(245,158,11,0.15); color: var(--gold); }
 .cost-locked { background: rgba(156,163,180,0.15); color: var(--text2); }
+.cost-done { background: rgba(16,185,129,0.15); color: var(--accent); }
 
 /* Confirm Button */
 .btn-primary {
@@ -212,9 +240,6 @@ body {
 .lifestyle-header h3 { color: var(--purple); margin-bottom: 4px; }
 .lifestyle-header p { color: var(--text2); font-size: 0.85rem; }
 
-/* Scroll anchor */
-.scroll-anchor { height: 1px; }
-
 /* Transitions */
 .fade-in { animation: fadeIn 0.3s ease-out; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
@@ -253,7 +278,8 @@ body {
   <div id="month-narrative" class="narrative-box"></div>
   <div id="character-line" class="narrative-box" style="border-left-color: var(--gold); display:none;"></div>
   <div id="stats-dashboard" class="stats-grid"></div>
-  <div id="energy-bar-section" class="energy-bar-wrap"></div>
+  <div id="bars-section" class="bars-section"></div>
+  <div id="step-indicator" class="step-indicator"></div>
   <div class="category-tabs" id="cat-tabs"></div>
   <div id="action-list"></div>
   <div class="bottom-bar">
@@ -281,7 +307,7 @@ body {
   <div id="event-choices"></div>
 </div>
 
-<!-- RESULT SCREEN (after actions resolve) -->
+<!-- RESULT SCREEN -->
 <div id="result-screen" class="screen">
   <div class="month-header"><h2 id="result-month-label">Results</h2></div>
   <div id="results-content"></div>
@@ -300,6 +326,16 @@ body {
   <div id="score-breakdown" class="stats-grid"></div>
   <div id="epilogue" class="epilogue-box"></div>
   <button class="btn-primary" onclick="location.reload()" style="margin-top:20px;">Play Again</button>
+</div>
+
+<!-- EBITDA Tooltip -->
+<div id="ebitda-tooltip" style="display:none;">
+  <div class="tooltip-overlay" onclick="Game.hideEbitda()"></div>
+  <div class="tooltip-popup">
+    <div style="font-weight:700;margin-bottom:8px;color:var(--accent);">How EBITDA is Calculated</div>
+    <div id="ebitda-breakdown"></div>
+    <button class="btn-secondary" onclick="Game.hideEbitda()" style="margin-top:12px;">Got it</button>
+  </div>
 </div>
 
 <script>
@@ -343,6 +379,7 @@ window.EMBEDDED_CONFIG = {
         "partner_conflict_risk": 0,
         "owner_pay": 800,
         "energy": 45,
+        "fitness_level": 35,
         "lifestyle_health": 20,
         "lifestyle_relationships": 15,
         "lifestyle_experiences": 10,
@@ -397,6 +434,7 @@ window.EMBEDDED_CONFIG = {
         "partner_conflict_risk": 0,
         "owner_pay": 0,
         "energy": 80,
+        "fitness_level": 60,
         "lifestyle_health": 50,
         "lifestyle_relationships": 50,
         "lifestyle_experiences": 40,
@@ -451,6 +489,7 @@ window.EMBEDDED_CONFIG = {
         "partner_conflict_risk": 0,
         "owner_pay": 6000,
         "energy": 25,
+        "fitness_level": 20,
         "lifestyle_health": 20,
         "lifestyle_relationships": 25,
         "lifestyle_experiences": 15,
@@ -554,6 +593,7 @@ window.EMBEDDED_CONFIG = {
       "id": "build_offer",
       "category": "marketing",
       "stage": "foundation",
+      "one_time": true,
       "label": "Refine Your Offer",
       "description": "Stop selling time. Package your expertise into a clear, premium offer with defined scope and pricing.",
       "cash_cost": 0,
@@ -584,6 +624,7 @@ window.EMBEDDED_CONFIG = {
       "id": "crm_pipeline",
       "category": "marketing",
       "stage": "leverage",
+      "one_time": true,
       "label": "Install CRM & Pipeline",
       "description": "Stop tracking leads in your head. Build a real sales pipeline with stages, follow-ups, and metrics.",
       "cash_cost": 800,
@@ -740,6 +781,7 @@ window.EMBEDDED_CONFIG = {
       "id": "write_first_sop",
       "category": "operations",
       "stage": "foundation",
+      "one_time": true,
       "label": "Document Your First SOP",
       "description": "Write down how you actually do the work. Step by step. So someone else could follow it without calling you.",
       "cash_cost": 0,
@@ -755,6 +797,7 @@ window.EMBEDDED_CONFIG = {
       "id": "basic_quality_control",
       "category": "operations",
       "stage": "foundation",
+      "one_time": true,
       "label": "Build Quality Control",
       "description": "Create a checklist and review process so work goes out right the first time, even when you're not looking.",
       "cash_cost": 200,
@@ -770,6 +813,7 @@ window.EMBEDDED_CONFIG = {
       "id": "client_onboarding",
       "category": "operations",
       "stage": "foundation",
+      "one_time": true,
       "label": "Build Client Onboarding",
       "description": "Create a smooth intake process — contracts, expectations, kickoff. Stop winging the first week with every new client.",
       "cash_cost": 100,
@@ -815,6 +859,7 @@ window.EMBEDDED_CONFIG = {
       "id": "project_management",
       "category": "operations",
       "stage": "leverage",
+      "one_time": true,
       "label": "Implement Project Management",
       "description": "Deploy real project tracking — Asana, Monday, or similar. Everyone sees what's due, who owns it, and what's late.",
       "cash_cost": 600,
@@ -830,6 +875,7 @@ window.EMBEDDED_CONFIG = {
       "id": "hiring_pipeline",
       "category": "operations",
       "stage": "leverage",
+      "one_time": true,
       "label": "Build a Hiring Pipeline",
       "description": "Stop panic-hiring. Build a repeatable process for finding, vetting, and onboarding new team members.",
       "cash_cost": 1000,
@@ -941,6 +987,7 @@ window.EMBEDDED_CONFIG = {
       "id": "open_business_account",
       "category": "finance",
       "stage": "foundation",
+      "one_time": true,
       "label": "Open Business Bank Account",
       "description": "Separate your money. Business dollars and personal dollars stop mixing today.",
       "cash_cost": 100,
@@ -956,6 +1003,7 @@ window.EMBEDDED_CONFIG = {
       "id": "basic_bookkeeping",
       "category": "finance",
       "stage": "foundation",
+      "one_time": true,
       "label": "Set Up Bookkeeping",
       "description": "Start tracking every dollar in and out. QuickBooks, a spreadsheet, anything — just start tracking.",
       "cash_cost": 200,
@@ -968,19 +1016,34 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "QuickBooks is installed. Categories are... a work in progress. But the bank feed is connected."
     },
     {
-      "id": "build_personal_credit",
+      "id": "build_personal_credit_repair",
       "category": "finance",
       "stage": "foundation",
-      "label": "Optimize Personal Credit",
-      "description": "Dispute errors, pay down utilization, request limit increases. Every point opens doors later.",
-      "cash_cost": 300,
+      "label": "Credit Repair — Dispute Negatives",
+      "description": "Hire a credit repair vendor to dispute collections, late payments, and inaccurate negative marks on your report. They know the process and fight on your behalf.",
+      "cash_cost": 500,
       "energy_cost": 8,
       "prerequisites": {},
-      "effects": { "personal_credit_score": 15 },
-      "success_rate": 0.7,
-      "failure_effects": { "personal_credit_score": 5 },
-      "narrative_success": "Three disputes resolved in your favor. Two limit increases approved. Your score jumped fifteen points this month.",
-      "narrative_failure": "One dispute resolved, one denied. A small improvement, but the trajectory is right."
+      "effects": { "personal_credit_score": 20, "collections_removed": true },
+      "success_rate": 0.6,
+      "failure_effects": { "personal_credit_score": 8 },
+      "narrative_success": "The credit repair vendor went to work — three disputes filed, two collections removed, one late payment deleted. Your score jumped twenty points. 'That's just round one,' she said.",
+      "narrative_failure": "One collection disputed successfully, but the other is fighting back. The vendor says give it another 30 days — the bureaus are slow but she's seen this before."
+    },
+    {
+      "id": "build_personal_credit_optimize",
+      "category": "finance",
+      "stage": "foundation",
+      "label": "Credit Optimization — Add Tradelines",
+      "description": "Add authorized user tradelines, report rent and utility payments to credit bureaus, fix data inaccuracies. Build credit depth without disputing anything.",
+      "cash_cost": 300,
+      "energy_cost": 6,
+      "prerequisites": {},
+      "effects": { "personal_credit_score": 12 },
+      "success_rate": 0.75,
+      "failure_effects": { "personal_credit_score": 4 },
+      "narrative_success": "Two tradelines added, rent reporting activated, and a data inaccuracy corrected. Your credit file looks thicker and cleaner. Twelve points up this month.",
+      "narrative_failure": "The tradeline is pending and rent reporting takes a cycle to show up. Small movement now, but the foundation is set for next month."
     },
     {
       "id": "pay_down_debt",
@@ -1016,21 +1079,22 @@ window.EMBEDDED_CONFIG = {
       "id": "debt_restructure",
       "category": "finance",
       "stage": "foundation",
-      "label": "Restructure/Consolidate Debt",
-      "description": "Negotiate better terms, consolidate high-interest debt, or settle old collections. Clean up the mess.",
+      "label": "Debt Restructure with Lending Expert",
+      "description": "Work with a local lending expert who knows the banks. They coach you through consolidation — getting credit utilization below 30%, qualifying for better loan terms, and restructuring payments.",
       "cash_cost": 500,
       "energy_cost": 10,
-      "prerequisites": { "total_debt_gte": 5000 },
-      "effects": { "total_debt": -3000, "personal_credit_score": 10, "dscr": 0.2, "operating_expenses": -200 },
+      "prerequisites": { "total_debt_gte": 5000, "personal_credit_score_gte": 580 },
+      "effects": { "total_debt": -3000, "personal_credit_score": 15, "dscr": 0.2, "operating_expenses": -200 },
       "success_rate": 0.55,
       "failure_effects": { "total_debt": -500, "personal_credit_score": 3 },
-      "narrative_success": "The collection agency settled for forty cents on the dollar. Two cards consolidated into one lower-rate payment. Breathing room.",
-      "narrative_failure": "One creditor negotiated. The others wouldn't budge. Partial relief — keep pushing."
+      "narrative_success": "Your lending expert knew exactly which bank to call. Two cards consolidated, utilization dropped below 30%, and your score jumped. 'That's how you build bankable credit,' she said.",
+      "narrative_failure": "One creditor negotiated. Your expert is working on the others. She says give it another month — the banks need to see the new payment pattern."
     },
     {
       "id": "form_llc",
       "category": "finance",
       "stage": "leverage",
+      "one_time": true,
       "label": "Form LLC Entity",
       "description": "Separate yourself from the business legally. Limited liability means your house isn't on the line.",
       "cash_cost": 800,
@@ -1061,6 +1125,7 @@ window.EMBEDDED_CONFIG = {
       "id": "payroll_setup",
       "category": "finance",
       "stage": "leverage",
+      "one_time": true,
       "label": "Set Up Owner Payroll",
       "description": "Pay yourself a real salary through the business. Stop pulling random draws — it looks better to lenders and the IRS.",
       "cash_cost": 500,
@@ -1106,6 +1171,7 @@ window.EMBEDDED_CONFIG = {
       "id": "s_corp_election",
       "category": "finance",
       "stage": "leverage",
+      "one_time": true,
       "label": "S-Corp Election",
       "description": "Restructure to save on self-employment tax. Your accountant has been telling you to do this for a year.",
       "cash_cost": 1500,
@@ -1151,6 +1217,7 @@ window.EMBEDDED_CONFIG = {
       "id": "asset_protection",
       "category": "finance",
       "stage": "wealth",
+      "one_time": true,
       "label": "Build Asset Protection Stack",
       "description": "Irrevocable trust, holding company, umbrella policy. Your assets become untouchable to lawsuits and creditors.",
       "cash_cost": 8000,
@@ -1166,6 +1233,7 @@ window.EMBEDDED_CONFIG = {
       "id": "multi_entity",
       "category": "finance",
       "stage": "wealth",
+      "one_time": true,
       "label": "Multi-Entity Holding Structure",
       "description": "Holding company owns the operating companies. Liability is siloed. Each business is its own island.",
       "cash_cost": 5000,
@@ -1221,7 +1289,7 @@ window.EMBEDDED_CONFIG = {
       "description": "Three days a week. Nothing heroic — just showing up consistently. Your energy and focus improve.",
       "cash_cost": 150,
       "energy_cost": -10,
-      "effects": { "lifestyle_health": 12, "energy": 10 },
+      "effects": { "lifestyle_health": 12, "energy": 10, "fitness_level": 10 },
       "narrative": "You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."
     },
     {
@@ -1232,8 +1300,19 @@ window.EMBEDDED_CONFIG = {
       "description": "Blood work, stress test, the works. Know your numbers before they surprise you.",
       "cash_cost": 500,
       "energy_cost": -3,
-      "effects": { "lifestyle_health": 8, "energy": 5 },
+      "effects": { "lifestyle_health": 8, "energy": 5, "fitness_level": 5 },
       "narrative": "The doctor said everything looks good — except your cortisol. 'You're running hot,' she said. 'Dial it back before your body does it for you.'"
+    },
+    {
+      "id": "fitness_training",
+      "category": "lifestyle",
+      "subcategory": "health",
+      "label": "Hire a Personal Trainer",
+      "description": "Three sessions a week with someone who won't let you skip. Structured training, accountability, results.",
+      "cash_cost": 800,
+      "energy_cost": -12,
+      "effects": { "lifestyle_health": 15, "energy": 12, "fitness_level": 20 },
+      "narrative": "The trainer doesn't care about your quarterly revenue. She cares about your deadlift form. For three hours a week, you're not a CEO — you're an athlete. And it's changing everything."
     },
     {
       "id": "date_night",
@@ -2019,12 +2098,11 @@ window.EMBEDDED_CONFIG = {
 };
 
 // ============================================================
-// ENGINE — loads all config, runs the simulation
+// ENGINE
 // ============================================================
 let CONFIG = {};
 
 async function loadConfig() {
-  // Try fetching from config files first (server mode), fall back to embedded data
   const files = [
     'starting_positions', 'actions_marketing', 'actions_operations',
     'actions_finance', 'lifestyle_options', 'events',
@@ -2046,6 +2124,9 @@ async function loadConfig() {
     }
   }
 }
+
+const CATEGORIES = ['marketing', 'operations', 'finance'];
+const CAT_LABELS = { marketing: 'Marketing', operations: 'Operations', finance: 'Finance' };
 
 const Game = {
   state: null,
@@ -2085,7 +2166,8 @@ const Game = {
     this.state._rival_state = 'unknown';
     this.state._family_state = this.archetype.id === 'established' ? 'strained' : 'coping';
     this.state._audit_events = 0;
-    this.state._market_cycle = 'normal'; // normal, boom, recession
+    this.state._market_cycle = 'normal';
+    this.state.fitness_level = this.state.fitness_level || 50;
     this.month = 1;
     this.selectedActions = {};
     this.actionHistory = [];
@@ -2093,7 +2175,6 @@ const Game = {
     this.lifestyleHistory = [];
     this.monthlySnapshots = [];
 
-    // Show opening
     this.showScreen('opening-screen');
     const beat = CONFIG.narrative_beats.fixed_beats.find(b => b.month === 1 && b.archetype === pos.id);
     document.getElementById('opening-narrative').innerHTML = beat ? beat.narrative.replace(/\n/g, '<br>') : pos.opening_narrative.replace(/\n/g, '<br>');
@@ -2121,7 +2202,7 @@ const Game = {
 
   updateStages() {
     const th = CONFIG.stage_thresholds.thresholds;
-    for (const cat of ['marketing', 'operations', 'finance']) {
+    for (const cat of CATEGORIES) {
       const current = this.state._stages[cat];
       if (current === 'foundation') {
         if (this.meetsRequirements(th[cat].foundation_to_leverage))
@@ -2138,21 +2219,15 @@ const Game = {
     if (!reqs || Object.keys(reqs).length === 0) return true;
     for (const [key, val] of Object.entries(reqs)) {
       if (key.endsWith('_gte')) {
-        const stat = key.replace('_gte', '');
-        if ((this.state[stat] || 0) < val) return false;
+        if ((this.state[key.replace('_gte', '')] || 0) < val) return false;
       } else if (key.endsWith('_lte')) {
-        const stat = key.replace('_lte', '');
-        if ((this.state[stat] || 0) > val) return false;
+        if ((this.state[key.replace('_lte', '')] || 0) > val) return false;
       } else if (key.endsWith('_in')) {
-        const stat = key.replace('_in', '');
-        if (!val.includes(this.state[stat])) return false;
+        if (!val.includes(this.state[key.replace('_in', '')])) return false;
       } else if (key.endsWith('_not')) {
-        const stat = key.replace('_not', '');
-        if (this.state[stat] === val) return false;
-      } else if (key === 'entity_structure') {
-        if (this.state.entity_structure !== val) return false;
-      } else if (key === 'business_credit_profile') {
-        if (this.state.business_credit_profile !== val) return false;
+        if (this.state[key.replace('_not', '')] === val) return false;
+      } else if (key === 'entity_structure' || key === 'business_credit_profile') {
+        if (this.state[key] !== val) return false;
       }
     }
     return true;
@@ -2173,13 +2248,27 @@ const Game = {
 
     const stages = ['foundation', 'leverage', 'wealth'];
     const currentIdx = stages.indexOf(this.getStage(category));
+
     return pool.filter(a => {
       const actionIdx = stages.indexOf(a.stage);
-      return actionIdx <= currentIdx;
+      if (actionIdx > currentIdx) return false;
+      // Context-aware credit actions
+      if (a.id === 'build_personal_credit_repair') {
+        return this.state.personal_credit_score < 600 || (this.state.debt_breakdown && this.state.debt_breakdown.collections > 0);
+      }
+      if (a.id === 'build_personal_credit_optimize') {
+        return this.state.personal_credit_score >= 600 && !(this.state.debt_breakdown && this.state.debt_breakdown.collections > 0);
+      }
+      return true;
     });
   },
 
+  isActionCompleted(action) {
+    return action.one_time && this.state._completed_actions.includes(action.id);
+  },
+
   isActionLocked(action) {
+    if (this.isActionCompleted(action)) return true;
     if (!this.meetsRequirements(action.prerequisites || {})) return true;
     if (!this.canAfford(action)) return true;
     return false;
@@ -2192,7 +2281,7 @@ const Game = {
     this.updateStages();
 
     document.getElementById('month-label').textContent = `Month ${this.month}`;
-    const highestStage = ['marketing','operations','finance']
+    const highestStage = CATEGORIES
       .map(c => this.getStage(c))
       .reduce((a,b) => {
         const order = {foundation:0,leverage:1,wealth:2};
@@ -2203,7 +2292,6 @@ const Game = {
     badge.style.background = highestStage === 'wealth' ? 'var(--gold)' :
                               highestStage === 'leverage' ? 'var(--blue)' : 'var(--accent2)';
 
-    // Narrative beat
     const beat = CONFIG.narrative_beats.fixed_beats.find(b =>
       b.month === this.month && (b.archetype === null || b.archetype === this.archetype.id));
     const narEl = document.getElementById('month-narrative');
@@ -2217,7 +2305,6 @@ const Game = {
       narEl.innerHTML = cliff;
     } else { narEl.style.display = 'none'; }
 
-    // Character line
     const charEl = document.getElementById('character-line');
     const charLine = this.getCharacterLine();
     if (charLine) {
@@ -2225,14 +2312,14 @@ const Game = {
       charEl.innerHTML = `<div class="char-name">${charLine.name}</div>${charLine.line}`;
     } else { charEl.style.display = 'none'; }
 
-    // Mentor beat line
     if (beat && beat.mentor_line && !charLine) {
       charEl.style.display = 'block';
       charEl.innerHTML = `<div class="char-name">Marcus Webb — Mentor</div>${beat.mentor_line}`;
     }
 
     this.renderStats();
-    this.renderEnergyBar();
+    this.renderBars();
+    this.renderStepIndicator();
     this.renderCategoryTabs();
     this.renderActions();
     this.updateConfirmButton();
@@ -2240,31 +2327,24 @@ const Game = {
 
   getCharacterLine() {
     const chars = CONFIG.characters.characters;
-    const roll = Math.random();
-    // ~30% chance of a character line each month
-    if (roll > 0.35) return null;
+    if (Math.random() > 0.35) return null;
 
-    // Pick a character based on state relevance
     if (this.state.energy <= 30 && this.state._family_state !== 'thriving') {
-      const family = chars.family;
-      const lines = family.lines[this.state._family_state] || [];
+      const lines = chars.family.lines[this.state._family_state] || [];
       if (lines.length) return { name: 'Family', line: lines[Math.floor(Math.random() * lines.length)] };
     }
     if (this.month % 4 === 0) {
-      const rival = chars.rival;
-      // Progress rival state
       if (this.state._rival_state === 'unknown' && this.month >= 3) this.state._rival_state = 'acquaintance';
       if (this.state._rival_state === 'acquaintance' && this.month >= 8) this.state._rival_state = 'competitor';
       if (this.state._rival_state === 'competitor' && this.month >= 24 && Math.random() > 0.5) this.state._rival_state = 'fallen';
       if (this.state._rival_state === 'competitor' && this.month >= 30) this.state._rival_state = 'respect';
-      const lines = rival.lines[this.state._rival_state] || [];
-      if (lines.length) return { name: `Jordan Blake — Rival`, line: lines[Math.floor(Math.random() * lines.length)] };
+      const lines = chars.rival.lines[this.state._rival_state] || [];
+      if (lines.length) return { name: 'Jordan Blake — Rival', line: lines[Math.floor(Math.random() * lines.length)] };
     }
     if (this.state._mentor_state !== 'unavailable') {
       if (this.month >= 6) this.state._mentor_state = 'advising';
       if (this.month >= 18) this.state._mentor_state = 'trusted';
-      const mentor = chars.mentor;
-      const lines = mentor.lines[this.state._mentor_state] || [];
+      const lines = chars.mentor.lines[this.state._mentor_state] || [];
       if (lines.length) {
         let line = lines[Math.floor(Math.random() * lines.length)];
         const lastAction = this.actionHistory.length > 0 ? this.actionHistory[this.actionHistory.length - 1] : null;
@@ -2281,43 +2361,97 @@ const Game = {
   renderStats() {
     const s = this.state;
     const ebitda = (s.monthly_revenue || 0) - (s.cogs || 0) - (s.operating_expenses || 0);
+    const monthlyBurn = (s.operating_expenses || 0) + (s.owner_pay || 0) + Math.round((s.total_debt || 0) * 0.018);
     const stats = [
       { label: 'Cash', value: '$' + this.fmt(s.cash), color: s.cash < 2000 ? 'negative' : 'positive' },
       { label: 'Revenue', value: '$' + this.fmt(s.monthly_revenue), color: 'positive' },
-      { label: 'EBITDA', value: '$' + this.fmt(ebitda), color: ebitda < 0 ? 'negative' : 'positive' },
+      { label: 'EBITDA', value: '$' + this.fmt(ebitda), color: ebitda < 0 ? 'negative' : 'positive', hasInfo: true },
       { label: 'Credit Score', value: Math.round(s.personal_credit_score), color: s.personal_credit_score < 620 ? 'negative' : s.personal_credit_score < 700 ? 'warning' : 'positive' },
       { label: 'Debt', value: '$' + this.fmt(s.total_debt), color: s.total_debt > 50000 ? 'negative' : 'neutral' },
-      { label: 'Customers', value: s.customer_base, color: 'neutral' },
+      { label: 'Monthly Burn', value: '$' + this.fmt(monthlyBurn), color: monthlyBurn > s.monthly_revenue ? 'negative' : 'neutral' },
     ];
-    const grid = document.getElementById('stats-dashboard');
-    grid.innerHTML = stats.map(st =>
-      `<div class="stat-card"><div class="stat-value stat-${st.color}">${st.value}</div><div class="stat-label">${st.label}</div></div>`
+    document.getElementById('stats-dashboard').innerHTML = stats.map(st =>
+      `<div class="stat-card">
+        <div class="stat-value stat-${st.color}">${st.value}${st.hasInfo ? '<span class="info-btn" onclick="Game.showEbitda()">i</span>' : ''}</div>
+        <div class="stat-label">${st.label}</div>
+      </div>`
     ).join('');
   },
 
-  renderEnergyBar() {
-    const e = Math.max(0, Math.min(100, this.state.energy));
-    const color = e > 60 ? 'var(--accent)' : e > 30 ? 'var(--gold)' : 'var(--red)';
-    document.getElementById('energy-bar-section').innerHTML = `
-      <div class="energy-label"><span>Energy / Burnout</span><span>${Math.round(e)}/100</span></div>
-      <div class="energy-bar"><div class="energy-bar-fill" style="width:${e}%;background:${color}"></div></div>`;
+  showEbitda() {
+    const s = this.state;
+    const rev = s.monthly_revenue || 0;
+    const cogs = s.cogs || 0;
+    const opex = s.operating_expenses || 0;
+    const ebitda = rev - cogs - opex;
+    document.getElementById('ebitda-breakdown').innerHTML = `
+      <div style="font-family:monospace;font-size:0.9rem;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;">
+          <span>Revenue</span><span style="color:var(--accent)">$${this.fmt(rev)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;">
+          <span>− COGS</span><span style="color:var(--red)">$${this.fmt(cogs)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;">
+          <span>− Operating Expenses</span><span style="color:var(--red)">$${this.fmt(opex)}</span>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px;display:flex;justify-content:space-between;font-weight:700;">
+          <span>= EBITDA</span><span style="color:${ebitda >= 0 ? 'var(--accent)' : 'var(--red)'}">$${this.fmt(ebitda)}</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:0.78rem;color:var(--text2);">
+        Earnings Before Interest, Taxes, Depreciation & Amortization — your business's operating profit before financial and tax decisions.
+      </div>`;
+    document.getElementById('ebitda-tooltip').style.display = 'block';
+  },
+
+  hideEbitda() {
+    document.getElementById('ebitda-tooltip').style.display = 'none';
+  },
+
+  renderBars() {
+    const s = this.state;
+    const e = Math.max(0, Math.min(100, s.energy));
+    const f = Math.max(0, Math.min(100, s.fitness_level || 0));
+    const eColor = e > 60 ? 'var(--accent)' : e > 30 ? 'var(--gold)' : 'var(--red)';
+    const fColor = f > 60 ? 'var(--blue)' : f > 30 ? 'var(--gold)' : 'var(--red)';
+    const recovery = Math.round(3 + (f / 10));
+    document.getElementById('bars-section').innerHTML = `
+      <div class="bar-row">
+        <div class="bar-label"><span>Energy (+${recovery}/mo recovery)</span><span>${Math.round(e)}/100</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${e}%;background:${eColor}"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>Fitness Level</span><span>${Math.round(f)}/100</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${f}%;background:${fColor}"></div></div>
+      </div>`;
+  },
+
+  renderStepIndicator() {
+    const catOrder = CATEGORIES;
+    const currentIdx = catOrder.indexOf(this.currentCategory);
+    const steps = catOrder.map((c, i) => {
+      const done = !!this.selectedActions[c];
+      const active = c === this.currentCategory;
+      if (done) return `<span style="color:var(--accent)">✓ ${CAT_LABELS[c]}</span>`;
+      if (active) return `<span class="step-current">→ ${CAT_LABELS[c]}</span>`;
+      return `<span>${CAT_LABELS[c]}</span>`;
+    });
+    document.getElementById('step-indicator').innerHTML = `Step ${currentIdx + 1}/3: ${steps.join(' · ')}`;
   },
 
   renderCategoryTabs() {
-    const cats = [
-      { id: 'marketing', label: 'Marketing', icon: '' },
-      { id: 'operations', label: 'Operations', icon: '' },
-      { id: 'finance', label: 'Finance', icon: '' },
-    ];
-    document.getElementById('cat-tabs').innerHTML = cats.map(c => {
-      const sel = this.selectedActions[c.id];
-      const check = sel ? ' ✓' : '';
-      return `<div class="cat-tab ${this.currentCategory === c.id ? 'active' : ''}" onclick="Game.switchCategory('${c.id}')">${c.label}${check}</div>`;
+    document.getElementById('cat-tabs').innerHTML = CATEGORIES.map(c => {
+      const sel = this.selectedActions[c];
+      const active = this.currentCategory === c;
+      const cls = active ? 'active' : (sel ? 'done' : '');
+      return `<div class="cat-tab ${cls}" onclick="Game.switchCategory('${c}')">${CAT_LABELS[c]}${sel ? ' ✓' : ''}</div>`;
     }).join('');
   },
 
   switchCategory(cat) {
     this.currentCategory = cat;
+    this.renderStepIndicator();
     this.renderCategoryTabs();
     this.renderActions();
   },
@@ -2327,18 +2461,21 @@ const Game = {
     const selected = this.selectedActions[this.currentCategory];
     const list = document.getElementById('action-list');
     list.innerHTML = actions.map(a => {
+      const completed = this.isActionCompleted(a);
       const locked = this.isActionLocked(a);
       const isSelected = selected && selected.id === a.id;
-      const lockedReason = locked ? this.getLockedReason(a) : '';
-      return `<div class="action-card ${isSelected ? 'selected' : ''} ${locked ? 'locked' : ''} fade-in"
-        onclick="${locked ? '' : `Game.selectAction('${this.currentCategory}','${a.id}')`}">
+      const lockedReason = completed ? 'Already completed' : (locked ? this.getLockedReason(a) : '');
+      const cls = completed ? 'completed-action' : (isSelected ? 'selected' : (locked ? 'locked' : ''));
+      const onclick = (locked || completed) ? '' : `Game.selectAction('${this.currentCategory}','${a.id}')`;
+      return `<div class="action-card ${cls} fade-in" onclick="${onclick}">
         <h4>${a.label}</h4>
         <p>${a.description}</p>
         <div class="action-costs">
           ${a.cash_cost ? `<span class="cost-tag cost-cash">$${this.fmt(a.cash_cost)}</span>` : ''}
           ${a.energy_cost > 0 ? `<span class="cost-tag cost-energy">${a.energy_cost} energy</span>` : ''}
           ${a.energy_cost < 0 ? `<span class="cost-tag" style="background:rgba(16,185,129,0.15);color:var(--accent)">+${Math.abs(a.energy_cost)} energy</span>` : ''}
-          ${locked ? `<span class="cost-tag cost-locked">${lockedReason}</span>` : ''}
+          ${completed ? `<span class="cost-tag cost-done">✓ Done</span>` : ''}
+          ${!completed && locked ? `<span class="cost-tag cost-locked">${lockedReason}</span>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -2349,9 +2486,9 @@ const Game = {
     if (action.energy_cost > 0 && this.state.energy < action.energy_cost) return 'Not enough energy';
     const prereqs = action.prerequisites || {};
     for (const [key, val] of Object.entries(prereqs)) {
-      if (key.endsWith('_gte')) return `Need ${key.replace('_gte','')} ≥ ${val}`;
-      if (key.endsWith('_lte')) return `Need ${key.replace('_lte','')} ≤ ${val}`;
-      if (key.endsWith('_in')) return `Need ${key.replace('_in','')} upgrade`;
+      if (key.endsWith('_gte')) return `Need ${key.replace('_gte','').replace(/_/g,' ')} ≥ ${val}`;
+      if (key.endsWith('_lte')) return `Need ${key.replace('_lte','').replace(/_/g,' ')} ≤ ${val}`;
+      if (key.endsWith('_in')) return `Need ${key.replace('_in','').replace(/_/g,' ')} upgrade`;
     }
     return 'Locked';
   },
@@ -2365,7 +2502,24 @@ const Game = {
       delete this.selectedActions[category];
     } else {
       this.selectedActions[category] = action;
+      // Auto-advance to next category
+      const catIdx = CATEGORIES.indexOf(category);
+      if (catIdx < CATEGORIES.length - 1) {
+        const nextCat = CATEGORIES[catIdx + 1];
+        if (!this.selectedActions[nextCat]) {
+          setTimeout(() => {
+            this.currentCategory = nextCat;
+            this.renderStepIndicator();
+            this.renderCategoryTabs();
+            this.renderActions();
+            this.updateConfirmButton();
+            window.scrollTo({ top: document.getElementById('step-indicator').offsetTop - 10, behavior: 'smooth' });
+          }, 200);
+          return;
+        }
+      }
     }
+    this.renderStepIndicator();
     this.renderCategoryTabs();
     this.renderActions();
     this.updateConfirmButton();
@@ -2386,18 +2540,18 @@ const Game = {
   resolveMonth() {
     const results = [];
     for (const [cat, action] of Object.entries(this.selectedActions)) {
-      const success = Math.random() < (action.success_rate || 0.7);
       const burnoutPenalty = this.state.energy < 30 ? 0.85 : 1;
       const actualSuccess = Math.random() < ((action.success_rate || 0.7) * burnoutPenalty);
 
       const effects = actualSuccess ? action.effects : (action.failure_effects || {});
-      this.applyEffects(effects, action);
+      this.applyEffects(effects);
 
-      // Deduct costs
       this.state.cash -= (action.cash_cost || 0);
       if (action.energy_cost > 0) this.state.energy -= action.energy_cost;
 
-      this.state._completed_actions.push(action.id);
+      if (!this.state._completed_actions.includes(action.id)) {
+        this.state._completed_actions.push(action.id);
+      }
       this.actionHistory.push(action);
       results.push({
         action, success: actualSuccess, effects,
@@ -2405,38 +2559,31 @@ const Game = {
       });
     }
 
-    // Monthly financial tick
     this.monthlyTick();
-
-    // Update relationship states
     this.updateRelationships();
-
-    // Save snapshot
     this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
-
-    // Check for events
     const triggeredEvent = this.checkEvents();
-
-    // Show results
     this.showResults(results, triggeredEvent);
   },
 
-  applyEffects(effects, action) {
+  applyEffects(effects) {
     for (const [key, val] of Object.entries(effects)) {
       if (key === 'entity_structure' || key === 'business_credit_profile' || key === 'trust_structure') {
         this.state[key] = val;
-      } else if (key === 'team_size') {
-        this.state.team_size = (this.state.team_size || 0) + val;
+      } else if (key === 'collections_removed') {
+        if (this.state.debt_breakdown) delete this.state.debt_breakdown.collections;
+      } else if (typeof val === 'boolean') {
+        this.state[key] = val;
       } else {
         this.state[key] = (this.state[key] || 0) + val;
       }
     }
-    // Clamp values
     this.state.energy = Math.max(0, Math.min(100, this.state.energy));
     this.state.personal_credit_score = Math.max(300, Math.min(850, this.state.personal_credit_score));
     this.state.brand_equity = Math.max(0, Math.min(100, this.state.brand_equity));
     this.state.systems_maturity = Math.max(0, Math.min(100, this.state.systems_maturity));
     this.state.key_person_dependency = Math.max(0, Math.min(100, this.state.key_person_dependency));
+    this.state.fitness_level = Math.max(0, Math.min(100, this.state.fitness_level || 0));
     this.state.churn_rate = Math.max(0, Math.min(0.5, this.state.churn_rate));
     this.state.customer_base = Math.max(0, this.state.customer_base);
     this.state.total_debt = Math.max(0, this.state.total_debt);
@@ -2445,27 +2592,27 @@ const Game = {
 
   monthlyTick() {
     const s = this.state;
-    // Revenue from customers (churn)
     const churned = Math.floor(s.customer_base * s.churn_rate);
     s.customer_base = Math.max(0, s.customer_base - churned);
 
-    // Cash flow
     const netIncome = s.monthly_revenue - s.cogs - s.operating_expenses - (s.owner_pay || 0);
     s.cash += netIncome;
 
-    // Debt interest (~0.8% monthly on outstanding)
     const interest = Math.round(s.total_debt * 0.008);
     s.cash -= interest;
 
-    // DSCR recalc
     const debtService = interest + Math.round(s.total_debt * 0.01);
     const ebitda = s.monthly_revenue - s.cogs - s.operating_expenses;
     s.dscr = debtService > 0 ? Math.round((ebitda / debtService) * 100) / 100 : 99;
 
-    // Energy natural drift (slowly recovers)
-    s.energy = Math.min(100, s.energy + 3);
+    // Energy recovery based on fitness
+    const fitnessRecovery = Math.round(3 + ((s.fitness_level || 0) / 10));
+    s.energy = Math.min(100, s.energy + fitnessRecovery);
 
-    // Market cycle shifts (every ~8 months)
+    // Fitness decays slowly if not maintained
+    s.fitness_level = Math.max(0, (s.fitness_level || 0) - 2);
+
+    // Market cycle shifts
     if (this.month % 8 === 0) {
       const r = Math.random();
       if (r < 0.2) { s._market_cycle = 'recession'; s.monthly_revenue = Math.round(s.monthly_revenue * 0.85); }
@@ -2473,7 +2620,6 @@ const Game = {
       else { s._market_cycle = 'normal'; }
     }
 
-    // Fail state: cash negative
     if (s.cash < -5000 && s.available_credit <= 0) {
       s.cash = 0;
       s.monthly_revenue = Math.round(s.monthly_revenue * 0.5);
@@ -2483,7 +2629,6 @@ const Game = {
 
   updateRelationships() {
     const s = this.state;
-    // Banker
     if (s.monthly_revenue > 10000 && s.dscr > 1.5) {
       if (s._banker_state === 'stranger') s._banker_state = 'neutral';
       else if (s._banker_state === 'neutral') s._banker_state = 'trusted';
@@ -2492,7 +2637,6 @@ const Game = {
       s._banker_state = 'skeptical';
     }
 
-    // Family
     const ls = s.lifestyle_health + s.lifestyle_relationships;
     if (ls > 80) s._family_state = 'thriving';
     else if (ls > 50) s._family_state = 'stable';
@@ -2508,7 +2652,6 @@ const Game = {
       if (evt.probability_scales_with && evt.scale_factor) {
         prob += (this.state[evt.probability_scales_with] || 0) * evt.scale_factor;
       }
-      // Mitigated
       if (evt.mitigated_by) {
         for (const actionId of evt.mitigated_by) {
           if (this.state._completed_actions.includes(actionId)) prob *= 0.5;
@@ -2529,22 +2672,20 @@ const Game = {
         <strong>${r.action.label}</strong> — ${r.success ? '<span style="color:var(--accent)">Success</span>' : '<span style="color:var(--gold)">Partial</span>'}
         <br><br>${r.narrative}
       </div>`;
-      html += `<div class="effect-list">`;
+      html += '<div class="effect-list">';
       for (const [key, val] of Object.entries(r.effects)) {
         if (typeof val === 'number' && val !== 0) {
           const sign = val > 0 ? '+' : '';
-          const color = key === 'total_debt' || key === 'operating_expenses' || key === 'audit_risk' || key === 'litigation_exposure' || key === 'key_person_dependency'
-            ? (val > 0 ? 'var(--red)' : 'var(--accent)')
-            : (val > 0 ? 'var(--accent)' : 'var(--red)');
-          html += `<div class="effect-item"><span>${this.formatStatName(key)}</span><span style="color:${color};font-weight:600">${sign}${typeof val === 'number' && key.includes('revenue') || key === 'cash' || key.includes('cost') || key.includes('expense') || key.includes('debt') || key.includes('pay') || key.includes('equity') && key.includes('real') || key.includes('insurance') || key.includes('investment') ? '$' + this.fmt(val) : val}</span></div>`;
+          const inverted = ['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs'].includes(key);
+          const color = inverted ? (val > 0 ? 'var(--red)' : 'var(--accent)') : (val > 0 ? 'var(--accent)' : 'var(--red)');
+          const isMoney = ['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure'].includes(key);
+          html += `<div class="effect-item"><span>${this.formatStatName(key)}</span><span style="color:${color};font-weight:600">${sign}${isMoney ? '$' + this.fmt(val) : val}</span></div>`;
         }
       }
-      html += `</div>`;
+      html += '</div>';
     }
 
     document.getElementById('results-content').innerHTML = html;
-
-    // Store triggered event for after results
     this._pendingEvent = triggeredEvent;
     this._isLifestyleMonth = (this.month % 3 === 0);
   },
@@ -2587,8 +2728,10 @@ const Game = {
     document.getElementById('event-choices').innerHTML = mitigateNote + evt.choices.map((c, i) => {
       const effectsStr = Object.entries(c.effects)
         .filter(([k,v]) => typeof v === 'number' && v !== 0)
-        .map(([k,v]) => `${v > 0 ? '+' : ''}${k.includes('cash') || k.includes('expense') || k.includes('debt') || k.includes('revenue') || k.includes('pay') ? '$' + this.fmt(v) : v} ${this.formatStatName(k)}`)
-        .join(', ');
+        .map(([k,v]) => {
+          const isMoney = ['cash','operating_expenses','total_debt','monthly_revenue','owner_pay'].includes(k);
+          return `${v > 0 ? '+' : ''}${isMoney ? '$' + this.fmt(v) : v} ${this.formatStatName(k)}`;
+        }).join(', ');
       return `<div class="choice-card fade-in" onclick="Game.resolveEvent(${i})">
         <h4>${c.label}</h4>
         <div class="choice-effects">${effectsStr}</div>
@@ -2604,9 +2747,8 @@ const Game = {
     const choice = evt.choices[choiceIdx];
     this.applyEffects(choice.effects);
 
-    // Show outcome inline then continue
     this.showScreen('result-screen');
-    document.getElementById('result-month-label').textContent = `Event Outcome`;
+    document.getElementById('result-month-label').textContent = 'Event Outcome';
     document.getElementById('results-content').innerHTML = `
       <div class="result-narrative fade-in">
         <strong>${choice.label}</strong><br><br>${choice.outcome_narrative}
@@ -2615,14 +2757,13 @@ const Game = {
         .filter(([k,v]) => typeof v === 'number' && v !== 0)
         .map(([k,v]) => {
           const sign = v > 0 ? '+' : '';
-          const color = k === 'cash' || k === 'energy' ? (v > 0 ? 'var(--accent)' : 'var(--red)') :
-                        k.includes('debt') || k.includes('exposure') || k.includes('risk') ? (v > 0 ? 'var(--red)' : 'var(--accent)') :
-                        (v > 0 ? 'var(--accent)' : 'var(--red)');
-          return `<div class="effect-item"><span>${this.formatStatName(k)}</span><span style="color:${color};font-weight:600">${sign}${v}</span></div>`;
+          const inverted = ['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','partner_conflict_risk'].includes(k);
+          const color = inverted ? (v > 0 ? 'var(--red)' : 'var(--accent)') : (v > 0 ? 'var(--accent)' : 'var(--red)');
+          const isMoney = ['cash','operating_expenses','total_debt','monthly_revenue'].includes(k);
+          return `<div class="effect-item"><span>${this.formatStatName(k)}</span><span style="color:${color};font-weight:600">${sign}${isMoney ? '$' + this.fmt(v) : v}</span></div>`;
         }).join('')}
       </div>`;
     this.currentEvent = null;
-    // _pendingEvent is already null, nextMonth will proceed
   },
 
   showLifestyleScreen() {
@@ -2661,10 +2802,7 @@ const Game = {
   selectLifestyle(id) {
     const actions = CONFIG.lifestyle_options.actions;
     this.selectedLifestyle = actions.find(a => a.id === id);
-    document.querySelectorAll('#lifestyle-list .action-card').forEach(card => {
-      card.classList.remove('selected');
-    });
-    // Find and select
+    document.querySelectorAll('#lifestyle-list .action-card').forEach(card => card.classList.remove('selected'));
     const idx = actions.findIndex(a => a.id === id);
     const cards = document.querySelectorAll('#lifestyle-list .action-card');
     if (cards[idx]) cards[idx].classList.add('selected');
@@ -2679,7 +2817,6 @@ const Game = {
     this.applyEffects(a.effects);
     this.lifestyleHistory.push(a);
 
-    // Show result
     this.showScreen('result-screen');
     document.getElementById('result-month-label').textContent = `Lifestyle — ${a.subcategory}`;
     document.getElementById('results-content').innerHTML = `
@@ -2694,12 +2831,8 @@ const Game = {
 
     document.getElementById('end-title').textContent = archetype.title;
     document.getElementById('end-subtitle').textContent = archetype.subtitle;
-
-    // Radar chart
     this.drawRadar(scores);
 
-    // Score breakdown
-    const dims = CONFIG.scoring_weights.dimensions;
     const labels = { net_worth: 'Net Worth', business_revenue: 'Revenue', personal_income: 'Income',
                      tax_efficiency: 'Tax Efficiency', passive_income: 'Passive Income', lifestyle: 'Lifestyle' };
     document.getElementById('score-breakdown').innerHTML = Object.entries(scores).map(([k,v]) =>
@@ -2712,27 +2845,24 @@ const Game = {
   calculateFinalScores() {
     const s = this.state;
     const netWorth = s.cash + (s.real_estate_equity || 0) + (s.investment_positions || 0) + (s.life_insurance_cv || 0) - s.total_debt + (s.available_credit * 0.1);
-    const maxNW = 200000;
-    const nwScore = Math.min(100, Math.max(0, (netWorth / maxNW) * 100));
-
-    const revScore = Math.min(100, (s.monthly_revenue / 500) * 1);
-    const incScore = Math.min(100, ((s.owner_pay || 0) / 150) * 1);
+    const nwScore = Math.min(100, Math.max(0, (netWorth / 200000) * 100));
+    const revScore = Math.min(100, (s.monthly_revenue / 500));
+    const incScore = Math.min(100, ((s.owner_pay || 0) / 150));
 
     const entityBonus = ['s_corp','c_corp','multi_entity'].includes(s.entity_structure) ? 20 : 0;
-    const auditPenalty = s._audit_events * 10;
-    const taxScore = Math.min(100, Math.max(0, 30 + entityBonus + (s.trust_structure !== 'none' ? 15 : 0) - auditPenalty));
+    const taxScore = Math.min(100, Math.max(0, 30 + entityBonus + (s.trust_structure !== 'none' ? 15 : 0) - s._audit_events * 10));
 
-    const passiveRE = (s.real_estate_owned || 0) * 15;
-    const passiveInv = (s.investment_positions || 0) / 500;
-    const passiveSys = s.key_person_dependency < 30 ? 20 : 0;
-    const passiveIns = (s.life_insurance_cv || 0) / 1000;
-    const passiveScore = Math.min(100, passiveRE + passiveInv + passiveSys + passiveIns);
+    const passiveScore = Math.min(100,
+      (s.real_estate_owned || 0) * 15 +
+      (s.investment_positions || 0) / 500 +
+      (s.key_person_dependency < 30 ? 20 : 0) +
+      (s.life_insurance_cv || 0) / 1000);
 
     const lw = CONFIG.scoring_weights.lifestyle_sub_weights;
-    const lifestyleRaw = s.lifestyle_health * lw.health + s.lifestyle_relationships * lw.relationships +
+    const lifestyleScore = Math.min(100,
+      s.lifestyle_health * lw.health + s.lifestyle_relationships * lw.relationships +
       s.lifestyle_experiences * lw.experiences + s.lifestyle_spiritual * lw.spiritual +
-      s.lifestyle_philanthropy * lw.philanthropy + s.lifestyle_legacy * lw.legacy;
-    const lifestyleScore = Math.min(100, lifestyleRaw);
+      s.lifestyle_philanthropy * lw.philanthropy + s.lifestyle_legacy * lw.legacy);
 
     return { net_worth: nwScore, business_revenue: revScore, personal_income: incScore,
              tax_efficiency: taxScore, passive_income: passiveScore, lifestyle: lifestyleScore };
@@ -2740,21 +2870,12 @@ const Game = {
 
   determineArchetype(scores) {
     const archetypes = CONFIG.archetypes.win_archetypes;
-    let best = archetypes[0];
-    let bestScore = -1;
-
+    let best = archetypes[0], bestScore = -1;
     for (const arch of archetypes) {
       let score = 0;
-      if (arch.requires_dominant && scores[arch.requires_dominant]) {
-        score = scores[arch.requires_dominant];
-      }
-      if (arch.requires_secondary && scores[arch.requires_secondary]) {
-        score += scores[arch.requires_secondary] * 0.5;
-      }
-      if (arch.requires_low) {
-        if (scores[arch.requires_low] < 30) score += 20;
-        else score -= 30;
-      }
+      if (arch.requires_dominant && scores[arch.requires_dominant]) score = scores[arch.requires_dominant];
+      if (arch.requires_secondary && scores[arch.requires_secondary]) score += scores[arch.requires_secondary] * 0.5;
+      if (arch.requires_low) { score += scores[arch.requires_low] < 30 ? 20 : -30; }
       if (score > bestScore) { bestScore = score; best = arch; }
     }
     return best;
@@ -2763,69 +2884,52 @@ const Game = {
   drawRadar(scores) {
     const canvas = document.getElementById('radar-canvas');
     const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height;
-    const cx = w/2, cy = h/2, r = 120;
+    const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, r = 120;
     const labels = ['Net Worth', 'Revenue', 'Income', 'Tax Eff.', 'Passive', 'Lifestyle'];
     const vals = [scores.net_worth, scores.business_revenue, scores.personal_income,
                   scores.tax_efficiency, scores.passive_income, scores.lifestyle];
     const n = 6;
-
     ctx.clearRect(0, 0, w, h);
 
-    // Grid
     for (let ring = 1; ring <= 4; ring++) {
       ctx.beginPath();
       for (let i = 0; i <= n; i++) {
         const angle = (Math.PI * 2 * i / n) - Math.PI/2;
         const rr = r * ring / 4;
-        const x = cx + rr * Math.cos(angle);
-        const y = cy + rr * Math.sin(angle);
+        const x = cx + rr * Math.cos(angle), y = cy + rr * Math.sin(angle);
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.strokeStyle = '#2d3a50'; ctx.lineWidth = 1; ctx.stroke();
     }
 
-    // Axes + labels
     for (let i = 0; i < n; i++) {
       const angle = (Math.PI * 2 * i / n) - Math.PI/2;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
+      ctx.beginPath(); ctx.moveTo(cx, cy);
       ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
       ctx.strokeStyle = '#2d3a50'; ctx.stroke();
-
-      const lx = cx + (r + 25) * Math.cos(angle);
-      const ly = cy + (r + 25) * Math.sin(angle);
       ctx.fillStyle = '#9ca3b4'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(labels[i], lx, ly);
+      ctx.fillText(labels[i], cx + (r + 25) * Math.cos(angle), cy + (r + 25) * Math.sin(angle));
     }
 
-    // Data
     ctx.beginPath();
     for (let i = 0; i <= n; i++) {
-      const idx = i % n;
-      const angle = (Math.PI * 2 * idx / n) - Math.PI/2;
+      const idx = i % n, angle = (Math.PI * 2 * idx / n) - Math.PI/2;
       const v = (vals[idx] / 100) * r;
-      const x = cx + v * Math.cos(angle);
-      const y = cy + v * Math.sin(angle);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      i === 0 ? ctx.moveTo(cx + v * Math.cos(angle), cy + v * Math.sin(angle)) : ctx.lineTo(cx + v * Math.cos(angle), cy + v * Math.sin(angle));
     }
     ctx.fillStyle = 'rgba(16,185,129,0.2)'; ctx.fill();
     ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2; ctx.stroke();
 
-    // Dots
     for (let i = 0; i < n; i++) {
-      const angle = (Math.PI * 2 * i / n) - Math.PI/2;
-      const v = (vals[i] / 100) * r;
-      ctx.beginPath();
-      ctx.arc(cx + v * Math.cos(angle), cy + v * Math.sin(angle), 4, 0, Math.PI * 2);
+      const angle = (Math.PI * 2 * i / n) - Math.PI/2, v = (vals[i] / 100) * r;
+      ctx.beginPath(); ctx.arc(cx + v * Math.cos(angle), cy + v * Math.sin(angle), 4, 0, Math.PI * 2);
       ctx.fillStyle = '#10b981'; ctx.fill();
     }
   },
 
   fmt(n) {
     n = Math.round(n);
-    if (Math.abs(n) >= 1000) return Math.abs(n).toLocaleString();
-    return Math.abs(n).toString();
+    return Math.abs(n) >= 1000 ? Math.abs(n).toLocaleString() : Math.abs(n).toString();
   },
 
   formatStatName(key) {
@@ -2833,7 +2937,6 @@ const Game = {
   }
 };
 
-// Boot
 Game.init();
 </script>
 </body>
