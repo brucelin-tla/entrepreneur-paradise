@@ -99,11 +99,11 @@
       "category": "finance",
       "stage": "foundation",
       "label": "Debt Restructure with Lending Expert",
-      "description": "Work with a local lending expert who knows the banks. They help move high-utilization revolving debt into a fixed-rate loan — dropping your utilization and boosting your score. They also coach you on qualifying for better terms.",
+      "description": "Work with a local lending expert who knows the banks. They move revolving debt into installment loans — the amount depends on your cash and debt position. Dropping utilization is the fastest way to boost your score.",
       "cash_cost": 500,
       "energy_cost": 10,
-      "prerequisites": { "total_debt_gte": 5000, "personal_credit_score_gte": 580 },
-      "effects": { "total_debt": -1000, "personal_credit_score": 18, "dscr": 0.2, "operating_expenses": -200, "available_credit": 5000 },
+      "prerequisites": { "personal_credit_score_gte": 580 },
+      "effects": { "personal_credit_score": 18, "dscr": 0.2, "operating_expenses": -200 },
       "success_rate": 0.55,
       "failure_effects": { "total_debt": -500, "personal_credit_score": 3 },
       "narrative_success": "Your lending expert moved $8,000 from your credit line to a fixed-rate installment loan. Utilization dropped from 70% to 25%. Your score jumped overnight. 'Now you're bankable,' she said. 'Let's go get you more credit.'",
@@ -415,6 +415,36 @@
       "failure_effects": { "personal_credit_score": -3 },
       "narrative_success": "Approved for $10,000. The loan officer barely hesitated — your credit spoke for itself. Cash in account by Friday.",
       "narrative_failure": "Declined. The loan officer said your debt-to-income was borderline. Try paying down some debt first."
+    },
+    {
+      "id": "business_credit_card_0pct",
+      "category": "finance",
+      "stage": "foundation",
+      "label": "Open 0% Business Credit Card",
+      "description": "Apply for a business credit card with 0% intro APR for 7-18 months. Use it for cash flow, inventory, or balance transfers. Free money — if you pay it off before the rate kicks in.",
+      "cash_cost": 0,
+      "energy_cost": 4,
+      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 650 },
+      "effects": { "available_credit": 10000, "business_credit_profile": "building", "personal_credit_score": 3 },
+      "success_rate": 0.65,
+      "failure_effects": { "available_credit": 2000, "personal_credit_score": -2 },
+      "narrative_success": "Approved for $10,000 at 0% for 15 months. That's free capital for over a year — use it wisely, and pay it off before month 15 when it jumps to 24.99%.",
+      "narrative_failure": "Approved for a smaller limit — $2,000. The hard inquiry cost you two points. But you're building business credit history now."
+    },
+    {
+      "id": "balance_transfer",
+      "category": "finance",
+      "stage": "foundation",
+      "label": "Balance Transfer to 0% Card",
+      "description": "Move high-interest revolving balances to your 0% intro rate card. Stops the interest bleeding while you pay it down. Do this before your intro period expires.",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "prerequisites": { "available_credit_gte": 3000, "personal_credit_score_gte": 620 },
+      "effects": { "personal_credit_score": 10, "operating_expenses": -150, "dscr": 0.1 },
+      "success_rate": 0.8,
+      "failure_effects": { "personal_credit_score": 2, "operating_expenses": -50 },
+      "narrative_success": "Transferred $5,000 from your 24% card to your 0% card. That's $100/month in interest you just stopped paying. Your utilization spread improved and your score jumped.",
+      "narrative_failure": "Partial transfer — only moved $2,000. The rest exceeded the available limit. Still, you're saving $40/month in interest."
     }
   ]
 }
