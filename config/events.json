@@ -141,6 +141,29 @@
       "mitigated_by": ["keyman_insurance"]
     },
     {
+      "id": "scaling_chaos",
+      "category": "operations",
+      "requires": { "monthly_revenue_gte": 20000, "systems_maturity_lte": 40 },
+      "base_probability": 0.13,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.000002,
+      "narrative": "Growth outran your systems. Orders are slipping, two clients got the wrong deliverable, and your team is firefighting instead of working. You scaled the revenue but not the machine — and it's breaking.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Pull all-nighters and fix it yourself",
+          "effects": { "energy": -20, "key_person_dependency": 8, "customer_base": -3 },
+          "outcome_narrative": "You personally caught up the backlog — at the cost of your sleep and by making the business depend on you even more. A patch, not a fix."
+        },
+        {
+          "label": "Refund affected clients and apologize",
+          "effects": { "cash": -6000, "brand_equity": -6, "customer_base": -4 },
+          "outcome_narrative": "You ate the cost and the reputation hit. The clients appreciated the honesty, but a few walked. Growth without systems has a price."
+        }
+      ],
+      "mitigated_by": ["fulfillment_system", "full_systemization", "basic_quality_control", "project_management"]
+    },
+    {
       "id": "client_dispute",
       "category": "litigation",
       "requires": { "customer_base_gte": 10 },

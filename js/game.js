@@ -290,8 +290,8 @@ applyEffects(effects){for(const[k,v]of Object.entries(effects)){if(k==='entity_s
 monthlyTick(){const s=this.state;
 // Process delayed effects
 if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.month);s._delayed_effects=s._delayed_effects.filter(d=>d.month>this.month);for(const d of ready)this.applyEffects(d.effects);}
-// Churn
-s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*s.churn_rate));
+// Churn — leaky bucket: a large base with low systems/no retention churns faster
+{const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
 // Lead conversion
 const baseConv=0.05,skillConv=(s.skill_marketing||0)/300,brandConv=(s.brand_equity||0)/1000,offerB=s._completed_actions&&s._completed_actions.includes('build_offer')?0.05:0,crmB=s._completed_actions&&s._completed_actions.includes('crm_pipeline')?0.05:0;
 const convRate=Math.min(0.5,baseConv+skillConv+brandConv+offerB+crmB);const converted=Math.floor((s.leads||0)*convRate);
@@ -299,6 +299,8 @@ s.customer_base+=converted;s.leads=Math.max(0,(s.leads||0)-converted);
 // Revenue = customers × value per customer (recalculated each month)
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+(s._completed_actions&&s._completed_actions.includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
 s.monthly_revenue=s.customer_base*revPerCust;
+// Revenue capacity cap — you can only capture demand up to what the business can deliver; beyond it revenue is heavily dampened (market saturation / strained delivery). Capacity grows via offer, sales infra, systems, team.
+{const cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);if(s.monthly_revenue>cap)s.monthly_revenue=Math.round(cap+(s.monthly_revenue-cap)*0.25);}
 // Seasonal dip — Q4 each year (months 10-12, 22-24, 34-36)
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)s.monthly_revenue=Math.round(s.monthly_revenue*0.85);
 s.monthly_revenue+=(s.other_monthly_revenue||0); // persistent income from assets (real estate, lending) — survives the monthly recompute above
@@ -307,6 +309,10 @@ const payroll=(s.team_size||0)*2500;if(payroll>0&&s.cash<payroll&&(s.available_c
 s.cash+=s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0);
 const interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();s.cash-=interest;s.cash-=principal;s.total_debt=Math.max(0,s.total_debt-principal);
 s.cash-=(s.living_expenses||0);s.cash-=(s.lifestyle_expenses||0);
+// People scaling drag — headcount past 3 without management/systems creates coordination cost
+{const team=s.team_size||0;if(team>3){const hasMgmt=s._completed_actions.includes('middle_management')||s._completed_actions.includes('full_systemization')||s._completed_actions.includes('hire_hr_manager');const sysFactor=Math.max(0.1,1-(s.systems_maturity||0)/100);const coordCost=Math.round((team-3)*1500*sysFactor*(hasMgmt?0.3:1));if(coordCost>0)s.cash-=coordCost;}}
+// Tax inefficiency drag — high profit without tax structure overpays the IRS every month
+{const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0));if(profit>5000){let ineff=0.10;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.07;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/40000);s.cash-=Math.round(profit*ineff);}}
 const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses);s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
 if(s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(taxableIncome*(s.tax_rate||0.25));s.tax_reserve+=res;s.cash-=res;}
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
