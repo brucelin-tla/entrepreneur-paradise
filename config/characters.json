@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "characters": {
     "mentor": {
-      "name": "Marcus Webb",
+      "name": "Bruce",
       "role": "mentor",
       "description": "Serial entrepreneur turned coach. Built and sold two companies before 40. Now he helps others avoid his mistakes — for a fee.",
       "relationship_states": {
@@ -13,16 +13,16 @@
       },
       "lines": {
         "introduced": [
-          "I've seen a hundred founders in your exact position. The ones who made it did two things: they got honest about what's broken, and they fixed the foundation before chasing growth.",
-          "Here's what I'll tell you for free — the fancy stuff everyone wants to skip to? It doesn't work without the boring stuff first."
+          "I've seen a hundred founders in your exact position. The ones who made it got honest about what's broken and fixed the foundation before chasing growth. So here's what I'd be asking myself first: what's actually broken right now?",
+          "The fancy stuff everyone wants to skip to? It doesn't work without the boring stuff first. Here's the question I'd sit with: what boring thing are you avoiding?"
         ],
         "advising": [
-          "Last month you {last_action}. That was {assessment}. Here's what I'd do next.",
-          "Your numbers say one thing. Your energy says another. Which one do you want to talk about?"
+          "Last month you {last_action}. That was {assessment}. Here's what I'd be asking myself next: does your next move build on it, or scatter your focus?",
+          "Your numbers say one thing, your energy says another. Here's what I'd do next — sit with the harder question: which one are you pretending isn't true?"
         ],
         "trusted": [
-          "Remember when you first walked in here? Look at your numbers now. That's not luck — that's discipline.",
-          "I'm going to push back on this one. You're ready for it, but your systems aren't. Give it one more month."
+          "Remember when you first walked in here? Look at your numbers now — that's discipline, not luck. So here's what I'd ask now: what got you here that won't get you to the next level?",
+          "I'm going to push back. You're ready, but your systems aren't. Here's the question I'd answer before you scale: what breaks first if you double tomorrow?"
         ]
       }
     },
