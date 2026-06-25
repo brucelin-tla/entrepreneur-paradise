@@ -1,5 +1,9 @@
 # Release Notes
 
+## v0.13.3 — 2026-06-25
+**Compact locked actions**
+- Locked actions render as compact one-line rows under an "Unlocks next" label instead of full greyed-out cards — tighter menu, less scrolling
+
 ## v0.13.2 — 2026-06-25
 **Title-screen background art**
 - Added a self-contained SVG hero backdrop (dusk skyline, horizon glow, stars, growth line) behind the title; bottom fade keeps text readable. Works on Pages and in the offline build.
