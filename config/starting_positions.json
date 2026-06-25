@@ -3,6 +3,7 @@
   "positions": [
     {
       "id": "stuck",
+      "enabled": false,
       "label": "The Stuck Business Owner",
       "tagline": "Rebuild from the wreckage",
       "description": "A life event wrecked your credit and finances. You have business instincts, maybe even an existing business — but you're boxed out of capital. Recovery starts now.",
@@ -150,6 +151,7 @@
     },
     {
       "id": "established",
+      "enabled": false,
       "label": "The Established Business Owner",
       "tagline": "Optimize what you've built",
       "description": "Your business is profitable and running. But you're overworked, under-optimized, and your wealth is exposed. It's time to build the structure around your success.",
