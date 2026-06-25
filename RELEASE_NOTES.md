@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.13.4 — 2026-06-25
+**Marketing funnel + action logic**
+- Marketing directions now map to the funnel: "Audience & Offer" = lead generation, "Get Customers" = converting leads into customers (lead-gen actions moved out of Get Customers)
+- `build_offer` now also generates leads (fits its lead-gen direction)
+- `do_work_yourself` requires ≥1 customer — no more delivering client work with no clients
+
 ## v0.13.3 — 2026-06-25
 **Compact locked actions**
 - Locked actions render as compact one-line rows under an "Unlocks next" label instead of full greyed-out cards — tighter menu, less scrolling

@@ -92,9 +92,9 @@
       "cash_cost": 0,
       "energy_cost": 12,
       "prerequisites": { "customer_base_gte": 5 },
-      "effects": { "monthly_revenue": 2000, "brand_equity": 8, "revenue_capacity": 3000 },
+      "effects": { "monthly_revenue": 2000, "brand_equity": 8, "revenue_capacity": 3000, "leads": 8 },
       "success_rate": 0.7,
-      "failure_effects": { "monthly_revenue": 500, "brand_equity": 2 },
+      "failure_effects": { "monthly_revenue": 500, "brand_equity": 2, "leads": 3 },
       "narrative_success": "The new pricing feels scary — and every new prospect is saying yes faster than before. You were undercharging.",
       "narrative_failure": "Two clients pushed back on the new pricing. You compromised on one. The packaging needs another pass."
     },

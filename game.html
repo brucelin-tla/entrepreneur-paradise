@@ -433,9 +433,9 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 0,
       "energy_cost": 12,
       "prerequisites": { "customer_base_gte": 5 },
-      "effects": { "monthly_revenue": 2000, "brand_equity": 8, "revenue_capacity": 3000 },
+      "effects": { "monthly_revenue": 2000, "brand_equity": 8, "revenue_capacity": 3000, "leads": 8 },
       "success_rate": 0.7,
-      "failure_effects": { "monthly_revenue": 500, "brand_equity": 2 },
+      "failure_effects": { "monthly_revenue": 500, "brand_equity": 2, "leads": 3 },
       "narrative_success": "The new pricing feels scary — and every new prospect is saying yes faster than before. You were undercharging.",
       "narrative_failure": "Two clients pushed back on the new pricing. You compromised on one. The packaging needs another pass."
     },
@@ -632,7 +632,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Do it yourself first — not forever. You can't systematize or delegate what you don't deeply understand. Master the work, then escape it.",
       "cash_cost": 0,
       "energy_cost": 20,
-      "prerequisites": {},
+      "prerequisites": { "customer_base_gte": 1 },
       "effects": { "monthly_revenue": 500, "systems_maturity": 2, "key_person_dependency": 5 },
       "success_rate": 0.9,
       "failure_effects": { "monthly_revenue": 200 },
@@ -2486,9 +2486,10 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Get Customers',['cold_outreach','local_networking','referral_asks','paid_ads_test']],['Audience & Offer',['basic_social_content','email_campaign','lead_magnet','build_offer']],['Scale Sales',['build_sales_team','crm_pipeline','webinar_funnel','referral_partnerships','brand_pr_push']],['Leverage & Expand',['content_engine','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Deliver & Document',['do_work_yourself','hire_first_contractor','write_first_sop','basic_quality_control','client_onboarding','basic_automation']],['Build the Team',['hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management']],['Systematize & Scale',['fulfillment_system','full_systemization','hire_fractional_cfo','hire_hr_manager','build_ip','vertical_integration','multi_location']]]};
+const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Audience & Offer',['cold_outreach','local_networking','paid_ads_test','basic_social_content','lead_magnet','build_offer','brand_pr_push']],['Get Customers',['referral_asks','email_campaign','crm_pipeline','webinar_funnel','build_sales_team']],['Scale & Expand',['content_engine','referral_partnerships','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Deliver & Document',['do_work_yourself','hire_first_contractor','write_first_sop','basic_quality_control','client_onboarding','basic_automation']],['Build the Team',['hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management']],['Systematize & Scale',['fulfillment_system','full_systemization','hire_fractional_cfo','hire_hr_manager','build_ip','vertical_integration','multi_location']]]};
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.13.4',d:'2026-06-25 09:27',n:['Marketing now follows the funnel: "Audience & Offer" generates leads, "Get Customers" converts leads into customers','"Do the Work Yourself" now unlocks once you have your first client (no more delivering to nobody)']},
 {v:'0.13.3',d:'2026-06-25 09:22',n:['Locked actions now show as compact one-line rows under "Unlocks next" instead of big greyed-out cards — tighter menu, less scrolling']},
 {v:'0.13.2',d:'2026-06-25 08:02',n:['New title-screen backdrop — a dusk city skyline with a rising growth line, for a more premium first impression']},
 {v:'0.13.1',d:'2026-06-25 07:55',n:['Action menu is now collapsible — tap a direction to reveal its options, so the menu is short and easy to scan instead of one long scroll']},

@@ -10,7 +10,7 @@
       "lesson": "Do it yourself first — not forever. You can't systematize or delegate what you don't deeply understand. Master the work, then escape it.",
       "cash_cost": 0,
       "energy_cost": 20,
-      "prerequisites": {},
+      "prerequisites": { "customer_base_gte": 1 },
       "effects": { "monthly_revenue": 500, "systems_maturity": 2, "key_person_dependency": 5 },
       "success_rate": 0.9,
       "failure_effects": { "monthly_revenue": 200 },
