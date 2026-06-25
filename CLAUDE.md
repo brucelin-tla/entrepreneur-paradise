@@ -44,12 +44,31 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 
 ## Content / balance
 
-- Uses the simplified action set: Marketing 7, Operations 10, Finance 12 = 29 actions.
-- Progression stages: Foundation → Leverage → Wealth.
+- Full action sets (`config/actions_*.json`): Marketing 17, Operations 20, Finance 30. One archetype enabled ("new"); the others have `"enabled": false` in `starting_positions.json`.
+- Stages: Foundation → Leverage → Wealth. `getAvailableActions` hides actions above the category's current stage; stage advances per `stage_thresholds.json`.
+
+## Code map (js/game.js — navigate by function name; line numbers shift)
+
+- **Title / changelog:** `init` → `renderArchetypes`, `renderTitleMeta`; data in `PATCH_NOTES`.
+- **The turn:** `resolveMonth` — per-action effects + special handlers (scaled loans/credit via `calcCreditCapacity`; `debt_restructure` is DEFERRED to after monthlyTick) → `payCost` → `monthlyTick` → `checkEvents` → `showResults`.
+- **Funding waterfall:** `payCost` (business credit ≤30% util → cash → rest of business → personal LAST) and `coverShortfall` (business → personal).
+- **Monthly cash flow:** `monthlyTick` — churn (leaky bucket), lead conversion, revenue + capacity cap, tax/coordination drags, passive income, auto-fund policy, `_bad_debt` calc.
+- **Dashboard:** `renderStats` (wide money bar + cards; zero-value cards hidden), `calcMonthlyBurn`, `calcPersUtil`/`calcBizUtil`, `calcFreedom`.
+- **Action menu:** `ADIR` (direction groups per category), `renderActions` (accordion via `_openDir`; locked actions are compact rows), `getAvailableActions` (stage filter), `isActionLocked`, `meetsReq` (`_gte/_lte/_in/_not`, `cash_gte` counts credit, `needs:[actionIds]` = completed-action gate), `getLockedReason`, `actionLabel`.
+- **Scoring / end:** `calculateFinalScores`, `calcComposite` (strong lifestyle gate), `buildDebrief` (uses `_actions_seen`; "Left On The Table" = seen-but-not-taken), `endGame`.
+- **Config notes:** actions carry `prerequisites`/`effects`/`failure_effects`/`lesson`/narratives. Events can carry a `protection` block (outcome changes by safeguard) and gate on `_bad_debt`. Capability gates use `needs:[...]`, not revenue.
+
+## Token-lean process (this project tends to long sessions)
+
+- Start a FRESH session for each new chunk of work — context carries via these docs + memory + RELEASE_NOTES, not chat history.
+- Batch related tweaks into ONE release (one build/commit/push). Verify with targeted checks; lean on the user's mobile playtest. Screenshot only when the visual is the point.
 
 ## Working preferences
 
-- Edit the small modular files; never reintroduce a monolith.
-- Tune numbers in `config/*.json`, not in code.
-- After code changes, verify in the preview (serve + check console + screenshot), don't assume.
-- Legacy files safe to ignore/delete: `index.html.backup`, `index_clean.html`, `deploy.zip`.
+- Edit the small modular files; never reintroduce a monolith. Tune numbers in `config/*.json`.
+- After code changes, reload the preview + check console for errors; verify the specific change, don't over-dump.
+- Legacy files safe to ignore: `index.html.backup`, `index_clean.html`, `deploy.zip`.
+
+## Pending work
+
+- **Credit/loan display fix (approved, not yet done).** Loan/credit actions show a fixed base (e.g. $10k) but the real amount is `base × calcCreditCapacity` — shown only in the dynamic narrative, so the results effect-list contradicts it. Fix = (A) move the full $ amounts into the `resolveMonth` handlers and REMOVE the base $ from config `effects` (so the effect-list isn't misleading), and (B) preview the expected amount on the action card before it's taken. Affects: `bank_personal_loan`, `business_term_loan`, `business_credit_line`, `qualify_more_credit`, `business_credit_card_0pct`, `premium_financing`, `buy_real_estate`, `private_lending`.

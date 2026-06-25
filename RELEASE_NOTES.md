@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.14.0 — 2026-06-25
+**Capability gates + money bar**
+- Replaced all `monthly_revenue` prerequisites in marketing & finance with capability/structure gates. New `needs:[actionIds]` prerequisite in `meetsReq` (e.g. Paid Ads / Sales / Webinar need `build_offer`). Finance keeps its order via entity/credit/owner-pay/DSCR.
+- `getLockedReason` shows "Needs: <action>"; added `actionLabel()` helper.
+- Dashboard: Cash + Credit rendered as a full-width money bar (cash | credit avail · P/B util).
+
 ## v0.13.9 — 2026-06-25
 **Bundled dashboard cards**
 - Cash + Credit combined into one card; Monthly Burn + Runway combined into one (5 core cards, ~2 rows)
