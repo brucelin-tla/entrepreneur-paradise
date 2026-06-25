@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.13.5 — 2026-06-25
+**Freeform operations**
+- Removed all `monthly_revenue_gte` gates from operations — affordability (cash or credit) + logical structure are the only gates now
+- Regrouped operations into three strategic directions: Run It Lean, Build a Team, Productize & Scale
+- Lowered full_systemization team requirement (4→2) so a lean operator can still reach "runs without you"
+
 ## v0.13.4 — 2026-06-25
 **Marketing funnel + action logic**
 - Marketing directions now map to the funnel: "Audience & Offer" = lead generation, "Get Customers" = converting leads into customers (lead-gen actions moved out of Get Customers)

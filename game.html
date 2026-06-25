@@ -648,7 +648,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Your first hire won't be as good as you — and that's fine. 80% done by someone else beats 100% done by you alone. Trading money for time is the whole game.",
       "cash_cost": 1500,
       "energy_cost": 10,
-      "prerequisites": { "monthly_revenue_gte": 2000 },
+      "prerequisites": {},
       "effects": { "team_size": 1, "systems_maturity": 5, "key_person_dependency": -10, "revenue_capacity": 5000 },
       "success_rate": 0.65,
       "failure_effects": { "team_size": 1, "systems_maturity": 2 },
@@ -731,7 +731,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "A dedicated delivery team is the leap from freelancer to business. The work happens whether you're in the room or not — that's a job becoming an asset.",
       "cash_cost": 5000,
       "energy_cost": 15,
-      "prerequisites": { "monthly_revenue_gte": 10000, "systems_maturity_gte": 20 },
+      "prerequisites": { "systems_maturity_gte": 20 },
       "effects": { "team_size": 2, "revenue_capacity": 20000, "key_person_dependency": -20, "operating_expenses": 4000 },
       "success_rate": 0.6,
       "failure_effects": { "team_size": 2, "operating_expenses": 4000, "key_person_dependency": -5 },
@@ -781,7 +781,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Manage one person instead of five. A management layer buys back your time and lets the team grow past your personal bandwidth — you stop being the ceiling.",
       "cash_cost": 4000,
       "energy_cost": 12,
-      "prerequisites": { "team_size_gte": 3, "monthly_revenue_gte": 15000, "systems_maturity_gte": 30 },
+      "prerequisites": { "team_size_gte": 3, "systems_maturity_gte": 30 },
       "effects": { "team_size": 1, "key_person_dependency": -25, "systems_maturity": 10, "operating_expenses": 4000, "energy": 10 },
       "success_rate": 0.5,
       "failure_effects": { "team_size": 1, "operating_expenses": 4000, "key_person_dependency": -5 },
@@ -813,7 +813,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "When the business runs without you, you've won the real prize: not just income, but freedom. You become the owner, not the operator — and your time becomes yours again.",
       "cash_cost": 8000,
       "energy_cost": 15,
-      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 4, "key_person_dependency_lte": 40 },
+      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 2, "key_person_dependency_lte": 40 },
       "effects": { "systems_maturity": 20, "key_person_dependency": -20, "energy": 15, "revenue_capacity": 15000 },
       "success_rate": 0.5,
       "failure_effects": { "systems_maturity": 8, "key_person_dependency": -5 },
@@ -829,7 +829,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Once the playbook works, clone it. A proven system dropped into a new market or vertical multiplies the business without reinventing it.",
       "cash_cost": 20000,
       "energy_cost": 15,
-      "prerequisites": { "systems_maturity_gte": 65, "monthly_revenue_gte": 30000, "team_size_gte": 5 },
+      "prerequisites": { "systems_maturity_gte": 65, "team_size_gte": 5 },
       "effects": { "monthly_revenue": 15000, "customer_base": 20, "operating_expenses": 8000, "team_size": 3, "brand_equity": 15 },
       "success_rate": 0.45,
       "failure_effects": { "monthly_revenue": 4000, "operating_expenses": 6000, "team_size": 2 },
@@ -861,7 +861,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Own more of the value chain, keep more of every dollar. Controlling your supply or distribution turns a cost center into a margin advantage competitors can't match.",
       "cash_cost": 25000,
       "energy_cost": 12,
-      "prerequisites": { "monthly_revenue_gte": 35000, "systems_maturity_gte": 55, "team_size_gte": 5 },
+      "prerequisites": { "systems_maturity_gte": 55, "team_size_gte": 5 },
       "effects": { "cogs": -3000, "monthly_revenue": 5000, "operating_expenses": 2000, "systems_maturity": 8 },
       "success_rate": 0.45,
       "failure_effects": { "operating_expenses": 3000, "cogs": -500 },
@@ -877,7 +877,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "A dedicated closer means revenue no longer depends on your calendar. The first role to hire out is usually the one you're the bottleneck for.",
       "cash_cost": 2000,
       "energy_cost": 8,
-      "prerequisites": { "monthly_revenue_gte": 8000, "team_size_gte": 1 },
+      "prerequisites": { "team_size_gte": 1 },
       "effects": { "team_size": 1, "leads": 5, "key_person_dependency": -8, "operating_expenses": 3000 },
       "success_rate": 0.65,
       "failure_effects": { "team_size": 1, "operating_expenses": 3000 },
@@ -926,7 +926,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 3000,
       "energy_cost": 4,
       "one_time": true,
-      "prerequisites": { "monthly_revenue_gte": 20000, "team_size_gte": 4 },
+      "prerequisites": { "team_size_gte": 4 },
       "effects": { "team_size": 1, "key_person_dependency": -15, "operating_expenses": 4000, "systems_maturity": 10 },
       "success_rate": 0.85,
       "failure_effects": { "team_size": 1, "operating_expenses": 4000 },
@@ -2486,9 +2486,10 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Audience & Offer',['cold_outreach','local_networking','paid_ads_test','basic_social_content','lead_magnet','build_offer','brand_pr_push']],['Get Customers',['referral_asks','email_campaign','crm_pipeline','webinar_funnel','build_sales_team']],['Scale & Expand',['content_engine','referral_partnerships','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Deliver & Document',['do_work_yourself','hire_first_contractor','write_first_sop','basic_quality_control','client_onboarding','basic_automation']],['Build the Team',['hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management']],['Systematize & Scale',['fulfillment_system','full_systemization','hire_fractional_cfo','hire_hr_manager','build_ip','vertical_integration','multi_location']]]};
+const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Audience & Offer',['cold_outreach','local_networking','paid_ads_test','basic_social_content','lead_magnet','build_offer','brand_pr_push']],['Get Customers',['referral_asks','email_campaign','crm_pipeline','webinar_funnel','build_sales_team']],['Scale & Expand',['content_engine','referral_partnerships','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Run It Lean',['do_work_yourself','basic_automation','write_first_sop','basic_quality_control','client_onboarding']],['Build a Team',['hire_first_contractor','hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management','hire_hr_manager']],['Productize & Scale',['fulfillment_system','full_systemization','build_ip','vertical_integration','multi_location','hire_fractional_cfo']]]};
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.13.5',d:'2026-06-25 09:32',n:['Operations is now freeform: actions are no longer gated behind revenue — if you can afford it (cash or credit), you can do it','Pick your own operations strategy: Run It Lean, Build a Team, or Productize & Scale']},
 {v:'0.13.4',d:'2026-06-25 09:27',n:['Marketing now follows the funnel: "Audience & Offer" generates leads, "Get Customers" converts leads into customers','"Do the Work Yourself" now unlocks once you have your first client (no more delivering to nobody)']},
 {v:'0.13.3',d:'2026-06-25 09:22',n:['Locked actions now show as compact one-line rows under "Unlocks next" instead of big greyed-out cards — tighter menu, less scrolling']},
 {v:'0.13.2',d:'2026-06-25 08:02',n:['New title-screen backdrop — a dusk city skyline with a rising growth line, for a more premium first impression']},
