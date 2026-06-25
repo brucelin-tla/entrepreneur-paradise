@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.13.7 — 2026-06-25
+**Smarter auto-pay (business credit to 30%, then cash)**
+- `payCost()` waterfall: business credit up to 30% utilization → cash → remaining business credit → personal credit (last resort). Keeps business credit in the healthy zone and preserves liquidity while protecting personal utilization.
+- Removed the manual "how do you want to pay?" popup — payment is automatic
+
 ## v0.13.6 — 2026-06-25
 **Credit priority, restructure timing, runway**
 - Funding order is now cash → business credit → personal credit (personal = last resort), protecting personal utilization. New `coverShortfall()` handles action payments and monthly-burn shortfalls.
