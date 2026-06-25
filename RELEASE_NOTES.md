@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.13.9 — 2026-06-25
+**Bundled dashboard cards**
+- Cash + Credit combined into one card; Monthly Burn + Runway combined into one (5 core cards, ~2 rows)
+- Fixed customer label pluralization ("0 customers" / "1 customer")
+
 ## v0.13.8 — 2026-06-25
 **Consolidated stats dashboard**
 - Trimmed the core stat cards (7 early-game vs 13); merged pipeline + customers into one card
