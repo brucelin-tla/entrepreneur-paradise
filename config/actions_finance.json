@@ -103,8 +103,8 @@
       "cash_cost": 500,
       "energy_cost": 10,
       "prerequisites": { "personal_credit_score_gte": 580 },
-      "effects": { "personal_credit_score": 18, "dscr": 0.2, "operating_expenses": -200 },
-      "success_rate": 0.55,
+      "effects": { "dscr": 0.2, "operating_expenses": -200 },
+      "success_rate": 0.80,
       "failure_effects": { "total_debt": -500, "personal_credit_score": 3 },
       "narrative_success": "Your lending expert moved $8,000 from your credit line to a fixed-rate installment loan. Utilization dropped from 70% to 25%. Your score jumped overnight. 'Now you're bankable,' she said. 'Let's go get you more credit.'",
       "narrative_failure": "One balance moved, but the installment loan terms weren't great. Your expert says wait a month for the score bump to show, then reapply for better rates."
