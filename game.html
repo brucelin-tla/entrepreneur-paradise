@@ -188,7 +188,7 @@ window.EMBEDDED_CONFIG = {
       "description": "You're starting fresh. No business credit, no track record, no playbook. You have an idea and the will to make it real. Everything is ahead of you.",
       "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
       "initial_state": {
-        "cash": 8000,
+        "cash": 10000,
         "personal_credit_score": 670,
         "business_credit_profile": "none",
         "available_credit": 6000,
@@ -2655,7 +2655,8 @@ if(action.id==='debt_restructure'&&success){const s=this.state,persRev=Math.max(
 if(action.id==='business_term_loan'&&success)this.state.business_installment_debt=(this.state.business_installment_debt||0)+25000;
 if(action.id==='bank_personal_loan'&&success)this.state._installment_debt=(this.state._installment_debt||0)+10000;
 if(action.id==='move_debt_to_business'&&success){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;}
-if(action.id==='buy_real_estate'){const mortAmt=success?80000:85000;this.state.real_estate_debt=(this.state.real_estate_debt||0)+mortAmt;}
+if(action.id==='buy_real_estate'){const mortAmt=success?80000:85000;this.state.real_estate_debt=(this.state.real_estate_debt||0)+mortAmt;this.state.other_monthly_revenue=(this.state.other_monthly_revenue||0)+(success?2500:1200);}
+if(action.id==='private_lending')this.state.other_monthly_revenue=(this.state.other_monthly_revenue||0)+(success?2000:800);
 if(action.id==='income_protection'&&success){const annRev=(this.state.monthly_revenue||0)*12,annSal=(this.state.owner_pay||0)*12,liab=this.state.total_debt||0;this.state.insurance_coverage=Math.max(Math.round(annRev*2.5),Math.round(annSal*15))+liab;}
 // Lifestyle action handling
 if(cat==='lifestyle'){if(action.recurring_cost&&!this.state._active_lifestyle_costs[action.id]){this.state._active_lifestyle_costs[action.id]=action.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+action.recurring_cost;}
@@ -2674,7 +2675,7 @@ if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.mo
 // Churn
 s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*s.churn_rate));
 // Lead conversion
-const baseConv=0.03,skillConv=(s.skill_marketing||0)/300,brandConv=(s.brand_equity||0)/1000,offerB=s._completed_actions&&s._completed_actions.includes('build_offer')?0.05:0,crmB=s._completed_actions&&s._completed_actions.includes('crm_pipeline')?0.05:0;
+const baseConv=0.05,skillConv=(s.skill_marketing||0)/300,brandConv=(s.brand_equity||0)/1000,offerB=s._completed_actions&&s._completed_actions.includes('build_offer')?0.05:0,crmB=s._completed_actions&&s._completed_actions.includes('crm_pipeline')?0.05:0;
 const convRate=Math.min(0.5,baseConv+skillConv+brandConv+offerB+crmB);const converted=Math.floor((s.leads||0)*convRate);
 s.customer_base+=converted;s.leads=Math.max(0,(s.leads||0)-converted);
 // Revenue = customers × value per customer (recalculated each month)
@@ -2682,6 +2683,7 @@ const revPerCust=Math.round(100+(s.brand_equity||0)*5+(s._completed_actions&&s._
 s.monthly_revenue=s.customer_base*revPerCust;
 // Seasonal dip — Q4 each year (months 10-12, 22-24, 34-36)
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)s.monthly_revenue=Math.round(s.monthly_revenue*0.85);
+s.monthly_revenue+=(s.other_monthly_revenue||0); // persistent income from assets (real estate, lending) — survives the monthly recompute above
 // Payroll obligation
 const payroll=(s.team_size||0)*2500;if(payroll>0&&s.cash<payroll&&(s.available_credit||0)<payroll){const lost=Math.ceil((payroll-Math.max(0,s.cash))/2500);s.team_size=Math.max(0,(s.team_size||0)-lost);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+lost*8);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-lost*2500);}
 s.cash+=s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0);

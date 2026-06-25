@@ -81,7 +81,7 @@
       "description": "You're starting fresh. No business credit, no track record, no playbook. You have an idea and the will to make it real. Everything is ahead of you.",
       "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
       "initial_state": {
-        "cash": 8000,
+        "cash": 10000,
         "personal_credit_score": 670,
         "business_credit_profile": "none",
         "available_credit": 6000,
