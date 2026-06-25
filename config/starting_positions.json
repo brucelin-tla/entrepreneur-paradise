@@ -57,7 +57,9 @@
         "leads": 5,
         "insurance_cash_value": 0,
         "insurance_loan_balance": 0,
-        "_installment_debt": 0
+        "business_credit_limit": 0,
+        "business_credit_used": 0,
+        "business_installment_debt": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -125,7 +127,10 @@
         "leads": 0,
         "insurance_cash_value": 0,
         "insurance_loan_balance": 0,
-        "_installment_debt": 0
+        "_installment_debt": 0,
+        "business_credit_limit": 0,
+        "business_credit_used": 0,
+        "business_installment_debt": 0
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -147,7 +152,7 @@
         "cash": 45000,
         "personal_credit_score": 720,
         "business_credit_profile": "building",
-        "available_credit": 15000,
+        "available_credit": 10000,
         "total_debt": 35000,
         "debt_breakdown": { "business_loc": 20000, "equipment_loan": 15000 },
         "dscr": 1.8,
@@ -192,7 +197,10 @@
         "leads": 20,
         "insurance_cash_value": 0,
         "insurance_loan_balance": 0,
-        "_installment_debt": 15000
+        "_installment_debt": 0,
+        "business_credit_limit": 35000,
+        "business_credit_used": 20000,
+        "business_installment_debt": 15000
       },
       "stage_overrides": {
         "marketing": "leverage",
