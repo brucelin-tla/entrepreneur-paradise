@@ -199,9 +199,9 @@
     {
       "id": "rate_hike",
       "category": "debt",
-      "requires": { "total_debt_gte": 10000 },
+      "requires": { "_bad_debt_gte": 8000 },
       "base_probability": 0.1,
-      "probability_scales_with": "total_debt",
+      "probability_scales_with": "_bad_debt",
       "scale_factor": 0.000002,
       "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive. The lender's letter arrives with the new payment schedule.",
       "act": 2,
@@ -469,7 +469,7 @@
     {
       "id": "lender_calls_note",
       "category": "debt",
-      "requires": { "dscr_lte": 1.1, "total_debt_gte": 20000 },
+      "requires": { "dscr_lte": 1.1, "_bad_debt_gte": 10000 },
       "base_probability": 0.12,
       "probability_scales_with": null,
       "scale_factor": 0,
