@@ -29280,7 +29280,7 @@ async function loadConfig(){const files=['starting_positions','actions_marketing
 const CATS=['marketing','operations','finance'],CL={marketing:'Marketing',operations:'Operations',finance:'Finance',lifestyle:'Life'};
 const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve'];
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses'];
-const BOOST_IDS=['cold_outreach','referral_asks','local_networking','basic_social_content','paid_ads_test','do_work_yourself'];
+const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 
 const Game={
 state:null,month:1,selectedActions:{},selectedLifestyle:null,actionHistory:[],eventHistory:[],lifestyleHistory:[],monthlySnapshots:[],currentCategory:'marketing',_lbFrom:'title',
@@ -29491,7 +29491,7 @@ renderCategoryTabs(){const ac=this._activeCats||CATS;document.getElementById('ca
 switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();},
 
 isActionOutgrown(a){const s=this.state,sk=s['skill_'+a.category]||0;if(a.stage==='foundation'&&sk>40&&this.getStage(a.category)!=='foundation')return true;
-const rules={cold_outreach:sk>30&&s.customer_base>20,do_work_yourself:sk>30&&(s.team_size||0)>1,local_networking:sk>40&&s.brand_equity>30,basic_social_content:sk>40&&s.brand_equity>40,basic_automation:(s.systems_maturity||0)>30};return rules[a.id]||false;},
+const rules={customer_acquisition_sprint:sk>30&&s.customer_base>20,build_delivery_foundation:sk>30&&(s.team_size||0)>1,build_content_presence:sk>40&&s.brand_equity>40,automate_tasks:(s.systems_maturity||0)>30};return rules[a.id]||false;},
 
 renderActions(){const actions=this.getAvailableActions(this.currentCategory),sel=this.selectedActions[this.currentCategory];
 const urgency=a=>{const s=this.state;let u=0;
@@ -29552,7 +29552,7 @@ const penalty=this.state.energy<30?0.85:1;
 const success=Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing);
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(!isDimExempt&&repeatCount>2){const dimMult=Math.max(0.4,1-repeatCount*0.1);for(const k in effects){if(typeof effects[k]==='number'&&effects[k]>0&&k!=='team_size')effects[k]=Math.round(effects[k]*dimMult);}}
-const DELAY_IDS=['cold_outreach','paid_ads_test','basic_social_content','local_networking','hire_first_contractor','hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','build_sales_team'];
+const DELAY_IDS=['customer_acquisition_sprint','build_content_presence','build_delivery_foundation','scale_delivery','sales_infrastructure','hire_specialists','scale_beyond_limits'];
 if(DELAY_IDS.includes(action.id)){const immediate={},delayed={};for(const k in effects){if(typeof effects[k]==='number'){if(k==='energy'||k==='cash'||k==='operating_expenses'||k==='team_size'||k==='key_person_dependency'){immediate[k]=effects[k];}else{delayed[k]=effects[k];}}else{immediate[k]=effects[k];}}
 effects=immediate;if(Object.keys(delayed).length){if(!this.state._delayed_effects)this.state._delayed_effects=[];this.state._delayed_effects.push({month:this.month+2,effects:delayed});}}
 this.applyEffects(effects);
