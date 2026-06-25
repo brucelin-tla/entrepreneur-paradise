@@ -1,12 +1,12 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "_comment": "v2 rewrites scoring around DESIGN.md: capital efficiency wins, not raw revenue. Passive tax-free income is the crown jewel; leverage efficiency is a first-class metric; lifestyle strongly gates the final score (see calcComposite). business_revenue is still computed for the radar/archetype flavor but carries ZERO composite weight (it is fuel, not the goal).",
   "dimensions": {
-    "net_worth": { "weight": 0.18, "label": "Net Worth", "description": "Assets minus liabilities, with bonus for unused qualified credit" },
-    "business_revenue": { "weight": 0.18, "label": "Business Revenue", "description": "Revenue and EBITDA, weighted by sustainability" },
-    "personal_income": { "weight": 0.15, "label": "Personal Income", "description": "Owner's pay relative to lifestyle cost" },
-    "tax_efficiency": { "weight": 0.15, "label": "Tax Efficiency", "description": "Effective tax rate vs income, penalized by audit events" },
-    "passive_income": { "weight": 0.17, "label": "Passive Income", "description": "Income requiring zero owner hours" },
-    "lifestyle": { "weight": 0.17, "label": "Lifestyle Score", "description": "Health, relationships, experiences, spiritual, philanthropy, legacy — consistency weighted" }
+    "passive_income": { "weight": 0.28, "label": "Passive Income", "description": "Mostly tax-free monthly income that arrives without owner hours: policy-loan income, real-estate cashflow, lending interest. The crown jewel." },
+    "leverage_efficiency": { "weight": 0.20, "label": "Leverage", "description": "Share of the productive asset base financed with good (OPM) debt — controlling large assets with little of your own cash." },
+    "net_worth": { "weight": 0.17, "label": "Net Worth", "description": "Asset equity + cash value + dry-powder credit, minus BAD debt heavily and other debt lightly. Good (asset-backed) debt is not penalized." },
+    "lifestyle": { "weight": 0.20, "label": "Lifestyle", "description": "Health, relationships, experiences, spiritual, philanthropy, legacy. Also STRONGLY gates the final composite — no paradise if life is wrecked." },
+    "tax_efficiency": { "weight": 0.15, "label": "Tax Efficiency", "description": "Entity structure (LLC -> S-corp), trust, share of income that is tax-free, low effective rate." }
   },
   "lifestyle_sub_weights": {
     "health": 0.20,

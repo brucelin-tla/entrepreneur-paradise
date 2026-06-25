@@ -211,9 +211,9 @@
       "cash_cost": 5000,
       "energy_cost": 8,
       "prerequisites": { "personal_credit_score_gte": 700, "monthly_revenue_gte": 20000, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "life_insurance_cv": 25000, "operating_expenses": 1500, "total_debt": 20000 },
+      "effects": { "insurance_cash_value": 25000, "operating_expenses": 1500, "total_debt": 20000 },
       "success_rate": 0.55,
-      "failure_effects": { "life_insurance_cv": 10000, "total_debt": 10000, "operating_expenses": 800 },
+      "failure_effects": { "insurance_cash_value": 10000, "total_debt": 10000, "operating_expenses": 800 },
       "narrative_success": "The premium financing deal is structured. You're building a tax-free asset with the bank's money. This is how the wealthy stay wealthy.",
       "narrative_failure": "Partially funded. The bank's terms were tighter than expected. Still building cash value, just slower."
     },

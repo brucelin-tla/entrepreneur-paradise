@@ -1,0 +1,13 @@
+# NOTE: game.html is a build output but is currently git-tracked, so it is NOT
+# ignored here. If you decide to stop committing it, run:
+#   git rm --cached game.html   (then uncomment the line below)
+# game.html
+
+# Legacy monolith copies / archives
+*.backup
+index_clean.html
+deploy.zip
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
