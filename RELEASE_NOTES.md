@@ -1,5 +1,22 @@
 # Release Notes
 
+## v0.13.0 — 2026-06-25
+**Menu, situational finance, in-game changelog**
+- Action menu grouped by direction; all takeable options visible (no more buried choices)
+- Finance actions (credit lines, loans, balance transfer, lending, real estate) scale to the player's real numbers
+- End-screen recap ("Left On The Table") shows only options the player actually saw
+- Added accumulating "What's New" changelog + version/timestamp on the title screen (driven by `PATCH_NOTES` in js/game.js)
+
+## v0.12.0 — 2026-06-25
+**Anti-grind economy**
+- Revenue capped by built capacity; progressive tax drag, team coordination cost, leaky-bucket churn; mentor renamed to Bruce
+
+## v0.11.0 — 2026-06-25
+**Scoring + teaching layer**
+- Scoring rebuilt around capital efficiency; 67 in-the-moment lessons + consequence events; eased early game
+
+---
+
 ## v0.10.0 — January 9, 2025
 **Game Simplification & Deployment Fix**
 - Consolidated 69 actions → 29 (58% reduction)

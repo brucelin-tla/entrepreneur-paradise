@@ -8,9 +8,10 @@
 </head>
 <body>
 <div id="title-screen" class="screen active">
-<h1>Entrepreneur Paradise</h1><p class="subtitle">36 months. One shot. Build your empire.</p><p style="color:var(--text2);font-size:0.7rem;margin-bottom:20px;opacity:0.5;">v0.10.0 — June 24, 2026 20:44</p>
+<h1>Entrepreneur Paradise</h1><p class="subtitle">36 months. One shot. Build your empire.</p><p id="version-line" style="color:var(--text2);font-size:0.7rem;margin-bottom:20px;opacity:0.5;">v0.10.0</p>
 <div id="archetype-list"></div>
 <button class="btn-outline" onclick="Game.showLeaderboard('title')" style="max-width:420px;width:100%;margin-top:20px;">Leaderboard</button>
+<div id="whats-new"></div>
 </div>
 <div id="opening-screen" class="screen"><div class="month-header"><h2>Month 1</h2></div><div id="opening-narrative" class="narrative-box"></div><div id="opening-mentor" class="narrative-box" style="border-left-color:var(--gold);"></div><button class="btn-primary" onclick="Game.startGame()">Begin Your Journey</button></div>
 <div id="game-screen" class="screen"><div class="month-header"><h2 id="month-label">Month 1</h2><span class="stage-badge" id="stage-badge">Foundation</span></div><div id="month-narrative" class="narrative-box"></div><div id="character-line" class="narrative-box" style="border-left-color:var(--gold);display:none;"></div><div id="stats-dashboard" class="stats-grid"></div><div id="bars-section" class="bars-section"></div><div id="step-indicator" class="step-indicator"></div><div class="category-tabs" id="cat-tabs"></div><div id="action-list"></div><div class="bottom-bar"><button class="btn-primary" id="confirm-actions-btn" onclick="Game.confirmActions()">End Turn (0/3 actions)</button></div></div>
