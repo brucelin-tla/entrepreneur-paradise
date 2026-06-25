@@ -71,4 +71,7 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 
 ## Pending work
 
-- **Credit/loan display fix (approved, not yet done).** Loan/credit actions show a fixed base (e.g. $10k) but the real amount is `base × calcCreditCapacity` — shown only in the dynamic narrative, so the results effect-list contradicts it. Fix = (A) move the full $ amounts into the `resolveMonth` handlers and REMOVE the base $ from config `effects` (so the effect-list isn't misleading), and (B) preview the expected amount on the action card before it's taken. Affects: `bank_personal_loan`, `business_term_loan`, `business_credit_line`, `qualify_more_credit`, `business_credit_card_0pct`, `premium_financing`, `buy_real_estate`, `private_lending`.
+- _(none currently)_
+
+### Done
+- **Credit/loan display fix** (v0.14.1). The scaled $ amounts (`base × calcCreditCapacity` / `× revenue mult`) now live entirely in the `resolveMonth` handlers; the base $ was removed from config `effects` so the results effect-list no longer contradicts the narrative. Action cards now show a `creditPreview(id)` "≈ $X" estimate before the action is taken. Affected: `bank_personal_loan`, `business_term_loan`, `business_credit_line`, `qualify_more_credit`, `business_credit_card_0pct`, `premium_financing`, `buy_real_estate`, `private_lending`.

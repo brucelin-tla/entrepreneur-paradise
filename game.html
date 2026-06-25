@@ -1098,7 +1098,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 200,
       "energy_cost": 8,
       "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp"], "personal_credit_score_gte": 650 },
-      "effects": { "business_credit_limit": 15000, "business_credit_profile": "building" },
+      "effects": { "business_credit_profile": "building" },
       "success_rate": 0.6,
       "failure_effects": { "business_credit_limit": 5000, "business_credit_profile": "building" },
       "narrative_success": "Approved for $15,000. The banker shook your hand and said 'come back when you need more.' You will.",
@@ -1180,7 +1180,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 5000,
       "energy_cost": 8,
       "prerequisites": { "personal_credit_score_gte": 700, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "insurance_cash_value": 25000, "operating_expenses": 1500, "total_debt": 20000 },
+      "effects": { "operating_expenses": 1500 },
       "success_rate": 0.55,
       "failure_effects": { "insurance_cash_value": 10000, "total_debt": 10000, "operating_expenses": 800 },
       "narrative_success": "The premium financing deal is structured. You're building a tax-free asset with the bank's money. This is how the wealthy stay wealthy.",
@@ -1196,9 +1196,9 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 25000,
       "energy_cost": 12,
       "prerequisites": { "personal_credit_score_gte": 680, "dscr_gte": 1.5, "cash_gte": 25000 },
-      "effects": { "real_estate_owned": 1, "real_estate_equity": 20000, "monthly_revenue": 2500, "total_debt": 80000, "operating_expenses": 1800 },
+      "effects": { "real_estate_owned": 1 },
       "success_rate": 0.55,
-      "failure_effects": { "real_estate_owned": 1, "real_estate_equity": 10000, "monthly_revenue": 1200, "total_debt": 85000, "operating_expenses": 2200 },
+      "failure_effects": { "real_estate_owned": 1 },
       "narrative_success": "Keys in hand. The duplex cash-flows $700/month after mortgage, taxes, and insurance. Passive income is real now.",
       "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
     },
@@ -1246,9 +1246,9 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 20000,
       "energy_cost": 5,
       "prerequisites": { "cash_gte": 30000, "personal_credit_score_gte": 700 },
-      "effects": { "investment_positions": 20000, "monthly_revenue": 2000 },
+      "effects": { "monthly_revenue": 2000 },
       "success_rate": 0.6,
-      "failure_effects": { "investment_positions": 15000, "monthly_revenue": 800 },
+      "failure_effects": { "monthly_revenue": 800 },
       "narrative_success": "First deal funded — $20,000 at 12%, secured by the borrower's equipment. Monthly checks arriving. You're the bank now.",
       "narrative_failure": "The deal funded, but the borrower's been slow on payments. Secured, so you're protected — but it's stressful."
     },
@@ -1278,7 +1278,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 200,
       "energy_cost": 6,
       "prerequisites": { "personal_credit_score_gte": 650, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "business_credit_limit": 15000, "business_credit_profile": "building", "personal_credit_score": 5 },
+      "effects": { "business_credit_profile": "building", "personal_credit_score": 5 },
       "success_rate": 0.6,
       "failure_effects": { "business_credit_limit": 3000, "personal_credit_score": -2 },
       "narrative_success": "Approved for $15,000 across two new business credit lines. Your available credit just tripled. Utilization dropped to single digits.",
@@ -1294,7 +1294,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 500,
       "energy_cost": 8,
       "prerequisites": { "personal_credit_score_gte": 680, "dscr_gte": 1.25 },
-      "effects": { "cash": 25000, "total_debt": 25000, "available_credit": 10000, "personal_credit_score": 3 },
+      "effects": { "personal_credit_score": 3 },
       "success_rate": 0.55,
       "failure_effects": { "personal_credit_score": -3 },
       "narrative_success": "Loan approved — $25,000 at 8.5% fixed. The banker smiled when she handed you the docs. Your credit line utilization just dropped to nearly zero, and you have cash to deploy.",
@@ -1376,7 +1376,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 200,
       "energy_cost": 6,
       "prerequisites": { "personal_credit_score_gte": 640 },
-      "effects": { "cash": 10000, "total_debt": 10000, "personal_credit_score": 3 },
+      "effects": { "personal_credit_score": 3 },
       "success_rate": 0.6,
       "failure_effects": { "personal_credit_score": -3 },
       "narrative_success": "Approved for $10,000. The loan officer barely hesitated — your credit spoke for itself. Cash in account by Friday.",
@@ -1392,7 +1392,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 0,
       "energy_cost": 4,
       "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 650 },
-      "effects": { "business_credit_limit": 10000, "business_credit_profile": "building", "personal_credit_score": 3 },
+      "effects": { "business_credit_profile": "building", "personal_credit_score": 3 },
       "success_rate": 0.65,
       "failure_effects": { "business_credit_limit": 2000, "personal_credit_score": -2 },
       "narrative_success": "Approved for $10,000 at 0% for 15 months. That's free capital for over a year — use it wisely, and pay it off before month 15 when it jumps to 24.99%.",
@@ -2489,6 +2489,7 @@ const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_
 const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Audience & Offer',['cold_outreach','local_networking','paid_ads_test','basic_social_content','lead_magnet','build_offer','brand_pr_push']],['Get Customers',['referral_asks','email_campaign','crm_pipeline','webinar_funnel','build_sales_team']],['Scale & Expand',['content_engine','referral_partnerships','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Run It Lean',['do_work_yourself','basic_automation','write_first_sop','basic_quality_control','client_onboarding']],['Build a Team',['hire_first_contractor','hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management','hire_hr_manager']],['Productize & Scale',['fulfillment_system','full_systemization','build_ip','vertical_integration','multi_location','hire_fractional_cfo']]]};
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.14.1',d:'2026-06-25 13:15',n:['Loans & credit lines now show an estimated amount right on the action card — sized to your credit and revenue, before you commit','Results no longer contradict themselves: the headline amount you see when a loan funds is the amount you actually get']},
 {v:'0.14.0',d:'2026-06-25 12:59',n:['Actions now unlock by capability, not revenue — e.g. Test Paid Ads needs an Offer first. If you can afford it (cash or credit), money is never the gate.','Cash and available Credit are now a clear money bar at the top of the dashboard']},
 {v:'0.13.9',d:'2026-06-25 10:09',n:['Tighter dashboard — Cash+Credit combined into one card, Monthly Burn+Runway into another; customer count now reads "0 customers" properly']},
 {v:'0.13.8',d:'2026-06-25 10:01',n:['Slimmer stats dashboard — fewer cards, and stats like Policy, Passive Income, Salary, and Staff only appear once they matter (pipeline + customers merged into one)']},
@@ -2707,7 +2708,7 @@ if(s.energy<30&&a.energy_cost<0)u+=5;
 return u;};
 const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a),isSel=sel&&sel.id===a.id;const reason=done?'Already completed':locked?this.getLockedReason(a):'';const outgrown=!done&&!locked&&this.isActionOutgrown(a);const cls=done?'completed-action':isSel?'selected':locked?'locked':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const rc=(this.state._action_counts||{})[a.id]||0;const repeatBadge=(!a.one_time&&rc>0)?'<span class="repeat-badge">×'+rc+'</span>':'';
 const needsCredit=!done&&!locked&&a.cash_cost&&this.state.cash<a.cash_cost&&(this.state.cash+(this.state.available_credit||0))>=a.cash_cost;
-return'<div class="action-card '+cls+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'"><h4>'+a.label+repeatBadge+'</h4><p>'+desc+'</p><div class="action-costs">'+
+return'<div class="action-card '+cls+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'"><h4>'+a.label+repeatBadge+'</h4><p>'+desc+'</p>'+(!done?this.creditPreview(a.id):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?'<span class="cost-tag cost-cash">~'+this.fmtMoney(Math.max(500,Math.round(Math.min(this.state.cash*0.2,(this.state.total_debt||0)*0.15))))+' cash</span>':(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':''))+
 (a.energy_cost>0?'<span class="cost-tag cost-energy">⚡-'+a.energy_cost+' energy</span>':'')+
 (a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+' energy</span>':'')+
@@ -2732,6 +2733,17 @@ selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a
 
 getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}if(a.cash_cost&&totalFunds<a.cash_cost)return'Not enough cash or credit';if(a.energy_cost>0&&s.energy<a.energy_cost)return'Low energy';for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
 actionLabel(id){for(const c of ['actions_marketing','actions_operations','actions_finance']){const a=((CONFIG[c]||{}).actions||[]).find(x=>x.id===id);if(a)return a.label;}return id.replace(/_/g,' ');},
+creditPreview(id){const s=this.state,cf=this.calcCreditCapacity(),fm=v=>this.fmtMoney(Math.round(v));let txt='';switch(id){
+case 'business_term_loan':txt='≈ '+fm(25000*cf)+' loan, sized to your credit & revenue';break;
+case 'business_credit_line':txt='≈ '+fm(15000*cf)+' line, sized to your credit & revenue';break;
+case 'qualify_more_credit':txt='≈ '+fm(15000*cf)+' added credit, sized to your profile';break;
+case 'business_credit_card_0pct':txt='≈ '+fm(10000*cf)+' limit, sized to your credit';break;
+case 'bank_personal_loan':{const c2=Math.max(0.6,Math.min(2.5,((s.personal_credit_score||600)-560)/120));txt='≈ '+fm(10000*c2)+' loan, sized to your credit score';break;}
+case 'premium_financing':{const m=Math.max(1,Math.min(5,(s.monthly_revenue||0)/20000));txt='≈ '+fm(25000*m)+' tax-free cash value from '+fm(20000*m)+' borrowed';break;}
+case 'buy_real_estate':{const m=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));txt='≈ '+fm(100000*m)+' property, '+fm(20000*m)+' equity, sized to your revenue';break;}
+case 'private_lending':{const extra=Math.min(Math.round((s.cash||0)*0.4),180000),pos=20000+(extra>0?extra:0);txt='≈ '+fm(pos)+' deployed from your cash';break;}
+default:return '';}
+return '<p style="margin:-2px 0 0;font-size:0.74rem;color:var(--gold);font-weight:600;">'+txt+'</p>';},
 
 selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(this.selectedActions[cat]&&this.selectedActions[cat].id===id){delete this.selectedActions[cat];if(this._paymentMethods)delete this._paymentMethods[id];}else{this.selectedActions[cat]=action;if(!this._paymentMethods)this._paymentMethods={};this._paymentMethods[action.id]=this._paymentMethod||'cash';const ac=this._activeCats||CATS,ci=ac.indexOf(cat);if(ci<ac.length-1&&!this.selectedActions[ac[ci+1]]){setTimeout(()=>{this.currentCategory=ac[ci+1];this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();window.scrollTo({top:document.getElementById('step-indicator').offsetTop-10,behavior:'smooth'});},200);return;}}this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
 updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;btn.disabled=false;btn.textContent=count<total?'End Turn ('+count+'/'+total+' actions)':'Confirm Actions →';},
@@ -2767,15 +2779,15 @@ if(action.id==='tax_planning_session'&&success)this.state.tax_rate=Math.max(0.15
 if(action.id==='policy_loan'&&success){const loanAmt=Math.round((this.state.insurance_cash_value||0)*0.9);this.state.cash+=loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;}
 if(action.id==='fund_accumulation_policy'&&success){const fundAmt=Math.max(500,Math.round(Math.min(this.state.cash*0.10,this.calcBusinessLevel()*3000)));this.state.cash-=fundAmt;this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+fundAmt;this.state._auto_fund_insurance=true;this.state._insurance_monthly_amount=Math.round(fundAmt/2);}
 if(action.id==='debt_restructure')this._deferRestructure={success};
-if(action.id==='business_term_loan'&&success){const cf=this.calcCreditCapacity();this.state.cash+=Math.round(25000*(cf-1));this.state.total_debt+=Math.round(25000*(cf-1));this.state.available_credit=(this.state.available_credit||0)+Math.round(10000*(cf-1));this.state.business_installment_debt=(this.state.business_installment_debt||0)+Math.round(25000*cf);this.state._dyn_narrative='Your banking relationship delivered a '+this.fmtMoney(Math.round(25000*cf))+' fixed-rate term loan — sized to your revenue and credit.';}
-if(action.id==='business_credit_line'&&success){const cf=this.calcCreditCapacity();this.state.business_credit_limit=(this.state.business_credit_limit||0)+Math.round(15000*(cf-1));this.state._dyn_narrative='Approved — a '+this.fmtMoney(Math.round(15000*cf))+' revolving line in the business name. Your credit and revenue did the talking.';}
-if(action.id==='qualify_more_credit'&&success){const cf=this.calcCreditCapacity();this.state.business_credit_limit=(this.state.business_credit_limit||0)+Math.round(15000*(cf-1));this.state._dyn_narrative='Approved for '+this.fmtMoney(Math.round(15000*cf))+' in additional credit. Lower utilization, more runway, more leverage on tap.';}
-if(action.id==='business_credit_card_0pct'&&success){const cf=this.calcCreditCapacity();this.state.business_credit_limit=(this.state.business_credit_limit||0)+Math.round(10000*(cf-1));this.state._dyn_narrative='Approved: a '+this.fmtMoney(Math.round(10000*cf))+' card at 0% for the intro period. Free money — if you clear it before the rate kicks in.';}
-if(action.id==='premium_financing'&&success){const mult=Math.max(1,Math.min(5,(this.state.monthly_revenue||0)/20000));this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+Math.round(25000*(mult-1));this.state.total_debt+=Math.round(20000*(mult-1));this.state._dyn_narrative='Structured: '+this.fmtMoney(Math.round(20000*mult))+' borrowed at low rates funds '+this.fmtMoney(Math.round(25000*mult))+' of tax-free cash value.';}
-if(action.id==='bank_personal_loan'&&success){const cf=Math.max(0.6,Math.min(2.5,((this.state.personal_credit_score||600)-560)/120));this.state.cash+=Math.round(10000*(cf-1));this.state.total_debt+=Math.round(10000*(cf-1));this.state._installment_debt=(this.state._installment_debt||0)+Math.round(10000*cf);this.state._dyn_narrative='Approved for '+this.fmtMoney(Math.round(10000*cf))+'. Your credit spoke for itself — funds in your account by Friday.';}
+if(action.id==='business_term_loan'&&success){const cf=this.calcCreditCapacity(),loan=Math.round(25000*cf),avail=Math.round(10000*cf);this.state.cash+=loan;this.state.total_debt+=loan;this.state.available_credit=(this.state.available_credit||0)+avail;this.state.business_installment_debt=(this.state.business_installment_debt||0)+loan;this.state._dyn_narrative='Your banking relationship delivered a '+this.fmtMoney(loan)+' fixed-rate term loan — sized to your revenue and credit.';}
+if(action.id==='business_credit_line'&&success){const cf=this.calcCreditCapacity(),lim=Math.round(15000*cf);this.state.business_credit_limit=(this.state.business_credit_limit||0)+lim;this.state._dyn_narrative='Approved — a '+this.fmtMoney(lim)+' revolving line in the business name. Your credit and revenue did the talking.';}
+if(action.id==='qualify_more_credit'&&success){const cf=this.calcCreditCapacity(),lim=Math.round(15000*cf);this.state.business_credit_limit=(this.state.business_credit_limit||0)+lim;this.state._dyn_narrative='Approved for '+this.fmtMoney(lim)+' in additional credit. Lower utilization, more runway, more leverage on tap.';}
+if(action.id==='business_credit_card_0pct'&&success){const cf=this.calcCreditCapacity(),lim=Math.round(10000*cf);this.state.business_credit_limit=(this.state.business_credit_limit||0)+lim;this.state._dyn_narrative='Approved: a '+this.fmtMoney(lim)+' card at 0% for the intro period. Free money — if you clear it before the rate kicks in.';}
+if(action.id==='premium_financing'&&success){const mult=Math.max(1,Math.min(5,(this.state.monthly_revenue||0)/20000)),cv=Math.round(25000*mult),debt=Math.round(20000*mult);this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+cv;this.state.total_debt+=debt;this.state._dyn_narrative='Structured: '+this.fmtMoney(debt)+' borrowed at low rates funds '+this.fmtMoney(cv)+' of tax-free cash value.';}
+if(action.id==='bank_personal_loan'&&success){const cf=Math.max(0.6,Math.min(2.5,((this.state.personal_credit_score||600)-560)/120)),loan=Math.round(10000*cf);this.state.cash+=loan;this.state.total_debt+=loan;this.state._installment_debt=(this.state._installment_debt||0)+loan;this.state._dyn_narrative='Approved for '+this.fmtMoney(loan)+'. Your credit spoke for itself — funds in your account by Friday.';}
 if(action.id==='move_debt_to_business'&&success){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;}
-if(action.id==='buy_real_estate'){const s=this.state;const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));const baseEq=success?20000:10000,baseMort=success?80000:85000,baseRev=success?2500:1200,baseOpx=success?1800:2200;s.real_estate_debt=(s.real_estate_debt||0)+Math.round(baseMort*mult);s.real_estate_equity=(s.real_estate_equity||0)+Math.round(baseEq*(mult-1));s.total_debt+=Math.round(baseMort*(mult-1));s.operating_expenses=(s.operating_expenses||0)+Math.round(baseOpx*(mult-1));s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(baseRev*mult);if(success)s._dyn_narrative='You closed on a '+this.fmtMoney(Math.round(baseEq*mult)+Math.round(baseMort*mult))+' property — '+this.fmtMoney(Math.round(baseEq*mult))+' equity, '+this.fmtMoney(Math.round(baseMort*mult))+' financed. It cash-flows and appreciates while you sleep.';}
-if(action.id==='private_lending'){const s=this.state;if(success){const extra=Math.min(Math.round((s.cash||0)*0.4),180000);if(extra>0){s.cash-=extra;s.investment_positions=(s.investment_positions||0)+extra;}const pos=20000+(extra>0?extra:0);s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(pos*0.012);s._dyn_narrative='You deployed '+this.fmtMoney(pos)+' into private loans at ~14% annual. The interest checks start arriving — you\'re the bank now.';}else{s.other_monthly_revenue=(s.other_monthly_revenue||0)+180;}}
+if(action.id==='buy_real_estate'){const s=this.state;const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000)),lvlRev=Math.min(2.5,this.calcBusinessLevel()),lvlOpx=Math.min(2,this.calcBusinessLevel());const baseEq=success?20000:10000,baseMort=success?80000:85000,baseRev=success?2500:1200,baseOpx=success?1800:2200;s.real_estate_debt=(s.real_estate_debt||0)+Math.round(baseMort*mult);s.real_estate_equity=(s.real_estate_equity||0)+Math.round(baseEq*mult);s.total_debt+=Math.round(baseMort*mult);s.operating_expenses=(s.operating_expenses||0)+Math.round(baseOpx*lvlOpx)+Math.round(baseOpx*(mult-1));s.monthly_revenue=(s.monthly_revenue||0)+Math.round(baseRev*lvlRev);s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(baseRev*mult);if(success)s._dyn_narrative='You closed on a '+this.fmtMoney(Math.round(baseEq*mult)+Math.round(baseMort*mult))+' property — '+this.fmtMoney(Math.round(baseEq*mult))+' equity, '+this.fmtMoney(Math.round(baseMort*mult))+' financed. It cash-flows and appreciates while you sleep.';}
+if(action.id==='private_lending'){const s=this.state;if(success){const extra=Math.min(Math.round((s.cash||0)*0.4),180000),add=(extra>0?extra:0);if(extra>0)s.cash-=extra;s.investment_positions=(s.investment_positions||0)+20000+add;const pos=20000+add;s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(pos*0.012);s._dyn_narrative='You deployed '+this.fmtMoney(pos)+' into private loans at ~14% annual. The interest checks start arriving — you\'re the bank now.';}else{s.investment_positions=(s.investment_positions||0)+15000;s.other_monthly_revenue=(s.other_monthly_revenue||0)+180;}}
 if(action.id==='balance_transfer'&&success){const s=this.state;const revolving=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)-(s.business_credit_used||0));const transferred=Math.min(revolving,15000);const saved=Math.round(transferred*0.008);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-saved);s._dyn_narrative=transferred>0?'You moved '+this.fmtMoney(transferred)+' of high-interest balances onto a 0% card, cutting about '+this.fmtMoney(saved)+'/mo in interest. Clear it before the intro rate ends.':'Not much high-interest revolving to move — but the new 0% card gives you flexibility.';}
 if(action.id==='income_protection'&&success){const annRev=(this.state.monthly_revenue||0)*12,annSal=(this.state.owner_pay||0)*12,liab=this.state.total_debt||0;this.state.insurance_coverage=Math.max(Math.round(annRev*2.5),Math.round(annSal*15))+liab;}
 // Lifestyle action handling
