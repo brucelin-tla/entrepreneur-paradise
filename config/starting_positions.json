@@ -61,7 +61,8 @@
         "business_credit_used": 0,
         "business_installment_debt": 0,
         "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0
+        "real_estate_debt": 0,
+        "freedom": 5
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -134,7 +135,8 @@
         "business_credit_used": 0,
         "business_installment_debt": 0,
         "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0
+        "real_estate_debt": 0,
+        "freedom": 10
       },
       "stage_overrides": {
         "marketing": "foundation",
@@ -206,7 +208,8 @@
         "business_credit_used": 20000,
         "business_installment_debt": 15000,
         "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0
+        "real_estate_debt": 0,
+        "freedom": 15
       },
       "stage_overrides": {
         "marketing": "leverage",
