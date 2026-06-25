@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.13.6 — 2026-06-25
+**Credit priority, restructure timing, runway**
+- Funding order is now cash → business credit → personal credit (personal = last resort), protecting personal utilization. New `coverShortfall()` handles action payments and monthly-burn shortfalls.
+- Debt Restructure is deferred to after `monthlyTick` (post-expenses), so the utilization fix isn't undone by forced borrowing the same turn
+- Added a "Runway" dashboard stat (months of expenses covered by cash + credit), colored red→green; "Profitable" when cash-flow positive
+- Fixed dashboard passive-income readout to match the engine ($100k / 10%)
+
 ## v0.13.5 — 2026-06-25
 **Freeform operations**
 - Removed all `monthly_revenue_gte` gates from operations — affordability (cash or credit) + logical structure are the only gates now
