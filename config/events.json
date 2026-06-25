@@ -2,6 +2,145 @@
   "version": "1.0.0",
   "events": [
     {
+      "id": "liability_lawsuit",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
+      "base_probability": 0.11,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000015,
+      "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Settle out of court",
+          "effects": { "cash": -12000, "brand_equity": -4 },
+          "outcome_narrative": "You settled to make it go away. Expensive, but the alternative was a year of legal fees and a court date hanging over everything."
+        },
+        {
+          "label": "Fight it with your attorney",
+          "effects": { "cash": -8000, "energy": -15, "litigation_exposure": 5 },
+          "outcome_narrative": "Your attorney mounts a defense. It drags on and drains you, but you refuse to be shaken down."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+        "protected_note": "Because the business is an LLC, the lawsuit stopped at the company. Your home, your savings, and your personal credit are untouched — this is exactly what the LLC is for.",
+        "unprotected_note": "You never formed an LLC, so there was no legal wall between you and the business. The claim came straight for your personal assets and credit. A $300 LLC filing would have contained all of this.",
+        "unprotected_extra": { "cash": -8000, "personal_credit_score": -40, "personal_guarantee_exposure": 15000 }
+      },
+      "mitigated_by": ["client_onboarding", "basic_quality_control"]
+    },
+    {
+      "id": "founder_health_crisis",
+      "category": "personal",
+      "requires": { "monthly_revenue_gte": 6000 },
+      "base_probability": 0.07,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000008,
+      "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Push through, work from bed",
+          "effects": { "energy": -20, "fitness_level": -15, "lifestyle_health": -12 },
+          "outcome_narrative": "You kept the lights on by sheer will. It cost you — your body and the people who love you both noticed."
+        },
+        {
+          "label": "Rest and let the business coast",
+          "effects": { "monthly_revenue": -4000, "customer_base": -3 },
+          "outcome_narrative": "You took the time to heal. Revenue slid and a few clients drifted, but you came back whole."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "insurance_coverage_gte": 1 },
+        "protected_note": "Your income protection policy kicked in, replacing much of your income while you recovered. This is the exact scenario it exists for — you healed without the money stopping.",
+        "unprotected_note": "With no income protection, there was no safety net. Every day you couldn't work was a day with nothing coming in — and the bills never paused.",
+        "unprotected_extra": { "cash": -9000, "total_debt": 4000 }
+      },
+      "mitigated_by": ["write_first_sop", "full_systemization"]
+    },
+    {
+      "id": "key_person_loss",
+      "category": "people",
+      "requires": { "team_size_gte": 2, "key_person_dependency_gte": 35 },
+      "base_probability": 0.08,
+      "probability_scales_with": "key_person_dependency",
+      "scale_factor": 0.001,
+      "narrative": "The one team member who holds half the operation in their head is suddenly gone — poached by a competitor. Critical knowledge walked out the door with them.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Scramble to cover the gap",
+          "effects": { "energy": -15, "systems_maturity": -5, "customer_base": -2 },
+          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing. Mostly, it worked."
+        },
+        {
+          "label": "Hire a replacement fast",
+          "effects": { "cash": -6000, "energy": -8 },
+          "outcome_narrative": "You paid up to fill the role quickly. The new hire needs ramp time, but the bleeding stopped."
+        }
+      ],
+      "protection": {
+        "shielded_by": "keyman_insurance",
+        "protected_note": "Your key-man policy paid out, funding a fast, well-paid replacement and bridging the gap. The business barely skipped a beat — which is exactly why you insured the people who matter.",
+        "unprotected_note": "With no key-man coverage, there was no money to cushion the loss. You ate the cost and the chaos directly, and a few clients slipped away in the disruption.",
+        "unprotected_extra": { "cash": -8000, "monthly_revenue": -3000 }
+      },
+      "mitigated_by": ["write_first_sop", "hiring_pipeline", "middle_management"]
+    },
+    {
+      "id": "capital_crunch",
+      "category": "debt",
+      "requires": { "monthly_revenue_gte": 8000 },
+      "base_probability": 0.08,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000007,
+      "narrative": "Your main equipment dies / a critical bill comes due — it can't wait. You need $15,000 immediately, so you go looking for financing.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Finance it and keep moving",
+          "effects": { "total_debt": 15000, "operating_expenses": 150 },
+          "outcome_narrative": "You got the money and got back to work. Now to pay it back."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "personal_credit_score_gte": 680 },
+        "protected_note": "Your strong credit landed a low-interest loan, approved fast. Good credit is cheapest precisely when you need money in a hurry — the years of building it just paid off.",
+        "unprotected_note": "Your weak credit meant predatory terms — high interest and fees stacked on top. Borrowing is most expensive exactly when you can least afford it. This is why you build credit BEFORE you need it.",
+        "unprotected_extra": { "total_debt": 8000, "personal_credit_score": -10, "operating_expenses": 250 }
+      }
+    },
+    {
+      "id": "major_lawsuit_wealth",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 25000 },
+      "base_probability": 0.09,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000008,
+      "narrative": "A serious claim lands: a major client alleges your work cost them six figures, and they've hired an aggressive firm coming after everything you've built.",
+      "act": 3,
+      "choices": [
+        {
+          "label": "Settle to limit exposure",
+          "effects": { "cash": -25000, "brand_equity": -5 },
+          "outcome_narrative": "You negotiated it down and settled. A heavy hit, but you contained it and moved on."
+        },
+        {
+          "label": "Fight it to the end",
+          "effects": { "cash": -15000, "energy": -20, "litigation_exposure": 10 },
+          "outcome_narrative": "A long, draining fight — but you prevailed. It cost time and focus you'll never get back."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "trust_structure_not": "none" },
+        "protected_note": "Your trust and asset-protection structure did its job — the wealth they came for was legally walled off and out of reach. The fortress held, exactly as designed.",
+        "unprotected_note": "With no trust or asset-protection structure, everything you'd accumulated was exposed. They went after the accounts and forced personal guarantees — the wealth was sitting in the open.",
+        "unprotected_extra": { "cash": -35000, "personal_guarantee_exposure": 30000 }
+      },
+      "mitigated_by": ["keyman_insurance"]
+    },
+    {
       "id": "client_dispute",
       "category": "litigation",
       "requires": { "customer_base_gte": 10 },

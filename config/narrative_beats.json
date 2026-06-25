@@ -66,6 +66,10 @@
     }
   ],
   "monthly_cliffhangers": [
+    { "text": "You're doing real business now — but the business is still legally just you. No LLC means every client and every contract is a direct line to your personal savings. One bad dispute could take it all.", "requires": { "monthly_revenue_gte": 5000, "entity_structure": "none" } },
+    { "text": "A client offhandedly mentioned 'getting their lawyer involved.' Probably nothing. But you have no LLC — no legal shield. If they're serious, there's nothing between them and everything you own.", "requires": { "monthly_revenue_gte": 9000, "entity_structure": "none" } },
+    { "text": "You felt run-down all week. It hit you: you ARE the business. If your body quit tomorrow, the income would stop cold — and you have nothing in place to replace it.", "requires": { "monthly_revenue_gte": 6000, "insurance_coverage_lte": 0 } },
+    { "text": "You've built something real now — accounts, maybe property, serious income. And it's all sitting in the open. No trust, no asset protection. One determined lawsuit could reach all of it.", "requires": { "monthly_revenue_gte": 25000, "trust_structure": "none" } },
     { "text": "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.", "requires": { "team_size_gte": 1 } },
     { "text": "You overheard two team members talking about job postings. They went quiet when you walked by.", "requires": { "team_size_gte": 2 } },
     { "text": "The banker asked you to come in next week. She didn't say why. She sounded... careful.", "requires": { "total_debt_gte": 5000 } },

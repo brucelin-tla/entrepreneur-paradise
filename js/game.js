@@ -3,7 +3,7 @@ let CONFIG={};
 async function loadConfig(){const files=['starting_positions','actions_marketing','actions_operations','actions_finance','lifestyle_options','events','stage_thresholds','scoring_weights','archetypes','characters','narrative_beats'];let ue=false;for(const f of files){if(!ue){try{const r=await fetch('config/'+f+'.json');if(!r.ok)throw 0;CONFIG[f]=await r.json();continue;}catch(e){ue=true;}}if(ue&&window.EMBEDDED_CONFIG&&window.EMBEDDED_CONFIG[f])CONFIG[f]=window.EMBEDDED_CONFIG[f];}}
 const CATS=['marketing','operations','finance'],CL={marketing:'Marketing',operations:'Operations',finance:'Finance',lifestyle:'Life'};
 const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve'];
-const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses'];
+const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 
 const Game={
@@ -53,7 +53,7 @@ isActionLocked(a){return this.isActionCompleted(a)||!this.meetsReq(a.prerequisit
 calcDebtInterest(){const bizDebt=(this.state.total_debt||0)-(this.state.real_estate_debt||0);return Math.round(bizDebt*0.008)+Math.round((this.state.real_estate_debt||0)*0.005);},
 calcDebtPrincipal(){const bizDebt=(this.state.total_debt||0)-(this.state.real_estate_debt||0);return Math.round(bizDebt*0.01)+Math.round((this.state.real_estate_debt||0)*0.005);},
 calcMonthlyBurn(){const s=this.state;return(s.operating_expenses||0)+(s.owner_pay||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0)+this.calcDebtInterest()+this.calcDebtPrincipal();},
-calcEnergyRecovery(){const s=this.state;return 5+Math.round((s.fitness_level||0)/5)+Math.round((s.lifestyle_health||0)/10);},
+calcEnergyRecovery(){const s=this.state;return 13+Math.round((s.fitness_level||0)/5)+Math.round((s.lifestyle_health||0)/10);},
 calcFreedom(){const s=this.state;return Math.min(100,Math.max(0,Math.round((100-(s.key_person_dependency||100))+Math.min(20,(s.team_size||0)*3)+Math.min(20,(s.systems_maturity||0)/5)+(s._completed_actions&&s._completed_actions.includes('middle_management')?10:0)+(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')?15:0)+(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')?10:0))));},
 calcBusinessLevel(){return Math.min(10,Math.max(1,(this.state.monthly_revenue||0)/5000));},
 getFounderRole(){const f=this.calcFreedom();if(f>80)return'Chairman';if(f>60)return'CEO';if(f>40)return'Director';if(f>20)return'Manager';return'Operator';},
@@ -268,7 +268,7 @@ this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='tax_planning_session'&&success)this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);
 if(action.id==='policy_loan'&&success){const loanAmt=Math.round((this.state.insurance_cash_value||0)*0.9);this.state.cash+=loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;}
-if(action.id==='fund_accumulation_policy'&&success){const fundAmt=Math.max(500,Math.round(Math.min(this.state.cash*0.10,this.calcBusinessLevel()*2000)));this.state.cash-=fundAmt;this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+fundAmt;this.state._auto_fund_insurance=true;this.state._insurance_monthly_amount=Math.round(fundAmt/4);}
+if(action.id==='fund_accumulation_policy'&&success){const fundAmt=Math.max(500,Math.round(Math.min(this.state.cash*0.10,this.calcBusinessLevel()*3000)));this.state.cash-=fundAmt;this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+fundAmt;this.state._auto_fund_insurance=true;this.state._insurance_monthly_amount=Math.round(fundAmt/2);}
 if(action.id==='debt_restructure'&&success){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(persRev>0){const swapAmt=Math.min(persRev,Math.round(Math.max(1000,persRev*0.4)));s._installment_debt=(s._installment_debt||0)+swapAmt;s.available_credit=(s.available_credit||0)+Math.round(swapAmt*0.8);const newPersRev=Math.max(0,persRev-swapAmt),newLim=newPersRev+(s.available_credit||0),newUtil=newLim>0?Math.round((newPersRev/newLim)*100):0;s.personal_credit_score=Math.min(850,s.personal_credit_score+Math.round((100-newUtil)/10));}}
 if(action.id==='business_term_loan'&&success)this.state.business_installment_debt=(this.state.business_installment_debt||0)+25000;
 if(action.id==='bank_personal_loan'&&success)this.state._installment_debt=(this.state._installment_debt||0)+10000;
@@ -310,7 +310,7 @@ if(s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(ta
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
 if(s.insurance_cash_value>0)s.insurance_cash_value=Math.round(s.insurance_cash_value*1.0057);
-if(s.insurance_cash_value>=250000){const moPassive=Math.round(s.insurance_cash_value*0.10/12);s.cash+=moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;}
+if(s.insurance_cash_value>=100000){const moPassive=Math.round(s.insurance_cash_value*0.10/12);s.cash+=moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;}
 if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession';s.monthly_revenue=Math.round(s.monthly_revenue*0.85);}else if(r<0.5){s._market_cycle='boom';s.monthly_revenue=Math.round(s.monthly_revenue*1.1);}else s._market_cycle='normal';}
 if(s.cash<0&&(s.available_credit||0)>0){const shortfall=Math.abs(s.cash),fee=Math.round(shortfall*0.03),totalDraw=shortfall+fee,actualDraw=Math.min(totalDraw,s.available_credit);s.cash=actualDraw>=totalDraw?0:s.cash+actualDraw;s.available_credit-=actualDraw;s.total_debt+=actualDraw;}
 if(s.cash<0&&(s.available_credit||0)<=0){s.cash=0;s.monthly_revenue=Math.round(s.monthly_revenue*0.8);s.personal_credit_score=Math.max(300,s.personal_credit_score-30);}
@@ -350,7 +350,13 @@ showEvent(evt){this.showScreen('event-screen');document.getElementById('event-mo
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects)}));
 document.getElementById('event-choices').innerHTML=note+evt._scaledChoices.map((c,i)=>{const eff=Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+' '+this.formatStatName(k)).join(', ');return'<div class="choice-card fade-in" onclick="Game.resolveEvent('+i+')"><h4>'+c.label+'</h4><div class="choice-effects">'+eff+'</div></div>';}).join('');this.currentEvent=evt;this.eventHistory.push(evt);},
 
-resolveEvent(ci){const c=this.currentEvent._scaledChoices?this.currentEvent._scaledChoices[ci]:this.currentEvent.choices[ci];this.applyEffects(c.effects);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Event Outcome';document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+c.label+'</strong><br><br>'+c.outcome_narrative+'</div><div class="effect-list">'+Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>{const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');return'<div class="effect-item"><span>'+this.formatStatName(k)+'</span><span style="color:'+color+';font-weight:600">'+(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+'</span></div>';}).join('')+'</div>';this.currentEvent=null;},
+resolveEvent(ci){const evt=this.currentEvent,c=evt._scaledChoices?evt._scaledChoices[ci]:evt.choices[ci];
+// Risk & consequence: protection (e.g. LLC, asset protection) changes the OUTCOME and explains why — see DESIGN.md legibility goal.
+let effects=Object.assign({},c.effects),protNote='';
+if(evt.protection){let shielded=false;if(evt.protection.shielded_when)shielded=this.meetsReq(evt.protection.shielded_when);if(!shielded&&evt.protection.shielded_by)shielded=(this.state._completed_actions||[]).includes(evt.protection.shielded_by);
+if(shielded){protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected.</strong> '+evt.protection.protected_note+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
+else{protNote='<div class="narrative-box fade-in" style="border-left-color:var(--red);margin-top:12px;"><strong>Unprotected.</strong> '+evt.protection.unprotected_note+'</div>';if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];effects[k]=(typeof effects[k]==='number'?effects[k]:0)+v;}}}
+this.applyEffects(effects);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Event Outcome';document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+c.label+'</strong><br><br>'+c.outcome_narrative+'</div><div class="effect-list">'+Object.entries(effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>{const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');return'<div class="effect-item"><span>'+this.formatStatName(k)+'</span><span style="color:'+color+';font-weight:600">'+(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+'</span></div>';}).join('')+'</div>'+protNote;this.currentEvent=null;},
 
 showTaxEvent(){const s=this.state,taxOwed=Math.round((s._ytd_taxable_income||0)*(s.tax_rate||0.25)),year=Math.ceil(this.month/12);
 this.showScreen('event-screen');document.getElementById('event-month-label').textContent='Tax Season — Year '+year;
@@ -457,7 +463,7 @@ const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.rea
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
 const otherDebt=Math.max(0,(s.total_debt||0)-reDebt-(bd.credit_card||0)-(bd.collections||0)-polLoan);
 // Passive, mostly tax-free, monthly income: policy-loan income (10%/yr once CV>=250k) + RE cashflow (~$700/property) + lending interest (12%/yr)
-const passiveMonthly=(cv>=250000?cv*0.10/12:0)+reOwned*700+invest*0.01;
+const passiveMonthly=(cv>=100000?cv*0.10/12:0)+reOwned*700+invest*0.01;
 // Leverage efficiency: % of productive asset base financed with good (OPM) debt, ramped by asset scale
 const controlled=reEquity+reDebt+invest+cv,goodDebt=reDebt+(s.business_installment_debt||0)+polLoan;
 const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));

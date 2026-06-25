@@ -1275,10 +1275,10 @@ window.EMBEDDED_CONFIG = {
       "energy_cost": 4,
       "one_time": true,
       "prerequisites": { "monthly_revenue_gte": 2000 },
-      "effects": { "insurance_cash_value": 500 },
+      "effects": { "insurance_cash_value": 3000 },
       "success_rate": 0.95,
       "failure_effects": {},
-      "narrative_success": "Policy in force. Your first $500 is in the cash value. It'll grow at 7% tax-free, and you can borrow against up to 90% of it anytime — no bank approval needed.",
+      "narrative_success": "Policy in force. Your first $3,000 is in the cash value. It'll grow at 7% tax-free, and you can borrow against up to 90% of it anytime — no bank approval needed.",
       "narrative_failure": "Underwriting needs more info. Should be approved next month."
     },
     {
@@ -1361,7 +1361,7 @@ window.EMBEDDED_CONFIG = {
       "category": "finance",
       "stage": "foundation",
       "label": "Fund Insurance Policy",
-      "description": "Put cash into your accumulation policy — amount scales with your wealth. Grows at ~7% annually, tax-deferred. At $250K+ cash value, you earn passive income through policy loans.",
+      "description": "Put cash into your accumulation policy — amount scales with your wealth. Grows at ~7% annually, tax-deferred. At $100K+ cash value, you earn passive income through policy loans.",
       "cash_cost": 0,
       "energy_cost": 2,
       "prerequisites": { "insurance_cash_value_gte": 1 },
@@ -1411,6 +1411,145 @@ window.EMBEDDED_CONFIG = {
   "events": {
   "version": "1.0.0",
   "events": [
+    {
+      "id": "liability_lawsuit",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
+      "base_probability": 0.11,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000015,
+      "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Settle out of court",
+          "effects": { "cash": -12000, "brand_equity": -4 },
+          "outcome_narrative": "You settled to make it go away. Expensive, but the alternative was a year of legal fees and a court date hanging over everything."
+        },
+        {
+          "label": "Fight it with your attorney",
+          "effects": { "cash": -8000, "energy": -15, "litigation_exposure": 5 },
+          "outcome_narrative": "Your attorney mounts a defense. It drags on and drains you, but you refuse to be shaken down."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+        "protected_note": "Because the business is an LLC, the lawsuit stopped at the company. Your home, your savings, and your personal credit are untouched — this is exactly what the LLC is for.",
+        "unprotected_note": "You never formed an LLC, so there was no legal wall between you and the business. The claim came straight for your personal assets and credit. A $300 LLC filing would have contained all of this.",
+        "unprotected_extra": { "cash": -8000, "personal_credit_score": -40, "personal_guarantee_exposure": 15000 }
+      },
+      "mitigated_by": ["client_onboarding", "basic_quality_control"]
+    },
+    {
+      "id": "founder_health_crisis",
+      "category": "personal",
+      "requires": { "monthly_revenue_gte": 6000 },
+      "base_probability": 0.07,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000008,
+      "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Push through, work from bed",
+          "effects": { "energy": -20, "fitness_level": -15, "lifestyle_health": -12 },
+          "outcome_narrative": "You kept the lights on by sheer will. It cost you — your body and the people who love you both noticed."
+        },
+        {
+          "label": "Rest and let the business coast",
+          "effects": { "monthly_revenue": -4000, "customer_base": -3 },
+          "outcome_narrative": "You took the time to heal. Revenue slid and a few clients drifted, but you came back whole."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "insurance_coverage_gte": 1 },
+        "protected_note": "Your income protection policy kicked in, replacing much of your income while you recovered. This is the exact scenario it exists for — you healed without the money stopping.",
+        "unprotected_note": "With no income protection, there was no safety net. Every day you couldn't work was a day with nothing coming in — and the bills never paused.",
+        "unprotected_extra": { "cash": -9000, "total_debt": 4000 }
+      },
+      "mitigated_by": ["write_first_sop", "full_systemization"]
+    },
+    {
+      "id": "key_person_loss",
+      "category": "people",
+      "requires": { "team_size_gte": 2, "key_person_dependency_gte": 35 },
+      "base_probability": 0.08,
+      "probability_scales_with": "key_person_dependency",
+      "scale_factor": 0.001,
+      "narrative": "The one team member who holds half the operation in their head is suddenly gone — poached by a competitor. Critical knowledge walked out the door with them.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Scramble to cover the gap",
+          "effects": { "energy": -15, "systems_maturity": -5, "customer_base": -2 },
+          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing. Mostly, it worked."
+        },
+        {
+          "label": "Hire a replacement fast",
+          "effects": { "cash": -6000, "energy": -8 },
+          "outcome_narrative": "You paid up to fill the role quickly. The new hire needs ramp time, but the bleeding stopped."
+        }
+      ],
+      "protection": {
+        "shielded_by": "keyman_insurance",
+        "protected_note": "Your key-man policy paid out, funding a fast, well-paid replacement and bridging the gap. The business barely skipped a beat — which is exactly why you insured the people who matter.",
+        "unprotected_note": "With no key-man coverage, there was no money to cushion the loss. You ate the cost and the chaos directly, and a few clients slipped away in the disruption.",
+        "unprotected_extra": { "cash": -8000, "monthly_revenue": -3000 }
+      },
+      "mitigated_by": ["write_first_sop", "hiring_pipeline", "middle_management"]
+    },
+    {
+      "id": "capital_crunch",
+      "category": "debt",
+      "requires": { "monthly_revenue_gte": 8000 },
+      "base_probability": 0.08,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000007,
+      "narrative": "Your main equipment dies / a critical bill comes due — it can't wait. You need $15,000 immediately, so you go looking for financing.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Finance it and keep moving",
+          "effects": { "total_debt": 15000, "operating_expenses": 150 },
+          "outcome_narrative": "You got the money and got back to work. Now to pay it back."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "personal_credit_score_gte": 680 },
+        "protected_note": "Your strong credit landed a low-interest loan, approved fast. Good credit is cheapest precisely when you need money in a hurry — the years of building it just paid off.",
+        "unprotected_note": "Your weak credit meant predatory terms — high interest and fees stacked on top. Borrowing is most expensive exactly when you can least afford it. This is why you build credit BEFORE you need it.",
+        "unprotected_extra": { "total_debt": 8000, "personal_credit_score": -10, "operating_expenses": 250 }
+      }
+    },
+    {
+      "id": "major_lawsuit_wealth",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 25000 },
+      "base_probability": 0.09,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000008,
+      "narrative": "A serious claim lands: a major client alleges your work cost them six figures, and they've hired an aggressive firm coming after everything you've built.",
+      "act": 3,
+      "choices": [
+        {
+          "label": "Settle to limit exposure",
+          "effects": { "cash": -25000, "brand_equity": -5 },
+          "outcome_narrative": "You negotiated it down and settled. A heavy hit, but you contained it and moved on."
+        },
+        {
+          "label": "Fight it to the end",
+          "effects": { "cash": -15000, "energy": -20, "litigation_exposure": 10 },
+          "outcome_narrative": "A long, draining fight — but you prevailed. It cost time and focus you'll never get back."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "trust_structure_not": "none" },
+        "protected_note": "Your trust and asset-protection structure did its job — the wealth they came for was legally walled off and out of reach. The fortress held, exactly as designed.",
+        "unprotected_note": "With no trust or asset-protection structure, everything you'd accumulated was exposed. They went after the accounts and forced personal guarantees — the wealth was sitting in the open.",
+        "unprotected_extra": { "cash": -35000, "personal_guarantee_exposure": 30000 }
+      },
+      "mitigated_by": ["keyman_insurance"]
+    },
     {
       "id": "client_dispute",
       "category": "litigation",
@@ -2223,6 +2362,10 @@ window.EMBEDDED_CONFIG = {
     }
   ],
   "monthly_cliffhangers": [
+    { "text": "You're doing real business now — but the business is still legally just you. No LLC means every client and every contract is a direct line to your personal savings. One bad dispute could take it all.", "requires": { "monthly_revenue_gte": 5000, "entity_structure": "none" } },
+    { "text": "A client offhandedly mentioned 'getting their lawyer involved.' Probably nothing. But you have no LLC — no legal shield. If they're serious, there's nothing between them and everything you own.", "requires": { "monthly_revenue_gte": 9000, "entity_structure": "none" } },
+    { "text": "You felt run-down all week. It hit you: you ARE the business. If your body quit tomorrow, the income would stop cold — and you have nothing in place to replace it.", "requires": { "monthly_revenue_gte": 6000, "insurance_coverage_lte": 0 } },
+    { "text": "You've built something real now — accounts, maybe property, serious income. And it's all sitting in the open. No trust, no asset protection. One determined lawsuit could reach all of it.", "requires": { "monthly_revenue_gte": 25000, "trust_structure": "none" } },
     { "text": "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.", "requires": { "team_size_gte": 1 } },
     { "text": "You overheard two team members talking about job postings. They went quiet when you walked by.", "requires": { "team_size_gte": 2 } },
     { "text": "The banker asked you to come in next week. She didn't say why. She sounded... careful.", "requires": { "total_debt_gte": 5000 } },
@@ -2242,7 +2385,7 @@ let CONFIG={};
 async function loadConfig(){const files=['starting_positions','actions_marketing','actions_operations','actions_finance','lifestyle_options','events','stage_thresholds','scoring_weights','archetypes','characters','narrative_beats'];let ue=false;for(const f of files){if(!ue){try{const r=await fetch('config/'+f+'.json');if(!r.ok)throw 0;CONFIG[f]=await r.json();continue;}catch(e){ue=true;}}if(ue&&window.EMBEDDED_CONFIG&&window.EMBEDDED_CONFIG[f])CONFIG[f]=window.EMBEDDED_CONFIG[f];}}
 const CATS=['marketing','operations','finance'],CL={marketing:'Marketing',operations:'Operations',finance:'Finance',lifestyle:'Life'};
 const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve'];
-const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses'];
+const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 
 const Game={
@@ -2292,7 +2435,7 @@ isActionLocked(a){return this.isActionCompleted(a)||!this.meetsReq(a.prerequisit
 calcDebtInterest(){const bizDebt=(this.state.total_debt||0)-(this.state.real_estate_debt||0);return Math.round(bizDebt*0.008)+Math.round((this.state.real_estate_debt||0)*0.005);},
 calcDebtPrincipal(){const bizDebt=(this.state.total_debt||0)-(this.state.real_estate_debt||0);return Math.round(bizDebt*0.01)+Math.round((this.state.real_estate_debt||0)*0.005);},
 calcMonthlyBurn(){const s=this.state;return(s.operating_expenses||0)+(s.owner_pay||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0)+this.calcDebtInterest()+this.calcDebtPrincipal();},
-calcEnergyRecovery(){const s=this.state;return 5+Math.round((s.fitness_level||0)/5)+Math.round((s.lifestyle_health||0)/10);},
+calcEnergyRecovery(){const s=this.state;return 13+Math.round((s.fitness_level||0)/5)+Math.round((s.lifestyle_health||0)/10);},
 calcFreedom(){const s=this.state;return Math.min(100,Math.max(0,Math.round((100-(s.key_person_dependency||100))+Math.min(20,(s.team_size||0)*3)+Math.min(20,(s.systems_maturity||0)/5)+(s._completed_actions&&s._completed_actions.includes('middle_management')?10:0)+(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')?15:0)+(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')?10:0))));},
 calcBusinessLevel(){return Math.min(10,Math.max(1,(this.state.monthly_revenue||0)/5000));},
 getFounderRole(){const f=this.calcFreedom();if(f>80)return'Chairman';if(f>60)return'CEO';if(f>40)return'Director';if(f>20)return'Manager';return'Operator';},
@@ -2507,7 +2650,7 @@ this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='tax_planning_session'&&success)this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);
 if(action.id==='policy_loan'&&success){const loanAmt=Math.round((this.state.insurance_cash_value||0)*0.9);this.state.cash+=loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;}
-if(action.id==='fund_accumulation_policy'&&success){const fundAmt=Math.max(500,Math.round(Math.min(this.state.cash*0.10,this.calcBusinessLevel()*2000)));this.state.cash-=fundAmt;this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+fundAmt;this.state._auto_fund_insurance=true;this.state._insurance_monthly_amount=Math.round(fundAmt/4);}
+if(action.id==='fund_accumulation_policy'&&success){const fundAmt=Math.max(500,Math.round(Math.min(this.state.cash*0.10,this.calcBusinessLevel()*3000)));this.state.cash-=fundAmt;this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+fundAmt;this.state._auto_fund_insurance=true;this.state._insurance_monthly_amount=Math.round(fundAmt/2);}
 if(action.id==='debt_restructure'&&success){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(persRev>0){const swapAmt=Math.min(persRev,Math.round(Math.max(1000,persRev*0.4)));s._installment_debt=(s._installment_debt||0)+swapAmt;s.available_credit=(s.available_credit||0)+Math.round(swapAmt*0.8);const newPersRev=Math.max(0,persRev-swapAmt),newLim=newPersRev+(s.available_credit||0),newUtil=newLim>0?Math.round((newPersRev/newLim)*100):0;s.personal_credit_score=Math.min(850,s.personal_credit_score+Math.round((100-newUtil)/10));}}
 if(action.id==='business_term_loan'&&success)this.state.business_installment_debt=(this.state.business_installment_debt||0)+25000;
 if(action.id==='bank_personal_loan'&&success)this.state._installment_debt=(this.state._installment_debt||0)+10000;
@@ -2549,7 +2692,7 @@ if(s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(ta
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
 if(s.insurance_cash_value>0)s.insurance_cash_value=Math.round(s.insurance_cash_value*1.0057);
-if(s.insurance_cash_value>=250000){const moPassive=Math.round(s.insurance_cash_value*0.10/12);s.cash+=moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;}
+if(s.insurance_cash_value>=100000){const moPassive=Math.round(s.insurance_cash_value*0.10/12);s.cash+=moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;}
 if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession';s.monthly_revenue=Math.round(s.monthly_revenue*0.85);}else if(r<0.5){s._market_cycle='boom';s.monthly_revenue=Math.round(s.monthly_revenue*1.1);}else s._market_cycle='normal';}
 if(s.cash<0&&(s.available_credit||0)>0){const shortfall=Math.abs(s.cash),fee=Math.round(shortfall*0.03),totalDraw=shortfall+fee,actualDraw=Math.min(totalDraw,s.available_credit);s.cash=actualDraw>=totalDraw?0:s.cash+actualDraw;s.available_credit-=actualDraw;s.total_debt+=actualDraw;}
 if(s.cash<0&&(s.available_credit||0)<=0){s.cash=0;s.monthly_revenue=Math.round(s.monthly_revenue*0.8);s.personal_credit_score=Math.max(300,s.personal_credit_score-30);}
@@ -2589,7 +2732,13 @@ showEvent(evt){this.showScreen('event-screen');document.getElementById('event-mo
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects)}));
 document.getElementById('event-choices').innerHTML=note+evt._scaledChoices.map((c,i)=>{const eff=Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+' '+this.formatStatName(k)).join(', ');return'<div class="choice-card fade-in" onclick="Game.resolveEvent('+i+')"><h4>'+c.label+'</h4><div class="choice-effects">'+eff+'</div></div>';}).join('');this.currentEvent=evt;this.eventHistory.push(evt);},
 
-resolveEvent(ci){const c=this.currentEvent._scaledChoices?this.currentEvent._scaledChoices[ci]:this.currentEvent.choices[ci];this.applyEffects(c.effects);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Event Outcome';document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+c.label+'</strong><br><br>'+c.outcome_narrative+'</div><div class="effect-list">'+Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>{const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');return'<div class="effect-item"><span>'+this.formatStatName(k)+'</span><span style="color:'+color+';font-weight:600">'+(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+'</span></div>';}).join('')+'</div>';this.currentEvent=null;},
+resolveEvent(ci){const evt=this.currentEvent,c=evt._scaledChoices?evt._scaledChoices[ci]:evt.choices[ci];
+// Risk & consequence: protection (e.g. LLC, asset protection) changes the OUTCOME and explains why — see DESIGN.md legibility goal.
+let effects=Object.assign({},c.effects),protNote='';
+if(evt.protection){let shielded=false;if(evt.protection.shielded_when)shielded=this.meetsReq(evt.protection.shielded_when);if(!shielded&&evt.protection.shielded_by)shielded=(this.state._completed_actions||[]).includes(evt.protection.shielded_by);
+if(shielded){protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected.</strong> '+evt.protection.protected_note+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
+else{protNote='<div class="narrative-box fade-in" style="border-left-color:var(--red);margin-top:12px;"><strong>Unprotected.</strong> '+evt.protection.unprotected_note+'</div>';if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];effects[k]=(typeof effects[k]==='number'?effects[k]:0)+v;}}}
+this.applyEffects(effects);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Event Outcome';document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+c.label+'</strong><br><br>'+c.outcome_narrative+'</div><div class="effect-list">'+Object.entries(effects).filter(([k,v])=>typeof v==='number'&&v!==0).map(([k,v])=>{const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');return'<div class="effect-item"><span>'+this.formatStatName(k)+'</span><span style="color:'+color+';font-weight:600">'+(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+'</span></div>';}).join('')+'</div>'+protNote;this.currentEvent=null;},
 
 showTaxEvent(){const s=this.state,taxOwed=Math.round((s._ytd_taxable_income||0)*(s.tax_rate||0.25)),year=Math.ceil(this.month/12);
 this.showScreen('event-screen');document.getElementById('event-month-label').textContent='Tax Season — Year '+year;
@@ -2696,7 +2845,7 @@ const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.rea
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
 const otherDebt=Math.max(0,(s.total_debt||0)-reDebt-(bd.credit_card||0)-(bd.collections||0)-polLoan);
 // Passive, mostly tax-free, monthly income: policy-loan income (10%/yr once CV>=250k) + RE cashflow (~$700/property) + lending interest (12%/yr)
-const passiveMonthly=(cv>=250000?cv*0.10/12:0)+reOwned*700+invest*0.01;
+const passiveMonthly=(cv>=100000?cv*0.10/12:0)+reOwned*700+invest*0.01;
 // Leverage efficiency: % of productive asset base financed with good (OPM) debt, ramped by asset scale
 const controlled=reEquity+reDebt+invest+cv,goodDebt=reDebt+(s.business_installment_debt||0)+polLoan;
 const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));

@@ -365,10 +365,10 @@
       "energy_cost": 4,
       "one_time": true,
       "prerequisites": { "monthly_revenue_gte": 2000 },
-      "effects": { "insurance_cash_value": 500 },
+      "effects": { "insurance_cash_value": 3000 },
       "success_rate": 0.95,
       "failure_effects": {},
-      "narrative_success": "Policy in force. Your first $500 is in the cash value. It'll grow at 7% tax-free, and you can borrow against up to 90% of it anytime — no bank approval needed.",
+      "narrative_success": "Policy in force. Your first $3,000 is in the cash value. It'll grow at 7% tax-free, and you can borrow against up to 90% of it anytime — no bank approval needed.",
       "narrative_failure": "Underwriting needs more info. Should be approved next month."
     },
     {
@@ -451,7 +451,7 @@
       "category": "finance",
       "stage": "foundation",
       "label": "Fund Insurance Policy",
-      "description": "Put cash into your accumulation policy — amount scales with your wealth. Grows at ~7% annually, tax-deferred. At $250K+ cash value, you earn passive income through policy loans.",
+      "description": "Put cash into your accumulation policy — amount scales with your wealth. Grows at ~7% annually, tax-deferred. At $100K+ cash value, you earn passive income through policy loans.",
       "cash_cost": 0,
       "energy_cost": 2,
       "prerequisites": { "insurance_cash_value_gte": 1 },
