@@ -453,7 +453,7 @@
       "cash_cost": 0,
       "energy_cost": 3,
       "prerequisites": { "available_credit_gte": 3000, "personal_credit_score_gte": 620, "total_debt_gte": 2000 },
-      "effects": { "personal_credit_score": 10, "operating_expenses": -150, "dscr": 0.1 },
+      "effects": { "personal_credit_score": 10, "dscr": 0.1 },
       "success_rate": 0.8,
       "failure_effects": { "personal_credit_score": 2, "operating_expenses": -50 },
       "narrative_success": "Transferred $5,000 from your 24% card to your 0% card. That's $100/month in interest you just stopped paying. Your utilization spread improved and your score jumped.",
