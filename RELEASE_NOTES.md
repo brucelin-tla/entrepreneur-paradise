@@ -1,5 +1,9 @@
 # Release Notes
 
+## v0.13.1 — 2026-06-25
+**Collapsible action menu**
+- Direction groups are now an accordion (one open at a time) with option counts — shorter menu, less scrolling, "pick a direction" flow
+
 ## v0.13.0 — 2026-06-25
 **Menu, situational finance, in-game changelog**
 - Action menu grouped by direction; all takeable options visible (no more buried choices)
