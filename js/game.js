@@ -9,6 +9,7 @@ const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_
 const ADIR={finance:[['Foundation',['open_business_account','basic_bookkeeping','form_llc','income_protection']],['Build Credit',['build_personal_credit_repair','build_personal_credit_optimize','balance_transfer','move_debt_to_business','debt_restructure','pay_down_debt']],['Get Capital',['bank_personal_loan','business_credit_card_0pct','business_credit_line','business_term_loan','qualify_more_credit']],['Structure & Tax',['payroll_setup','s_corp_election','banking_relationship','monthly_tax_reserve','tax_planning_session','tax_optimization','multi_entity']],['Protect',['keyman_insurance','asset_protection']],['Wealth Engine',['setup_accumulation_policy','fund_accumulation_policy','policy_loan','premium_financing','buy_real_estate','private_lending']]],marketing:[['Audience & Offer',['cold_outreach','local_networking','paid_ads_test','basic_social_content','lead_magnet','build_offer','brand_pr_push']],['Get Customers',['referral_asks','email_campaign','crm_pipeline','webinar_funnel','build_sales_team']],['Scale & Expand',['content_engine','referral_partnerships','jv_affiliate_network','franchise_licensing','acquire_competitor']]],operations:[['Run It Lean',['do_work_yourself','basic_automation','write_first_sop','basic_quality_control','client_onboarding']],['Build a Team',['hire_first_contractor','hire_delivery_team','hire_sales_rep','hire_content_creator','hire_client_success','hiring_pipeline','project_management','middle_management','hire_hr_manager']],['Productize & Scale',['fulfillment_system','full_systemization','build_ip','vertical_integration','multi_location','hire_fractional_cfo']]]};
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.13.8',d:'2026-06-25 10:01',n:['Slimmer stats dashboard — fewer cards, and stats like Policy, Passive Income, Salary, and Staff only appear once they matter (pipeline + customers merged into one)']},
 {v:'0.13.7',d:'2026-06-25 09:48',n:['Smarter auto-pay: uses business credit up to 30% utilization first (keeps your credit healthy), then cash, then stretches business, with personal credit as the last resort — no more "how do you want to pay?" prompt']},
 {v:'0.13.6',d:'2026-06-25 09:41',n:['Credit now draws in the right order — cash first, then business credit, with personal credit as a last resort (protects your utilization)','Debt Restructure now runs after the month\'s expenses, so your utilization stays fixed instead of getting re-messed','New "Runway" readout shows how many months of expenses your resources cover, green when healthy, red when low']},
 {v:'0.13.5',d:'2026-06-25 09:32',n:['Operations is now freeform: actions are no longer gated behind revenue — if you can afford it (cash or credit), you can do it','Pick your own operations strategy: Run It Lean, Build a Team, or Productize & Scale']},
@@ -110,18 +111,17 @@ const convPct=Math.round(Math.min(0.5,baseConv+skConv+brConv+ofB+crB)*100);
 const _netFlow=(s.monthly_revenue||0)-(s.cogs||0)-burn,_resources=(s.cash||0)+totalAvail;const _runwayMo=_netFlow>=0?Infinity:Math.floor(_resources/Math.max(1,Math.abs(_netFlow)));const _runwayStr=_netFlow>=0?'Profitable':(_runwayMo>=36?'36+ mo':_runwayMo+' mo left');const _runwayColor=_netFlow>=0?'positive':(_runwayMo>=6?'positive':_runwayMo>=3?'warning':'negative');
 const stats=[
 {label:'Cash',value:this.fmtMoney(s.cash),color:s.cash>5000?'positive':s.cash<2000?'negative':'warning'},
-{label:'Credit (P:'+persUtil+'% B:'+bizUtil+'%)',value:this.fmtMoney(totalAvail),color:totalAvail>0?'positive':'neutral',info:'CreditAvail'},
-{label:icv>0?'Policy Value':'Policy (none)',value:this.fmtMoney(icv),color:icv>0?'positive':'neutral'},
-{label:'Revenue',value:this.fmtMoney(s.monthly_revenue),color:'positive'},
-{label:this.term('Monthly Burn'),value:this.fmtMoney(burn),color:burn>s.monthly_revenue?'negative':'neutral',info:'Burn'},
 {label:'Runway',value:_runwayStr,color:_runwayColor},
-{label:'Owner Salary',value:s.owner_pay?this.fmtMoney(s.owner_pay):'No Salary',color:s.owner_pay?'positive':'neutral'},
+{label:'Credit P'+persUtil+'/B'+bizUtil+'%',value:this.fmtMoney(totalAvail),color:totalAvail>0?'positive':'neutral',info:'CreditAvail'},
+{label:'Revenue/mo',value:this.fmtMoney(s.monthly_revenue),color:'positive'},
+{label:this.term('Monthly Burn'),value:this.fmtMoney(burn),color:burn>s.monthly_revenue?'negative':'neutral',info:'Burn'},
 {label:'Credit Score',value:Math.round(s.personal_credit_score),color:s.personal_credit_score<620?'negative':s.personal_credit_score<700?'warning':'positive',info:'CreditScore'},
-{label:'Total Loans',value:this.fmtMoney(totalLoans),color:totalLoans>30000?'negative':'neutral',info:'Debt'},
-{label:'Passive Income',value:this.fmtMoney(passiveInc),color:passiveInc>0?'positive':'neutral'},
-{label:'Pipeline ('+convPct+'% conv)',value:''+(s.leads||0),color:'neutral'},
-{label:'Customers',value:s.customer_base+' <span style="font-size:0.6rem;color:var(--text2)">@'+this.fmtMoney(cv)+'</span>',color:'neutral'},
-{label:'Staff',value:''+(s.team_size||0),color:'neutral'}];
+{label:(s.leads||0)+' leads · '+convPct+'%',value:s.customer_base+' cust',color:'neutral'}];
+if(totalLoans>0)stats.push({label:'Total Loans',value:this.fmtMoney(totalLoans),color:totalLoans>30000?'negative':'neutral',info:'Debt'});
+if(icv>0)stats.push({label:'Policy Value',value:this.fmtMoney(icv),color:'positive'});
+if(passiveInc>0)stats.push({label:'Passive/mo',value:this.fmtMoney(passiveInc),color:'positive'});
+if((s.owner_pay||0)>0)stats.push({label:'Owner Salary',value:this.fmtMoney(s.owner_pay),color:'positive'});
+if((s.team_size||0)>0)stats.push({label:'Staff',value:''+s.team_size,color:'neutral'});
 document.getElementById('stats-dashboard').innerHTML=stats.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'" style="font-size:0.95rem;">'+st.value+(st.info?'<span class="info-btn" onclick="Game.show'+st.info+'()">i</span>':'')+'</div><div class="stat-label">'+st.label+'</div></div>').join('');},
 
 calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},

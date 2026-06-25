@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.13.8 — 2026-06-25
+**Consolidated stats dashboard**
+- Trimmed the core stat cards (7 early-game vs 13); merged pipeline + customers into one card
+- Policy Value, Passive Income, Owner Salary, Staff, Total Loans now show only when non-zero, so the dashboard grows with relevance instead of front-loading empty cards
+
 ## v0.13.7 — 2026-06-25
 **Smarter auto-pay (business credit to 30%, then cash)**
 - `payCost()` waterfall: business credit up to 30% utilization → cash → remaining business credit → personal credit (last resort). Keeps business credit in the healthy zone and preserves liquidity while protecting personal utilization.
