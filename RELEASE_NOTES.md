@@ -1,5 +1,9 @@
 # Release Notes
 
+## v0.13.2 — 2026-06-25
+**Title-screen background art**
+- Added a self-contained SVG hero backdrop (dusk skyline, horizon glow, stars, growth line) behind the title; bottom fade keeps text readable. Works on Pages and in the offline build.
+
 ## v0.13.1 — 2026-06-25
 **Collapsible action menu**
 - Direction groups are now an accordion (one open at a time) with option counts — shorter menu, less scrolling, "pick a direction" flow
