@@ -91,7 +91,7 @@
       "effects": { "operating_expenses": 150, "key_person_dependency": -5 },
       "success_rate": 0.95,
       "failure_effects": {},
-      "narrative_success": "Policy in force. If you break your leg tomorrow, the bills still get paid for six months. Peace of mind has a price — $150/month.",
+      "narrative_success": "Policy in force. Coverage sized to your revenue and liabilities — enough to keep the business running and your family protected for two years if something happens to you. The premium is $150/month.",
       "narrative_failure": "Application submitted. Underwriting wants more medical records. Should be approved next month."
     },
     {
@@ -460,6 +460,21 @@
       "failure_effects": { "personal_credit_score": 5 },
       "narrative_success": "Transferred your personal card balances to the business card. Your personal utilization dropped to near zero — score jumped. The business now carries the debt where it belongs.",
       "narrative_failure": "Moved some but not all — the business card limit wasn't high enough for everything. Partial improvement."
+    },
+    {
+      "id": "fund_accumulation_policy_large",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Max-Fund Insurance Policy",
+      "description": "Put $10,000 into your accumulation policy. Accelerate the path to $250K+ cash value where passive income from policy loans kicks in.",
+      "cash_cost": 10000,
+      "energy_cost": 2,
+      "prerequisites": { "insurance_cash_value_gte": 5000, "cash_gte": 15000 },
+      "effects": { "insurance_cash_value": 10000 },
+      "success_rate": 1.0,
+      "failure_effects": {},
+      "narrative_success": "Ten thousand more into the policy. At this rate, you'll hit the passive income threshold within a year. Every dollar in here grows tax-free and can never be taken from you.",
+      "narrative_failure": ""
     }
   ]
 }
