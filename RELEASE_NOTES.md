@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.21.0 — 2026-06-26
+**Milestones/achievements system, Achievements panel, Funding Ready milestone, freedom-score rebalance**
+
+- **Milestones (`MILESTONES` const, 15 total):** category-tagged achievements with `check(state, game)` predicates across Marketing (first customer, funnel built, brand, demand engine), Operations (first hire, systemized, team, runs-without-you), and Finance (made it legal, creditworthy, business banking, **funding ready**, tax-smart, money engine, tax-free passive income). `checkMilestones()` runs at the end of `monthlyTick`, recording `{id, month}` into `state._milestones_achieved`; `initMilestones()` marks already-true ones at month 0 on `startGame` so they aren't celebrated retroactively.
+- **Surfacing:** newly-unlocked milestones render as 🏆 cards on the results screen (`showResults`, color-coded by category, with Bruce's note) and the mentor section leads with `mentorMilestoneLine()` the following month.
+- **Achievements panel:** `showAchievements()` popup + an always-visible "🏆 Achievements — X/15" button on the dashboard (`renderStats`). Groups all milestones by category, shows unlocked (🏆 + month) vs locked (🔒 + description), with a big progress count.
+- **Funding Ready (finance):** unlocks on LLC + `open_business_account` + `debt_restructure` + clean credit file (no `debt_breakdown.collections`). Per design feedback, "no negative" = clean credit (collections cleared / disputes resolved), not non-negative cash.
+- **Freedom rebalance (`calcFreedom`):** key-person dependency now weighted 0.5 (was the dominant term); team/systems capped contributions; and direct bonuses for fractional execs (+6/+8/+4 CRO/COO/CFO), full-time bumps (+4/+8/+4), board (+16), plus ops hires (middle management, HR, full systemization). Hiring a C-suite now visibly climbs Operator → Director → CEO → Chairman.
+
 ## v0.20.0 — 2026-06-26
 **Fractional→full-time C-suite, OPM-tied growth, CFO leverage unlock, private banking 1% facility, policy-loan fixes**
 
