@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.20.0 — 2026-06-26
+**Fractional→full-time C-suite, OPM-tied growth, CFO leverage unlock, private banking 1% facility, policy-loan fixes**
+
+- **Two-tier C-suite (fractional → full-time):** `hire_cro/coo/cfo` are now affordable *fractional* hires (set `_cro_hired` etc; auto-pick/highlight as before). New `promote_cro_fulltime`/`promote_coo_fulltime`/`promote_cfo_fulltime` (gated on the fractional + ~$70-80k/mo + structural maturity) set `_x_fulltime`. Comp is tiered: `calcExecFrac` (clamp $3.5k+2.5%rev, 3.5k–11k) vs `calcExecFull` (clamp $12k+7%rev, 12k–48k) — full-time ~3-4×, summed per exec by tier in `calcExecComp`. Monthly auto-growth (team/capacity/brand) now gates on `_x_fulltime` only; promotions excluded from `bestAction` auto-pick.
+- **CFO leverage unlock:** `calcCreditCapacity` ×1.15 (fractional) / ×1.4 (full-time); `payCost` healthy-utilization cap 0.30 → 0.42 / 0.55; `calcDebtInterest` business rate ×0.9 / ×0.8. "Leverage harder and safer."
+- **Growth tied to OPM:** `actionCashCost` scaling raised (up to 5× with business level) on repeatable marketing/ops actions — cash alone can't fund growth, forcing productive use of credit lines.
+- **Tax efficiency tightened:** monthly inefficiency drag base 0.10→0.16, S-corp credit 0.07→0.10, denom profit/40k→/30k, small trust credit — profitable unstructured businesses bleed cash, rewarding S-corp/tax structure.
+- **Private banking reworked (`liquid_cash_gte` 2,000,000):** new `meetsReq` key for literal cash. Handler deposits ~85% of cash into `private_bank_balance` (earns ~5%/yr in `monthlyTick`) and draws 90% as `private_bank_loan` at ~1%/yr (charged in `calcDebtInterest`, its own bucket — not in `total_debt`, so it doesn't pollute utilization/DTI). Shown in `showAssets` (deposit) and `showDebt` (1% line); counted in net-worth/leverage/passive scoring. PE and family office decoupled from the old `private_banking` prereq.
+- **Policy fixes:** `policy_loan` draws only remaining headroom (90% of CV − existing loan balance); monthly passive-income draw capped to the same headroom. `activate_passive_income` and `policy_loan` now gate **only** on having cash value (5000 / 1000) — no stage/needs gates.
+- **Art + difficulty:** detailed inline-SVG founder portraits per archetype; Easy/Medium/Hard badges, sorted.
+- **Year-1 pacing:** `scaleActionEffects` `lvlF` curve softened (1× until ~$15k/mo, ~2.4× by $50k/mo); C-suite revenue gates raised earlier in the dev cycle.
+
 ## v0.19.1 — 2026-06-25
 **Difficulty badges on the founder picker**
 
