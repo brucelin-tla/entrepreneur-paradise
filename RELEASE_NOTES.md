@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.22.1 — 2026-06-26
+**Interactive spotlight tutorial (replaces the single scrolling popup)**
+
+- **Guided coachmark tour (`showTutorial` → `renderTutorialStep`/`tutNext`/`tutPrev`/`endTutorial`, steps in `TUTORIAL_STEPS`):** month-1 tutorial rebuilt from one scrolling popup into a 6-step spotlight walkthrough. A full-screen dim (`#tut-hole` box-shadow cutout) darkens everything except the highlighted element; each step `scrollIntoView`s its target, draws a pulsing accent border, and shows a tooltip auto-placed below/above (center fallback for tall/absent targets).
+- **Steps:** intro (centered, no cutout) → `#stats-dashboard` → `#cat-tabs` → `#action-list` → `#month-narrative` → `#confirm-actions-btn`. Original copy (the loop, dashboard, events, leverage→passive-income path, NEW badge / Achievements) preserved and distributed across the relevant highlighted areas.
+- **Controls:** Skip / Back / Next, a "Step X of N" counter, and progress dots; overlay is built and torn down dynamically (no `index.html` changes). Still gated by `state._tutorial_seen` in `renderMonth`.
+- **Note:** uses instant `scrollIntoView` (smooth no-ops in the headless preview). New CSS under "Interactive spotlight tutorial" in `css/styles.css`.
+
 ## v0.22.0 — 2026-06-26
 **First-month tutorial, end-after-Y1/Y2/Y3 messaging, action-menu UX overhaul, partial-retry mechanic, selected-action visibility, before→after credit, policy funding gate**
 

@@ -91,6 +91,24 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .skill-row .skill-name{width:70px;text-align:right}.skill-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
 .skill-fill{height:100%;border-radius:2px;background:var(--purple)}
 
+/* Interactive spotlight tutorial */
+#tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
+#tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
+#tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
+@keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
+#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6}
+#tut-tip .tut-count{font-size:0.68rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
+#tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:1rem;margin-bottom:6px}
+#tut-tip .tut-body{color:var(--text);font-size:0.84rem;line-height:1.55}
+#tut-tip .tut-nav{display:flex;gap:8px;align-items:center;margin-top:14px}
+#tut-tip .tut-skip{flex:0 0 auto;background:none;border:none;color:var(--text2);font-size:0.78rem;cursor:pointer;padding:8px 4px}
+#tut-tip .tut-spacer{flex:1}
+#tut-tip .tut-back{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-next{background:var(--accent);border:none;color:#04130d;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-dots{display:flex;gap:5px;justify-content:center;margin-top:12px}
+#tut-tip .tut-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+#tut-tip .tut-dot.on{background:var(--accent)}
+
 </style>
 </head>
 <body>
@@ -2582,6 +2600,7 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.22.1',d:'2026-06-26 13:00',n:['Tutorial reimagined as a guided walkthrough: the screen dims and each part of the game lights up one at a time — your dashboard, the action tabs, the action list, the story panel and the End Turn button — with a short explanation for each.','Step through it at your own pace with Next / Back, or skip the whole tour anytime.']},
 {v:'0.22.0',d:'2026-06-26 12:49',n:['New: a first-month tutorial explains how to play — and you can skip it anytime.','You can end your run after Year 1, 2, or 3 — you don\'t have to play all 36 months. The tutorial and the year-end checkpoint now make this clear, with an “End Here — Lock In My Final Score” option.','Action menu reworked: the most relevant group auto-opens, NEW and ↻ RETRY markers show on group headers, unselected actions float to the top, and your selected action is clearly marked and moved to the bottom so it’s out of the way.','Partial successes can now be retried: a one-time action that only partially lands stays on the menu (badged ↻ PARTIAL — RETRY) and your next attempt is far more likely to succeed.','Selected actions are now obvious — a bright SELECTED badge, glowing border and tint — and a newly-unlocked action no longer looks selected.','Credit actions now show before → after on the result (e.g. business limit $10k → $45k, utilization 60% → 13%).','Accumulation policy now unlocks only once you can fund it — you need about $50k of capacity (cash or credit) before it appears.']},
 {v:'0.21.2',d:'2026-06-26 11:42',n:['Results screen consolidated — each action is now one compact card with its outcome and inline stat “chips,” lessons trimmed to a single line. Much easier to read.','Aggressive Debt Paydown reworked: it now uses spare cash to drop your credit utilization just under 30%, and only pays down installment loans if your DTI is also high — the result screen shows the before→after numbers.','Event "preparation helped" notes now make sense — e.g. an open credit line "gives you room to act from strength," not "lowered the odds." Each safeguard is described by what it actually does.','Recession event choices are no longer generic: Play offense (borrow cheap to grab market share), Reposition to recession-proof demand, or Batten down and wait.','"Hire Your First Contractor" description clarified — delegate delivery so you can focus on revenue-generating work.']},
 {v:'0.21.1',d:'2026-06-26 11:09',n:['You now see your debrief ("What You Learned" + milestones) at the Year 1 and Year 2 checkpoints — no need to end the run to get feedback.','Your ending title now reflects how you actually played: master leverage + finance efficiency AND enjoy the lifestyle/toys to earn Freedom Architect; grind revenue while skipping leverage, passive income and tax structure and you get "The Grinder" — a high-paying job, not freedom.','The debrief now lists your milestones — what you unlocked and what\'s still on the table.','Finance milestones reordered into a clean ladder (Made It Legal → Business Banking → Creditworthy → Funding Ready → Tax-Smart → Money Engine → Tax-Free Passive Income); "Funding Ready" now means debt restructured + a clean credit file, no longer overlapping the others.','Removed a redundant credit action: "Apply for Additional Credit Lines" is now "Expand Your Credit Lines" and only appears after you\'ve opened your first business line.']},
@@ -2646,15 +2665,48 @@ startGame(){this.state._mentor_state='introduced';this.initMilestones();this.ren
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;document.getElementById('popup-container').style.display='block';},
 hidePopup(){document.getElementById('popup-container').style.display='none';},
-showTutorial(){const row=(n,t,d)=>'<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;"><div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#04130d;font-weight:800;font-size:0.8rem;display:flex;align-items:center;justify-content:center;">'+n+'</div><div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:0.88rem;">'+t+'</div><div style="font-size:0.8rem;color:var(--text2);line-height:1.5;">'+d+'</div></div></div>';
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:12px;">You have <strong>up to 36 months</strong> to build wealth and a life you love — but you don\'t have to play them all. At the end of <strong>Year 1, 2, or 3</strong> you can cash out and lock in your final score whenever you\'re ready. Here\'s the loop:</div>';
-h+=row('1','Pick one move per area','Each month choose an action in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span>, and <span style="color:var(--gold)">Finance</span> (plus Life each quarter), then tap <strong>End Turn</strong>.');
-h+=row('2','Watch your dashboard','Cash, credit, energy and Freedom sit up top. Tap any stat with an ⓘ to see the breakdown — and tap underlined terms to learn what they mean.');
-h+=row('3','Events test you','Things happen — lawsuits, opportunities, downturns. The safeguards you build ahead of time (an LLC, insurance, systems, credit) protect you when they hit.');
-h+=row('4','The winning path','Grinding revenue alone hits a ceiling. The real game: build credit, leverage <em>other people\'s money</em>, fund a cash-value policy, and turn it into passive, tax-free income. That\'s how you reach paradise.');
-h+='<div style="font-size:0.78rem;color:var(--gold);background:rgba(212,175,55,0.08);border-radius:var(--radius-sm);padding:8px 10px;margin-top:6px;">💡 New options unlock as you grow — watch for the <span class="new-badge">NEW</span> badge, and check 🏆 Achievements to see your milestones.</div>';
-h+='<div style="font-size:0.74rem;color:var(--text2);text-align:center;margin-top:10px;">Tap “Got it” (or anywhere outside) to skip and start playing.</div>';
-this.showPopup('Welcome — How to Play',h);},
+TUTORIAL_STEPS:[
+{sel:null,title:'Welcome to Entrepreneur Paradise',body:'You have <strong>up to 36 months</strong> to build wealth and a life you love — but you don\'t have to play them all. At the end of <strong>Year 1, 2, or 3</strong> you can cash out and lock in your score. Let me walk you around the screen.'},
+{sel:'#stats-dashboard',title:'Your dashboard',body:'Cash, credit, energy and <strong>Freedom</strong> live up here. Tap any stat with an ⓘ to see how it\'s calculated, and tap underlined terms to learn what they mean.'},
+{sel:'#cat-tabs',title:'Pick one move per area',body:'Each month you choose one action in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span> (plus Life each quarter). These tabs switch between them — watch for the <span class="new-badge">NEW</span> badge when fresh options unlock.'},
+{sel:'#action-list',title:'Choose your action',body:'Tap a card to select it. Grinding revenue alone hits a ceiling — the real game is to build credit, leverage <em>other people\'s money</em>, fund a cash-value policy and turn it into <strong>passive, tax-free income</strong>. That\'s how you reach paradise.'},
+{sel:'#month-narrative',title:'The story & your mentor',body:'Story beats and your mentor speak here. Events will test you — lawsuits, downturns, opportunities — and the safeguards you build ahead of time (LLC, insurance, systems, credit) are what protect you when they hit.'},
+{sel:'#confirm-actions-btn',title:'End your turn',body:'Once you\'ve picked your moves, tap here to advance the month and see your results. Check 🏆 Achievements anytime to track milestones. Now — go build your empire.'}
+],
+showTutorial(){this._tutStep=0;this.renderTutorialStep();},
+renderTutorialStep(){
+const steps=this.TUTORIAL_STEPS,i=this._tutStep,step=steps[i];
+if(!step){return this.endTutorial();}
+let ov=document.getElementById('tut-overlay');
+if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-tip"></div>';document.body.appendChild(ov);}
+const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip');
+const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>').join('');
+const backBtn=i>0?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
+const nextLabel=i===steps.length-1?'Got it':'Next';
+tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button></div><div class="tut-dots">'+dots+'</div>';
+const target=step.sel?document.querySelector(step.sel):null;
+const place=()=>{
+if(target){
+const r=target.getBoundingClientRect(),pad=8;
+hole.style.display='block';hole.classList.add('pulse');
+hole.style.top=(r.top-pad)+'px';hole.style.left=(r.left-pad)+'px';hole.style.width=(r.width+pad*2)+'px';hole.style.height=(r.height+pad*2)+'px';
+const th=tip.offsetHeight,gap=14,vh=window.innerHeight;
+let top;
+if(r.bottom+gap+th<vh-10)top=r.bottom+gap;            // below
+else if(r.top-gap-th>10)top=r.top-gap-th;             // above
+else top=Math.max(10,(vh-th)/2);                      // center fallback
+tip.style.top=top+'px';
+}else{
+hole.style.display='none';hole.classList.remove('pulse');
+tip.style.top=Math.max(10,(window.innerHeight-tip.offsetHeight)/2)+'px';
+}
+tip.style.left='50%';tip.style.transform='translateX(-50%)';
+};
+if(target){target.scrollIntoView({block:'center'});setTimeout(place,60);}else{place();}
+},
+tutNext(){this._tutStep++;this.renderTutorialStep();},
+tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},
+endTutorial(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
 showGlossary(t){this.showPopup(t,'<div style="color:var(--text);line-height:1.7;">'+(this.GLOSSARY[t]||'No definition available.')+'</div>');},
 term(w,d){return'<span class="term-link" onclick="Game.showGlossary(\''+w.replace(/'/g,"\\'")+'\')\">'+(d||w)+'</span>';},
 linkTerms(t){const terms=Object.keys(this.GLOSSARY).sort((a,b)=>b.length-a.length);for(const w of terms)t=t.replace(new RegExp('\\b'+w.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'\\b','g'),'<span class="term-link" onclick="Game.showGlossary(\''+w.replace(/'/g,"\\'")+'\')">'+w+'</span>');return t;},

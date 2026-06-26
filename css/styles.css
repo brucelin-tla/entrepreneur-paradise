@@ -83,3 +83,21 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .skill-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:0.7rem;color:var(--text2)}
 .skill-row .skill-name{width:70px;text-align:right}.skill-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
 .skill-fill{height:100%;border-radius:2px;background:var(--purple)}
+
+/* Interactive spotlight tutorial */
+#tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
+#tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
+#tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
+@keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
+#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6}
+#tut-tip .tut-count{font-size:0.68rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
+#tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:1rem;margin-bottom:6px}
+#tut-tip .tut-body{color:var(--text);font-size:0.84rem;line-height:1.55}
+#tut-tip .tut-nav{display:flex;gap:8px;align-items:center;margin-top:14px}
+#tut-tip .tut-skip{flex:0 0 auto;background:none;border:none;color:var(--text2);font-size:0.78rem;cursor:pointer;padding:8px 4px}
+#tut-tip .tut-spacer{flex:1}
+#tut-tip .tut-back{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-next{background:var(--accent);border:none;color:#04130d;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-dots{display:flex;gap:5px;justify-content:center;margin-top:12px}
+#tut-tip .tut-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
+#tut-tip .tut-dot.on{background:var(--accent)}
