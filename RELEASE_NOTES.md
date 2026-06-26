@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.19.1 — 2026-06-25
+**Difficulty badges on the founder picker**
+
+- `renderArchetypes` now reads a `difficulty` field (`Easy`/`Medium`/`Hard`) from each starting position, renders a color-coded pill badge in the card header (Easy = accent/green, Medium = gold, Hard = red), and sorts the cards easy → hard. Added `difficulty` to `starting_positions.json`: New = Easy, Established = Medium, Stuck = Hard.
+
 ## v0.19.0 — 2026-06-25
 **Stuck & Established archetypes re-enabled, late-game cost/effect scaling, C-suite auto-growth**
 
