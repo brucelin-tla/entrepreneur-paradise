@@ -28,6 +28,7 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.22.4',d:'2026-06-26 13:50',n:['Results now show before → after numbers for the stats an action moved — leads, customers, team size, brand equity, systems maturity and revenue capacity — so you can see exactly what changed.']},
 {v:'0.22.3',d:'2026-06-26 13:35',n:['Less clutter on the action screen: your mentor’s comments now appear on the monthly Results screen instead of above your choices.','Mentor is back to his original name — Marcus Webb.']},
 {v:'0.22.2',d:'2026-06-26 13:20',n:['Your selected action now jumps to the TOP of its group (was sinking to the bottom) so it stays in view.','The selected action is easier to see — brighter green fill and a stronger glow.']},
 {v:'0.22.1',d:'2026-06-26 13:00',n:['Tutorial reimagined as a guided walkthrough: the screen dims and each part of the game lights up one at a time — your dashboard, the action tabs, the action list, the story panel and the End Turn button — with a short explanation for each.','Step through it at your own pace with Next / Back, or skip the whole tour anytime.']},
@@ -563,6 +564,7 @@ resolveMonth(){
 const results=[];const _execBonuses=[];
 for(const[cat,action]of Object.entries(this.selectedActions)){
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0};
+const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
 const skillKey='skill_'+cat,skillBonus=(this.state[skillKey]||0)/200;
 const repeatCount=(this.state._action_counts||{})[action.id]||0;
 const EXEMPT_DIM=['debt_restructure','banking_relationship','fund_accumulation_policy','policy_loan','pay_down_debt','build_personal_credit'];
@@ -626,6 +628,9 @@ const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHi
 if(af.bizLim!==_cb.bizLim||(af.bizLim>0&&af.bizUtil!==_cb.bizUtil))rows.push(['Business credit limit',this.fmtMoney(_cb.bizLim),this.fmtMoney(af.bizLim)],['Business utilization',_cb.bizUtil+'%',af.bizUtil+'%']);
 if(af.persUtil!==_cb.persUtil)rows.push(['Personal utilization',_cb.persUtil+'%',af.persUtil+'%']);
 if(af.avail!==_cb.avail&&af.bizLim===_cb.bizLim)rows.push(['Personal credit available',this.fmtMoney(_cb.avail),this.fmtMoney(af.avail)]);
+// Status-bar stats this action moved directly (leads, customers, team, etc.)
+const _sbLbl={leads:'Leads',customer_base:'Customers',team_size:'Team size',brand_equity:'Brand equity',systems_maturity:'Systems maturity',revenue_capacity:'Revenue capacity'};_ro._baKeys=[];
+for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av)]);_ro._baKeys.push(k);}}
 if(rows.length)_ro.beforeAfter=rows;}
 results.push(_ro);if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
 for(const b of _execBonuses){results.push({action:{label:b.role+' Performance Bonus'},success:true,effects:{cash:-b.bonus},narrative:'Your '+b.role+' hit their targets executing “'+b.label+'” — you paid a '+this.fmtMoney(b.bonus)+' performance bonus. Great executives earn their keep.'});}
@@ -718,7 +723,7 @@ const _newMs=(this.state._milestones_new||[]).map(id=>MILES_BY_ID[id]).filter(Bo
 const _lp=this.state._lastPassive;if(_lp&&_lp.month===this.month&&_lp.amt>0)html+='<div class="fade-in" style="background:rgba(16,185,129,0.07);border:1px solid var(--accent);border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;color:var(--accent);">Tax-Free Passive Income · +'+this.fmtMoney(_lp.amt)+'</div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">Paid to you tax-free ('+this.fmtMoney(_lp.before)+' → '+this.fmtMoney(_lp.after)+'), borrowed against cash value that keeps growing ~7%/yr.</div></div>';
 // One compact card per action: title + badge, short narrative, inline effect chips, light lesson line
 for(const r of results){
-const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+this.formatStatName(k)+'</span>');}
+const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;if(r._baKeys&&r._baKeys.includes(k))continue;const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+this.formatStatName(k)+'</span>');}
 const firstLesson=r.success&&r.action.lesson&&!(this.state._lessons_shown||[]).includes(r.action.id);if(firstLesson)(this.state._lessons_shown=(this.state._lessons_shown||[])).push(r.action.id);
 html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;">'+
 '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;">'+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.success?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(r.success?'Success':'Partial')+'</span></div>'+

@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.22.4 — 2026-06-26
+**Before → after stat numbers on the Results screen**
+
+- **Status-bar stat deltas (`resolveMonth` / `showResults`):** snapshot `leads`, `customer_base`, `team_size`, `brand_equity`, `systems_maturity`, `revenue_capacity` before `applyEffects`, then add any that changed to the action's `beforeAfter` table (e.g. "Leads 0 → 10", "Team size 0 → 1"). Reuses the existing before→after block used for credit metrics.
+- **De-dup:** keys shown in the before→after table (`_ro._baKeys`) are suppressed from the effect "chips" so a stat isn't shown twice. Money stat `revenue_capacity` formats with `fmtMoney`; counts/scores render as integers. Delayed-effect actions don't show these rows until the effect actually lands (2 months later), avoiding misleading numbers.
+
 ## v0.22.3 — 2026-06-26
 **Mentor commentary moved to Results screen; mentor renamed back to Marcus Webb**
 
