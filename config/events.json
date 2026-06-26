@@ -7,13 +7,13 @@
       "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
       "base_probability": 0.11,
       "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000015,
+      "scale_factor": 0.0000005,
       "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
       "act": 2,
       "choices": [
         {
           "label": "Settle out of court",
-          "effects": { "cash": -12000, "brand_equity": -4 },
+          "effects": { "cash": -6000, "brand_equity": -4 },
           "outcome_narrative": "You settled to make it go away. Expensive, but the alternative was a year of legal fees and a court date hanging over everything."
         },
         {
@@ -35,8 +35,8 @@
       "category": "personal",
       "requires": { "monthly_revenue_gte": 6000 },
       "base_probability": 0.07,
-      "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000008,
+      "probability_scales_with": null,
+      "scale_factor": 0,
       "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
       "act": 2,
       "choices": [
@@ -93,17 +93,23 @@
       "category": "debt",
       "requires": { "monthly_revenue_gte": 8000 },
       "base_probability": 0.08,
-      "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000007,
+      "probability_scales_with": null,
+      "scale_factor": 0,
       "narrative": "Your main equipment dies / a critical bill comes due — it can't wait. You need $15,000 immediately, so you go looking for financing.",
       "act": 2,
       "choices": [
+        {
+          "label": "Cover it from cash reserves",
+          "effects": { "cash": -15000 },
+          "outcome_narrative": "You had the reserves to handle it outright — no new debt, no lender, no drama. This is exactly why you keep a buffer."
+        },
         {
           "label": "Finance it and keep moving",
           "effects": { "total_debt": 15000, "operating_expenses": 150 },
           "outcome_narrative": "You got the money and got back to work. Now to pay it back."
         }
       ],
+      "mitigated_by": ["banking_relationship", "setup_accumulation_policy"],
       "protection": {
         "shielded_when": { "personal_credit_score_gte": 680 },
         "protected_note": "Your strong credit landed a low-interest loan, approved fast. Good credit is cheapest precisely when you need money in a hurry — the years of building it just paid off.",
@@ -116,14 +122,14 @@
       "category": "litigation",
       "requires": { "monthly_revenue_gte": 25000 },
       "base_probability": 0.09,
-      "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000008,
+      "probability_scales_with": null,
+      "scale_factor": 0,
       "narrative": "A serious claim lands: a major client alleges your work cost them six figures, and they've hired an aggressive firm coming after everything you've built.",
       "act": 3,
       "choices": [
         {
           "label": "Settle to limit exposure",
-          "effects": { "cash": -25000, "brand_equity": -5 },
+          "effects": { "cash": -12000, "brand_equity": -5 },
           "outcome_narrative": "You negotiated it down and settled. A heavy hit, but you contained it and moved on."
         },
         {
@@ -136,7 +142,7 @@
         "shielded_when": { "trust_structure_not": "none" },
         "protected_note": "Your trust and asset-protection structure did its job — the wealth they came for was legally walled off and out of reach. The fortress held, exactly as designed.",
         "unprotected_note": "With no trust or asset-protection structure, everything you'd accumulated was exposed. They went after the accounts and forced personal guarantees — the wealth was sitting in the open.",
-        "unprotected_extra": { "cash": -35000, "personal_guarantee_exposure": 30000 }
+        "unprotected_extra": { "cash": -20000, "personal_guarantee_exposure": 30000 }
       },
       "mitigated_by": ["keyman_insurance"]
     },
@@ -146,7 +152,7 @@
       "requires": { "monthly_revenue_gte": 20000, "systems_maturity_lte": 40 },
       "base_probability": 0.13,
       "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.000002,
+      "scale_factor": 0.0000006,
       "narrative": "Growth outran your systems. Orders are slipping, two clients got the wrong deliverable, and your team is firefighting instead of working. You scaled the revenue but not the machine — and it's breaking.",
       "act": 2,
       "choices": [
@@ -245,7 +251,7 @@
           "outcome_narrative": "You threw cash at the balance. Painful, but every dollar you kill now saves you three in interest over the life of the loan."
         }
       ],
-      "mitigated_by": []
+      "mitigated_by": ["banking_relationship", "advanced_tax_strategy"]
     },
     {
       "id": "market_recession",
@@ -391,9 +397,9 @@
       "id": "real_estate_deal",
       "category": "opportunity",
       "requires": { "cash_gte": 15000, "personal_credit_score_gte": 680 },
-      "base_probability": 0.03,
-      "probability_scales_with": null,
-      "scale_factor": 0,
+      "base_probability": 0.05,
+      "probability_scales_with": "personal_credit_score",
+      "scale_factor": 0.0001,
       "narrative": "Your banker called with an off-market deal. A duplex in a solid neighborhood, below market value. The seller needs to close fast. It's the kind of deal that doesn't come around often.",
       "act": 3,
       "choices": [
@@ -464,7 +470,13 @@
           "outcome_narrative": "You were back at your desk the next morning. Your partner didn't say anything. The silence was louder than a fight."
         }
       ],
-      "mitigated_by": ["gym_routine", "annual_physical", "income_protection"]
+      "mitigated_by": ["gym_routine", "annual_physical"],
+      "protection": {
+        "shielded_when": { "insurance_coverage_gte": 1 },
+        "protected_note": "Your income protection covered the lost weeks and the ER bill — you could actually afford to rest. The policy did exactly what it's for.",
+        "unprotected_note": "With no coverage, the ER bill and the missed work both came straight out of pocket. Recovering cost you twice.",
+        "unprotected_extra": { "cash": -4000 }
+      }
     },
     {
       "id": "windfall_referral",
@@ -566,7 +578,7 @@
       "narrative": "A former client is suing for breach of contract and negligence. Their attorney is aggressive, and the amount they're claiming would materially hurt your business. This isn't a nuisance suit.",
       "act": 2,
       "choices": [
-        { "label": "Settle for $25,000", "effects": { "cash": -25000, "brand_equity": -5 }, "outcome_narrative": "You wrote the check. It hurt. But six months of litigation would have cost more — in money and in focus." },
+        { "label": "Settle for $15,000", "effects": { "cash": -15000, "brand_equity": -5 }, "outcome_narrative": "You wrote the check. It hurt. But six months of litigation would have cost more — in money and in focus." },
         { "label": "Fight it — hire a litigation attorney", "effects": { "cash": -15000, "energy": -20, "operating_expenses": 2000 }, "outcome_narrative": "The attorney says you have a strong case. But strong cases still take 8 months and $15K in legal fees. The stress is real." },
         { "label": "Counter-sue for damages", "effects": { "cash": -20000, "energy": -25, "brand_equity": 5 }, "outcome_narrative": "Your counter-suit caught them off guard. It'll take longer, but your attorney thinks you'll come out ahead. Maybe." }
       ],
@@ -578,7 +590,7 @@
       "requires": { "customer_base_gte": 15, "monthly_revenue_gte": 8000 },
       "base_probability": 0.08,
       "probability_scales_with": "churn_rate",
-      "scale_factor": 0.5,
+      "scale_factor": 2,
       "narrative": "Your biggest client just called. They're moving to a competitor. They were 20% of your revenue. The conversation was polite, but the damage is immediate.",
       "act": 2,
       "choices": [
@@ -630,7 +642,7 @@
       "narrative": "Full audit. Not a letter — an agent. They want three years of records, entity documentation, and explanations for every deduction you've taken. Your accountant looks worried.",
       "act": 2,
       "choices": [
-        { "label": "Hire a tax attorney and cooperate fully", "effects": { "cash": -10000, "energy": -15, "audit_risk": -15 }, "outcome_narrative": "The attorney guided every response. Six weeks of stress, but the outcome was clean — minor adjustments, no penalties. Your books are bulletproof now." },
+        { "label": "Hire a tax attorney and cooperate fully", "effects": { "cash": -7000, "energy": -15, "audit_risk": -15 }, "outcome_narrative": "The attorney guided every response. Six weeks of stress, but the outcome was clean — minor adjustments, no penalties. Your books are bulletproof now." },
         { "label": "Let your CPA handle it", "effects": { "cash": -3000, "energy": -20, "audit_risk": -5, "total_debt": 5000 }, "outcome_narrative": "Your CPA did her best. The IRS found $5,000 in disallowed deductions plus penalties. It could have been worse." },
         { "label": "Stall and provide minimal documentation", "effects": { "cash": -1000, "audit_risk": 20, "personal_credit_score": -10, "total_debt": 10000 }, "outcome_narrative": "Bad move. The IRS assessed penalties for non-cooperation. $10,000 in back taxes and your file is flagged for future scrutiny." }
       ],
@@ -699,6 +711,36 @@
         { "label": "Bring in an outside HR consultant", "effects": { "cash": -8000, "energy": -8, "systems_maturity": 8, "litigation_exposure": -10 }, "outcome_narrative": "The consultant handled it professionally. New policies in place, training scheduled, and the company is protected. Expensive but worth it." }
       ],
       "mitigated_by": ["hire_hr_manager"]
+    },
+    {
+      "id": "policy_loan_opportunity",
+      "category": "opportunity",
+      "requires": { "insurance_cash_value_gte": 20000 },
+      "base_probability": 0.05,
+      "probability_scales_with": "insurance_cash_value",
+      "scale_factor": 0.0000008,
+      "narrative": "An opportunity lands that needs cash fast — and for once, you don't need a bank. Your policy's cash value is sitting right there, ready to borrow against tax-free, no credit check, while it keeps compounding.",
+      "act": 3,
+      "choices": [
+        { "label": "Borrow against the policy and fund the deal", "effects": { "insurance_loan_balance": 15000, "investment_positions": 15000, "other_monthly_revenue": 180 }, "outcome_narrative": "You pulled tax-free cash from your policy in days — no application, no approval — and deployed it into a passive position. The cash value kept growing as if you never touched it. This is what being your own bank feels like." },
+        { "label": "Pass — keep the policy untouched", "effects": { "insurance_cash_value": 1000 }, "outcome_narrative": "You let it ride. The opportunity passed, but your cash value kept compounding. There will be other deals." }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "passive_income_milestone",
+      "category": "opportunity",
+      "requires": { "insurance_passive_loan_total_gte": 1 },
+      "base_probability": 0.06,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "You notice it on a quiet morning: money hit your account this month that you didn't work for. The tax-free policy income is real, recurring, and growing — the engine is running without you.",
+      "act": 3,
+      "choices": [
+        { "label": "Reinvest it into the policy", "effects": { "insurance_cash_value": 3000, "lifestyle_health": 3 }, "outcome_narrative": "You fed the income right back into the engine. Compounding on compounding — and a little more peace of mind." },
+        { "label": "Take the day off and enjoy it", "effects": { "energy": 15, "lifestyle_relationships": 5, "lifestyle_health": 3 }, "outcome_narrative": "You closed the laptop and spent the day with people you love, funded by money that arrived on its own. This is the whole point." }
+      ],
+      "mitigated_by": []
     }
   ]
 }

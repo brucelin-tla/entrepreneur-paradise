@@ -1,5 +1,34 @@
 # Release Notes
 
+## v0.16.0 — 2026-06-25
+**Personal/business cash routing for policies & loans + "NEW" action badges + random-events balance pass**
+
+Personal/business breakdown separation:
+- `showRevenue` → "Income Sources" split into **Business Revenue** (customers × value) and **Personal Income** (owner salary/draw + passive/asset income incl. policy).
+- `showBurn` → split into **Business** (opex, COGS, owner salary, debt service, tax reserve) and **Personal** (living, lifestyle) subtotals.
+- `showCreditScore` → "Credit Scores" split into **Personal — FICO** (300–850) and **Business — D&B** (0–100, via `calcBizCreditScore`); DTI factor now gated to `monthly_revenue > 2000` so it doesn't show absurd % at near-zero revenue. (`showCreditAvail` / `showDebt` were already split.)
+- **Policy cash value as personal asset:** new "Policy Value" row in the Personal dashboard column (links to the policy breakdown); already counted in net worth.
+- **Personal income increases personal cash:** rewrote the owner-draw in `monthlyTick` to explicitly transfer salary business→personal as income, then pay personal living/lifestyle from `personal_cash` (top-up draw only if salary fell short) — so salary surplus + passive visibly accumulate in personal cash. Verified: 5000→9302 in one month with a 6k salary.
+
+Cash-pool routing (matches the separated economy):
+- **Accumulation policy is personal:** `setup_accumulation_policy`, `fund_accumulation_policy`, `policy_loan`, `premium_financing`, `activate_passive_income` action costs now route through `payCost(..., fromPersonal=true)`; the monthly auto-fund deducts from `personal_cash` (not business) when separated; `policy_loan` proceeds pay into `personal_cash`.
+- **Loans follow LLC status:** `bank_personal_loan` and `business_term_loan` book the debt to `business_installment_debt` when `isSeparated()` (LLC+), else `_installment_debt` (personal). (`debt_restructure` already requires an LLC.)
+- **Protection bundle is a business expense:** `combined_insurance` → "Business Insurance Stack" now includes **general business liability** alongside income protection + key-person life (the one life policy the business buys). Effects `operating_expenses` 400→550, `litigation_exposure` −5→−15; cost $400→$500. Still paid from business (`operating_expenses`).
+- Verified headless: LLC loan → business debt, sole-prop loan → personal debt, policy loan → personal cash, monthly funding deducted from personal cash; no console errors.
+
+**"NEW" action badges + random-events balance pass**
+
+- **NEW badge:** `renderActions` records `_action_new_month[id] = this.month` the first time an action becomes available (added alongside the existing `_actions_seen` tracking). The card shows a green `NEW` pill + `.is-new` accent border while `_action_new_month[id] === this.month`, so it persists across re-renders that month and clears next month. New CSS `.new-badge` / `.action-card.is-new`.
+- **Events rebalance** (`config/events.json`, philosophy: revenue *gates* events, doesn't inflate bad-event probability; preparation pays off; the wealth engine is rewarded):
+  - Stopped revenue-scaling negative probability on `founder_health_crisis`, `capital_crunch`, `major_lawsuit_wealth` (→ `null`); reduced `liability_lawsuit` (1.5e-6→5e-7) and `scaling_chaos` (2e-6→6e-7) scale factors.
+  - Reduced brutal magnitudes: `liability_lawsuit` settle −12k→−6k; `major_lawsuit_wealth` settle −25k→−12k & unprotected_extra −35k→−20k; `major_lawsuit` settle −25k→−15k; `tax_audit` attorney −10k→−7k.
+  - Filled mitigation gaps: `rate_hike` `mitigated_by` []→[banking_relationship, advanced_tax_strategy]; `capital_crunch` gained a "Cover from cash reserves" choice (no debt) + `mitigated_by` [banking_relationship, setup_accumulation_policy].
+  - `health_scare`: moved `income_protection` from probability-mitigation into a proper `protection` block (shielded_when insurance_coverage≥1, else −4k ER bill).
+  - `key_client_loss` scale_factor 0.5→2 (churn-rate scaling was effectively dead). `real_estate_deal` base .03→.05 + scales with `personal_credit_score` (strong credit surfaces more deals).
+  - **Added 2 positive wealth-path events:** `policy_loan_opportunity` (borrow tax-free against cash value into a passive position — uses non-scaled stats to avoid the cash ×level blowup) and `passive_income_milestone` (celebrate recurring tax-free income). Corrects the EV asymmetry where only defensive safeguards were rewarded.
+  - `checkEvents` now collects all events that pass their roll and picks one at random (was: first in array order) — removes array-order bias, fair variety.
+  - Verified headless: all new/edited events fire and resolve (both choices) with no errors/NaN; `meetsReq` handles the new `insurance_*` requires.
+
 ## v0.15.0 — 2026-06-25
 **Personal/Business dashboard split + marketing & ops reorg + wealth-path cleanup**
 
