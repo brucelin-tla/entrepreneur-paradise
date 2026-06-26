@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.17.0 — 2026-06-25
+**Legal owner-draw model: capital account + pass-through tax + business-credit liquidation; Business gauge bars**
+
+- **Business gauge bars:** Leads / Customers / Staff now render as mini-bars at the bottom of the Business column (new `cgauge` helper), mirroring Energy / Personal Mastery / Freedom on the Personal side. Fill = `min(100, leads)`, `min(100, customers)`, `min(100, staff×10)`; the actual count is the value shown. Replaced the plain count rows; Owner Equity moved up into the financial rows.
+
+When personal cash can't cover personal expenses (separated/post-LLC), the engine no longer commingles by spending business credit directly on personal costs. Instead (`monthlyTick`):
+- **Funding waterfall:** personal cash → owner draw from business cash → **liquidate the business credit line (~6%) into business cash, then draw** → personal credit as the last resort. Each draw runs through `_recordDraw`.
+- **Capital account (owner equity):** new `capital_account` state — grows by monthly retained net income (`revenue − cogs − opex − owner_pay − pass-through tax`) and is reduced by every owner draw. Shown as an **Owner Equity** row on the Business panel and in the Income breakdown, with cumulative `_owner_draws_total`.
+- **Pass-through tax to personal, settled at year-end:** the existing year-end tax event (`showTaxEvent`/`resolveTax`, months 12/24/36) now bills the **personal** side when separated (LLC/S-Corp pass-through) — "pay from cash" gates on `personal_cash`, and cash/reserve/partial payments track `personal_tax_ytd`. The optional **Set Up Monthly Tax Reserve** action pre-funds it from `personal_cash` into `tax_reserve` (so no reserve = year-end lump; reserve = smoothed monthly). No standalone monthly tax drain (removed the earlier double-count); business-side reserve stays gated to non-separated.
+- Verified headless: business-credit liquidation funds the draw when business cash is short; draws/capital/pass-through tax all track; full 36-month run finite with no spiral; personal cash self-balances positive; no console errors.
+
 ## v0.16.0 — 2026-06-25
 **Personal/business cash routing for policies & loans + "NEW" action badges + random-events balance pass**
 
