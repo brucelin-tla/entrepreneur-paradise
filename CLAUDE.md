@@ -44,7 +44,8 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 
 ## Content / balance
 
-- Full action sets (`config/actions_*.json`): Marketing 17, Operations 20, Finance 30. One archetype enabled ("new"); the others have `"enabled": false` in `starting_positions.json`.
+- Full action sets (`config/actions_*.json`): Marketing 16, Operations 20, Finance 30. One archetype enabled ("new"); the others have `"enabled": false` in `starting_positions.json`.
+- **Tuning gotcha:** the static `monthly_revenue` value in marketing/ops action `effects` is **recomputed away every tick** by `monthlyTick` (revenue = `customer_base × revPerCust`); it only shows on the one results screen. To actually move revenue, tune `customer_base`, `brand_equity`, and `revenue_capacity` — not `monthly_revenue`. Persistent passive income uses `other_monthly_revenue` (survives the recompute).
 - Stages: Foundation → Leverage → Wealth. `getAvailableActions` hides actions above the category's current stage; stage advances per `stage_thresholds.json`.
 
 ## Code map (js/game.js — navigate by function name; line numbers shift)
