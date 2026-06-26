@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.22.5 — 2026-06-26
+**Skip redundant opening screen; mentor name consistency**
+
+- **Removed opening screen (`selectArchetype`):** archetype selection now calls `startGame()` directly instead of showing the `opening-screen` ("Month 1" + "Begin Your Journey"). The month-1 narrative beat already renders in the game screen's `month-narrative`, and the tutorial fires there, so the intermediate screen was redundant. All three archetypes have month-1 beats, so no intro content is lost; the `opening-screen` markup stays in `index.html` unused.
+- **Mentor name consistency (`config/narrative_beats.json`):** the 7 beat `mentor_line` prose references read "Bruce" while the display header reads "Marcus Webb" (from v0.22.3). Aligned the prose to "Marcus Webb". Historical `PATCH_NOTES` entries that mention "Bruce" are left intact as changelog history.
+
 ## v0.22.4 — 2026-06-26
 **Before → after stat numbers on the Results screen**
 

@@ -28,6 +28,7 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.22.5',d:'2026-06-26 14:05',n:['Faster start: picking your path now drops you straight into Month 1 — the old “Begin Your Journey” screen was redundant with the in-game tutorial and intro.','Mentor’s name is now consistent everywhere — Marcus Webb.']},
 {v:'0.22.4',d:'2026-06-26 13:50',n:['Results now show before → after numbers for the stats an action moved — leads, customers, team size, brand equity, systems maturity and revenue capacity — so you can see exactly what changed.']},
 {v:'0.22.3',d:'2026-06-26 13:35',n:['Less clutter on the action screen: your mentor’s comments now appear on the monthly Results screen instead of above your choices.','Mentor is back to his original name — Marcus Webb.']},
 {v:'0.22.2',d:'2026-06-26 13:20',n:['Your selected action now jumps to the TOP of its group (was sinking to the bottom) so it stays in view.','The selected action is easier to see — brighter green fill and a stronger glow.']},
@@ -87,10 +88,8 @@ this.state.leads=this.state.leads||0;this.state.tax_reserve=this.state.tax_reser
 this.state.personal_cash=this.state.personal_cash||0;this.state.capital_account=this.state.capital_account||0;this.state._owner_draws_total=this.state._owner_draws_total||0;this.state.personal_tax_ytd=this.state.personal_tax_ytd||0;
 this.state.skill_marketing=this.state.skill_marketing||0;this.state.skill_operations=this.state.skill_operations||0;this.state.skill_finance=this.state.skill_finance||0;
 this.month=1;this.selectedActions={};this.actionHistory=[];this.eventHistory=[];this.lifestyleHistory=[];this.monthlySnapshots=[];this._pendingTax=false;
-this.showScreen('opening-screen');
-const b=CONFIG.narrative_beats.fixed_beats.find(x=>x.month===1&&x.archetype===p.id);
-document.getElementById('opening-narrative').innerHTML=b?b.narrative.replace(/\n/g,'<br>'):p.opening_narrative.replace(/\n/g,'<br>');
-const m=document.getElementById('opening-mentor');if(b&&b.mentor_line){m.style.display='block';m.innerHTML='<div class="char-name">Marcus Webb — Mentor</div>'+b.mentor_line;}else m.style.display='none';},
+// Straight into month 1 — the opening narrative beat + tutorial both live on the game screen, so a separate opening screen was redundant.
+this.startGame();},
 
 startGame(){this.state._mentor_state='introduced';this.initMilestones();this.renderMonth();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
