@@ -85,7 +85,7 @@
     {
       "id": "business_credit_line",
       "category": "finance",
-      "stage": "leverage",
+      "stage": "foundation",
       "label": "Open Business Line of Credit",
       "description": "Get approved for a revolving credit line in the business name. Cash when you need it, interest only when you use it.",
       "lesson": "Business credit borrows on the company's name and assets — not yours. This is how you scale with other people's money without putting your household on the line.",
@@ -101,7 +101,7 @@
     {
       "id": "qualify_more_credit",
       "category": "finance",
-      "stage": "leverage",
+      "stage": "foundation",
       "label": "Apply for Additional Credit Lines",
       "description": "With your improved credit profile, apply for additional business credit lines and cards. More available credit means lower utilization and more runway.",
       "lesson": "Unused credit lowers your utilization, raises your score, and sits ready as dry powder for the right opportunity. Access is an asset even when idle.",
@@ -117,7 +117,7 @@
     {
       "id": "business_term_loan",
       "category": "finance",
-      "stage": "leverage",
+      "stage": "foundation",
       "label": "Secure a Business Term Loan",
       "description": "Apply for a fixed-rate business loan through your banking relationship. Use it to consolidate revolving debt, fund growth, or build cash reserves.",
       "lesson": "Fixed-rate, predictable debt is a planning tool. Use it to retire expensive revolving balances or fund growth you can confidently pay back — that's productive debt.",

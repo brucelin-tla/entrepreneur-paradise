@@ -582,7 +582,14 @@
         { "label": "Fight it — hire a litigation attorney", "effects": { "cash": -15000, "energy": -20, "operating_expenses": 2000 }, "outcome_narrative": "The attorney says you have a strong case. But strong cases still take 8 months and $15K in legal fees. The stress is real." },
         { "label": "Counter-sue for damages", "effects": { "cash": -20000, "energy": -25, "brand_equity": 5 }, "outcome_narrative": "Your counter-suit caught them off guard. It'll take longer, but your attorney thinks you'll come out ahead. Maybe." }
       ],
-      "mitigated_by": ["client_onboarding", "asset_protection", "form_llc"]
+      "mitigated_by": ["client_onboarding", "asset_protection", "form_llc"],
+      "protection": {
+        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+        "protected_note": "Your LLC kept the claim at the company — they couldn't reach through to your home and savings, so the hit came out of the business, not your personal life.",
+        "unprotected_note": "With no LLC, there was no wall between you and the business. The suit came straight for your personal assets and credit alongside the company.",
+        "shielded_multiplier": 0.6,
+        "unprotected_extra": { "personal_credit_score": -25, "personal_guarantee_exposure": 15000 }
+      }
     },
     {
       "id": "key_client_loss",

@@ -1,5 +1,22 @@
 # Release Notes
 
+## v0.17.2 — 2026-06-25
+**End-turn confirm + NEW-on-tabs + dashboard polish + debt-restructure result + capital-options fix**
+
+- **CFO Briefing:** hiring `hire_fractional_cfo` unlocks a `📊 CFO Briefing` button on the dashboard (`showCfoReport`). It shows **company value** (≈3× annual profit, or 0.5× revenue early), **net worth** (liquid + RE equity + business value + policy − debt), liquid assets, policy cash value, total debt, monthly profit & margin, burn·runway, DSCR; a **6-month revenue projection** (mirrors the engine's conversion/churn/capacity); and one prioritized recommendation each for **Marketing / Operations / Finance** (`_cfoMktg` / `_cfoOps` / `_cfoFin`, contextual to the player's weakest levers). The hire result points the player to it.
+- **Money-movement on result screens:** `policy_loan` now sets a dynamic narrative showing amount + personal cash before → after and adds `cash` to the effect list. Monthly passive income is stored (`_lastPassive` {amt, before, after, month}) in the tick and rendered as its own "Tax-Free Passive Income — Received" block in `showResults` (before → after).
+- **Policy mechanics spelled out:** `showCreditAvail` policy section now notes cash value grows ~7%/yr (compounds even while borrowed), loan outstanding accrues ~5%/yr, and the cumulative loan is netted from the death benefit at death (never repaid from pocket). (Rates were already correct: `×1.0057/mo` ≈ 7%/yr growth, `×1.0041/mo` ≈ 5%/yr loan.)
+- **Event protection legibility:** new `_safeguardName()` maps shield ids/conditions to friendly names. `resolveEvent` now shows **"Protected — {safeguard}"** plus the damage avoided (the `unprotected_extra` it dodged, or the `shielded_multiplier` reduction); when unprotected it shows **"How to prepare next time: {safeguard}"**. The mitigated-by note on the event screen names the actions that lowered the odds.
+- **Lawsuit prep:** added a `protection` block to `major_lawsuit` (`shielded_when` LLC+ → `shielded_multiplier 0.6`, `unprotected_extra` credit/PG hit), so an LLC now cuts a major lawsuit's *damage*, not just its probability — fixing "got sued and couldn't prepare against it" (the prep actions were already reachable; the damage just wasn't reducible).
+- **Tax extension no longer hits credit:** removed the `personal_credit_score −15` from `resolveTax`'s `extend` path (a tax extension isn't reported to the bureaus); it still adds the deferred tax to debt, `audit_risk +20`, and the monthly interest/penalty. Updated the choice label.
+- **End-turn confirmation:** `confirmActions` now checks selected vs active categories; if fewer than all are chosen it `window.confirm`s ("…N/total selected. End the month anyway?") listing the missing categories, and aborts if you cancel.
+- **NEW badge on category tabs:** new `scanNewActions()` (called in `renderMonth` before the tabs) marks newly-available actions across ALL active categories up-front into `_action_new_month`; `categoryHasNew(c)` drives a `NEW` pill on each `cat-tab` for the month a fresh option appears there.
+
+- **Dashboard:** moved **Credit Score** (personal) and **D&B Score** (business) to the top row of each column, above Cash; renamed the **Loans** row to **Debt** on both sides.
+- **`debt_restructure` result now shows actual numbers:** the deferred `applyDebtRestructure` builds one combined narrative from the stored amounts (`dr.lim`, `dr.moveAmt`, `dr.cashLoan`) + the revolving→installment swap, e.g. *"opened a $15,000 business line at 0%; shifted $12,000 of personal balances onto your business credit; pulled $6,250 in working cash."* The handler also adds `cash` / `business_credit_limit` / `business_credit_used` to the result effect-list.
+- **Capital-options fix:** `business_credit_line`, `qualify_more_credit`, `business_term_loan` moved from leverage → **foundation stage** (their prereqs already gate them), so they're usable *before* `debt_restructure`. The hide-once-available logic now only fires when `debt_restructure` is genuinely usable (`getAvailableActions` checks the real action's stage/prereqs/affordability), so you always have at least one capital option.
+- Verified: capital options visible at foundation with an LLC; debt-restructure result narrative + effects show real amounts; dashboard reorder/rename render; no console errors.
+
 ## v0.17.1 — 2026-06-25
 **Bug fixes for the separated-cash regressions + balance pass**
 
