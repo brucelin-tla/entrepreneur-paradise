@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.17.1 — 2026-06-25
+**Bug fixes for the separated-cash regressions + balance pass**
+
+- **Staff no longer vanish:** the payroll-layoff check now runs *after* this month's revenue and counts ALL available credit (personal + business), only laying off if you genuinely can't make payroll (was checking pre-revenue and could fire immediately). Root cause of disappearing staff was also an event (`market_recession` "cut expenses") combined with the next item.
+- **`operating_expenses` / `cogs` can never go negative:** clamped `≥0` in `applyEffects`. Negative opex was free money (`cash += revenue − opex`) — e.g. a −$3,000 opex event drove it to −$2,600.
+- **IUL funding fixed + made aggressive:** the monthly contribution is folded into the owner-draw (`personalExp`, credited `×0.98`) so it actually funds from the business — previously the auto-fund read `personal_cash` (~$0 early) and silently skipped. Now scales with revenue: `min(15% revenue, businessLevel×5000)`. (Cash value: stuck at ~$3k → ~$70k by month 12 in testing.)
+- **Bigger owner draw / personal income:** `owner_pay` auto-scales to `min(operating profit, max(living+1500, 25% revenue))` every month (not just after S-Corp). Pre-revenue $0; once profitable it covers living + the IUL with real surplus accumulating in `personal_cash`.
+- **`debt_restructure` stays comprehensive + de-duplicates the menu:** restored the full play (0% business line `12000×cf` + installment paydown + shift personal balances onto it + `5000×cf` working cash). Once it's available (finance at leverage stage + LLC + score ≥600), `getAvailableActions` hides the now-redundant `bank_personal_loan` / `business_term_loan` / `business_credit_line` / `qualify_more_credit`.
+- **Event scaling pass:** `scaleEventEffects` now scales cash/revenue `×min(6,level)`, opex/cogs/total_debt `×min(3,level)`, plus a **never-fatal cap** — a single event's negative cash hit can't exceed ~60% of everything you could tap (cash + personal cash + all credit). (Verified: a raw −$100k event capped to −$6k for a small player.)
+- Verified: `bank_personal_loan` routing correct (pre-LLC personal installment, post-LLC business — installment excluded from utilization). Staff stick and grow; IUL grows fast; owner pay/personal cash scale; no negative opex; full 36-month runs (new + stuck) finite/stable; no console errors.
+
 ## v0.17.0 — 2026-06-25
 **Legal owner-draw model: capital account + pass-through tax + business-credit liquidation; Business gauge bars**
 
