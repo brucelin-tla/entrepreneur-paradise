@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.22.3 — 2026-06-26
+**Mentor commentary moved to Results screen; mentor renamed back to Marcus Webb**
+
+- **Mentor → Results (`renderMonth` / `showResults`):** the recurring character/mentor line no longer renders in `#character-line` on the action screen (kept hidden). It's stashed in `this._pendingCharLine` and rendered at the top of the monthly Results screen as a gold-accent `narrative-box`, reducing clutter above the action choices.
+- **Name revert:** display name reverted "Bruce — Mentor" → "Marcus Webb — Mentor" across opening, milestone, fixed-beat, and recurring lines (`getCharLine`, `mentorMilestoneLine`, `selectArchetype`); `config/characters.json` mentor name updated to match.
+
 ## v0.22.2 — 2026-06-26
 **Selected action floats to top + brighter highlight**
 
