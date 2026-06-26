@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.19.0 — 2026-06-25
+**Stuck & Established archetypes re-enabled, late-game cost/effect scaling, C-suite auto-growth**
+
+- **Archetypes restored (`starting_positions.json`):** removed `enabled:false` from `stuck` and `established`.
+  - **Stuck** (hard, recoverable): re-tuned for a survivable-but-hard dig-out — `cash 7000`, `available_credit 6000`, `total_debt 27000` (cards 17k / collections 7k / personal loan 3k), `personal_credit_score 540`, sole-prop, `living_expenses 2200`, `churn 0.10`, `customer_base 22` / `brand_equity 22` (~$3.8k real revenue), `revenue_capacity 7000`. The credit→LLC→`debt_restructure` sequence reaches Finance Leverage stage (~655 credit) by month 5–6 with positive cash; ignoring it bleeds out via the underwater credit-penalty spiral. (`locked_until` is dead config — gating is the global `stage_thresholds.json` + `stage_overrides`.)
+  - **Established** (medium): `customer_base 85→105` so recomputed revenue (~$36k/mo) matches the "$480k/year" narrative; finance starts foundation but immediately promotes to Leverage (meets global thresholds). Blind spots intact: litigation 45, audit 30, key-person 75, LLC (not S-corp), no insurance/asset protection.
+- **Late-game balance:** new `actionCashCost(a)` scales repeatable Marketing/Operations action costs up to 4× with `calcBusinessLevel()` (one-time and Finance actions unchanged); wired through `canAfford`, `getLockedReason`, the card cost tag, the needs-credit hint, and the `resolveMonth` charge. `scaleActionEffects` now also scales `leads`/`customer_base` by a business-level factor (up to ~3×) and `revenue_capacity` cap 2.5→3, so bigger spend yields bigger impact.
+- **C-suite auto-growth (`monthlyTick`):** with `_coo_hired`, capacity grows (~900×level/mo), systems +1, key-person −1, and auto-hires staff (+payroll) when `revenue > team×6000`; with `_cro_hired`, leads (+5×level), capacity (+600×level) and brand +1 each month — on top of their auto-picked actions.
+
 ## v0.18.0 — 2026-06-25
 **C-suite executives, Board autopilot, Family Office & Legacy investments, billionaire lifestyle, asset visibility, 600-point score**
 
