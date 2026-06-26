@@ -264,19 +264,19 @@
       "act": 2,
       "choices": [
         {
-          "label": "Cut expenses aggressively",
-          "effects": { "operating_expenses": -3000, "team_size": -1, "energy": -10, "systems_maturity": -5 },
-          "outcome_narrative": "You cut deep. One contractor let go, subscriptions cancelled, office lease renegotiated. It hurts, but you'll survive the winter."
+          "label": "Play offense — borrow cheap, grab market share",
+          "effects": { "total_debt": 6000, "customer_base": 9, "monthly_revenue": 3500, "brand_equity": 10, "leads": 8, "energy": -10 },
+          "outcome_narrative": "While competitors went dark, you got loud — funded with the bank's money, not your own. You scooped up their abandoned customers at the cheapest acquisition cost you'll ever see. Recessions transfer market share to whoever has the nerve and the capital to act."
         },
         {
-          "label": "Double down on marketing",
-          "effects": { "cash": -3000, "customer_base": 5, "monthly_revenue": 2000, "brand_equity": 5 },
-          "outcome_narrative": "While competitors went silent, you got loud. Market share when others are scared is the cheapest kind."
+          "label": "Reposition to recession-proof demand",
+          "effects": { "cash": -2500, "brand_equity": 6, "customer_base": 2, "churn_rate": -0.03, "energy": -8 },
+          "outcome_narrative": "You reframed the offer around what clients can't cut even in a downturn — the must-haves, not the nice-to-haves. Slower, but the customers you keep are far stickier now."
         },
         {
-          "label": "Hold steady, conserve cash",
-          "effects": { "cash": -1000, "monthly_revenue": -2000, "energy": -5 },
-          "outcome_narrative": "You white-knuckled it. Revenue dipped but didn't collapse. The cash reserve bought you time to wait for recovery."
+          "label": "Batten down — cut to the core and wait",
+          "effects": { "operating_expenses": -3000, "team_size": -1, "energy": -10, "systems_maturity": -5, "brand_equity": -3 },
+          "outcome_narrative": "You cut deep: a contractor let go, subscriptions killed, the lease renegotiated. You'll survive the winter — but you're playing defense while bolder operators take your customers."
         }
       ],
       "mitigated_by": ["business_credit_line", "build_offer"]

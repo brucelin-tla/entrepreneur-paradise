@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.21.2 — 2026-06-26
+**Consolidated results screen, smarter Aggressive Debt Paydown, sensible event mitigation notes + richer recession choices**
+
+- **Results screen consolidation (`showResults`):** one compact card per action — title + Success/Partial badge, short narrative, effects as inline pill "chips" (instead of vertical effect-lists), and lessons as a single light line (first-time only). Milestone/passive banners tightened. No horizontal overflow on mobile.
+- **Aggressive Debt Paydown rework:** new `_debtPaydownPlan()` + `calcDTI()`. Spends ~60% of liquid cash to pay revolving down to just under 30% utilization (math accounts for the freed limit, so it lands ~29% without overshooting). Only pays installment loans if DTI > 30%. `_dyn_narrative` shows before→after utilization (and DTI when loans are paid); card cost-tag estimates the deploy or shows "already healthy." Config description/lesson updated to teach utilization-first.
+- **Event mitigation notes (`_mitigationNote`):** replaced the hardcoded "…lowered the odds — softens the blow" with a per-safeguard phrase map describing what each safeguard actually does (credit line → "room to act from strength," clean books → "quick to answer and hard to dispute," etc.). Opportunity events lead with "You're positioned to seize this."
+- **Recession choices reworked (`market_recession`):** three distinct strategies — Play offense (borrow cheap, grab share — on-theme OPM), Reposition to recession-proof demand, Batten down and wait — with richer, scaled effects.
+- **Copy:** `hire_first_contractor` description clarified (delegate delivery to focus on revenue-generating work).
+
 ## v0.21.1 — 2026-06-26
 **Checkpoint debrief, play-style-aware ending titles (The Grinder), debrief milestones, finance milestone rework, credit-action de-dup**
 
