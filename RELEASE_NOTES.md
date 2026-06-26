@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.22.2 — 2026-06-26
+**Selected action floats to top + brighter highlight**
+
+- **Selected → top (`renderActions` group sort):** flipped the in-group sort so the selected action sorts to the **top** of its direction group (`return sb-sa`) instead of the bottom. Keeps the active choice in view instead of pushing it under the fold.
+- **Brighter selected style (`.action-card.selected`):** fill `rgba(16,185,129,0.12)→0.2`, glow ring `0.35→0.5` and drop shadow `0.22→0.3` for clearer visibility.
+
 ## v0.22.1 — 2026-06-26
 **Interactive spotlight tutorial (replaces the single scrolling popup)**
 
