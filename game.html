@@ -1198,12 +1198,12 @@ window.EMBEDDED_CONFIG = {
       "id": "qualify_more_credit",
       "category": "finance",
       "stage": "foundation",
-      "label": "Apply for Additional Credit Lines",
-      "description": "With your improved credit profile, apply for additional business credit lines and cards. More available credit means lower utilization and more runway.",
-      "lesson": "Unused credit lowers your utilization, raises your score, and sits ready as dry powder for the right opportunity. Access is an asset even when idle.",
+      "label": "Expand Your Credit Lines",
+      "description": "You already have a business line open — now stack more on top. With a track record, apply to raise limits and add cards. More available credit means lower utilization and more dry powder.",
+      "lesson": "Once you have one line, each additional one lowers your utilization, raises your score, and sits ready as dry powder for the right opportunity. Access is an asset even when idle.",
       "cash_cost": 200,
       "energy_cost": 6,
-      "prerequisites": { "personal_credit_score_gte": 650, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "prerequisites": { "needs": ["business_credit_line"], "personal_credit_score_gte": 650, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
       "effects": { "business_credit_profile": "building", "personal_credit_score": 5 },
       "success_rate": 0.6,
       "failure_effects": { "business_credit_limit": 3000, "personal_credit_score": -2 },
@@ -2329,6 +2329,14 @@ window.EMBEDDED_CONFIG = {
       "epilogue": "Your net worth statement doesn't look like most people's. It's not a savings account — it's a portfolio of leveraged assets, each one producing income, appreciating in value, and sheltered behind entities and trusts that your attorney built like a fortress.\n\nYou used the bank's money to build your wealth. Every dollar of debt is backed by an asset worth more. Every asset is protected by a structure designed to survive anything short of an act of God.\n\nThe banker who once made you nervous now sends you deal flow. The credit score that used to feel like a cage is now a tool you wield with precision. You learned the game — and now you're winning it."
     },
     {
+      "id": "the_grinder",
+      "title": "The Grinder",
+      "subtitle": "You built a high-paying job, not freedom",
+      "requires_dominant": "business_revenue",
+      "description": "Big revenue, but little leverage, passive income, or tax structure — the whole point of the game, missed.",
+      "epilogue": "The revenue looks great on paper. You hit numbers most founders only talk about.\n\nBut look closer: almost all of it ran through your own two hands. No real leverage, no policy throwing off tax-free income, no structure shielding what you earned. The day you stop, the money stops.\n\nYou didn't build wealth — you built a high-paying job with your name on the door. The whole point was to make other people's money and smart structure do the heavy lifting, so the business pays you whether you show up or not.\n\nThe good news: every dollar of that revenue is fuel. Point it at leverage, a cash-value policy, and tax efficiency next time, and the same effort buys freedom instead of just income."
+    },
+    {
       "id": "burnout_billionaire",
       "title": "Burnout Billionaire",
       "subtitle": "You won the game and lost the plot",
@@ -2563,10 +2571,10 @@ const MILESTONES=[
 {id:'op_systems',cat:'operations',title:'Systemized',desc:'Systems maturity passed 50.',mentor:'Documented systems mean the work doesn’t live in your head anymore. That’s real leverage.',check:s=>(s.systems_maturity||0)>=50},
 {id:'op_team',cat:'operations',title:'Built a Team',desc:'Grew to a team of five.',mentor:'Five people rowing with you. Your job now is to steer, not to row.',check:s=>(s.team_size||0)>=5},
 {id:'op_free',cat:'operations',title:'Runs Without You',desc:'Key-person dependency dropped below 20.',mentor:'The business barely needs you now. That’s when it stops being a job and becomes an asset you could sell.',check:s=>(s.key_person_dependency==null?100:s.key_person_dependency)<=20},
-{id:'fi_legit',cat:'finance',title:'Made It Legal',desc:'Formed an LLC (or beyond).',mentor:'An LLC shields everything you own from the business. You’re a real legal entity now.',check:(s,g)=>g.isSeparated()},
+{id:'fi_legit',cat:'finance',title:'Made It Legal',desc:'Formed an LLC and opened a business bank account.',mentor:'An LLC shields everything you own from the business, and a real business account ends commingling. You’re a legitimate entity now.',check:(s,g)=>g.isSeparated()},
+{id:'fi_banked',cat:'finance',title:'Business Banking',desc:'Opened your first credit in the company’s name.',mentor:'Credit in the business’s name, not yours — the first step to scaling on the company’s own balance sheet instead of your household.',check:s=>(s.business_credit_limit||0)>0||['building','established'].includes(s.business_credit_profile)},
 {id:'fi_credit',cat:'finance',title:'Creditworthy',desc:'Personal credit score hit 700.',mentor:'700 credit. You just unlocked cheaper money than most business owners can ever get.',check:s=>(s.personal_credit_score||0)>=700},
-{id:'fi_banked',cat:'finance',title:'Business Banking',desc:'Established real business credit.',mentor:'Credit in the business’s name, not yours. The bank sees a company worth lending to.',check:s=>s.business_credit_profile==='established'||(s.business_credit_limit||0)>=25000},
-{id:'fi_funding_ready',cat:'finance',title:'Funding Ready',desc:'LLC formed, business bank account open, debt restructured, and a clean credit file — no collections, negatives disputed off. A lender-ready profile.',mentor:'This is exactly what a lender wants to see: a real entity, a business bank account, debt restructured, and a clean report — no collections, disputes resolved. You’re fundable now — capital is there when you want to deploy it.',check:(s,g)=>g.isSeparated()&&(s._completed_actions||[]).includes('open_business_account')&&(s._completed_actions||[]).includes('debt_restructure')&&!(((s.debt_breakdown||{}).collections||0)>0)},
+{id:'fi_funding_ready',cat:'finance',title:'Funding Ready',desc:'Debt restructured and a clean credit file — no collections, negatives disputed off. The lender-ready profile.',mentor:'This is what a lender wants to see: debt restructured, utilization healthy, and a clean report with no collections. You’re fundable now — capital is there when you want to deploy it.',check:(s,g)=>g.isSeparated()&&(s._completed_actions||[]).includes('debt_restructure')&&!(((s.debt_breakdown||{}).collections||0)>0)},
 {id:'fi_tax',cat:'finance',title:'Tax-Smart Structure',desc:'Elected S-Corp (or beyond).',mentor:'S-Corp — you legally stopped overpaying the IRS. That’s money that now compounds for you.',check:s=>['s_corp','c_corp','multi_entity'].includes(s.entity_structure)},
 {id:'fi_engine',cat:'finance',title:'Money Engine Built',desc:'Built $5k+ of policy cash value.',mentor:'Your cash-value policy is funded — the tax-free engine the wealthy quietly run their whole lives on.',check:s=>(s.insurance_cash_value||0)>=5000},
 {id:'fi_passive',cat:'finance',title:'Tax-Free Passive Income',desc:'Switched on passive, tax-free income.',mentor:'The crown jewel: money arriving every month without you working, and tax-free. This is what the whole game was pointing at.',check:s=>!!s._passive_income_active}
@@ -2574,6 +2582,7 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.21.1',d:'2026-06-26 11:09',n:['You now see your debrief ("What You Learned" + milestones) at the Year 1 and Year 2 checkpoints — no need to end the run to get feedback.','Your ending title now reflects how you actually played: master leverage + finance efficiency AND enjoy the lifestyle/toys to earn Freedom Architect; grind revenue while skipping leverage, passive income and tax structure and you get "The Grinder" — a high-paying job, not freedom.','The debrief now lists your milestones — what you unlocked and what\'s still on the table.','Finance milestones reordered into a clean ladder (Made It Legal → Business Banking → Creditworthy → Funding Ready → Tax-Smart → Money Engine → Tax-Free Passive Income); "Funding Ready" now means debt restructured + a clean credit file, no longer overlapping the others.','Removed a redundant credit action: "Apply for Additional Credit Lines" is now "Expand Your Credit Lines" and only appears after you\'ve opened your first business line.']},
 {v:'0.21.0',d:'2026-06-26 10:49',n:['New: Milestones! Hit key moments across Marketing, Operations and Finance — first customer, funnel built, first hire, runs without you, made it legal, tax-free passive income, and more. Each pops on your results screen and your mentor Bruce calls it out.','New: 🏆 Achievements panel on your dashboard — see every milestone grouped by category, what you\'ve unlocked, and what\'s still ahead (X/15).','Finance milestone "Funding Ready": LLC formed, business bank account open, debt restructured, and a clean credit file (no collections / negatives disputed off) — the lender-ready profile.','Freedom score rebalanced: hiring your C-suite and building a team/board now properly raise your Freedom (Operator → Director → CEO → Chairman), instead of being stuck as Manager.']},
 {v:'0.20.0',d:'2026-06-26 08:41',n:['C-suite now starts FRACTIONAL (part-time, affordable) and can be promoted to FULL-TIME — full-timers cost 3-4× and actively build the business, but you can only carry that payroll with strong margins and smart leverage. The "can\'t afford great people yet" ceiling is the lesson.','Growth is now tied to using OPM: marketing & operations actions cost more as you scale, so you must fund growth with credit — build your credit lines and you scale fast; rely on cash alone and you stall.','Tax efficiency matters more: a profitable business with no S-Corp/structure bleeds noticeably more cash each month — electing S-Corp and optimizing taxes frees the cash to afford growth and people.','Your CFO now lets you leverage harder AND safer: more credit capacity, cheaper debt, and a higher safe utilization — full-time CFO unlocks the most.','Private Banking reworked: requires $2M cash, then you deposit it (earning ~5%/yr) and borrow against it at just 1%/yr — your money earns while near-free money funds your growth. Shown in your Assets and Debt breakdowns.','Bug fix: policy loans can no longer exceed 90% of your cash value (the monthly tax-free income respects the same cap).','Tax-free passive income and policy loans now only require having cash value in the policy — no other gates.','New detailed founder artwork on the home screen, and difficulty badges (Easy/Medium/Hard).','Re-tuned so the business and net worth grow at a realistic pace in year one instead of ballooning.']},
 {v:'0.19.1',d:'2026-06-25 22:35',n:['The founder picker now shows a difficulty badge on each option (Easy / Medium / Hard) and lists them easy → hard: New Business Owner (Easy), Established Business Owner (Medium), Stuck Business Owner (Hard)']},
@@ -3233,6 +3242,7 @@ html+='<div class="checkpoint-label">COMPOSITE SCORE</div><div class="checkpoint
 html+='<div class="radar-wrap"><canvas id="cp-radar" width="260" height="260"></canvas></div>';
 const labels={net_worth:'Net Worth',business_revenue:'Revenue',passive_income:'Passive',leverage_efficiency:'Leverage',tax_efficiency:'Tax Eff.',lifestyle:'Lifestyle'};
 html+='<div class="stats-grid">'+Object.entries(scores).map(([k,v])=>'<div class="stat-card"><div class="stat-value" style="color:var(--accent)">'+Math.round(v)+'</div><div class="stat-label">'+(labels[k]||k)+'</div></div>').join('')+'</div>';
+html+=this.buildDebrief();
 if(this.month<36)html+='<button class="btn-primary" onclick="Game.continueFromCheckpoint()">Keep Going — Year '+(year+1)+'</button>';
 html+='<button class="btn-outline" onclick="Game.endGame()" style="margin-top:8px;">Cash Out — End My Run</button>';
 document.getElementById('checkpoint-content').innerHTML=html;this.showScreen('checkpoint-screen');
@@ -3282,6 +3292,10 @@ const learned=items.filter(i=>i.done),missed=items.filter(i=>!i.done&&sa(i.ids))
 let h='<div class="epilogue-box" style="text-align:left;margin-top:16px;"><div style="font-size:1.1rem;font-weight:700;color:var(--gold);margin-bottom:4px;">What You Learned</div><div style="color:var(--text2);font-size:0.85rem;margin-bottom:10px;">You put '+learned.length+' core wealth principles into practice'+(missed.length?', and left '+missed.length+' on the table.':'.')+'</div>';
 if(learned.length){h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Put Into Practice</div>';for(const i of learned)h+='<div style="margin-bottom:7px;font-size:0.9rem;"><span style="color:var(--accent);font-weight:600;">&#10003; '+i.name+'</span> — '+i.got+'</div>';}
 if(missed.length){h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">Left On The Table <span style="text-transform:none;opacity:0.7;">(you saw these but didn\'t take them)</span></div>';for(const i of missed)h+='<div style="margin-bottom:7px;font-size:0.9rem;opacity:0.9;"><span style="color:var(--gold);font-weight:600;">&#9675; '+i.name+'</span> — '+i.miss+'</div>';}
+const haveM={};(s._milestones_achieved||[]).forEach(m=>haveM[m.id]=1);const gotM=MILESTONES.filter(m=>haveM[m.id]),missM=MILESTONES.filter(m=>!haveM[m.id]);
+h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;border-top:1px solid var(--border);padding-top:10px;">🏆 Milestones — '+gotM.length+'/'+MILESTONES.length+' unlocked</div>';
+if(gotM.length)h+='<div style="font-size:0.85rem;line-height:1.7;">'+gotM.map(m=>'<span style="color:var(--accent);">&#127942; '+m.title+'</span>').join(' &nbsp;·&nbsp; ')+'</div>';
+if(missM.length)h+='<div style="font-size:0.8rem;line-height:1.7;margin-top:6px;opacity:0.7;"><span style="color:var(--gold);">Still on the table:</span> '+missM.map(m=>m.title).join(' &nbsp;·&nbsp; ')+'</div>';
 h+='</div>';return h;},
 endGame(){
 this.showScreen('end-screen');const scores=this.calculateFinalScores(),arch=this.determineArchetype(scores),composite=this.calcComposite(scores);
@@ -3337,7 +3351,25 @@ const taxFreeBonus=passiveMonthly>0?Math.min(20,passiveMonthly/300):0;
 return{net_worth:Math.min(100,Math.max(0,(nw/250000)*100)),business_revenue:Math.min(100,(s.monthly_revenue||0)/600),passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.round(lev),tax_efficiency:Math.min(100,Math.max(0,30+(['s_corp','c_corp','multi_entity'].includes(s.entity_structure)?20:0)+((s.trust_structure&&s.trust_structure!=='none')?15:0)-(s._audit_events||0)*10+((0.25-(s.tax_rate||0.25))*200)+taxFreeBonus)),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15)};},
 // Strong lifestyle gate: a wrecked life caps the final score (no "paradise" if you burned out). lifestyle 65+ = full, ~32 = half, floored at 0.3.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
-determineArchetype(scores){let best=CONFIG.archetypes.win_archetypes[0],bs=-1;for(const a of CONFIG.archetypes.win_archetypes){let sc=0;if(a.requires_dominant&&scores[a.requires_dominant])sc=scores[a.requires_dominant];if(a.requires_secondary&&scores[a.requires_secondary])sc+=scores[a.requires_secondary]*0.5;if(a.requires_low)sc+=scores[a.requires_low]<30?20:-30;if(sc>bs){bs=sc;best=a;}}return best;},
+determineArchetype(scores){const A=id=>CONFIG.archetypes.win_archetypes.find(a=>a.id===id)||CONFIG.archetypes.win_archetypes[0];
+const nw=scores.net_worth||0,rev=scores.business_revenue||0,pas=scores.passive_income||0,lev=scores.leverage_efficiency||0,tax=scores.tax_efficiency||0,life=scores.lifestyle||0;
+const moneyStrong=Math.max(nw,rev,pas,lev)>=45;
+const efficient=pas>=45&&lev>=40&&tax>=45; // mastered the point: OPM leverage + finance efficiency
+// 1. Won the money, wrecked the life
+if(life<30&&moneyStrong)return A('burnout_billionaire');
+// 2. Brute-forced revenue, skipped leverage/passive/tax — missed the whole point
+if(rev>=50&&lev<35&&pas<35&&tax<55)return A('the_grinder');
+// 3. The full win: efficient leverage + finance AND the lifestyle/toys
+if(efficient&&life>=50)return A('freedom_architect');
+// 4. Passive income is the standout (the crown jewel)
+if(pas>=40&&pas>=lev&&pas>=nw&&pas>=rev)return A('cashflow_king');
+// 5. Leverage / net worth via OPM is the standout
+if(Math.max(lev,nw)>=40&&Math.max(lev,nw)>=rev&&Math.max(lev,nw)>=pas)return A('leverage_master');
+// 6. Real revenue engine with at least some structure
+if(rev>=40)return A('empire_builder');
+// 7. Weak/partial run — name it by the single strongest area, leaning to the lesson
+const top=Math.max(nw,rev,pas,lev,life);
+if(top===life)return A('freedom_architect');if(top===pas)return A('cashflow_king');if(top===rev)return A('the_grinder');return A('leverage_master');},
 
 drawRadarOn(canvas,scores){const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-30;const lb=['Net Worth','Passive','Leverage','Tax Eff.','Lifestyle','Revenue'],vl=[scores.net_worth,scores.passive_income,scores.leverage_efficiency,scores.tax_efficiency,scores.lifestyle,scores.business_revenue],n=6;ctx.clearRect(0,0,w,h);for(let ring=1;ring<=4;ring++){ctx.beginPath();for(let i=0;i<=n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,rr=r*ring/4;i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}ctx.strokeStyle='#2d3a50';ctx.lineWidth=1;ctx.stroke();}for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));ctx.strokeStyle='#2d3a50';ctx.stroke();ctx.fillStyle='#9ca3b4';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lb[i],cx+(r+20)*Math.cos(a),cy+(r+20)*Math.sin(a));}ctx.beginPath();for(let i=0;i<=n;i++){const idx=i%n,a=(Math.PI*2*idx/n)-Math.PI/2,v=(vl[idx]/100)*r;i===0?ctx.moveTo(cx+v*Math.cos(a),cy+v*Math.sin(a)):ctx.lineTo(cx+v*Math.cos(a),cy+v*Math.sin(a));}ctx.fillStyle='rgba(16,185,129,0.2)';ctx.fill();ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.stroke();for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,v=(vl[i]/100)*r;ctx.beginPath();ctx.arc(cx+v*Math.cos(a),cy+v*Math.sin(a),3,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();}},
 

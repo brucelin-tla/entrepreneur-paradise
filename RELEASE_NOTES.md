@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.21.1 — 2026-06-26
+**Checkpoint debrief, play-style-aware ending titles (The Grinder), debrief milestones, finance milestone rework, credit-action de-dup**
+
+- **Checkpoint debrief:** `showCheckpoint` now renders `buildDebrief()` at the Year 1/2 checkpoints, so the "What You Learned / Left On The Table" feedback shows without ending the run.
+- **Ending titles by play style (`determineArchetype` rewrite):** selects by score profile + neglect rather than a single dominant dimension. New `the_grinder` archetype (config) for high-revenue/low-leverage-passive-tax runs ("a high-paying job, not freedom"). `freedom_architect` is now the full-win pinnacle (efficient passive+leverage+tax AND lifestyle ≥50); `burnout_billionaire` for money-but-lifestyle<30; cashflow_king / leverage_master / empire_builder for the respective standouts; weak-run fallback by single strongest area.
+- **Debrief milestones:** `buildDebrief` appends a "🏆 Milestones — X/15 unlocked" section (unlocked + still-on-the-table), shown on both the end screen and the checkpoints.
+- **Finance milestones reworked + reordered:** ladder is now Made It Legal → Business Banking → Creditworthy → Funding Ready → Tax-Smart → Money Engine → Tax-Free Passive Income. `fi_funding_ready` now keys only on its unique signals (separated + `debt_restructure` + no `debt_breakdown.collections`), removing overlap with `fi_legit`/`fi_banked`; `fi_legit` now covers LLC+bank account, `fi_banked` is the first-business-credit step.
+- **Credit action de-dup:** `qualify_more_credit` relabeled "Expand Your Credit Lines" and gated `needs:['business_credit_line']` so it no longer appears alongside "Open Business Line of Credit" as a duplicate.
+
 ## v0.21.0 — 2026-06-26
 **Milestones/achievements system, Achievements panel, Funding Ready milestone, freedom-score rebalance**
 

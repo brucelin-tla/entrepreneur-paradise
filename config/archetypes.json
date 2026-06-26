@@ -35,6 +35,14 @@
       "epilogue": "Your net worth statement doesn't look like most people's. It's not a savings account — it's a portfolio of leveraged assets, each one producing income, appreciating in value, and sheltered behind entities and trusts that your attorney built like a fortress.\n\nYou used the bank's money to build your wealth. Every dollar of debt is backed by an asset worth more. Every asset is protected by a structure designed to survive anything short of an act of God.\n\nThe banker who once made you nervous now sends you deal flow. The credit score that used to feel like a cage is now a tool you wield with precision. You learned the game — and now you're winning it."
     },
     {
+      "id": "the_grinder",
+      "title": "The Grinder",
+      "subtitle": "You built a high-paying job, not freedom",
+      "requires_dominant": "business_revenue",
+      "description": "Big revenue, but little leverage, passive income, or tax structure — the whole point of the game, missed.",
+      "epilogue": "The revenue looks great on paper. You hit numbers most founders only talk about.\n\nBut look closer: almost all of it ran through your own two hands. No real leverage, no policy throwing off tax-free income, no structure shielding what you earned. The day you stop, the money stops.\n\nYou didn't build wealth — you built a high-paying job with your name on the door. The whole point was to make other people's money and smart structure do the heavy lifting, so the business pays you whether you show up or not.\n\nThe good news: every dollar of that revenue is fuel. Point it at leverage, a cash-value policy, and tax efficiency next time, and the same effort buys freedom instead of just income."
+    },
+    {
       "id": "burnout_billionaire",
       "title": "Burnout Billionaire",
       "subtitle": "You won the game and lost the plot",
