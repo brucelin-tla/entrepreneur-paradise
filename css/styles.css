@@ -37,7 +37,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .cat-tab{flex-shrink:0;padding:8px 16px;border-radius:20px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all 0.2s;white-space:nowrap}
 .cat-tab.active{background:var(--accent);color:white;border-color:var(--accent)}.cat-tab.done{background:var(--accent2);color:white;border-color:var(--accent2);opacity:0.7}
 .action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
-.action-card:active{transform:scale(0.98)}.action-card.selected{border-color:var(--accent);background:var(--bg3)}
+.action-card:active{transform:scale(0.98)}.action-card.selected{border-color:var(--accent);border-width:2px;background:rgba(16,185,129,0.12);box-shadow:0 0 0 2px rgba(16,185,129,0.35),0 4px 16px rgba(16,185,129,0.22);border-left:5px solid var(--accent)}
 .action-card.locked{opacity:0.4;cursor:not-allowed}.action-card.completed-action{opacity:0.3;cursor:not-allowed}
 .action-card h4{font-size:0.95rem;margin-bottom:4px}.action-card p{font-size:0.82rem;color:var(--text2);line-height:1.5;margin-bottom:8px}
 .action-costs{display:flex;gap:8px;font-size:0.75rem;flex-wrap:wrap}
@@ -48,7 +48,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .cost-recurring{background:rgba(139,92,246,0.15);color:var(--purple)}
 .repeat-badge{font-size:0.7rem;color:var(--gold);margin-left:6px;font-weight:400}
 .new-badge{display:inline-block;background:var(--accent);color:#04210f;font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.6px}
-.action-card.is-new{border-color:var(--accent)}
+.action-card.is-new{border-color:var(--border)}
 .btn-primary{width:100%;padding:14px;border:none;border-radius:var(--radius);background:var(--accent);color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed}.btn-primary:active:not(:disabled){transform:scale(0.98);background:var(--accent2)}
 .btn-secondary{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:8px}

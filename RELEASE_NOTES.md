@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.22.0 — 2026-06-26
+**First-month tutorial, end-after-Y1/Y2/Y3 messaging, action-menu UX overhaul, partial-retry mechanic, selected-action visibility, before→after credit, policy funding gate**
+
+- **Tutorial:** `showTutorial()` shown on month 1 (`renderMonth`, gated by `state._tutorial_seen`), dismissable via the popup's Got it/overlay. Explains the monthly loop, dashboard, events, and the leverage→passive-income path; notes you can end after Year 1/2/3.
+- **End-the-run clarity:** tutorial intro reworded ("up to 36 months… cash out at the end of Year 1, 2, or 3"). `showCheckpoint` cash-out button → "🏁 End Here — Lock In My Final Score" with an explainer line; month-36 checkpoint shows "See Your Final Score →".
+- **Action-menu UX:** default-open group now prioritizes a group with an unselected partial → unselected NEW → any unselected action (was "first group with avail"). Group headers show **↻ RETRY** and **NEW** markers (computed over unselected avail). Within a group, sort = unselected (partial → new → urgency) with the **selected action pushed to the bottom**.
+- **Partial-retry mechanic:** one-time actions only enter `_completed_actions` (and lock) on full success; a partial sets `_partial_actions[id]`. Retry gets `+0.35` success and the flag clears on success. Cards show a "↻ PARTIAL — RETRY" badge; partials sort to the top of their group.
+- **Selected-action visibility:** `.action-card.selected` now has a 2px accent border + glow + tint + left bar, plus a "✓ SELECTED" badge in the card title. `.action-card.is-new` border reverted to normal (a NEW card no longer looks selected).
+- **Before→after credit on results:** `resolveMonth` snapshots business credit limit/utilization, personal utilization, and available credit per action; `_ro.beforeAfter` renders a compact before→after table on the result card for any action that moved them.
+- **Accumulation policy gate:** `setup_accumulation_policy` now requires `cash_gte: 50000` (cash + available credit) so it only appears once the player can realistically fund the ~$50k/yr it wants; description/lesson updated; `getLockedReason` shows "Need $50,000 in cash or credit".
+
 ## v0.21.2 — 2026-06-26
 **Consolidated results screen, smarter Aggressive Debt Paydown, sensible event mitigation notes + richer recession choices**
 
