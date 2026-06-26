@@ -2,6 +2,23 @@
   "version": "1.0.0",
   "actions": [
     {
+      "id": "hire_cro",
+      "category": "marketing",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Hire a Chief Revenue Officer",
+      "description": "Bring on a seasoned CRO to own growth. They don't just advise — every month they execute the highest-leverage marketing move for you automatically, so you stop running the funnel by hand. A real salary, but you buy back your time.",
+      "lesson": "The point of a business is to make it run without you. A great executive hire is the ultimate leverage: you trade salary for freedom and the business keeps growing while you work on it, not in it.",
+      "cash_cost": 6000,
+      "energy_cost": 8,
+      "prerequisites": { "monthly_revenue_gte": 30000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "brand_equity": 8, "key_person_dependency": -10, "_cro_hired": true },
+      "success_rate": 0.85,
+      "failure_effects": { "brand_equity": 3, "_cro_hired": true },
+      "narrative_success": "Your new CRO is in the chair. From now on Marketing runs itself — each month they pick and execute the smartest growth play while you focus on capital and lifestyle. Their pay scales with the company (a market salary plus performance bonuses).",
+      "narrative_failure": "The CRO is hired but ramping slowly — the first month was mostly onboarding. They'll be picking your growth moves from here. Their pay scales with the company."
+    },
+    {
       "id": "build_offer",
       "category": "marketing",
       "stage": "foundation",

@@ -2,6 +2,23 @@
   "version": "1.0.0",
   "actions": [
     {
+      "id": "hire_coo",
+      "category": "operations",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Hire a Chief Operating Officer",
+      "description": "Hand the machine to a COO. They run delivery, systems, and the team — and each month they automatically execute the operations move that most reduces your dependence on you. The business stops breaking when you step away.",
+      "lesson": "Key-person dependency is the silent killer of business value — a company that needs you isn't an asset, it's a job. A COO turns your operation into a system that runs (and sells) without you.",
+      "cash_cost": 6000,
+      "energy_cost": 8,
+      "prerequisites": { "monthly_revenue_gte": 30000, "team_size_gte": 3 },
+      "effects": { "systems_maturity": 10, "key_person_dependency": -18, "_coo_hired": true },
+      "success_rate": 0.85,
+      "failure_effects": { "systems_maturity": 4, "key_person_dependency": -6, "_coo_hired": true },
+      "narrative_success": "Your COO has the wheel. Operations now runs itself — each month they execute the smartest systems-and-delivery move so the business holds together without you. Their pay scales with the company (a market salary plus performance bonuses).",
+      "narrative_failure": "The COO is onboard but still learning the operation. They'll be driving your ops moves from here. Their pay scales with the company."
+    },
+    {
       "id": "do_work_yourself",
       "category": "operations",
       "stage": "foundation",

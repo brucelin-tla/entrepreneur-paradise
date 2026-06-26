@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.18.0 — 2026-06-25
+**C-suite executives, Board autopilot, Family Office & Legacy investments, billionaire lifestyle, asset visibility, 600-point score**
+
+- **Executive hires (CRO / COO / CFO):** new prestige hires — `hire_cro` (Marketing menu), `hire_coo` (Operations menu), `hire_cfo` (Finance menu), each in a new "Executive Team" ADIR group. Gated on revenue + entity/team. The CRO and COO auto-pre-select the best action in their category each month (`_autoPicked`, badged "CRO pick"/"COO pick", overridable); the CFO stars the best Finance move (`_cfoPick`, "CFO ★") without picking it. Picks come from `bestAction(cat)` → new `_actionValue(a,cat)` scorer (projects scaled effect impact + explicit high values for handler-based golden-path moves like passive income/policy/PE/real estate; discounts credit-building once credit is high).
+- **Focus Mode:** when all three execs are hired, `_setupActionMenu()` drops Marketing & Operations from `_activeCats`, lands the player on Finance, and `renderActions` shows an executive-team banner with the auto-picks; `toggleFocus()` restores the full menu. The pick's accordion group auto-opens so its badge is visible.
+- **Scaling exec compensation + bonuses:** removed the flat salary from the hire effects. `calcExecPerHead()` = `clamp($8k + 6% of monthly revenue, $8k, $35k)`; `calcExecComp()` × heads, applied each `monthlyTick` as a delta to `operating_expenses` (flows through burn/EBITDA/tax/profit). Successful exec auto-picks pay a performance bonus (3% of revenue, $1k–$15k) shown as its own result card.
+- **Board of Directors capstone:** `establish_board` (needs all 3 hires + `activate_passive_income`) sets `_board_active`. Adds a "🏛 Let the Board run this month" button (`boardRunMonth`) that auto-fills the CFO's Finance pick + best lifestyle (`_bestLifestyle`) and resolves the month in one tap.
+- **Family Office & Legacy investments (new finance ADIR group):** `private_banking` (sweeps idle cash into a yield portfolio), `private_equity_fund` (large illiquid position, marked up, distributions), `setup_family_office` (coordination + ~5%/yr portfolio appreciation in tick), `dynasty_trust` (lawsuit/estate-tax protection, lower tax rate, legacy). resolveMonth handlers route capital into `investment_positions` + `other_monthly_revenue`.
+- **Billionaire lifestyle options:** `private_jet`, `superyacht_charter`, `private_estate`, `art_collection`, `philanthropic_foundation_major` added to `lifestyle_options.json`.
+- **Asset visibility:** new `Investments` row on the personal dashboard (shown when `investment_positions>0`) → `showAssets()` popup (gross assets − debt = net worth, dynasty-trust note). CFO Briefing now gated on `_cfo_hired` (not just `hire_fractional_cfo`) and includes an Investments line.
+- **NEW badge relocation:** removed from the category tabs (`renderCategoryTabs`); now rendered on the specific accordion group header (`renderActions`, `gNew`) that contains a newly-unlocked action.
+- **Composite score out of 600:** `calcComposite` now `×6` instead of `×10` (six dimensions × 100); checkpoint and end-screen labels updated to "/ 600". Still weighted (revenue weight 0) with the lifestyle gate.
+
 ## v0.17.2 — 2026-06-25
 **End-turn confirm + NEW-on-tabs + dashboard polish + debt-restructure result + capital-options fix**
 
