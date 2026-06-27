@@ -127,7 +127,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 <div id="whats-new"></div>
 </div>
 <div id="opening-screen" class="screen"><div class="month-header"><h2>Month 1</h2></div><div id="opening-narrative" class="narrative-box"></div><div id="opening-mentor" class="narrative-box" style="border-left-color:var(--gold);"></div><button class="btn-primary" onclick="Game.startGame()">Begin Your Journey</button></div>
-<div id="game-screen" class="screen"><div class="month-header"><h2 id="month-label">Month 1</h2><span class="stage-badge" id="stage-badge">Foundation</span></div><div id="month-narrative" class="narrative-box"></div><div id="character-line" class="narrative-box" style="border-left-color:var(--gold);display:none;"></div><div id="stats-dashboard" class="stats-grid"></div><div id="bars-section" class="bars-section"></div><div id="step-indicator" class="step-indicator"></div><div class="category-tabs" id="cat-tabs"></div><div id="action-list"></div><div class="bottom-bar"><button class="btn-primary" id="confirm-actions-btn" onclick="Game.confirmActions()">End Turn (0/3 actions)</button></div></div>
+<div id="game-screen" class="screen"><div class="month-header"><h2 id="month-label">Month 1</h2><span class="stage-badge" id="stage-badge">Foundation</span></div><div id="month-narrative" class="narrative-box"></div><div id="character-line" class="narrative-box" style="border-left-color:var(--gold);display:none;"></div><div id="stats-dashboard" class="stats-grid"></div><div id="bars-section" class="bars-section"></div><div id="step-indicator" class="step-indicator"></div><div class="category-tabs" id="cat-tabs"></div><div id="action-list"></div><div class="bottom-bar"><button class="btn-primary" id="confirm-actions-btn" onclick="Game.primaryActionBtn()">Next →</button><button class="btn-secondary" id="endturn-now-btn" style="display:none;margin-top:6px;" onclick="Game.confirmActions()">End turn now</button></div></div>
 <div id="lifestyle-screen" class="screen"><div class="lifestyle-header"><h3>Quarterly Life Check-In</h3><p>Business isn't everything. What are you doing for the rest of your life?</p></div><div id="lifestyle-scores" class="stats-grid"></div><div id="lifestyle-list"></div><div class="bottom-bar"><button class="btn-primary" id="lifestyle-btn" disabled onclick="Game.confirmLifestyle()">Choose a Lifestyle Action</button><button class="btn-secondary" onclick="Game.skipLifestyle()" style="margin-top:6px;">Skip This Quarter</button></div></div>
 <div id="event-screen" class="screen"><div class="month-header"><h2 id="event-month-label">Event</h2></div><div id="event-dashboard" class="stats-grid"></div><div id="event-box" class="event-box"></div><div id="event-choices"></div></div>
 <div id="result-screen" class="screen"><div class="month-header"><h2 id="result-month-label">Results</h2></div><div id="results-content"></div><div class="bottom-bar"><button class="btn-primary" onclick="Game.nextMonth()">Continue to Next Month</button></div></div>
@@ -2724,6 +2724,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.21',d:'2026-06-27 21:15',n:[
+'The bottom button now guides you through your turn: until all three moves are set it reads “Next: Marketing/Operations/Finance →” and walks you to the next action you still need to pick, with a small “End turn now” option if you want to skip ahead. Once all three are chosen it becomes “Confirm Actions →”.',
+'When your business first unlocks, a quick 2-step walkthrough goes over your business finances first (cash, revenue, credit, expenses, debt, owner equity), then your operational engine — Leads → Customers → Staff (and Culture).',
+]},
 {v:'0.23.20',d:'2026-06-27 20:00',n:[
 'Health now matters: the more you run yourself down (low energy + neglected Body), the easier you get sick — illness/burnout events scale with neglect, so healthy founders are barely exposed and run-down ones get hit often. No more random blowups.',
 'Insurance pays real cash claims: with the Business Insurance Stack, a health crisis reimburses most of the medical bill AND pays a tax-free critical/chronic-illness lump sum (a few months of living costs) — so getting sick while insured can leave you cash-positive instead of broke. The stack now spells out its critical & chronic illness cover.',
@@ -2982,7 +2986,17 @@ if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div 
 const tip=document.getElementById('tut-tip');ov.style.pointerEvents='auto';ov.style.touchAction='none';tip.style.pointerEvents='auto';
 tip.innerHTML='<div class="tut-title">'+title+'</div><div class="tut-body">'+body+'</div><div class="tut-nav"><div class="tut-spacer"></div><button class="tut-next" onclick="Game._closeSpotlight()">Got it</button></div>';
 const target=sel?document.querySelector(sel):null;setTimeout(()=>this._positionSpotlight(target,null),60);setTimeout(()=>this._positionSpotlight(target,null),380);},
-_closeSpotlight(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
+_closeSpotlight(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();this._seq=null;},
+// A short multi-step guided spotlight (e.g. the business-unlock walk: financials first, then Leads/Customers/Staff). Steps: [{sel,t,b}].
+_spotlightSeq(steps,idx){this._seq=steps;this._seqIdx=idx||0;this._renderSeqStep();},
+_seqNext(){if(!this._seq)return;this._seqIdx++;if(this._seqIdx>=this._seq.length)return this._closeSpotlight();this._renderSeqStep();},
+_renderSeqStep(){const step=this._seq[this._seqIdx];if(!step)return this._closeSpotlight();
+let ov=document.getElementById('tut-overlay');
+if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-hit"></div><div id="tut-tip"></div>';document.body.appendChild(ov);ov.addEventListener('touchmove',function(e){if(e.target.id==='tut-overlay'||e.target.id==='tut-hole')e.preventDefault();},{passive:false});}
+const tip=document.getElementById('tut-tip');ov.style.pointerEvents='auto';ov.style.touchAction='none';tip.style.pointerEvents='auto';
+const last=this._seqIdx===this._seq.length-1,dots=this._seq.map((s,k)=>'<span class="tut-dot'+(k===this._seqIdx?' on':'')+'"></span>').join('');
+tip.innerHTML='<div class="tut-count">Step '+(this._seqIdx+1)+' of '+this._seq.length+'</div><div class="tut-title">'+step.t+'</div><div class="tut-body">'+step.b+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game._closeSpotlight()">Skip</button><div class="tut-spacer"></div><button class="tut-next" onclick="Game._seqNext()">'+(last?'Got it':'Next →')+'</button></div><div class="tut-dots">'+dots+'</div>';
+const target=step.sel?document.querySelector(step.sel):null;setTimeout(()=>this._positionSpotlight(target,null,true),60);setTimeout(()=>this._positionSpotlight(target,null,false),420);setTimeout(()=>this._positionSpotlight(target,null,false),900);},
 tutNext(){this._tutStep++;this.renderTutorialStep();},
 tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},
 endTutorial(){this._tutActive=false;this._tutFinalPending=false;const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
@@ -3029,12 +3043,15 @@ _maybeShowUnlockTip(){const s=this.state;if(this._tutActive)return;if(!s._tips_s
 const _rec=this.calcEnergyRecovery();
 const tips=[
 {k:'energy_low',show:(s.energy<=45),sel:'#dash-energy',t:'⚡ Watch Your Energy',b:'Heads up — your energy is getting low. Most moves cost energy but it only recovers <strong>+'+_rec+'/mo</strong>, so stacking high-energy actions every month will drain you. Below <strong>30</strong> your moves get <strong>~15% weaker</strong>, and the more run-down you are the <strong>easier you get sick</strong> (a medical/burnout event that costs cash and time). Recharge by investing in your 🏖️ <strong>Life</strong> (raises Mastery → faster recovery), and carry <strong>health/income protection insurance</strong> so a claim is covered when it happens.'},
-{k:'business',show:this.isSeparated(),sel:'#biz-col',t:'🔓 Business Unlocked',b:'Your business is now its own legal entity. This side of your dashboard tracks its money — cash, revenue, credit, customers and culture — kept separate from your personal finances. It pays you a salary/draw into your personal account.'},
+{k:'business',show:this.isSeparated(),sel:'#biz-col',seq:[
+{sel:'#biz-money',t:'🔓 Business Unlocked — the Money',b:'Your business is now its own legal entity, with finances kept <strong>separate</strong> from your personal side. Read these first: <strong>cash</strong>, <strong>revenue</strong>, <strong>credit</strong>, monthly <strong>expenses</strong>, <strong>debt</strong>, and your <strong>owner equity</strong> (your stake in it). This is the health of the engine — and it pays you a salary/draw into your personal account.'},
+{sel:'#biz-ops',t:'Leads → Customers → Staff',b:'And this is what drives the money: <strong>Leads</strong> come in from Marketing, convert into paying <strong>Customers</strong>, and your <strong>Staff</strong> delivers the work (watch team <strong>Culture</strong> once you hire). Growing revenue means moving these up — more leads, better conversion, and the capacity to deliver.'}
+]},
 {k:'life',show:(this._activeCats||[]).includes('lifestyle'),sel:'#life-btn',t:'🏖️ Life Check-In Unlocked',b:'Tap this 🏖️ icon for a Life action. Investing in your health, relationships, mind and experiences builds <strong>Personal Mastery</strong> — which keeps your energy recovering so you can keep acting. Don\'t neglect it.'},
 {k:'epic',show:this._reveal('epic'),sel:'#epic-btn',t:'⭐ Epic Life Membership',b:'A done-for-you wealth concierge is now available — this <strong>⭐</strong> icon. It\'s powerful and runs the financial playbook for you. If you\'re still learning, try finishing a run <em>without</em> it first.'},
 {k:'networth',show:this._reveal('networth'),sel:'#dash-networth',t:'📈 Net Worth Is Now Tracked',b:'Your dashboard now shows <strong>Net Worth</strong> right here — everything you own minus everything you owe, with a month-over-month trend. This is the real scoreboard of the wealth you\'re building.'},
 ];
-for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_shown.push(tip.k);if(document.querySelector(tip.sel))this._spotlightTip(tip.sel,tip.t,tip.b);else this.showPopup(tip.t,tip.b);return;}}},
+for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_shown.push(tip.k);if(tip.seq){if(document.querySelector(tip.seq[0].sel))this._spotlightSeq(tip.seq,0);else this.showPopup(tip.seq[0].t,tip.seq[0].b);}else if(document.querySelector(tip.sel))this._spotlightTip(tip.sel,tip.t,tip.b);else this.showPopup(tip.t,tip.b);return;}}},
 // C-suite compensation scales with the company. Fractional (part-time) is affordable; full-time A-players cost ~3-4x — only sustainable with strong margins + leverage. That gap is the "can't afford good people" ceiling.
 calcExecFrac(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(3500,Math.min(11000,3500+r*0.025)));},
 calcExecFull(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(12000,Math.min(48000,12000+r*0.07)));},
@@ -3151,7 +3168,7 @@ P+=subLab('Capacity')+gauge('Energy',en,enC,enSub,'dash-energy');
 if(this._reveal('mastery'))P+='<div onclick="Game.showMastery()" style="cursor:pointer;">'+gauge('Personal Mastery',mas,masC,'ⓘ')+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('Freedom',fr,frC,this.getFounderRole());
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
-B+=subLab('Money');
+B+='<div id="biz-money">'+subLab('Money');
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',"Game.showCreditAvail()");
@@ -3161,7 +3178,7 @@ B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.sh
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),"Game.showDebt()");
 B+=row('Owner Equity',m(s.capital_account||0,(s.capital_account||0)>=0?'var(--text)':'var(--red)'),"Game.showRevenue()");
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
-B+=subLab('Operations')+cgauge('Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('Culture',Math.round(_cul),_cul,_culC):'');
+B+='</div><div id="biz-ops">'+subLab('Operations')+cgauge('Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
@@ -3400,7 +3417,7 @@ h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpic
 this.showPopup('⭐ Epic Life Membership',h);},
 enrollEpicLife(plan){if(this.state._epic_life)return this.hidePopup();this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.state._epic_enroll_pending=true;this.hidePopup();this.renderCategoryTabs();},
 cancelEpicLife(){this.state._epic_enroll_pending=false;this.hidePopup();this.renderCategoryTabs();},
-switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();},
+switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
 
 isActionOutgrown(a){const s=this.state,sk=s['skill_'+a.category]||0;if(a.stage==='foundation'&&sk>40&&this.getStage(a.category)!=='foundation')return true;
 const rules={customer_acquisition_sprint:sk>30&&s.customer_base>20,build_delivery_foundation:sk>30&&(s.team_size||0)>1,build_content_presence:sk>40&&s.brand_equity>40,automate_tasks:(s.systems_maturity||0)>30};return rules[a.id]||false;},
@@ -3583,7 +3600,15 @@ document.getElementById('epilogue').textContent='The business couldn\'t meet its
 document.getElementById('end-save').innerHTML='<button class="btn-primary" onclick="location.reload()">Start Over</button>';},
 
 selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(this.selectedActions[cat]&&this.selectedActions[cat].id===id){delete this.selectedActions[cat];if(this._paymentMethods)delete this._paymentMethods[id];}else{this.selectedActions[cat]=action;if(!this._paymentMethods)this._paymentMethods={};this._paymentMethods[action.id]=this._paymentMethod||'cash';this._tutNotify('select');const ac=this._activeCats||CATS,ci=ac.indexOf(cat);if(!this._tutActive&&ci<ac.length-1&&!this.selectedActions[ac[ci+1]]){setTimeout(()=>{this.currentCategory=ac[ci+1];this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();window.scrollTo({top:document.getElementById('step-indicator').offsetTop-10,behavior:'smooth'});this._tutReposition();},200);return;}}this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();this._tutReposition();},
-updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;btn.disabled=false;btn.textContent=count<total?'End Turn ('+count+'/'+total+' actions)':'Confirm Actions →';},
+// The next active category that still needs a pick — preferring one OTHER than where you are now, so the button reads like "go forward".
+_nextUnselectedCat(){const ac=this._activeCats||CATS,start=ac.indexOf(this.currentCategory);for(let i=1;i<=ac.length;i++){const c=ac[(start+i)%ac.length];if(c!==this.currentCategory&&!this.selectedActions[c])return c;}return this.selectedActions[this.currentCategory]?null:this.currentCategory;},
+// Primary bottom button: until all three moves are set it walks you to your next action; once they're all set it ends the turn.
+primaryActionBtn(){const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory)return this.switchCategory(nxt);return this.confirmActions();},
+updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]),done=ac.length-unsel.length;btn.disabled=false;
+if(!unsel.length){btn.textContent='Confirm Actions →';if(sec)sec.style.display='none';return;}
+const nxt=this._nextUnselectedCat();
+if(nxt&&nxt!==this.currentCategory){btn.textContent='Next: '+CL[nxt]+' →';if(sec)sec.style.display='block';}
+else{btn.textContent='End turn now ('+done+'/'+ac.length+') →';if(sec)sec.style.display='none';}},
 confirmActions(){const ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;if(count<total){const missing=ac.filter(c=>!this.selectedActions[c]).map(c=>CL[c]).join(', ');if(!window.confirm("You haven't chosen an action for: "+missing+" ("+count+"/"+total+" selected). End the month anyway?"))return;}this.resolveMonth();},
 
 coverShortfall(amount){const s=this.state;let need=Math.max(0,Math.round(amount));const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));if(bizAvail>0&&need>0){const d=Math.min(bizAvail,need),fee=Math.round(d*0.03);s.business_credit_used=(s.business_credit_used||0)+d+fee;s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}return need;},

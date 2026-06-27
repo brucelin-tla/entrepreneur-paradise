@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.23.21 — 2026-06-27
+**Turn-navigator button, guided business-unlock walkthrough**
+
+- **Primary button as navigator (`primaryActionBtn`, `updateConfirmButton`, `_nextUnselectedCat`):** until all active categories have a pick, the bottom button reads `Next: [category] →` and calls `switchCategory` to the next unselected category (wraps); a secondary `#endturn-now-btn` ("End turn now") appears as an early-exit. All selected → `Confirm Actions →`. `switchCategory` now also calls `updateConfirmButton` (was leaving the label stale). Button markup in index.html points at `Game.primaryActionBtn()`.
+- **Business-unlock guided walk (`_spotlightSeq`/`_seqNext`/`_renderSeqStep`):** the one-off `business` unlock tip is now a 2-step sequence — Step 1 `#biz-money` (financials), Step 2 `#biz-ops` (Leads → Customers → Staff / Culture). The business column's money + operations blocks are wrapped in `#biz-money` / `#biz-ops` in `renderStats`. Reusable sequence runner (Step N of M, Next/Got it/Skip) built on `_positionSpotlight`.
+
 ## v0.23.20 — 2026-06-27
 **Health-neglect illness risk, insurance cash claims, half-cost retries, taken-before markers, cost-text fixes**
 
