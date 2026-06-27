@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.23.0 — 2026-06-26
+**Personal Mastery system, Company Culture, C-suite AI overhaul, Creditworthiness scoring dimension, Executive Assistant & General Counsel, private-banking deals, full stat transparency**
+
+- **Personal Mastery (`lifeDims`/`calcPersonalMastery`/`calcEnergyRecovery`):** Life reorganized into five dimensions (Body/Mind/Spirit/Heart/Luxury); mastery = their average and drives monthly energy recovery (~10/mo at low mastery → ~22 at high, firm-but-recoverable). Diminishing returns on Life gains (`_scaleLifestyleEffects`). New tiered Life actions (company retreat, dream car/home, world sabbatical, leadership coaching, nutrition). Dashboard gauge + `showMastery` popup; Life check-in regrouped by theme.
+- **End-screen showcase + leaderboard badges (`buildLifeShowcase`/`calcBadges`):** "The Life You Built" panel; badges of honor stored on leaderboard entries and shown in `renderLBList`/`showRunDetail`.
+- **Company Culture (`company_culture` stat):** culture actions — `company_retreat` (Life), `build_benefits_package`, `grant_stock_incentives` (needs C-Corp), `reincorporate_c_corp`. `checkEvents` scales people-event probability inversely with culture (~3× at low culture); two new high-stakes culture-gated events (`team_mutiny`, `star_defection`). Culture gauge on the Business dashboard.
+- **Credit rework:** `build_personal_credit` disputes resolve over 2–3 months (delayed via `_credit_repair`, `credit_negatives`), clearing to ~650 then drifting toward a utilization-based ceiling. New `build_dnb_profile` + reworked `calcBizCreditScore` (credibility markers + tradelines + history).
+- **C-suite AI & UX:** execs offer their own promotions; CFO follows a priority ladder (separate → protect → tax → D&B → wealth) in `bestAction`. Unified "Your Team's Plan" panel + single `runTeamMonth` button (retires the focus-toggle/board-button split). Life-action cadence: board = monthly, full C-suite = every other month, else quarterly.
+- **Executive Assistant & General Counsel:** `hire_executive_assistant` auto-manages utilization/credit/D&B/tax-reserve each month; `hire_general_counsel` mitigates 7 legal/HR events. **Milestone perks** (`_perks`): Fully Protected softens bad-event cash ~20%, Tax-Smart trims tax drag ~30%, Funding Ready +12% credit capacity.
+- **Scoring:** new 7th radar dimension **Creditworthiness** (personal score + D&B + low utilization), weights rebalanced to sum 1.0. Milestones +3 (Referral Engine, Strong Culture, Business Credit Built → 18, balanced 6/6/6); debrief items added for the new systems. **Full stats dump** (`_statSnapshot`/`buildStatsDump`) on the end screen and every leaderboard entry — every tracked scalar incl. hidden flags + derived values.
+- **Private banking:** new `pre_ipo_allocation` opportunity (pre-IPO + private-credit deals) gated on being a private-banking client. Fixed `scaleEventEffects` so opt-in deal *returns* (investment_positions/real_estate_equity/other_monthly_revenue) scale with the cash cost.
+- **Earlier in this cycle:** save/resume runs, full action-history log, before→after on results & event outcomes, 7 action consolidations, accumulation-policy merge, event-choice number hiding (deals still show the offer), leads now cumulative (≥ customers), contractor → "Work With a Vendor Contractor".
+
 ## v0.22.7 — 2026-06-26
 **Save/resume in-progress runs, action-history tracking, event before→after**
 

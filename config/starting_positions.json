@@ -11,6 +11,7 @@
       "initial_state": {
         "cash": 7000,
         "personal_credit_score": 540,
+        "credit_negatives": 6,
         "business_credit_profile": "none",
         "available_credit": 6000,
         "total_debt": 27000,
