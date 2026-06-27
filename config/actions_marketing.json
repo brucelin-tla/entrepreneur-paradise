@@ -206,7 +206,7 @@
       "lesson": "Before you can afford a sales team or a funnel, you are the sales team. Founder-led selling is the cheapest, highest-converting channel you have early on — and every call teaches you what actually makes people buy.",
       "cash_cost": 0,
       "energy_cost": 14,
-      "prerequisites": {},
+      "prerequisites": { "leads_gte": 1 },
       "effects": { "customer_base": 5, "sales_conversion": 2, "brand_equity": 2 },
       "success_rate": 0.85,
       "failure_effects": { "customer_base": 1 },

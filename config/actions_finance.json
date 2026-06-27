@@ -386,7 +386,7 @@
       "cash_cost": 0,
       "energy_cost": 4,
       "one_time": true,
-      "prerequisites": {},
+      "prerequisites": { "needs": ["establish_business"] },
       "effects": {},
       "success_rate": 0.95,
       "failure_effects": {},

@@ -1,5 +1,15 @@
 # Release Notes
 
+## v0.23.24 — 2026-06-28
+**Action-list polish, per-turn energy summary, early-game action balance**
+
+- **Selected card stays in place:** dropped the selected-to-top sort in `renderActions` (order now retry → NEW → urgency); selected just gets the highlight where it sits.
+- **Per-turn energy summary:** new `_turnEnergy()` sums energy across all picked moves (exec/team picks excluded); the selected card shows "This turn: X of Y energy committed · Z left", gold ≤15 left, red "over budget!" when negative.
+- **Removed CFO-forecast upsell** line from `actionPreview` (returned plain `curLine`).
+- **Removed Read-more collapse:** descriptions are concise now, so the `.desc-clamp`/`.desc-toggle`/`_toggleDesc` collapse was removed; descriptions render in full.
+- **Navigator focuses the cards:** `primaryActionBtn` calls new `_focusActionList()` after `switchCategory` — scrolls to the action list and flashes it (`.attn-flash` keyframes) instead of just flipping the icon.
+- **Early-game action balance (config):** Operations was 1 choice at month 1 / 3 at month 2 vs marketing 4–5 and finance 6. Freed `basic_quality_control` and `write_first_sop` prereqs (→ available from start); `do_work_yourself` now gated on `leads_gte:1` (+ still `needs:["study_business_content"]`) instead of `customer_base_gte:1`. Trimmed the glut: marketing `do_sales_yourself` now needs `leads_gte:1`; finance `monthly_tax_reserve` now needs `establish_business`. Result ~ M1 3/3/4, M2 5/4/6, M3 8/5/7.
+
 ## v0.23.23 — 2026-06-27
 **Concise action descriptions**
 

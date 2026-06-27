@@ -60,8 +60,8 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .new-badge{display:inline-block;background:var(--accent);color:#04210f;font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.6px}
 .action-card.is-new{border-color:var(--border)}
 .group-tag{display:inline-block;font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);border-radius:6px;padding:1px 7px;margin-bottom:6px}
-.action-desc.desc-clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:2px}
-.desc-toggle{display:inline-block;font-size:0.7rem;color:var(--blue);font-weight:600;cursor:pointer;margin-bottom:8px}
+@keyframes attnFlash{0%{box-shadow:0 0 0 0 rgba(16,185,129,0);}30%{box-shadow:0 0 0 3px rgba(16,185,129,0.5);}100%{box-shadow:0 0 0 0 rgba(16,185,129,0);}}
+.attn-flash{animation:attnFlash 0.9s ease-out;border-radius:var(--radius)}
 .btn-primary{width:100%;padding:14px;border:none;border-radius:var(--radius);background:var(--accent);color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
 .btn-primary:disabled{opacity:0.4;cursor:not-allowed}.btn-primary:active:not(:disabled){transform:scale(0.98);background:var(--accent2)}
 .btn-secondary{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:8px}
@@ -579,7 +579,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Before you can afford a sales team or a funnel, you are the sales team. Founder-led selling is the cheapest, highest-converting channel you have early on — and every call teaches you what actually makes people buy.",
       "cash_cost": 0,
       "energy_cost": 14,
-      "prerequisites": {},
+      "prerequisites": { "leads_gte": 1 },
       "effects": { "customer_base": 5, "sales_conversion": 2, "brand_equity": 2 },
       "success_rate": 0.85,
       "failure_effects": { "customer_base": 1 },
@@ -732,7 +732,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Do it yourself first — not forever. You can't systematize or delegate what you don't deeply understand. Master the work, bank the cash, then escape it before you become the bottleneck.",
       "cash_cost": 0,
       "energy_cost": 20,
-      "prerequisites": { "customer_base_gte": 1, "needs": ["study_business_content"] },
+      "prerequisites": { "leads_gte": 1, "needs": ["study_business_content"] },
       "effects": { "cash": 1000, "systems_maturity": 3, "key_person_dependency": 5 },
       "success_rate": 0.9,
       "failure_effects": { "cash": 400 },
@@ -831,7 +831,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Document before you delegate, then automate what repeats. SOPs move the process out of your head and onto paper; automation makes sure nothing slips through the cracks — together they're the first real step from operator to owner.",
       "cash_cost": 200,
       "energy_cost": 12,
-      "prerequisites": { "customer_base_gte": 5 },
+      "prerequisites": {},
       "effects": { "systems_maturity": 14, "key_person_dependency": -8, "energy": 5, "operating_expenses": -100 },
       "success_rate": 0.82,
       "failure_effects": { "systems_maturity": 5 },
@@ -952,7 +952,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "Quality has to survive your absence. A simple checklist keeps the work right when you're not the one doing it — and consistent quality is what keeps clients from leaving.",
       "cash_cost": 200,
       "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 5 },
+      "prerequisites": {},
       "effects": { "churn_rate": -0.03, "systems_maturity": 8, "brand_equity": 5 },
       "success_rate": 0.8,
       "failure_effects": { "systems_maturity": 3 },
@@ -1419,7 +1419,7 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 0,
       "energy_cost": 4,
       "one_time": true,
-      "prerequisites": {},
+      "prerequisites": { "needs": ["establish_business"] },
       "effects": {},
       "success_rate": 0.95,
       "failure_effects": {},
@@ -2727,6 +2727,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.24',d:'2026-06-28 11:00',n:[
+'Action menu polish: your selected move now stays put instead of jumping to the top, the selected card shows your total energy committed this turn vs what you have left (turns red if you overcommit), and the “🔒 hire a CFO to forecast” clutter is gone. Descriptions are short enough now that the “Read more” collapse was removed.',
+'The “Next: …” button now scrolls and highlights the action cards so your attention lands on the actual choices, not just the category icons.',
+'Early-game balance: Operations is no longer empty in the first months — Quality Control and Document & Automate Systems are available from the start, and Do the Work Yourself opens once you have a pipeline. Marketing’s “Do the Sales Yourself” now needs at least one lead, and the tax reserve waits until you’ve formed your business. Month-to-month choices are far more even across Marketing / Operations / Finance.',
+]},
 {v:'0.23.23',d:'2026-06-27 23:30',n:[
 'Every action card description is now short and to the point — one quick line on what the move is. The full explanation (narrative + lesson) still shows on the result screen after you play it.',
 ]},
@@ -3110,6 +3115,8 @@ _scaleLifestyleEffects(effects){const s=this.state,LK=['lifestyle_health','lifes
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
 actionCashCost(a){const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
 actionEnergyCost(a){const e=a.energy_cost||0;if(e<=0)return e;return this.isRetry(a)?Math.round(e*0.5):e;},
+// Total energy your currently-picked moves will spend this turn (exec/team-run picks cost you none), vs what you have.
+_turnEnergy(){let used=0;for(const[c,act]of Object.entries(this.selectedActions||{})){const execRun=(this._autoPicked&&this._autoPicked[c]===act.id)||(c==='finance'&&this._cfoPick===act.id);if(!execRun)used+=Math.max(0,this.actionEnergyCost(act));}const have=Math.max(0,Math.min(100,this.state.energy||0));return{used,have,left:have-used};},
 scaleEventEffects(effects,skipCap){const scaled=JSON.parse(JSON.stringify(effects)),level=this.calcBusinessLevel(),s=this.state;for(const k in scaled){if(typeof scaled[k]!=='number')continue;if(k==='cash'||k==='monthly_revenue'||k==='investment_positions'||k==='real_estate_equity'||k==='other_monthly_revenue')scaled[k]=Math.round(scaled[k]*Math.min(6,level));else if(k==='operating_expenses'||k==='cogs')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='total_debt')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='customer_base')scaled[k]=Math.round(scaled[k]*Math.min(3,Math.max(1,(s.customer_base||1)/20)));}
 // Never-fatal cap on RANDOM negative events: a single bad event's cash hit can't exceed ~60% of everything you could tap. Opt-in opportunities (real estate, etc.) are NOT capped — you chose to spend, and the credit/lose path handles funding.
 if(!skipCap&&scaled.cash&&scaled.cash<0){const cushion=Math.round(((s.cash||0)+(s.personal_cash||0)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)))*0.6);if(-scaled.cash>cushion)scaled.cash=-Math.max(cushion,1000);}
@@ -3527,10 +3534,7 @@ const cat0=this.currentCategory;const offBadge=(this._autoPicked&&this._autoPick
 const _cc=this.actionCashCost(a);const needsCredit=!done&&!locked&&_cc&&this.state.cash<_cc&&(this.state.cash+(this.state.available_credit||0))>=_cc;
 const selBadge=isSel?'<span class="new-badge" style="background:var(--accent);color:#04130d;">✓ SELECTED</span>':'';
 const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpName+'</span>':'';
-// Collapse long descriptions to 2 lines; each card expands on its own so the list stays scannable.
-const longDesc=desc.replace(/<[^>]*>/g,'').length>95,descOpen=this._descOpen&&this._descOpen[a.id];
-const descHtml=longDesc?'<p class="action-desc'+(descOpen?'':' desc-clamp')+'">'+desc+'</p><span class="desc-toggle" onclick="event.stopPropagation();Game._toggleDesc(\''+a.id+'\')">'+(descOpen?'Show less ▴':'Read more ▾')+'</span>':'<p>'+desc+'</p>';
-return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+grpTag+'<h4>'+a.label+selBadge+partialBadge+offBadge+newBadge+repeatBadge+'</h4>'+descHtml+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
+return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+grpTag+'<h4>'+a.label+selBadge+partialBadge+offBadge+newBadge+repeatBadge+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;return '<span class="cost-tag cost-cash">'+(est>0?'~'+this.fmtMoney(est)+' cash':'already healthy')+'</span>';})():(_cc?'<span class="cost-tag cost-cash">$'+this.fmt(_cc)+'</span>':''))+
 ((this.actionEnergyCost(a))>0?'<span class="cost-tag cost-energy">⚡-'+this.actionEnergyCost(a)+' energy</span>':'')+
 (a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+' energy</span>':'')+
@@ -3539,13 +3543,13 @@ return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(o
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
-'</div></div>';};
+'</div>'+(isSel?(()=>{const te=this._turnEnergy();return '<div style="margin-top:7px;padding-top:6px;border-top:1px dashed var(--border);font-size:0.7rem;font-weight:600;color:'+(te.left<0?'var(--red)':te.left<=15?'var(--gold)':'var(--accent)')+';">⚡ This turn: '+te.used+' of '+te.have+' energy committed · '+(te.left<0?Math.abs(te.left)+' over budget!':te.left+' left')+'</div>';})():'')+'</div>';};
 if(!this.state._actions_seen)this.state._actions_seen=[];if(!this.state._action_new_month)this.state._action_new_month={};actions.forEach(a=>{if(!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!this.state._actions_seen.includes(a.id)){this.state._actions_seen.push(a.id);this.state._action_new_month[a.id]=this.month;}});
 let listHtml='';
 const hdr=t=>'<div style="padding:12px 0 6px;font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);margin-top:6px;">'+t+'</div>';
 const isPartialA=a=>this.state._partial_actions&&this.state._partial_actions[a.id],isNewA=a=>this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;
-// One flat list with group-name tags on each card. Order: your selection → retry (finish what you started) → NEW → other available (by urgency) → locked (unlocks next) → completed.
-const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const sa=sel&&sel.id===a.id?1:0,sb=sel&&sel.id===b.id?1:0;if(sa!==sb)return sb-sa;const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;return urgency(b)-urgency(a);});
+// One flat list with group-name tags on each card. Order: retry (finish what you started) → NEW → other available (by urgency) → locked (unlocks next) → completed. The selected card stays in its natural spot (it doesn't jump to the top).
+const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;return urgency(b)-urgency(a);});
 const locked=actions.filter(a=>!this.isActionCompleted(a)&&this.isActionLocked(a));
 const completed=actions.filter(a=>this.isActionCompleted(a));
 const lockRow=a=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';
@@ -3565,7 +3569,6 @@ document.getElementById('action-list').innerHTML=banner+epicPanel+listHtml;},
 runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}this.resolveMonth();},
 
 selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;this._paymentMethod='cash';this.selectAction(cat,id);},
-_toggleDesc(id){this._descOpen=this._descOpen||{};this._descOpen[id]=!this._descOpen[id];this.renderActions();},
 
 getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}if(a.energy_cost>0&&s.energy<a.energy_cost)return'Low energy';for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k==='liquid_cash_gte')return'Need '+this.fmtMoney(v)+' in cash';if(k==='cash_gte')return'Need '+this.fmtMoney(v)+' in cash or credit';if(k==='net_worth_gte')return'Need '+this.fmtMoney(v)+' net worth';if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
 actionLabel(id){for(const c of ['actions_marketing','actions_operations','actions_finance']){const a=((CONFIG[c]||{}).actions||[]).find(x=>x.id===id);if(a)return a.label;}return id.replace(/_/g,' ');},
@@ -3588,8 +3591,7 @@ if(cfo){
 if(special)return curLine+special;
 const scaled=this.scaleActionEffects(eff,a.category),proj=keys.filter(k=>scaled[k]).map(k=>{const after=Math.round((s[k]||0)+scaled[k]);return showVal(k)?(label(k)+' '+fmv(k)+' → ~'+this.fmtMoney(after)):(label(k)+' → ~'+after);});
 return proj.length?'<p style="margin:-2px 0 0;font-size:0.72rem;color:var(--gold);font-weight:600;">📊 '+proj.join(' · ')+'</p>':curLine;}
-if(this._cfoHintShown)return curLine;this._cfoHintShown=true;
-return curLine+'<p style="margin:1px 0 0;font-size:0.64rem;color:var(--text2);opacity:0.75;">🔒 Hire a fractional CFO to forecast results (this & other actions)</p>';},
+return curLine;},
 creditPreview(id){const s=this.state,cf=this.calcCreditCapacity(),fm=v=>this.fmtMoney(Math.round(v));let txt='';switch(id){
 case 'business_credit_line':txt='≈ '+fm(15000*cf)+' line, sized to your credit & revenue';break;
 case 'bank_personal_loan':{if(this.isSeparated()){txt='≈ '+fm(25000*cf)+' business term loan, sized to your revenue & credit';}else{const c2=Math.max(0.6,Math.min(2.5,((s.personal_credit_score||600)-560)/120));txt='≈ '+fm(10000*c2)+' personal loan now — larger business loan once you form an LLC';}break;}
@@ -3619,7 +3621,9 @@ selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.
 // The next active category that still needs a pick — preferring one OTHER than where you are now, so the button reads like "go forward".
 _nextUnselectedCat(){const ac=this._activeCats||CATS,start=ac.indexOf(this.currentCategory);for(let i=1;i<=ac.length;i++){const c=ac[(start+i)%ac.length];if(c!==this.currentCategory&&!this.selectedActions[c])return c;}return this.selectedActions[this.currentCategory]?null:this.currentCategory;},
 // Primary bottom button: until all three moves are set it walks you to your next action; once they're all set it ends the turn.
-primaryActionBtn(){const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory)return this.switchCategory(nxt);return this.confirmActions();},
+primaryActionBtn(){const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory){this.switchCategory(nxt);return this._focusActionList();}return this.confirmActions();},
+// Pull the player's eye to the actual choices: scroll the action cards into view and give them a brief highlight (not just flip the category icon).
+_focusActionList(){const list=document.getElementById('action-list'),ind=document.getElementById('step-indicator');const anchor=ind||list;if(anchor&&anchor.scrollIntoView)anchor.scrollIntoView({behavior:'smooth',block:'start'});if(list){list.classList.remove('attn-flash');void list.offsetWidth;list.classList.add('attn-flash');setTimeout(()=>list.classList.remove('attn-flash'),900);}},
 updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]),done=ac.length-unsel.length;btn.disabled=false;
 if(!unsel.length){btn.textContent='Confirm Actions →';if(sec)sec.style.display='none';return;}
 const nxt=this._nextUnselectedCat();
