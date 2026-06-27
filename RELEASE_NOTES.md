@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.23.22 — 2026-06-27
+**Flat tagged action list, collapsible descriptions**
+
+- **Action list redesign (`renderActions`):** dropped the collapsible direction-group accordion (`_openDir` no longer used for layout). All actions render as one flat list; each card gets a `.group-tag` from `_grpOf` (built from `ADIR`). Sort order: selected → retry (`_partial_actions`) → NEW (`_action_new_month`) → other available (by `urgency`); then locked "Unlocks next" compact rows; then completed (still behind "Show N completed").
+- **Collapsible descriptions:** descriptions >95 chars (tags stripped) render with `.action-desc.desc-clamp` (2-line `-webkit-line-clamp`) and a `.desc-toggle` ("Read more ▾"/"Show less ▴"). `_toggleDesc(id)` flips per-card state in `_descOpen` and re-renders; toggle uses `event.stopPropagation()` so it doesn't select the action.
+
 ## v0.23.21 — 2026-06-27
 **Turn-navigator button, guided business-unlock walkthrough**
 
