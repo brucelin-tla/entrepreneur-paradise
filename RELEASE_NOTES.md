@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.25 — 2026-06-28
+**Turn-flow UX: stay-on-pick, card/tag cleanup, dashboard icons, button labels**
+
+- **Stay on the picked move (`selectAction`):** removed auto-advance; after selecting, you stay on that category and the "Next: …" button pulses (`_flashNextBtn` / `btnPulse` keyframes). `switchCategory` clears the pulse.
+- **Last-pick prompt:** when the only unselected category is the current one, the primary button reads "Take Action" and `primaryActionBtn` focuses/flashes the cards instead of ending the turn; "End Turn" escape stays visible.
+- **Card cleanup:** group tag + NEW/RETRY/SELECTED badges share a `.card-toprow`; cost tags use icons (💵 cash, ⚡ energy w/o minus, 🔁 recurring); selected card shows per-turn energy as a compact right-aligned "⚡ left: N" tag (`_turnEnergy`).
+- **Dashboard icons (`renderStats`):** `RICON` map prepends icons to money/credit rows; gauges and Leads/Customers/Staff/Culture rows get icons too.
+- **Button labels:** Take Action, End Turn, Next Month →, Take Life Action, Skip, Run the Month — capitalized and concise.
+
 ## v0.23.24 — 2026-06-28
 **Action-list polish, per-turn energy summary, early-game action balance**
 
