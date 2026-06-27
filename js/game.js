@@ -31,6 +31,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.19',d:'2026-06-27 18:30',n:[
+'Tutorial polish on mobile: the spotlight no longer jumps around (it scrolls once, then settles), the hint arrow now points the right way (↑/↓) at the highlighted spot, and the “end your turn” prompt matches the real button (“Confirm Actions” / “End Turn”). Removed the Back button — the tour now moves one way, fixing a bug where going back broke it.',
+'Energy gives you a heads-up now: when it runs low you get a one-time warning (and the gauge flags “rest soon” / “low · moves weaker”) explaining that below 30 your moves get weaker — and that investing in 🏖️ Life raises Personal Mastery, which recovers energy faster. No more burning out by surprise.',
+'Net Worth now waits for a positive month before it appears (and at month 4 you’re pointed to the ⭐ Epic concierge instead) — no celebrating a negative figure.',
+]},
 {v:'0.23.18',d:'2026-06-27 17:15',n:[
 'Net worth is now ownership-aware: the CFO briefing shows your equity stake (e.g., 70% with a partner) and counts only your share of the company’s value — the dashboard Net Worth keeps tracking your real, partner-adjusted retained equity.',
 'Operations has a clearer path: “Do the Work Yourself” now unlocks after “Study Business Content” (learn → do → delegate).',
@@ -206,13 +211,13 @@ TUTORIAL_STEPS:[
 {sel:'#dash-debt',title:'Your debt',body:function(){const d=Math.max(0,(this.state.total_debt||0)-(this.state.business_credit_used||0)-(this.state.business_installment_debt||0)-(this.state.real_estate_debt||0))+(this.state.insurance_loan_balance||0);return 'You\'re also carrying about <strong>'+this.fmtMoney(d)+'</strong> in debt (credit cards). Paying it down and building your credit is a big part of the game.';}},
 {sel:'#dash-cashflow',title:'Your cash flow',body:function(){const exp=(this.state.living_expenses||0)+(this.state.lifestyle_expenses||0);return 'Your living expenses run about <strong>'+this.fmtMoney(exp)+'/mo</strong>. With no income yet, that\'s your monthly burn — the "~X mo left" is your <strong>runway</strong> before cash runs out. Tap it anytime for the breakdown.';}},
 {sel:'#dash-energy',title:'Your energy',body:'This is your <strong>energy</strong>. Most actions cost energy, and it only recovers a little each month — so you can\'t do everything at once. Spend it on what matters.'},
-{sel:'#action-list',cat:'marketing',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Marketing fills your pipeline with leads. <strong>We\'ve highlighted a solid first move — tap it.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:'#action-list',cat:'marketing',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Marketing fills your pipeline with leads. <strong>We\'ve highlighted a solid first move — tap it.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
 {cat:'marketing',explain:true,title:'Why this move?',body:'No leads, no business. <strong>Outbound Prospecting</strong> means talking to people directly — calls, emails, in-person — to put names in your pipeline. You can\'t sell to anyone until there\'s someone to sell to.'},
-{sel:'#action-list',cat:'operations',title:'Now — Operations',body:'Operations is how you run and deliver the work. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:'#action-list',cat:'operations',title:'Now — Operations',body:'Operations is how you run and deliver the work. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
 {cat:'operations',explain:true,title:'Why this move?',body:'<strong>Study Business Content</strong> (books, YouTube) is free and sharpens how you run things — it builds your <em>systems</em>. You can\'t systematize or delegate what you don\'t understand yet, so learn first while it\'s cheap.'},
-{sel:'#action-list',cat:'finance',title:'Now — Finance',body:'Finance is the heart of the game — credit, leverage, and turning money into <strong>passive income</strong>. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:'#action-list',cat:'finance',title:'Now — Finance',body:'Finance is the heart of the game — credit, leverage, and turning money into <strong>passive income</strong>. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
 {cat:'finance',explain:true,title:'Why this move?',body:'<strong>Form an LLC</strong> makes your business its own legal entity — it shields your personal assets and <strong>unlocks the entire Business side</strong> of your dashboard (business cash, credit, customers). It\'s the foundation everything else is built on.'},
-{sel:'#confirm-actions-btn',title:'End your turn',body:'All three moves are set. <strong>Tap End Turn</strong> to play out the month and see what happened.',wait:'endturn',waitHint:'↓ Tap End Turn'},
+{sel:'#confirm-actions-btn',title:'End your turn',body:function(){var b=document.getElementById('confirm-actions-btn');var t=(b&&b.textContent.trim())||'Confirm Actions';return 'All three moves are set. <strong>Tap "'+t+'"</strong> to play out the month and see what happened.';},wait:'endturn',waitHint:'__btn__'},
 {sel:'#tut-result-card',title:'Your results',body:'Each move you made plays out here — what changed, what it cost, and a short <strong>lesson</strong>. This is where you learn what actually works.'},
 {sel:'#month-cash-panel',title:'Your money this month',body:'This panel sums up the month: your total <strong>accessible capital</strong>, your <strong>runway</strong>, and how your cash & credit moved. Glance at it every month to stay solvent.'},
 {sel:null,title:'That\'s the loop!',body:'Every month: read the story, make your three moves, end the turn, and learn from the results. Build safeguards (LLC, insurance, credit) <em>before</em> events hit, and steer toward passive income. New features unlock as you grow — now go build your empire.'}
@@ -233,9 +238,11 @@ const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-
 // The overlay is fully modal: it blocks all taps and scrolling. Only the spotlighted area (via an invisible click-proxy) and the tip's buttons are interactive.
 ov.style.pointerEvents='auto';ov.style.touchAction='none';tip.style.pointerEvents='auto';
 const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>').join('');
-const backBtn=(i>0&&!step.wait)?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
 const nextLabel=i===steps.length-1?'Got it':'Next';
-const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
+let hintBase=step.waitHint||'';
+if(hintBase==='__btn__'){var _cb=document.getElementById('confirm-actions-btn');hintBase='Tap "'+((_cb&&_cb.textContent.trim())||'Confirm Actions')+'"';}
+// No Back button: this is an interactive tour where real game moves drive it forward; reversing across a completed action broke the flow. Every step advances one way — tap the highlight, or tap Next.
+const navRight=step.wait?'<span class="tut-wait"><span id="tut-arrow">↓</span> '+hintBase+'</span>':'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
 const bodyHtml=(typeof step.body==='function')?step.body.call(this):step.body;
 tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+bodyHtml+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
 // The tutorial drives the category itself (auto-advance is paused during the tour) so each pick stays put for its explanation.
@@ -245,15 +252,18 @@ let target=step.sel?document.querySelector(step.sel):null,hitAction=null;
 if(step.wait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card){target=card;hitAction=()=>this.selectActionPayment(cat,recId);}}}
 else if(step.explain){const card=document.querySelector('#action-list .action-card.selected');if(card)target=card;} // pause on the just-picked action while we explain why
 else if(step.wait==='endturn'){hitAction=()=>this.confirmActions();}
-const place=()=>this._positionSpotlight(target,hitAction);
-setTimeout(place,60);setTimeout(place,380); // re-place after any fade-in/scroll settles so the spotlight aligns exactly
+// Scroll the target into view ONCE, then re-place from the settled rect WITHOUT re-scrolling — re-scrolling on every pass is what made the box jump up and down on mobile. Extra late passes catch slow first-load layout (fonts/SVG) so "Month 1 — Operator" lines up.
+const place=(doScroll)=>this._positionSpotlight(target,hitAction,doScroll);
+setTimeout(()=>place(true),60);
+setTimeout(()=>place(false),420);
+setTimeout(()=>place(false),900);
 },
 // Shared spotlight placement: center the target, put the tip in whichever gap (below/above) has room so it never hides the highlight. Used by the tutorial and the one-off unlock tips.
-_positionSpotlight(target,hitAction){const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip'),hit=document.getElementById('tut-hit');if(!hole||!tip)return;
+_positionSpotlight(target,hitAction,doScroll){const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip'),hit=document.getElementById('tut-hit'),arrow=document.getElementById('tut-arrow');if(!hole||!tip)return;
 tip.style.left='50%';tip.style.transform='translateX(-50%)';
 const th=tip.offsetHeight,gap=12,vh=window.innerHeight,pad=8;
 if(target){
-if(target.scrollIntoView)target.scrollIntoView({block:'center'});
+if(doScroll!==false&&target.scrollIntoView)target.scrollIntoView({block:'center'});
 const r=target.getBoundingClientRect();
 hole.style.display='block';hole.classList.add('pulse');
 hole.style.top=(r.top-pad)+'px';hole.style.left=(r.left-pad)+'px';hole.style.width=(r.width+pad*2)+'px';hole.style.height=(r.height+pad*2)+'px';
@@ -261,7 +271,10 @@ if(hitAction){hit.style.display='block';hit.style.top=(r.top-pad)+'px';hit.style
 else{hit.style.display='none';hit.onclick=null;}
 const below=vh-(r.bottom+pad),above=(r.top-pad);let top;
 if(below>=th+gap)top=r.bottom+pad+gap;else if(above>=th+gap)top=r.top-pad-gap-th;else top=Math.max(8,vh-th-8);
-tip.style.top=Math.max(8,top)+'px';
+top=Math.max(8,top);
+tip.style.top=top+'px';
+// Point the hint arrow at the highlight: ↑ when the tip sits below the target, ↓ when above.
+if(arrow)arrow.textContent=(top>r.top)?'↑':'↓';
 }else{hole.style.display='none';hole.classList.remove('pulse');if(hit){hit.style.display='none';hit.onclick=null;}tip.style.top=Math.max(10,(vh-th)/2)+'px';}},
 // A one-off spotlight (used by feature-unlock tips): highlights an element and shows a "Got it" card. Reuses the tutorial overlay.
 _spotlightTip(sel,title,body){let ov=document.getElementById('tut-overlay');
@@ -306,18 +319,20 @@ calcNetWorth(st){const s=st||this.state;const cash=(s.cash||0)+(s.personal_cash|
 _reveal(f){const s=this.state;if(!s._revealed)s._revealed={};if(s._revealed[f])return true;const m=this.month,sep=this.isSeparated();let on=false;
 switch(f){
 case 'mastery': on=(this._activeCats||[]).includes('lifestyle')||m>=3; break; // Personal Mastery, life dimensions & Freedom — surface when Life becomes a thing
-case 'networth': on=sep||m>=4||this.calcNetWorth()>15000; break;
+case 'networth': on=(sep||m>=4)&&this.calcNetWorth()>0; break; // save the Net Worth reveal/tip for a positive month — no celebrating a negative figure
 case 'epic': on=(sep&&m>=4); break; // the advanced concierge — learn the basics first
 case 'achievements': on=((s._milestones_achieved||[]).length>0)||m>=2; break;
 default: on=true;}
 if(on)s._revealed[f]=true;return on;},
 // One-time contextual tip the first time a feature appears, so learning is spread across the run instead of dumped up front.
 _maybeShowUnlockTip(){const s=this.state;if(this._tutActive)return;if(!s._tips_shown)s._tips_shown=[];
+const _rec=this.calcEnergyRecovery();
 const tips=[
+{k:'energy_low',show:(s.energy<=45),sel:'#dash-energy',t:'⚡ Watch Your Energy',b:'Heads up — your energy is getting low. Most moves cost energy but it only recovers <strong>+'+_rec+'/mo</strong>, so stacking high-energy actions every month will drain you. Below <strong>30</strong> your moves also get <strong>~15% weaker</strong>. Recharge by investing in your 🏖️ <strong>Life</strong> (it raises Personal Mastery, which speeds recovery) and spread out the heavy moves.'},
 {k:'business',show:this.isSeparated(),sel:'#biz-col',t:'🔓 Business Unlocked',b:'Your business is now its own legal entity. This side of your dashboard tracks its money — cash, revenue, credit, customers and culture — kept separate from your personal finances. It pays you a salary/draw into your personal account.'},
 {k:'life',show:(this._activeCats||[]).includes('lifestyle'),sel:'#life-btn',t:'🏖️ Life Check-In Unlocked',b:'Tap this 🏖️ icon for a Life action. Investing in your health, relationships, mind and experiences builds <strong>Personal Mastery</strong> — which keeps your energy recovering so you can keep acting. Don\'t neglect it.'},
-{k:'networth',show:this._reveal('networth'),sel:'#dash-networth',t:'📈 Net Worth Is Now Tracked',b:'Your dashboard now shows <strong>Net Worth</strong> right here — everything you own minus everything you owe, with a month-over-month trend. This is the real scoreboard of the wealth you\'re building.'},
 {k:'epic',show:this._reveal('epic'),sel:'#epic-btn',t:'⭐ Epic Life Membership',b:'A done-for-you wealth concierge is now available — this <strong>⭐</strong> icon. It\'s powerful and runs the financial playbook for you. If you\'re still learning, try finishing a run <em>without</em> it first.'},
+{k:'networth',show:this._reveal('networth'),sel:'#dash-networth',t:'📈 Net Worth Is Now Tracked',b:'Your dashboard now shows <strong>Net Worth</strong> right here — everything you own minus everything you owe, with a month-over-month trend. This is the real scoreboard of the wealth you\'re building.'},
 ];
 for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_shown.push(tip.k);if(document.querySelector(tip.sel))this._spotlightTip(tip.sel,tip.t,tip.b);else this.showPopup(tip.t,tip.b);return;}}},
 // C-suite compensation scales with the company. Fractional (part-time) is affordable; full-time A-players cost ~3-4x — only sustainable with strong margins + leverage. That gap is the "can't afford good people" ceiling.
@@ -428,7 +443,8 @@ const enC=en>60?'var(--accent)':en>30?'var(--gold)':'var(--red)',masC=mas>60?'va
 const gauge=(label,v,col,sub,id)=>'<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+(sub?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"></div></div></div>';
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
-P+=subLab('Capacity')+gauge('Energy',en,enC,'+'+rec+'/mo','dash-energy');
+const enSub=en<=30?'⚠ low · moves weaker':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
+P+=subLab('Capacity')+gauge('Energy',en,enC,enSub,'dash-energy');
 if(this._reveal('mastery'))P+='<div onclick="Game.showMastery()" style="cursor:pointer;">'+gauge('Personal Mastery',mas,masC,'ⓘ')+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('Freedom',fr,frC,this.getFounderRole());
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){

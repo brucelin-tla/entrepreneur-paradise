@@ -1,5 +1,15 @@
 # Release Notes
 
+## v0.23.19 — 2026-06-27
+**Mobile tutorial stability, energy burnout warnings, Net Worth reveal gating**
+
+- **Tutorial placement (`_positionSpotlight`, `renderTutorialStep`):** `scrollIntoView` runs once (first pass `place(true)`); later passes (`420ms`, `900ms`) re-align from the settled rect with `doScroll=false`, killing the up/down jump and fixing first-load misalignment of `#month-label`. Added `transition:top .18s` on `#tut-tip`.
+- **Dynamic hint arrow:** `#tut-arrow` set to `↑`/`↓` by `_positionSpotlight` based on whether the tip lands below/above the target. Baked-in arrows removed from `waitHint`s.
+- **Button-aware End Turn step:** body is now a function and `waitHint:'__btn__'` resolves to the live `#confirm-actions-btn` label ("Confirm Actions →" / "End Turn (x/3 actions)").
+- **Removed Back button:** dropped `backBtn`/dropped reverse nav from the interactive tour (reversing across a completed action selection broke the flow). `tutPrev` left unused but harmless.
+- **Energy warnings:** new one-time `energy_low` tip in `_maybeShowUnlockTip` (fires at `energy ≤ 45`, points at `#dash-energy`), plus inline gauge sub in `renderStats`: `⚠ +rec/mo · rest soon` (≤45) → `⚠ low · moves weaker` (≤30). Explains the sub-30 effectiveness penalty and Life→Mastery→recovery loop.
+- **Net Worth reveal:** `_reveal('networth')` now requires `calcNetWorth() > 0` (plus `sep || month≥4`); month-4 unlock tip points to ⭐ Epic instead.
+
 ## v0.23.18 — 2026-06-27
 **Ownership-aware net worth (CFO), Operations gating, Epic-during-tutorial guard**
 
