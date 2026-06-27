@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.23.7 — 2026-06-26
+**Net Worth on the personal dashboard with a trend indicator**
+
+- **`calcNetWorth(state)`:** new helper — assets (cash + personal cash + investments + real-estate equity + policy cash value + retained business equity + private-bank balance) minus debt (total debt + insurance loan + private-bank loan).
+- **Net Worth row (`renderStats`):** added to the bottom of the personal Money column (parallel to business Owner Equity), showing the value plus a **▲/▼ month-over-month change** vs the net worth snapshotted at the start of the month (`_nwStart`, captured in `resolveMonth`). Tappable → full asset breakdown (`showAssets`).
+
 ## v0.23.6 — 2026-06-26
 **Recurring costs modeled & displayed properly (Business Insurance Stack)**
 

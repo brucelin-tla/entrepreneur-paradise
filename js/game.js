@@ -31,6 +31,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.7',d:'2026-06-26 20:15',n:[
+'Your personal dashboard now shows Net Worth (all assets minus all debt) with a month-over-month trend arrow (▲/▼), so you can see at a glance whether your wealth is growing. Tap it for the full asset breakdown.',
+]},
 {v:'0.23.6',d:'2026-06-26 19:55',n:[
 'Business Insurance Stack now reads correctly as what it is: a one-time setup plus an ongoing monthly premium. Result cards show recurring costs as “🔁 +$X/mo ongoing,” and the menu shows the monthly premium up front.',
 ]},
@@ -214,6 +217,8 @@ isActionLocked(a){return this._epicHandled(a)||this.isActionCompleted(a)||!this.
 calcDebtInterest(){const s=this.state,pb=s.private_bank_loan||0,bizDebt=(s.total_debt||0)-(s.real_estate_debt||0),cfo=s._cfo_fulltime?0.8:s._cfo_hired?0.9:1;return Math.round(bizDebt*0.008*cfo)+Math.round((s.real_estate_debt||0)*0.005)+Math.round(pb*0.000833);},
 calcDebtPrincipal(){const s=this.state,bizDebt=(s.total_debt||0)-(s.real_estate_debt||0);return Math.round(bizDebt*0.01)+Math.round((s.real_estate_debt||0)*0.005);},
 calcMonthlyBurn(){const s=this.state;return(s.operating_expenses||0)+(s.owner_pay||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0)+this.calcDebtInterest()+this.calcDebtPrincipal();},
+// Total net worth: all assets (cash, investments, real-estate equity, policy cash value, retained business equity, private-bank balance) minus all debt.
+calcNetWorth(st){const s=st||this.state;const cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,debt=(s.total_debt||0)+(s.insurance_loan_balance||0)+(s.private_bank_loan||0);return cash+inv+re+cv+cap+pbb-debt;},
 // C-suite compensation scales with the company. Fractional (part-time) is affordable; full-time A-players cost ~3-4x — only sustainable with strong margins + leverage. That gap is the "can't afford good people" ceiling.
 calcExecFrac(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(3500,Math.min(11000,3500+r*0.025)));},
 calcExecFull(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(12000,Math.min(48000,12000+r*0.07)));},
@@ -311,6 +316,7 @@ P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,"Game.showRevenue()");
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),"Game.showDebt()");
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),"Game.showCreditAvail()");
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),"Game.showAssets()");
+{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null,nwCol=nwNow>=0?'var(--accent)':'var(--red)';let nwHtml='<span style="color:'+nwCol+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+=' <span style="font-size:0.55rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}P+=row('Net Worth',nwHtml,"Game.showAssets()");}
 const en=Math.max(0,Math.min(100,s.energy||0)),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=en>60?'var(--accent)':en>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
 const gauge=(label,v,col,sub)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+(sub?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"></div></div></div>';
@@ -721,6 +727,7 @@ this._tutNotify('endturn');
 const results=[];const _execBonuses=[];
 // Month-start cash/credit snapshot + action-spend accumulator for the end-of-month summary
 const _S0=this.state,_msStart={cash:_S0.cash||0,personalCash:_S0.personal_cash||0,bizUsed:_S0.business_credit_used||0,bizLim:_S0.business_credit_limit||0,avail:_S0.available_credit||0,debt:_S0.total_debt||0};
+this._nwStart=this.calcNetWorth(); // net worth at the start of the month → month-over-month trend on the dashboard
 const _spend={total:0,cash:0,biz:0,pers:0};
 // Epic Life concierge runs one extra high-priority finance move this month (selected from start-of-turn state), processed through the normal loop so all costs/handlers apply.
 if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selectedActions['epic']=_perk;}
