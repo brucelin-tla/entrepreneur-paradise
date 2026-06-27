@@ -2652,6 +2652,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.8',d:'2026-06-26 20:30',n:[
+'Result cards now show the energy each action spent (or gained), so you can see what a move cost you.',
+]},
 {v:'0.23.7',d:'2026-06-26 20:15',n:[
 'Your personal dashboard now shows Net Worth (all assets minus all debt) with a month-over-month trend arrow (▲/▼), so you can see at a glance whether your wealth is growing. Tap it for the full asset breakdown.',
 ]},
@@ -3562,6 +3565,7 @@ html+='<div class="fade-in" style="background:var(--surface);border:1px solid va
 (r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
 ((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 '+(r.action.recurring_cost?'Setup':'Cost')+' <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 ((r.success&&r.action.recurring_cost)?'<div style="font-size:0.73rem;color:var(--purple);margin-top:4px;">🔁 +'+this.fmtMoney(r.action.recurring_cost)+'/mo ongoing operating expense</div>':'')+
+((r.action.energy_cost&&r.action.energy_cost!==0)?'<div style="font-size:0.73rem;color:'+(r.action.energy_cost>0?'var(--orange)':'var(--accent)')+';margin-top:4px;">⚡ '+(r.action.energy_cost>0?'−'+r.action.energy_cost+' energy spent':'+'+Math.abs(r.action.energy_cost)+' energy gained')+'</div>':'')+
 (chips.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">'+chips.join('')+'</div>':'')+
 (r.beforeAfter?'<div style="margin-top:8px;background:rgba(127,127,127,0.08);border-radius:var(--radius-sm);padding:6px 9px;">'+r.beforeAfter.map(row=>'<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.73rem;padding:2px 0;"><span style="color:var(--text2);">'+row[0]+'</span><span style="white-space:nowrap;"><span style="color:var(--text2);">'+row[1]+'</span> <span style="color:'+(row[3]||'var(--accent)')+';font-weight:700;">→ '+row[2]+'</span></span></div>').join('')+'</div>':'')+
 (firstLesson?'<div style="font-size:0.73rem;color:var(--gold);line-height:1.5;margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;"><strong>💡 Lesson:</strong> '+this.linkTerms(r.action.lesson)+'</div>':'')+

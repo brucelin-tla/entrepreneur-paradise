@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.23.8 — 2026-06-26
+**Energy spend shown on result cards**
+
+- **`showResults`:** each action card now shows an energy line — `⚡ −X energy spent` (orange) or `⚡ +X energy gained` (green) — based on the action's `energy_cost`, so the energy a move cost is visible alongside its cash cost and effects.
+
 ## v0.23.7 — 2026-06-26
 **Net Worth on the personal dashboard with a trend indicator**
 
