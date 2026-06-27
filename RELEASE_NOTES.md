@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.23.15 — 2026-06-27
+**Icon action bar — no more overlap**
+
+- **Category controls as uniform icons (`renderCategoryTabs`/`CAT_ICON`):** Marketing 📣, Operations ⚙️, Finance 💰, Life 🏖️, Epic ⭐ — all same-size `.cat-icon` buttons. Categories grouped left in a scroll area, Epic (gold) pinned right; the Epic button no longer overlaps the other tabs on mobile (replaced the earlier sticky approach with a scroll-area + sibling layout). Active highlights green, chosen shows a ✓, names surface via the step indicator and `title` tooltips.
+
 ## v0.23.14 — 2026-06-27
 **Epic Life guardrails + enrollment decoupling; mobile display fixes; tutorial alignment**
 

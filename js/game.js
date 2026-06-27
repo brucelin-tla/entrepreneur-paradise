@@ -31,6 +31,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.15',d:'2026-06-27 12:15',n:[
+'Cleaner action bar: Marketing, Operations, Finance, Life and Epic Life are now compact same-size icons (📣 ⚙️ 💰 🏖️ ⭐) — the Epic ⭐ no longer overlaps the other tabs on mobile. Tap any to switch; the step line and tooltips still name them.',
+]},
 {v:'0.23.14',d:'2026-06-27 11:00',n:[
 'Epic Life is gentler on your wallet: it spends only from cash (never your credit) and always leaves about a month of expenses in the bank — so it can’t drain you or quietly add debt. On Hard mode it also holds off on the expensive setup until your business is stable, and it now fixes your credit first.',
 'Enrolling Epic Life no longer uses up your Finance action — you can enroll AND still make a finance move the same month (with a Cancel option).',
@@ -592,11 +595,12 @@ const grid=cells=>'<div style="display:grid;grid-template-columns:repeat(3,1fr);
 const el=document.getElementById('bars-section');if(el){el.innerHTML='';el.style.display='none';}},
 
 renderStepIndicator(){const ac=this._activeCats||CATS,ci=ac.indexOf(this.currentCategory),total=ac.length;document.getElementById('step-indicator').innerHTML='Step '+(ci+1)+'/'+total+': '+ac.map(c=>{if(this.selectedActions[c])return'<span style="color:var(--accent)">✓ '+CL[c]+'</span>';if(c===this.currentCategory)return'<span class="step-current">→ '+CL[c]+'</span>';return'<span>'+CL[c]+'</span>';}).join(' · ');},
-renderCategoryTabs(){const ac=this._activeCats||CATS;const tabs=ac.map(c=>'<div class="cat-tab '+(this.currentCategory===c?'active':this.selectedActions[c]?'done':'')+'" onclick="Game.switchCategory(\''+c+'\')">'+CL[c]+(this.selectedActions[c]?' ✓':'')+'</div>').join('');
+CAT_ICON:{marketing:'📣',operations:'⚙️',finance:'💰',lifestyle:'🏖️'},
+renderCategoryTabs(){const ac=this._activeCats||CATS;
+const tabs=ac.map(c=>{const on=this.currentCategory===c,done=!!this.selectedActions[c];return '<div class="cat-tab cat-icon'+(on?' active':done?' done':'')+'" title="'+CL[c]+'" onclick="Game.switchCategory(\''+c+'\')">'+(this.CAT_ICON[c]||'•')+(done&&!on?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>';}).join('');
 const member=!!this.state._epic_life,pendingEpic=!!this.state._epic_enroll_pending;
-const epicLabel=(member||pendingEpic)?'⭐ Epic ✓':'⭐ Epic';
-const epicBtn='<div id="epic-btn" class="cat-tab" style="margin-left:auto;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">'+epicLabel+'</div>';
-document.getElementById('cat-tabs').innerHTML=tabs+epicBtn;},
+const epic='<div id="epic-btn" class="cat-tab cat-icon" title="Epic Life Membership" style="background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>';
+document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
