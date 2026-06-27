@@ -2651,6 +2651,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.4',d:'2026-06-26 19:15',n:[
+'Result screen is clearer for decisions: the Cash & Credit panel now leads with your total accessible capital (cash + all available credit) and how many months of runway you have. Action costs read straight — any credit financing fee is shown separately instead of making the numbers look off.',
+'Epic Life Membership moves now appear at the top of your results, above your own actions.',
+'Removed the monthly mentor blurb on the results screen — it was redundant with each action’s lesson and your achievements.',
+]},
 {v:'0.23.3',d:'2026-06-26 18:45',n:[
 'Fixes: business credit now shows “—” until you actually have a business credit line (instead of $0); the tutorial no longer blocks tapping actions on mobile; and the Epic Life Membership card is more compact.',
 ]},
@@ -3522,8 +3527,10 @@ for(const evt of CONFIG.events.events.filter(e=>this.meetsReq(e.requires))){let 
 showResults(results,triggeredEvent){if(this._pendingLose){const r=this._pendingLose;this._pendingLose=null;return this.loseGame(r);}
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Month '+this.month+' — Results';
 let html='';if(!results.length)html='<div class="result-narrative fade-in">You took the month off. Sometimes rest is the most productive thing you can do.</div>';
-// Mentor / character commentary — moved here from the action screen to reduce clutter
-const _cl=this._pendingCharLine;if(_cl){html+='<div class="narrative-box fade-in" style="border-left-color:var(--gold);margin-bottom:12px;"><div class="char-name">'+_cl.name+'</div>'+_cl.line+'</div>';this._pendingCharLine=null;}
+// Mentor commentary removed — redundant with each action's lesson and the achievement banners.
+this._pendingCharLine=null;
+// Epic Life concierge moves show first, above your own Marketing/Operations/Finance/Life results.
+results=results.filter(r=>r.action&&r.action._epic).concat(results.filter(r=>!(r.action&&r.action._epic)));
 // Compact milestone banners
 const _newMs=(this.state._milestones_new||[]).map(id=>MILES_BY_ID[id]).filter(Boolean);if(_newMs.length){for(const m of _newMs){const col=m.cat==='marketing'?'var(--accent)':m.cat==='operations'?'var(--blue)':'var(--gold)';html+='<div class="fade-in" style="background:rgba(212,175,55,0.08);border:1px solid '+col+';border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.88rem;font-weight:700;">🏆 '+m.title+' <span style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">'+m.cat+'</span></div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">'+m.mentor+'</div></div>';}this.state._milestones_new=[];}
 // Compact passive-income banner
@@ -3548,8 +3555,14 @@ const cashThen=st.cash+(sep?st.personalCash:0),cashNow=(s.cash||0)+(sep?(s.perso
 const bizAvail0=Math.max(0,st.bizLim-st.bizUsed),bizAvail1=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
 const posRow=(lbl,b,a,goodUp)=>{const up=Math.round(a)>Math.round(b),down=Math.round(a)<Math.round(b),col=(!up&&!down)?'var(--text2)':((up===!!goodUp)?'var(--accent)':'var(--red)');return'<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;"><span style="color:var(--text2);">'+lbl+'</span><span style="white-space:nowrap;"><span style="color:var(--text2);">'+fm(b)+'</span> <span style="color:'+col+';font-weight:700;">→ '+fm(a)+'</span></span></div>';};
 let rows='';rows+=posRow('Cash',cashThen,cashNow,true);rows+=posRow('Business credit available',bizAvail0,bizAvail1,true);if((s.available_credit||0)||st.avail)rows+=posRow('Personal credit available',st.avail,s.available_credit||0,true);rows+=posRow('Total debt',st.debt,s.total_debt||0,false);
-let spendLine='';if(sp.total>0){const parts=[];if(sp.cash>0)parts.push(fm(sp.cash)+' cash');if(sp.biz>0)parts.push(fm(sp.biz)+' business credit');if(sp.pers>0)parts.push(fm(sp.pers)+' personal');spendLine='<div style="font-size:0.74rem;color:var(--text2);margin-top:7px;border-top:1px dashed var(--border);padding-top:6px;">Action costs this month: <strong style="color:var(--red);">−'+fm(sp.total)+'</strong>'+(parts.length?' · funded by '+parts.join(', '):'')+'</div>';}
-html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:4px;">📊 Cash & Credit — This Month</div>'+rows+spendLine+'</div>';this._monthCashSummary=null;}
+// Total accessible capital (cash + all available credit) and how long it lasts at the current burn — the two numbers that drive decisions.
+const accessible=cashNow+(s.available_credit||0)+bizAvail1;
+const netFlow=(s.monthly_revenue||0)-(s.cogs||0)-this.calcMonthlyBurn();
+const runway=netFlow>=0?'Profitable':(Math.max(0,Math.floor(accessible/Math.max(1,-netFlow)))+' mo');
+const runCol=netFlow>=0?'var(--accent)':(accessible/Math.max(1,-netFlow)<4?'var(--red)':'var(--gold)');
+const capBlock='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border);"><span><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Accessible capital</div><div style="font-size:1.15rem;font-weight:800;color:var(--accent);">'+fm(accessible)+'</div><div style="font-size:0.58rem;color:var(--text2);">cash + all available credit</div></span><span style="text-align:right;"><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Runway</div><div style="font-size:1.05rem;font-weight:800;color:'+runCol+';">'+runway+'</div><div style="font-size:0.58rem;color:var(--text2);">'+(netFlow>=0?'cash-flow positive':'at current burn')+'</div></span></div>';
+let spendLine='';if(sp.total>0){const drawn=sp.cash+sp.biz+sp.pers,fee=Math.max(0,drawn-sp.total),src=[];if(sp.cash>0)src.push('cash');if(sp.biz>0)src.push('business credit');if(sp.pers>0)src.push('personal');spendLine='<div style="font-size:0.74rem;color:var(--text2);margin-top:7px;border-top:1px dashed var(--border);padding-top:6px;">Action costs this month: <strong style="color:var(--red);">−'+fm(sp.total)+'</strong>'+(src.length?' · from '+src.join(' + '):'')+(fee>0?' <span style="color:var(--text2);">(+'+fm(fee)+' credit financing fee)</span>':'')+'</div>';}
+html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">📊 Cash & Credit — This Month</div>'+capBlock+rows+spendLine+'</div>';this._monthCashSummary=null;}
 document.getElementById('results-content').innerHTML=html;this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);
 if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}},
 

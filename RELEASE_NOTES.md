@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.4 — 2026-06-26
+**Result-screen decision clarity: accessible capital + runway, transparent financing fees, Epic perks first, mentor blurb removed**
+
+- **Cash & Credit panel (`showResults`):** now leads with **Accessible capital** (cash + personal + business available credit) and **Runway** (`accessible / monthly net burn`, or "Profitable" when cash-flow positive). The action-cost line now shows the cost and names the funding source(s), with any 3% credit cash-advance fee broken out separately (`+$X credit financing fee`) so the funded amount no longer looks mismatched (e.g. an $800 cost drawn on credit no longer reads as "$824 personal").
+- **Epic Life perks first:** results are reordered so 🌟 Epic Life concierge moves appear above the player's Marketing/Operations/Finance/Life cards.
+- **Removed mentor blurb:** the monthly mentor/character commentary box on the result screen is gone — redundant with each action's lesson line and the achievement banners (`_pendingCharLine` no longer rendered).
+
 ## v0.23.3 — 2026-06-26
 **Fixes: business-credit display, mobile tutorial tap-blocking, Epic card size**
 
