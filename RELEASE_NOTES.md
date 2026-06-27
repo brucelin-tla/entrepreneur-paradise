@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.6 — 2026-06-26
+**Recurring costs modeled & displayed properly (Business Insurance Stack)**
+
+- **`combined_insurance` config:** moved the $550/mo premium out of one-time `effects.operating_expenses` into a proper `recurring_cost: 550` field.
+- **Generic recurring-cost handler (`resolveMonth`):** any non-lifestyle action with a `recurring_cost` now adds it to `operating_expenses` once on activation (tracked in `_active_recurring_costs` to prevent double-charging). Unified the Epic Life Membership's $300/mo onto this path (removed its bespoke add).
+- **Result card display (`showResults`):** actions with a recurring cost show the one-time charge as **Setup −$X** and a separate purple **🔁 +$X/mo ongoing operating expense** line, instead of a misleading one-time chip. The action menu already surfaces the `$X/mo ongoing` tag.
+
 ## v0.23.5 — 2026-06-26
 **Bug fix: business term loan no longer inflates personal credit**
 
