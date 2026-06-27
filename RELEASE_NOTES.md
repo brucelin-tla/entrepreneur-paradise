@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.16 — 2026-06-27
+**Comprehensive onboarding: progressive disclosure + guided first-month tutorial; team-plan energy/Life/icon fixes**
+
+- **Progressive disclosure (`_reveal`/`_maybeShowUnlockTip`):** advanced UI hidden until relevant, sticky once shown, archetype-aware. Personal Mastery + dimensions + Freedom reveal with Life; Net Worth once building wealth; ⭐ Epic after LLC + a few months; 🏆 Achievements after month 2. One-time contextual tips when Business, Life, Net Worth and Epic first appear.
+- **Guided first-month tutorial (`TUTORIAL_STEPS`/dynamic bodies/row+gauge ids):** step-by-step dashboard walkthrough with live numbers (cash, debt, monthly burn + runway, energy, months left); after each category pick it pauses on the chosen action with a "why" explanation (auto-advance paused during the tour, tutorial drives the category via `step.cat`); result-screen walkthrough highlighting the result card (`#tut-result-card`) and the Cash & Credit panel (`#month-cash-panel`).
+- **Team plan:** exec/team-run actions cost the player no energy (`_execRun` gate in `resolveMonth`, also hides the energy line on results); Life is always the player's own pick (`runTeamMonth` no longer auto-fills lifestyle; panel shows "🏖️ Life — always your pick"); team-plan icons match the action bar (CFO 💰, Life 🏖️).
+
 ## v0.23.15 — 2026-06-27
 **Icon action bar — no more overlap**
 
