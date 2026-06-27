@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.23.23 — 2026-06-27
+**Concise action descriptions**
+
+- Rewrote the `description` field of all ~76 actions across `actions_marketing.json`, `actions_operations.json`, `actions_finance.json`, and `actions_marketing_simplified.json` to one short sentence each (card stays scannable). Detail/teaching remains in `lesson` + `narrative_*` shown on the result screen. Preserved the accumulation-policy setup-cost clarification and the Epic first-game warning. No other fields touched; all four files validate.
+
 ## v0.23.22 — 2026-06-27
 **Flat tagged action list, collapsible descriptions**
 

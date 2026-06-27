@@ -31,6 +31,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.23',d:'2026-06-27 23:30',n:[
+'Every action card description is now short and to the point — one quick line on what the move is. The full explanation (narrative + lesson) still shows on the result screen after you play it.',
+]},
 {v:'0.23.22',d:'2026-06-27 22:30',n:[
 'Action menu redesigned: no more collapsing groups — every available action shows together, each card tagged with its group name. Ordered so it’s easy to scan: your current pick first, then any half-cost retries, then NEW, then the rest; locked “unlocks next” and completed actions fall to the bottom.',
 'Long action descriptions are now collapsed to a couple of lines with a per-card “Read more ▾” — expand just the ones you want to dig into and keep the list scannable.',
