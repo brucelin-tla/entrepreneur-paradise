@@ -288,9 +288,9 @@
       "cash_cost": 200,
       "energy_cost": 10,
       "prerequisites": { "leads_gte": 10 },
-      "effects": { "customer_base": 5, "leads": -8, "brand_equity": 5, "sales_conversion": 4 },
+      "effects": { "customer_base": 5, "brand_equity": 5, "sales_conversion": 4 },
       "success_rate": 0.7,
-      "failure_effects": { "customer_base": 1, "leads": -3, "brand_equity": 2 },
+      "failure_effects": { "customer_base": 1, "brand_equity": 2 },
       "narrative_success": "The email sequence is converting. Three leads became clients this month — they said your emails made them feel like they already knew you.",
       "narrative_failure": "Open rates are decent, clicks are low. The content needs work, but the infrastructure is built."
     }

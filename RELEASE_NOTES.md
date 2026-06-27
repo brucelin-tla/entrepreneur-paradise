@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.22.6 — 2026-06-26
+**Results-screen financial transparency, CFO-gated forecasts, event dashboard, insolvency/lose condition, realistic company sale, resume-after-early-end, onboarding tweaks**
+
+- **Cash & Credit results (`resolveMonth`/`showResults`):** per-action cost + funding source (`💸 Cost −$X · from cash/business credit/personal`), an end-of-month "📊 Cash & Credit — This Month" summary (start→end for cash, business/personal credit available, total debt + action-spend breakdown), and per-action before→after rows for **cash**, **personal cash**, **total debt** (red when worse), credit metrics, personal credit score, and headline stats. Keys shown in before→after are suppressed from the effect chips (`_baKeys`). Direction-aware coloring via an optional 4th row element.
+- **Money chips finance-only:** ± money effect chips render only on Finance result cards; Marketing/Operations keep stat chips.
+- **CFO-gated action previews (`actionPreview`):** action cards always show impacted dashboard stats + current values; the projected **result** (creditPreview projections for credit/finance actions, or `current → ~projected` scaled deltas for stat actions) is gated behind completing `hire_fractional_cfo` (`🔒 Hire a fractional CFO to forecast the result`). Adds `build_personal_credit` creditPreview case + personal-credit-score before→after.
+- **Event dashboard (`renderStats(targetId)`):** the full stats panel renders on every random-event and tax screen (`#event-dashboard` added to `index.html`).
+- **Insolvency / lose condition (`_settleCashOrLose`, `loseGame`):** cash can't sit negative — shortfalls auto-draw business→personal credit; if cash AND credit are exhausted, an "Insolvent — Game Over" screen appears. Hooked in `resolveEvent`, `monthlyTick` (via `_pendingLose`→`showResults`). Opt-in **opportunity** events skip `scaleEventEffects`' never-fatal cap (`skipCap`) so they cost their true price.
+- **Realistic company sale (`acquisition_offer` handler in `resolveEvent`):** proceeds become **personal** income, taxed ~23.8% (LTCG + NIIT), equity forfeited (`capital_account`→0); narrative teaches the mechanic.
+- **Resume after early end (`endGame`/`resumeFromEnd`):** ending at a Year 1/2 checkpoint shows a "↩ Resume — Keep Building" button that returns to the next month.
+- **Onboarding:** +25% action success in months 1–3 (fewer early partials). Email campaign (`config/actions_marketing.json`) no longer subtracts leads (`leads: -8`/`-3` removed) — you keep your contacts; pipeline only shrinks via natural conversion or bad-PR events.
+
 ## v0.22.5 — 2026-06-26
 **Skip redundant opening screen; mentor name consistency**
 

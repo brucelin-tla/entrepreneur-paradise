@@ -1,0 +1,16 @@
+feat: v0.22.6 results financial transparency, CFO-gated forecasts, event dashboard, insolvency/lose, realistic sale, resume, onboarding — 2026-06-26 15:12
+
+- Results: per-action cost + funding, end-of-month Cash & Credit summary, and
+  before/after rows for cash, total debt, credit and key stats (red when worse).
+- Money chips now finance-only; Marketing/Ops keep stat chips.
+- Action cards show impacted stats + current values; projected result gated
+  behind hiring a fractional CFO.
+- Full dashboard now renders on random-event and tax screens.
+- Cash can't go negative: shortfalls draw on credit; if cash and credit run dry,
+  the game ends (insolvent). Opt-in opportunities skip the never-fatal cap.
+- Company sale is realistic: proceeds to personal, ~23.8% capital-gains tax,
+  equity forfeited.
+- Resume option after ending early at a year checkpoint.
+- Gentler first 3 months (+25% success); email campaign no longer drops leads.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
