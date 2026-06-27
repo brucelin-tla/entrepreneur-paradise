@@ -2,6 +2,24 @@
   "version": "1.0.0",
   "actions": [
     {
+      "id": "epic_life_membership",
+      "category": "finance",
+      "stage": "foundation",
+      "one_time": true,
+      "label": "Epic Life Membership",
+      "description": "Enroll in Epic Life — a done-for-you wealth concierge. For a flat monthly fee, a team quietly runs your financial infrastructure in the background: credit optimization and debt restructuring as needed, a protective holding structure, banking relationships, the right insurance and a tax-free accumulation policy — switching on passive income once it's ready — and surfacing more investment opportunities. Each month it executes the single highest-priority move for you, so you can focus on the business and your life.",
+      "lesson": "The wealthy don't run the whole financial playbook themselves — they hire specialists who run it for them. A concierge trades a monthly fee for time and flawless execution: the protective and wealth-building moves happen on schedule whether or not you remember them. (This is a real service — the game just lets you feel the value.)",
+      "cash_cost": 500,
+      "recurring_cost": 300,
+      "energy_cost": 0,
+      "prerequisites": {},
+      "effects": {},
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Welcome to Epic Life. Your concierge team is on it — from here the financial playbook runs in the background. Watch for the 🌟 Epic Life updates each month as each piece clicks into place.",
+      "narrative_failure": ""
+    },
+    {
       "id": "hire_cfo",
       "category": "finance",
       "stage": "leverage",
@@ -242,7 +260,7 @@
       "lesson": "Capital is a relationship business. Bankers fund people they know and trust — build the relationship before you need money, not when you're desperate for it.",
       "cash_cost": 0,
       "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp"] },
+      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
       "effects": { "personal_credit_score": 5, "business_credit_profile": "established", "business_credit_limit": 5000 },
       "success_rate": 0.75,
       "failure_effects": { "personal_credit_score": 2 },

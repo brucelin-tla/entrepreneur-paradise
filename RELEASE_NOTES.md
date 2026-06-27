@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.2 — 2026-06-26
+**Epic Life Membership — a done-for-you wealth concierge that auto-runs the financial playbook**
+
+- **New finance action `epic_life_membership`** ($500 setup + $300/mo, added to `operating_expenses` on enroll, sets `_epic_life`). Models a real concierge service so players feel its value.
+- **Concierge engine (`_epicLifePick` / resolveMonth injection):** once active, each month the engine picks the single highest-priority financial move that's genuinely needed, has its prereqs met, and is comfortably affordable (`funds ≥ cost×1.1`), then injects it as an extra action processed through the normal resolution loop (so all costs, special handlers, completion and before/after reporting apply). Priority order follows the DESIGN waterfall: banking → asset-protection holding structure → insurance → debt restructure (util>45) → credit repair (negatives) → utilization paydown (util>30) → fund accumulation policy → activate tax-free passive income. One-time setups fire once; the credit/debt optimizers run as-needed. Result cards are attributed with a 🌟 **Epic Life** badge.
+- **Handled actions hidden from the menu (`EPIC_HANDLED` / `_epicHandled`):** the covered finance actions are locked from manual selection and shown in a "🌟 Epic Life Membership handles these for you" panel instead.
+- **More deal flow:** opportunity-category events are ~1.6× more likely while the membership is active (`checkEvents`).
+- **Balance:** perks still cost their real cash (business-funded) and the membership is a monthly drag, so it accelerates the optimal path rather than creating free money — and the affordability gate makes the engine stand down when the business can't afford a move (verified it stops cleanly when cash runs low). A config `funding` override and the `funds×1.1` buffer keep it from over-leveraging. Widened `banking_relationship` prereq to include `multi_entity`.
+
 ## v0.23.1 — 2026-06-26
 **Interactive first-month tutorial + dashboard UI/UX refinements: at-a-glance net cash flow & runway, grouped stats, color-coded mastery, decluttered action menu**
 
