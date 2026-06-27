@@ -41,7 +41,8 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .bar-fill{height:100%;border-radius:3px;transition:width 0.5s,background 0.5s}
 .step-indicator{text-align:center;margin-bottom:12px;font-size:0.8rem;color:var(--text2)}.step-indicator .step-current{color:var(--accent);font-weight:700}
 .category-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.cat-tab{flex-shrink:0;padding:8px 16px;border-radius:20px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all 0.2s;white-space:nowrap}
+.cat-tab{flex-shrink:0;padding:7px 11px;border-radius:20px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all 0.2s;white-space:nowrap}
+#epic-btn{position:sticky;right:0;box-shadow:-6px 0 8px -4px var(--bg)}
 .cat-tab.active{background:var(--accent);color:white;border-color:var(--accent)}.cat-tab.done{background:var(--accent2);color:white;border-color:var(--accent2);opacity:0.7}
 .action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
 .action-card:active{transform:scale(0.98)}.action-card.selected{border-color:var(--accent);border-width:2px;background:rgba(16,185,129,0.2);box-shadow:0 0 0 2px rgba(16,185,129,0.5),0 6px 20px rgba(16,185,129,0.3);border-left:5px solid var(--accent)}
@@ -2716,6 +2717,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.14',d:'2026-06-27 11:00',n:[
+'Epic Life is gentler on your wallet: it spends only from cash (never your credit) and always leaves about a month of expenses in the bank — so it can’t drain you or quietly add debt. On Hard mode it also holds off on the expensive setup until your business is stable, and it now fixes your credit first.',
+'Enrolling Epic Life no longer uses up your Finance action — you can enroll AND still make a finance move the same month (with a Cancel option).',
+'Mobile fixes: the ⭐ Epic button stays put on the right and no longer runs off-screen, and the “Cash flow/mo” figure no longer spills into the business column.',
+'Tutorial: the finance highlight now lines up correctly with the recommended action.',
+]},
 {v:'0.23.13',d:'2026-06-27 09:30',n:[
 'Epic Life results polish: the concierge’s monthly move no longer costs you energy, shows in premium gold, and now runs first — so the before→after numbers flow in order from the top of the results instead of looking out of sequence.',
 ]},
@@ -2905,7 +2912,7 @@ if(hitAction){hit.style.display='block';hit.style.top=(r.top-pad)+'px';hit.style
 else{hit.style.display='none';hit.onclick=null;}
 }else{hole.style.display='none';hole.classList.remove('pulse');hit.style.display='none';hit.onclick=null;}
 };
-setTimeout(place,60);
+setTimeout(place,60);setTimeout(place,380); // re-place after the action-card fade-in settles so the spotlight aligns exactly
 },
 tutNext(){this._tutStep++;this.renderTutorialStep();},
 tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},
@@ -3025,7 +3032,7 @@ const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
 const row=(label,valHtml,click)=>'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(click?'cursor:pointer;':'')+'"'+(click?' onclick="'+click+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+(click?' <span class="info-btn">i</span>':'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-const netRow=(label,net,liquid,click)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+=' <span style="font-size:0.55rem;color:var(--text2);font-weight:400;">~'+mo+'mo left</span>';}return row(label,v,click);};
+const netRow=(label,net,liquid,click)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+='<br><span style="font-size:0.52rem;color:var(--text2);font-weight:400;">~'+mo+'mo left</span>';}return row(label,v,click);};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',"Game.showCreditScore()");
 P+=row('Cash',m(persCash,cashCol(persCash)));
@@ -3272,23 +3279,25 @@ const el=document.getElementById('bars-section');if(el){el.innerHTML='';el.style
 
 renderStepIndicator(){const ac=this._activeCats||CATS,ci=ac.indexOf(this.currentCategory),total=ac.length;document.getElementById('step-indicator').innerHTML='Step '+(ci+1)+'/'+total+': '+ac.map(c=>{if(this.selectedActions[c])return'<span style="color:var(--accent)">✓ '+CL[c]+'</span>';if(c===this.currentCategory)return'<span class="step-current">→ '+CL[c]+'</span>';return'<span>'+CL[c]+'</span>';}).join(' · ');},
 renderCategoryTabs(){const ac=this._activeCats||CATS;const tabs=ac.map(c=>'<div class="cat-tab '+(this.currentCategory===c?'active':this.selectedActions[c]?'done':'')+'" onclick="Game.switchCategory(\''+c+'\')">'+CL[c]+(this.selectedActions[c]?' ✓':'')+'</div>').join('');
-const member=!!this.state._epic_life,selectedEpic=this.selectedActions.finance&&this.selectedActions.finance.id==='epic_life_membership';
-const epicLabel=member?'⭐ Epic ✓':(selectedEpic?'⭐ Epic ✓':'⭐ Epic Life');
+const member=!!this.state._epic_life,pendingEpic=!!this.state._epic_enroll_pending;
+const epicLabel=(member||pendingEpic)?'⭐ Epic ✓':'⭐ Epic';
 const epicBtn='<div id="epic-btn" class="cat-tab" style="margin-left:auto;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">'+epicLabel+'</div>';
 document.getElementById('cat-tabs').innerHTML=tabs+epicBtn;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
-const member=!!s._epic_life,selected=this.selectedActions.finance&&this.selectedActions.finance.id==='epic_life_membership';
+const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
 let h='<div style="font-size:0.85rem;line-height:1.6;">'+(a.description||'')+'</div>';
 h+='<div style="font-size:0.8rem;line-height:1.55;color:var(--text2);margin-top:8px;">It runs the single highest-priority money move for you each month — building credit, protection, banking, your tax-free policy, then switching on passive income — and surfaces more investment opportunities.</div>';
 h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:var(--radius-sm);font-size:0.78rem;line-height:1.5;"><strong>⚠️ Very powerful.</strong> If this is your first game, try a full run without it so you learn how the money moves yourself first.</div>';
 if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
-else if(selected)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn.</div>';
-else{h+='<div style="margin-top:12px;font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Choose a plan ('+fm(setup)+' setup either way)</div>';
+else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action).</div>';
+h+='<button class="btn-secondary" style="margin-top:8px;" onclick="Game.cancelEpicLife()">Cancel enrollment</button>';}
+else{h+='<div style="margin-top:12px;font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Choose a plan ('+fm(setup)+' setup either way) — enrolling doesn’t use your Finance action</div>';
 h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'monthly\')">Monthly — '+fm(setup)+' setup + '+fm(mo)+'/mo</button>';
 h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'annual\')">Annual — '+fm(setup)+' setup + '+fm(yr)+'/yr <span style="font-weight:400;opacity:0.85;">(save '+fm(mo*12-yr)+'/yr)</span></button>';}
 this.showPopup('⭐ Epic Life Membership',h);},
-enrollEpicLife(plan){const a=this.getAvailableActions('finance').find(x=>x.id==='epic_life_membership');if(a&&!this.isActionLocked(a)){this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.selectActionPayment('finance','epic_life_membership');}this.hidePopup();this.renderCategoryTabs();},
+enrollEpicLife(plan){if(this.state._epic_life)return this.hidePopup();this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.state._epic_enroll_pending=true;this.hidePopup();this.renderCategoryTabs();},
+cancelEpicLife(){this.state._epic_enroll_pending=false;this.hidePopup();this.renderCategoryTabs();},
 switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();},
 
 isActionOutgrown(a){const s=this.state,sk=s['skill_'+a.category]||0;if(a.stage==='foundation'&&sk>40&&this.getStage(a.category)!=='foundation')return true;
@@ -3354,22 +3363,27 @@ _epicHandled(a){return !!this.state._epic_life&&this.EPIC_HANDLED.includes(a.id)
 _epicLifePick(){const s=this.state,fin=id=>CONFIG.actions_finance.actions.find(a=>a.id===id),util=this.calcPersUtil();
 const persRev=()=>Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
 const profit=()=>Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));
+// Hard mode (Stuck owner): hold the expensive protective setup until the business is genuinely stable — don't bypass the dig-out or accelerate insolvency.
+const stuck=this.archetype&&this.archetype.id==='stuck',stable=(s.credit_negatives||0)===0&&profit()>3000;
 const specs=[
- {id:'banking_relationship',once:true,need:()=>true},
- {id:'asset_protection_stack',need:()=>this.isSeparated()},
- {id:'combined_insurance',need:()=>this.isSeparated()},
- {id:'debt_restructure',need:()=>util>45&&persRev()>2000},
+ // Fix credit first — it's the gate to everything else, and the player can't do these manually while Epic is active.
  {id:'build_personal_credit',need:()=>(s.credit_negatives||0)>0&&!s._credit_repair},
+ {id:'debt_restructure',need:()=>util>45&&persRev()>2000},
  {id:'pay_down_debt',need:()=>util>30&&(s.cash||0)>2000},
+ {id:'banking_relationship',once:true,need:()=>true},
+ {id:'asset_protection_stack',need:()=>this.isSeparated()&&(!stuck||stable)},
+ {id:'combined_insurance',need:()=>this.isSeparated()&&(!stuck||stable)},
  {id:'fund_accumulation_policy',need:()=>profit()>3000},
  {id:'activate_passive_income',need:()=>(s.insurance_cash_value||0)>5000&&!s._passive_income_active},
 ];
+// Cash-reserve guardrail: Epic spends only from CASH (never credit) and never below ~1 month of core expenses — so it can't drain you or quietly add debt.
+const reserve=Math.round((s.operating_expenses||0)+(s.cogs||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0));
 for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if((a.one_time||spec.once)&&(s._completed_actions||[]).includes(a.id))continue;
  if(!this.meetsReq(a.prerequisites||{}))continue;
  if(!spec.need())continue;
- const cost=this.actionCashCost(a),funds=(s.cash||0)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
- if(cost>0&&funds<cost*1.1)continue;
+ const cost=this.actionCashCost(a);
+ if(cost>0&&(s.cash||0)-cost<reserve)continue; // wait until you can pay from cash and still keep a month's cushion
  const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;perk.energy_cost=0;return perk;}
 return null;},
 boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
@@ -3479,9 +3493,11 @@ const _S0=this.state,_msStart={cash:_S0.cash||0,personalCash:_S0.personal_cash||
 this._nwStart=this.calcNetWorth(); // net worth at the start of the month → month-over-month trend on the dashboard
 const _spend={total:0,cash:0,biz:0,pers:0};
 // Epic Life concierge runs one extra high-priority finance move this month (selected from start-of-turn state), processed through the normal loop so all costs/handlers apply.
+// Epic Life enrollment resolves as its own move (not your Finance action) so it never conflicts with a finance pick.
+if(this.state._epic_enroll_pending&&!this.state._epic_life){const _m=Object.assign({},CONFIG.actions_finance.actions.find(x=>x.id==='epic_life_membership'));_m.success_rate=2;_m.energy_cost=0;_m._epic=true;this.selectedActions['epicbuy']=_m;this.state._epic_enroll_pending=false;}
 if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selectedActions['epic']=_perk;}
-// Resolve the Epic Life concierge move FIRST so its before→after reflects start-of-month numbers — matching its position at the top of the results.
-const _entries=Object.entries(this.selectedActions),_ordered=_entries.filter(e=>e[0]==='epic').concat(_entries.filter(e=>e[0]!=='epic'));
+// Resolve the Epic Life move FIRST so its before→after reflects start-of-month numbers — matching its position at the top of the results.
+const _entries=Object.entries(this.selectedActions),_isEpic=e=>e[0]==='epic'||e[0]==='epicbuy',_ordered=_entries.filter(_isEpic).concat(_entries.filter(e=>!_isEpic(e)));
 for(const[cat,action]of _ordered){
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0};
 const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
@@ -3514,8 +3530,9 @@ if(total>0){const parts=['Put '+this.fmtMoney(total)+' of spare cash to work cle
 else s._dyn_narrative='Your utilization ('+beforeUtil+'%) and DTI ('+beforeDti+'%) are already healthy — no high-interest revolving debt worth paying down right now. Keep that cash working elsewhere.';}
 const _cost=action.id==='pay_down_debt'?0:this.actionCashCost(action),_pm=(this._paymentMethods||{})[action.id]||'cash';
 const _payB={cash:this.state.cash||0,pc:this.state.personal_cash||0,bu:this.state.business_credit_used||0,ac:this.state.available_credit||0};
-// Marketing/Operations/Finance always run on the business; only a purely-personal life action draws personal cash.
-this.payCost(_cost,cat==='lifestyle'&&this.lifeActionIsPersonal(action));
+// Marketing/Operations/Finance always run on the business; only a purely-personal life action draws personal cash. Epic Life perks spend CASH ONLY (never credit) — guarded by its cash-reserve rule.
+if(cat==='epic'){const d=Math.min(_cost,Math.max(0,this.state.cash||0));this.state.cash-=d;if(_cost>d)this.coverShortfall(_cost-d);}
+else this.payCost(_cost,cat==='lifestyle'&&this.lifeActionIsPersonal(action));
 // How this cost was actually funded (business cash, business credit, personal cash, personal credit)
 const _fund={cash:Math.max(0,_payB.cash-(this.state.cash||0)),biz:Math.max(0,(this.state.business_credit_used||0)-_payB.bu),persCash:Math.max(0,_payB.pc-(this.state.personal_cash||0)),persCredit:Math.max(0,_payB.ac-(this.state.available_credit||0))};
 if(_cost>0){_spend.total+=_cost;_spend.cash+=_fund.cash;_spend.biz+=_fund.biz;_spend.pers+=_fund.persCash+_fund.persCredit;}
@@ -3578,7 +3595,7 @@ const _sbLbl={leads:'Leads',customer_base:'Customers',team_size:'Team size',bran
 for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av)]);_ro._baKeys.push(k);}}
 if(rows.length)_ro.beforeAfter=rows;}
 results.push(_ro);if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
-delete this.selectedActions['epic'];
+delete this.selectedActions['epic'];delete this.selectedActions['epicbuy'];
 for(const b of _execBonuses){results.push({action:{label:b.role+' Performance Bonus'},success:true,effects:{cash:-b.bonus},narrative:'Your '+b.role+' hit their targets executing “'+b.label+'” — you paid a '+this.fmtMoney(b.bonus)+' performance bonus. Great executives earn their keep.'});}
 this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro)dr.ro.narrative=n;}}this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
 this._monthCashSummary={start:_msStart,spend:_spend};

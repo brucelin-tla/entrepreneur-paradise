@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.14 — 2026-06-27
+**Epic Life guardrails + enrollment decoupling; mobile display fixes; tutorial alignment**
+
+- **Cash-reserve guardrail (`_epicLifePick` / resolveMonth):** Epic perks spend CASH ONLY (never credit) and only if they leave ≥1 month of core expenses; otherwise it waits. Credit repair now prioritized first.
+- **Hard-mode pacing:** for the Stuck archetype, Epic holds expensive protective setup (asset protection, insurance) until the business is stable (credit cleared + profitable).
+- **Enrollment decoupled from Finance slot (`enrollEpicLife`/`_epic_enroll_pending`/`epicbuy`):** enrolling no longer occupies/cancels the Finance action — both resolve on End Turn; added a Cancel-enrollment option.
+- **Mobile display:** `#epic-btn` shortened to "⭐ Epic" and `position:sticky;right:0` so it stays visible; compacted `.cat-tab` padding; `Cash flow/mo` runway wraps to a second line so it no longer overflows into the business column.
+- **Tutorial alignment (`renderTutorialStep`):** re-place after the action-card fade-in settles so the finance highlight lines up exactly.
+
 ## v0.23.13 — 2026-06-27
 **Epic Life result-card polish**
 
