@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.9 — 2026-06-26
+**Life-mastery clarity, recurring-cost sweep (Group A+B), event revenue-model fixes, policy-deal fix, popup scroll lock**
+
+- **Life → Personal Mastery panel, unified (`_masteryPanel`):** both the quarterly check-in (`confirmLifestyle`) and the delegated-life result card (`resolveMonth`) now show `✨ Personal Mastery X → Y` with the dimensions (💪🧠🕊️❤️✨) and energy that moved. Life actions in the delegated path **always succeed** now (they were rolling a 0.7 chance and could no-op).
+- **Recurring costs (Group A + B, 15 actions):** moved ongoing monthly costs out of one-time `effects.operating_expenses` into a `recurring_cost` field for family office, board, general counsel, S-corp, C-corp, LLC/bookkeeping, premium financing, and all 8 team hires — so they display as `🔁 +$X/mo ongoing` and tag the menu. Net gameplay effect unchanged (generic handler adds to opex once on activation). Group C (ongoing *savings*) left as-is.
+- **Event revenue-model sweep:** removed all flat `monthly_revenue` effects from events (they were recomputed away each tick — cosmetic and misleading, e.g. "biggest client left → revenue zeroed"). Persistent client losses now use `customer_base`; one-month rest/health dips use real `cash`; growth opportunities (big contract, partnership, referral surge) now grant `customer_base` so the gains actually persist; the real-estate deal's rental income moved to `other_monthly_revenue` (persistent passive). Opportunity events are now genuinely rewarding; loss events cost real, lasting ground.
+- **Policy-funded deal (`policy_loan_opportunity`):** the borrow-against-policy deal gave a level-scaled position for an unscaled loan (free wealth) and ignored policy capacity. Now you can only borrow up to ~90% of cash value, the position funded equals the amount borrowed, and cash value is untouched.
+- **Popup scroll lock (`showPopup`/`_lockScroll`):** opening any dashboard info screen pins the background (iOS-safe) and restores scroll position on close.
+
 ## v0.23.8 — 2026-06-26
 **Energy spend shown on result cards**
 

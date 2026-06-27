@@ -710,9 +710,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 5000,
       "energy_cost": 15,
       "prerequisites": { "systems_maturity_gte": 20 },
-      "effects": { "team_size": 2, "revenue_capacity": 20000, "key_person_dependency": -20, "operating_expenses": 4000 },
+      "recurring_cost": 4000,
+      "effects": { "team_size": 2, "revenue_capacity": 20000, "key_person_dependency": -20 },
       "success_rate": 0.6,
-      "failure_effects": { "team_size": 2, "operating_expenses": 4000, "key_person_dependency": -5 },
+      "failure_effects": { "team_size": 2, "key_person_dependency": -5 },
       "narrative_success": "The team handled this month's workload without a single escalation to you. You built something that works without you.",
       "narrative_failure": "The team is hired and training. Quality isn't where you want it yet. You're managing more than doing — the awkward middle phase."
     },
@@ -758,9 +759,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 28000,
       "energy_cost": 14,
       "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 5 },
-      "effects": { "cogs": -3000, "customer_base": 20, "operating_expenses": 8000, "team_size": 3, "brand_equity": 12, "systems_maturity": 8 },
+      "recurring_cost": 8000,
+      "effects": { "cogs": -3000, "customer_base": 20, "team_size": 3, "brand_equity": 12, "systems_maturity": 8 },
       "success_rate": 0.45,
-      "failure_effects": { "customer_base": 5, "operating_expenses": 6000, "team_size": 2, "cogs": -500 },
+      "failure_effects": { "customer_base": 5, "team_size": 2, "cogs": -500 },
       "narrative_success": "You own more of the supply chain AND opened a second market — margins jumped and capacity multiplied. You're an empire now.",
       "narrative_failure": "Expansion is messier than expected: integration overhead is real and the new market is slow. It'll take time to break even — if it does."
     },
@@ -808,9 +810,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 4000,
       "energy_cost": 12,
       "prerequisites": { "team_size_gte": 3, "systems_maturity_gte": 30 },
-      "effects": { "team_size": 1, "key_person_dependency": -25, "systems_maturity": 10, "operating_expenses": 4000, "energy": 10 },
+      "recurring_cost": 4000,
+      "effects": { "team_size": 1, "key_person_dependency": -25, "systems_maturity": 10, "energy": 10 },
       "success_rate": 0.5,
-      "failure_effects": { "team_size": 1, "operating_expenses": 4000, "key_person_dependency": -5 },
+      "failure_effects": { "team_size": 1, "key_person_dependency": -5 },
       "narrative_success": "She ran the Monday meeting without you this week. The team didn't even notice you weren't there. That's the goal.",
       "narrative_failure": "The new manager is learning. Team dynamics shifted. Two people aren't happy about the new layer. Growing pains."
     },
@@ -841,9 +844,10 @@ window.EMBEDDED_CONFIG = {
       "energy_cost": 4,
       "one_time": true,
       "prerequisites": { "team_size_gte": 4 },
-      "effects": { "team_size": 1, "key_person_dependency": -15, "operating_expenses": 4000, "systems_maturity": 10 },
+      "recurring_cost": 4000,
+      "effects": { "team_size": 1, "key_person_dependency": -15, "systems_maturity": 10 },
       "success_rate": 0.85,
-      "failure_effects": { "team_size": 1, "operating_expenses": 4000 },
+      "failure_effects": { "team_size": 1 },
       "narrative_success": "Your CFO restructured two loan terms in her first month, found $3,000 in unnecessary expenses, and projected your cash flow for the next six months. You should have done this two years ago.",
       "narrative_failure": "Onboarding is taking longer than expected — your books were messier than she anticipated. But she's cleaning them up."
     },
@@ -858,9 +862,10 @@ window.EMBEDDED_CONFIG = {
       "energy_cost": 8,
       "one_time": true,
       "prerequisites": { "team_size_gte": 4, "systems_maturity_gte": 25 },
-      "effects": { "team_size": 1, "key_person_dependency": -12, "operating_expenses": 3500, "systems_maturity": 12 },
+      "recurring_cost": 3500,
+      "effects": { "team_size": 1, "key_person_dependency": -12, "systems_maturity": 12 },
       "success_rate": 0.78,
-      "failure_effects": { "team_size": 1, "operating_expenses": 3500, "systems_maturity": 4 },
+      "failure_effects": { "team_size": 1, "systems_maturity": 4 },
       "narrative_success": "First hire she made on her own was better than your last three. The job posting, screening, and onboarding all happened while you were focused on strategy.",
       "narrative_failure": "She's building processes. The org chart is getting formalized. It feels bureaucratic — but your team of 6+ needs it."
     },
@@ -875,9 +880,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 2500,
       "energy_cost": 6,
       "prerequisites": { "monthly_revenue_gte": 20000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "key_person_dependency": -8, "operating_expenses": 4000 },
+      "recurring_cost": 4000,
+      "effects": { "key_person_dependency": -8 },
       "success_rate": 0.9,
-      "failure_effects": { "operating_expenses": 4000 },
+      "failure_effects": {},
       "narrative_success": "Within a week your assistant had a spreadsheet of every account, a paydown schedule to keep utilization under 30%, the DUNS file current, and the tax reserve on autopilot. You stopped thinking about any of it — which is exactly the point.",
       "narrative_failure": "Onboarding took longer than hoped, but the systems are in place now — the financial housekeeping runs itself from here."
     },
@@ -925,9 +931,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 2000,
       "energy_cost": 6,
       "prerequisites": { "customer_base_gte": 20, "team_size_gte": 2 },
-      "effects": { "churn_rate": -0.04, "team_size": 1, "brand_equity": 5, "key_person_dependency": -10, "operating_expenses": 3000 },
+      "recurring_cost": 3000,
+      "effects": { "churn_rate": -0.04, "team_size": 1, "brand_equity": 5, "key_person_dependency": -10 },
       "success_rate": 0.7,
-      "failure_effects": { "team_size": 1, "operating_expenses": 3000, "churn_rate": -0.01 },
+      "failure_effects": { "team_size": 1, "churn_rate": -0.01 },
       "narrative_success": "Three clients sent thank-you emails this month — none of them were to you. Your CSM is building relationships you used to own alone.",
       "narrative_failure": "The CSM is learning your clients. Some awkward handoffs, but the clients appreciate having a dedicated contact."
     },
@@ -942,9 +949,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 4000,
       "energy_cost": 8,
       "prerequisites": { "team_size_gte": 3 },
-      "effects": { "company_culture": 15, "churn_rate": -0.02, "key_person_dependency": -6, "operating_expenses": 4000 },
+      "recurring_cost": 4000,
+      "effects": { "company_culture": 15, "churn_rate": -0.02, "key_person_dependency": -6 },
       "success_rate": 0.85,
-      "failure_effects": { "company_culture": 6, "operating_expenses": 4000 },
+      "failure_effects": { "company_culture": 6 },
       "narrative_success": "Open enrollment went out and the Slack lit up with thank-yous. People feel taken care of — and people who feel taken care of don't quit over a bad week.",
       "narrative_failure": "The package is partway in place — health is live, retirement is still being set up. The team noticed the effort, at least."
     },
@@ -1067,9 +1075,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 15000,
       "energy_cost": 8,
       "prerequisites": { "monthly_revenue_gte": 60000 },
-      "effects": { "operating_expenses": 5000, "audit_risk": -10, "key_person_dependency": -8, "lifestyle_legacy": 10, "_family_office": true },
+      "recurring_cost": 5000,
+      "effects": { "audit_risk": -10, "key_person_dependency": -8, "lifestyle_legacy": 10, "_family_office": true },
       "success_rate": 0.9,
-      "failure_effects": { "operating_expenses": 5000, "_family_office": true },
+      "failure_effects": { "_family_office": true },
       "narrative_success": "Your family office is running. A dedicated team now coordinates your investments, taxes, estate, and giving — and your portfolio's yield ticks up as they optimize allocation. Runs about $5,000/mo, and it earns its keep.",
       "narrative_failure": "The family office is staffed but still onboarding your accounts. Coordination — and the efficiency gains — ramp up over the next month."
     },
@@ -1101,9 +1110,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 12000,
       "energy_cost": 6,
       "prerequisites": { "needs": ["hire_cro", "hire_coo", "hire_cfo", "activate_passive_income"] },
-      "effects": { "operating_expenses": 3000, "key_person_dependency": -12, "lifestyle_legacy": 8, "_board_active": true },
+      "recurring_cost": 3000,
+      "effects": { "key_person_dependency": -12, "lifestyle_legacy": 8, "_board_active": true },
       "success_rate": 0.95,
-      "failure_effects": { "operating_expenses": 3000, "_board_active": true },
+      "failure_effects": { "_board_active": true },
       "narrative_success": "Your board is seated. Between your executive team and board oversight, the company governs itself — use “Let the Board run the month” any time to autopilot, and spend your energy on the big moves only you can make.",
       "narrative_failure": "The board is forming — a couple of seats still to fill. Governance is taking shape."
     },
@@ -1118,9 +1128,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 700,
       "energy_cost": 12,
       "prerequisites": { "entity_structure_in": ["none", "sole_prop"] },
-      "effects": { "entity_structure": "llc", "systems_maturity": 12, "audit_risk": -12, "personal_credit_score": 5, "litigation_exposure": -15, "personal_guarantee_exposure": -5000, "operating_expenses": 150 },
+      "recurring_cost": 150,
+      "effects": { "entity_structure": "llc", "systems_maturity": 12, "audit_risk": -12, "personal_credit_score": 5, "litigation_exposure": -15, "personal_guarantee_exposure": -5000 },
       "success_rate": 0.92,
-      "failure_effects": { "entity_structure": "llc", "systems_maturity": 4, "operating_expenses": 150 },
+      "failure_effects": { "entity_structure": "llc", "systems_maturity": 4 },
       "narrative_success": "The LLC is filed, the EIN issued, a business checking account is open, and your books are live. Your business exists as its own legal person with clean financials — and bookkeeping runs about $150/mo from here.",
       "narrative_failure": "The LLC is filed and the account is open, but the bookkeeping setup is half-done — categories are a work in progress. Still running about $150/mo."
     },
@@ -1266,9 +1277,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 2500,
       "energy_cost": 10,
       "prerequisites": { "entity_structure": "llc" },
-      "effects": { "entity_structure": "s_corp", "owner_pay": 3000, "operating_expenses": 300, "audit_risk": -3, "litigation_exposure": -10, "personal_credit_score": 5 },
+      "recurring_cost": 300,
+      "effects": { "entity_structure": "s_corp", "owner_pay": 3000, "audit_risk": -3, "litigation_exposure": -10, "personal_credit_score": 5 },
       "success_rate": 0.85,
-      "failure_effects": { "entity_structure": "s_corp", "owner_pay": 2000, "operating_expenses": 300 },
+      "failure_effects": { "entity_structure": "s_corp", "owner_pay": 2000 },
       "narrative_success": "You're on payroll, the operating agreement is signed, and the S-Corp election is filed. Your tax advisor estimates $8,000–$12,000 in annual savings — and lenders now see a real, bankable business.",
       "narrative_failure": "Payroll is running and the election is filed, but at a lower salary than planned. Savings are real, just smaller until revenue catches up."
     },
@@ -1283,9 +1295,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 5000,
       "energy_cost": 10,
       "prerequisites": { "entity_structure_in": ["s_corp", "multi_entity"], "monthly_revenue_gte": 40000 },
-      "effects": { "entity_structure": "c_corp", "operating_expenses": 500, "audit_risk": -2 },
+      "recurring_cost": 500,
+      "effects": { "entity_structure": "c_corp", "audit_risk": -2 },
       "success_rate": 0.85,
-      "failure_effects": { "entity_structure": "c_corp", "operating_expenses": 500 },
+      "failure_effects": { "entity_structure": "c_corp" },
       "narrative_success": "The C-Corp conversion is filed, the option pool is authorized, and your cap table is investor-ready. You can now put real ownership in your people's hands.",
       "narrative_failure": "The conversion went through, though the option pool paperwork is still being finalized. The structure is in place to grant equity soon."
     },
@@ -1317,9 +1330,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 3000,
       "energy_cost": 6,
       "prerequisites": { "monthly_revenue_gte": 25000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "litigation_exposure": -25, "audit_risk": -8, "personal_guarantee_exposure": -10000, "operating_expenses": 3000 },
+      "recurring_cost": 3000,
+      "effects": { "litigation_exposure": -25, "audit_risk": -8, "personal_guarantee_exposure": -10000 },
       "success_rate": 0.9,
-      "failure_effects": { "litigation_exposure": -8, "operating_expenses": 3000 },
+      "failure_effects": { "litigation_exposure": -8 },
       "narrative_success": "Your counsel rewrote your contracts, filed your trademarks, and put a demand-letter process in place. The next time someone threatens to 'get their lawyer involved,' yours picks up the phone.",
       "narrative_failure": "Counsel is on retainer and reviewing the backlog — contracts first, IP next. The shield is going up, just not all at once."
     },
@@ -1417,9 +1431,10 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 5000,
       "energy_cost": 8,
       "prerequisites": { "personal_credit_score_gte": 700, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "operating_expenses": 1500 },
+      "recurring_cost": 1500,
+      "effects": {},
       "success_rate": 0.55,
-      "failure_effects": { "insurance_cash_value": 10000, "total_debt": 10000, "operating_expenses": 800 },
+      "failure_effects": { "insurance_cash_value": 10000, "total_debt": 10000 },
       "narrative_success": "The premium financing deal is structured. You're building a tax-free asset with the bank's money. This is how the wealthy stay wealthy.",
       "narrative_failure": "Partially funded. The bank's terms were tighter than expected. Still building cash value, just slower."
     },
@@ -1568,8 +1583,8 @@ window.EMBEDDED_CONFIG = {
         },
         {
           "label": "Rest and let the business coast",
-          "effects": { "monthly_revenue": -4000, "customer_base": -3 },
-          "outcome_narrative": "You took the time to heal. Revenue slid and a few clients drifted, but you came back whole."
+          "effects": { "customer_base": -3 },
+          "outcome_narrative": "You took the time to heal. A few clients drifted while you were out, but you came back whole."
         }
       ],
       "protection": {
@@ -1605,7 +1620,7 @@ window.EMBEDDED_CONFIG = {
         "shielded_by": "keyman_insurance",
         "protected_note": "Your key-man policy paid out, funding a fast, well-paid replacement and bridging the gap. The business barely skipped a beat — which is exactly why you insured the people who matter.",
         "unprotected_note": "With no key-man coverage, there was no money to cushion the loss. You ate the cost and the chaos directly, and a few clients slipped away in the disruption.",
-        "unprotected_extra": { "cash": -8000, "monthly_revenue": -3000 }
+        "unprotected_extra": { "cash": -8000, "customer_base": -3 }
       },
       "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
     },
@@ -1786,7 +1801,7 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Play offense — borrow cheap, grab market share",
-          "effects": { "total_debt": 6000, "customer_base": 9, "monthly_revenue": 3500, "brand_equity": 10, "leads": 8, "energy": -10 },
+          "effects": { "total_debt": 6000, "customer_base": 9, "brand_equity": 10, "leads": 8, "energy": -10 },
           "outcome_narrative": "While competitors went dark, you got loud — funded with the bank's money, not your own. You scooped up their abandoned customers at the cheapest acquisition cost you'll ever see. Recessions transfer market share to whoever has the nerve and the capital to act."
         },
         {
@@ -1814,7 +1829,7 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Take a week off completely",
-          "effects": { "energy": 25, "monthly_revenue": -2000, "lifestyle_health": 5 },
+          "effects": { "energy": 25, "cash": -2000, "lifestyle_health": 5 },
           "outcome_narrative": "You disappeared for seven days. The business survived. You came back with something you'd lost — perspective."
         },
         {
@@ -1870,12 +1885,12 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Take the contract, scale up to deliver",
-          "effects": { "monthly_revenue": 8000, "cash": -3000, "operating_expenses": 3000, "energy": -10, "customer_base": 1, "key_person_dependency": 10 },
+          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
           "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
         },
         {
           "label": "Negotiate better terms first",
-          "effects": { "monthly_revenue": 5000, "operating_expenses": 1500, "brand_equity": 5 },
+          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
           "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
         },
         {
@@ -1898,12 +1913,12 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Accept the partnership (give 30% equity)",
-          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "monthly_revenue": 3000 },
+          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "customer_base": 4 },
           "outcome_narrative": "The deal is signed. $20K in the bank and a Rolodex of connections. But 30% of every future dollar belongs to someone else now."
         },
         {
           "label": "Counter with a revenue-share, no equity",
-          "effects": { "cash": 5000, "monthly_revenue": 2000, "partner_conflict_risk": 10 },
+          "effects": { "cash": 5000, "customer_base": 3, "partner_conflict_risk": 10 },
           "outcome_narrative": "She accepted the rev-share. Less capital upfront, but you kept your equity. Smart — if you can grow without the full injection."
         },
         {
@@ -1926,7 +1941,7 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Make the offer, use available credit",
-          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
+          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
           "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
         },
         {
@@ -1977,12 +1992,12 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Cancel everything for two weeks",
-          "effects": { "energy": 30, "monthly_revenue": -3000, "lifestyle_health": 10 },
+          "effects": { "energy": 30, "cash": -3000, "lifestyle_health": 10 },
           "outcome_narrative": "Two weeks of nothing. The business wobbled but didn't fall. You came back lighter. The ER bill is on the fridge as a reminder."
         },
         {
           "label": "Scale back to half-days",
-          "effects": { "energy": 15, "monthly_revenue": -1000, "lifestyle_health": 5 },
+          "effects": { "energy": 15, "cash": -1000, "lifestyle_health": 5 },
           "outcome_narrative": "Half-days for a month. The urgent things got done. The rest waited. Most of it didn't matter as much as you thought."
         },
         {
@@ -2011,12 +2026,12 @@ window.EMBEDDED_CONFIG = {
       "choices": [
         {
           "label": "Take on everyone",
-          "effects": { "customer_base": 8, "monthly_revenue": 5000, "energy": -15, "key_person_dependency": 10 },
+          "effects": { "customer_base": 8, "energy": -15, "key_person_dependency": 10 },
           "outcome_narrative": "Eight new clients in a month. Your calendar is a war zone. Revenue is up — so is your blood pressure."
         },
         {
           "label": "Cherry-pick the best fits",
-          "effects": { "customer_base": 4, "monthly_revenue": 3000, "brand_equity": 5 },
+          "effects": { "customer_base": 4, "brand_equity": 5 },
           "outcome_narrative": "You picked four. Said no to the rest — gracefully. The four you took are ideal clients. Quality over quantity."
         }
       ],
@@ -2122,9 +2137,9 @@ window.EMBEDDED_CONFIG = {
       "narrative": "Your biggest client just called. They're moving to a competitor. They were 20% of your revenue. The conversation was polite, but the damage is immediate.",
       "act": 2,
       "choices": [
-        { "label": "Offer a steep discount to keep them", "effects": { "monthly_revenue": -2000, "brand_equity": -5 }, "outcome_narrative": "They stayed — at 30% less. You kept the revenue but set a precedent. Other clients will hear about this." },
-        { "label": "Let them go, double down on pipeline", "effects": { "monthly_revenue": -5000, "customer_base": -1, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone. It stings. But you redirected that energy into three new prospects. Diversification is a lesson you won't forget." },
-        { "label": "Ask for an exit interview to learn why", "effects": { "monthly_revenue": -5000, "customer_base": -1, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "The feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
+        { "label": "Offer a steep discount to keep them", "effects": { "brand_equity": -8 }, "outcome_narrative": "They stayed — at 30% less. You kept the account but set a precedent that quietly drags your pricing power. Other clients will hear about this." },
+        { "label": "Let them go, double down on pipeline", "effects": { "customer_base": -4, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone — about a fifth of your book walked out the door with them. It stings, and you can feel it in the numbers. But you redirected that energy into new prospects. Diversification is a lesson you won't forget." },
+        { "label": "Ask for an exit interview to learn why", "effects": { "customer_base": -4, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "They still left — that chunk of revenue is gone — but the feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
       ],
       "mitigated_by": ["hire_client_success", "crm_pipeline"]
     },
@@ -2187,7 +2202,7 @@ window.EMBEDDED_CONFIG = {
       "act": 2,
       "choices": [
         { "label": "Absorb the cost, protect client relationships", "effects": { "cogs": 2000, "brand_equity": 3 }, "outcome_narrative": "You ate the margin hit. Clients don't know anything changed. But your profitability just took a serious dent." },
-        { "label": "Pass the cost to clients", "effects": { "monthly_revenue": 2000, "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced. Three clients left. The rest grumbled but stayed. Revenue actually went up, but trust went down." },
+        { "label": "Pass the cost to clients", "effects": { "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced — you protected your margins instead of eating the vendor hike. Three clients left over it and some goodwill eroded, but the rest grumbled and stayed." },
         { "label": "Find a new vendor immediately", "effects": { "energy": -15, "cogs": 500, "systems_maturity": -3 }, "outcome_narrative": "New vendor found in two weeks. Cheaper, but the transition was messy. Two deliveries were late during the switch." }
       ],
       "mitigated_by": ["vertical_integration", "fulfillment_system"]
@@ -2218,7 +2233,7 @@ window.EMBEDDED_CONFIG = {
       "narrative": "A private equity firm reached out. They want to buy your company. The offer is serious — 3x annual revenue. But the terms include a 2-year earn-out where you stay on as an employee.",
       "act": 3,
       "choices": [
-        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "monthly_revenue": -10000, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
+        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "customer_base": -10, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
         { "label": "Counter at 5x revenue", "effects": { "brand_equity": 10 }, "outcome_narrative": "They came back at 4x. The negotiation continues. Either way — someone thinks your company is worth buying. That's the real win." },
         { "label": "Decline — this isn't for sale", "effects": { "brand_equity": 5, "energy": 10 }, "outcome_narrative": "You said no. The PE firm respected it. And something crystallized — you're not building to sell. You're building to own." }
       ],
@@ -2297,7 +2312,7 @@ window.EMBEDDED_CONFIG = {
       "act": 2,
       "choices": [
         { "label": "Emergency retention — raises, equity talk, a real mea culpa", "effects": { "cash": -25000, "operating_expenses": 4000, "company_culture": 22, "energy": -20 }, "outcome_narrative": "You got in a room, owned the failures, and put real money and ownership on the table. Most of them stayed — and the ones who did now trust you more. Expensive lesson: culture isn't a perk, it's the foundation." },
-        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "monthly_revenue": -8000, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
+        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "customer_base": -6, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
       ],
       "mitigated_by": ["build_benefits_package", "grant_stock_incentives", "hire_hr_manager"]
     },
@@ -2312,8 +2327,8 @@ window.EMBEDDED_CONFIG = {
       "act": 3,
       "choices": [
         { "label": "Enforce the non-compete in court", "effects": { "cash": -20000, "energy": -20, "customer_base": -3, "company_culture": -5 }, "outcome_narrative": "Your lawyers moved fast and slowed them down — but litigation is ugly, expensive, and the team watched the whole thing. You kept most clients; you spent a fortune and a lot of goodwill doing it." },
-        { "label": "Counter-offer hard to keep the clients", "effects": { "monthly_revenue": -5000, "operating_expenses": 2000, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
-        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "monthly_revenue": -7000, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
+        { "label": "Counter-offer hard to keep the clients", "effects": { "operating_expenses": 2000, "brand_equity": -6, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
+        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
       ],
       "mitigated_by": ["grant_stock_incentives", "hire_general_counsel", "hire_client_success"]
     }
@@ -2652,6 +2667,13 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.9',d:'2026-06-26 21:30',n:[
+'Life rewards now clearly show their Personal Mastery impact (which dimensions moved + your new mastery score) — on both the quarterly check-in and when your team frees up a Life slot. Life actions also always land now (no more random “nothing happened”).',
+'Recurring costs read correctly: family office, board, counsel, S/C-corp, bookkeeping, premium financing and every team hire now show as “🔁 +$X/mo ongoing” instead of a confusing one-time charge.',
+'Event fixes so revenue behaves sensibly: losing a big client (or clients) now actually reduces your customer base proportionally instead of briefly zeroing your revenue, and growth opportunities (big contracts, partnerships, referrals, real estate) now deliver real, lasting gains.',
+'Borrowing against your policy to fund a deal now respects your actual borrowing room (up to ~90% of cash value); the position funded equals what you borrowed, and your cash value keeps compounding untouched.',
+'Opening any dashboard info screen no longer lets the page behind it scroll.',
+]},
 {v:'0.23.8',d:'2026-06-26 20:30',n:[
 'Result cards now show the energy each action spent (or gained), so you can see what a move cost you.',
 ]},
@@ -2764,8 +2786,11 @@ this.startGame();},
 
 startGame(){this.state._mentor_state='introduced';this.initMilestones();this.renderMonth();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
-showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;document.getElementById('popup-container').style.display='block';},
-hidePopup(){document.getElementById('popup-container').style.display='none';},
+showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;document.getElementById('popup-container').style.display='block';this._lockScroll();},
+hidePopup(){document.getElementById('popup-container').style.display='none';this._unlockScroll();},
+// Lock background scroll while a popup is open (iOS-safe: pin the body and restore scroll position on close).
+_lockScroll(){if(this._scrollLocked)return;this._scrollLocked=true;this._scrollY=window.scrollY||window.pageYOffset||0;const b=document.body;b.style.position='fixed';b.style.top=(-this._scrollY)+'px';b.style.left='0';b.style.right='0';b.style.width='100%';b.style.overflow='hidden';},
+_unlockScroll(){if(!this._scrollLocked)return;this._scrollLocked=false;const b=document.body;b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.width='';b.style.overflow='';window.scrollTo(0,this._scrollY||0);},
 TUTORIAL_STEPS:[
 {sel:null,title:'Welcome to Entrepreneur Paradise',body:'You have <strong>up to 36 months</strong> to build wealth and a life you love — cash out at the end of <strong>Year 1, 2, or 3</strong> to lock in your score. Let\'s play your first month together so you get a feel for the game.'},
 {sel:'#stats-dashboard',title:'Your dashboard',body:'Cash, credit, debt and your <strong>Net/mo</strong> (with a runway estimate) live up here, next to Energy and Freedom. Tap any stat with an ⓘ to see how it\'s calculated. Watch Net/mo — if cash and credit both run dry, the game ends.'},
@@ -3358,6 +3383,7 @@ if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selecte
 for(const[cat,action]of Object.entries(this.selectedActions)){
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0};
 const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
+const _lifeDB=cat==='lifestyle'?this.lifeDims():null,_lifeMB=cat==='lifestyle'?this.calcPersonalMastery():null,_lifeEnB=cat==='lifestyle'?Math.round(this.state.energy):null;
 const skillKey='skill_'+cat,skillBonus=(this.state[skillKey]||0)/200;
 const repeatCount=(this.state._action_counts||{})[action.id]||0;
 const EXEMPT_DIM=['debt_restructure','banking_relationship','fund_accumulation_policy','policy_loan','pay_down_debt','build_personal_credit'];
@@ -3366,7 +3392,7 @@ const diminishing=isDimExempt?0:Math.min(0.25,repeatCount*0.05);
 const penalty=this.state.energy<30?0.85:1;
 const retryBoost=(this.state._partial_actions&&this.state._partial_actions[action.id])?0.35:0; // a second attempt after a partial is far more likely to land
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
-const success=Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost);
+const success=cat==='lifestyle'?true:(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
 if(!isDimExempt&&repeatCount>2){const dimMult=Math.max(0.4,1-repeatCount*0.1);for(const k in effects){if(typeof effects[k]==='number'&&effects[k]>0&&k!=='team_size')effects[k]=Math.round(effects[k]*dimMult);}}
@@ -3431,6 +3457,7 @@ const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_reve
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund};
+if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
 {const sep=this.isSeparated(),RED='var(--red)',GRN='var(--accent)',af={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0,debt:this.state.total_debt||0},rows=[];_ro._baKeys=[];_ro._scoreMoved=af.persScore!==_cb.persScore;
 // Cash this action moved (cost paid, or loan/sale proceeds added)
@@ -3558,14 +3585,15 @@ const _lp=this.state._lastPassive;if(_lp&&_lp.month===this.month&&_lp.amt>0)html
 const _crp=this.state._lastCreditRepair;if(_crp&&_crp.month===this.month){html+='<div class="fade-in" style="background:rgba(59,130,246,0.07);border:1px solid var(--blue);border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;color:var(--blue);">📈 Credit Repair · '+_crp.removed+' negative'+(_crp.removed>1?'s':'')+' removed · score '+_crp.before+' → '+_crp.after+'</div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">'+(_crp.remaining>0?_crp.remaining+' mark'+(_crp.remaining>1?'s':'')+' still under dispute — keep going, your score climbs as each one falls off.':'Your file is clean now. From here, lowering credit utilization is what carries your score toward 750-800.')+'</div></div>';this.state._lastCreditRepair=null;}
 // One compact card per action: title + badge, short narrative, inline effect chips, light lesson line
 for(const r of results){
-const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;if(r._baKeys&&r._baKeys.includes(k))continue;if(k==='personal_credit_score'&&r._scoreMoved)continue;const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&(!r.action||r.action.category!=='finance'))continue;if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+this.formatStatName(k)+'</span>');}
+const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;if(r._baKeys&&r._baKeys.includes(k))continue;if(k==='personal_credit_score'&&r._scoreMoved)continue;if(r._mastery&&(k.indexOf('lifestyle_')===0||k==='fitness_level'||k==='energy'))continue;/* dimension panel covers these */const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&(!r.action||r.action.category!=='finance'))continue;if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+this.formatStatName(k)+'</span>');}
 const firstLesson=r.success&&r.action.lesson&&!(this.state._lessons_shown||[]).includes(r.action.id);if(firstLesson)(this.state._lessons_shown=(this.state._lessons_shown||[])).push(r.action.id);
 html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;">'+
 '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.success?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(r.action._epic?'Epic Life':(r.success?'Success':'Partial'))+'</span></div>'+
 (r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
 ((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 '+(r.action.recurring_cost?'Setup':'Cost')+' <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 ((r.success&&r.action.recurring_cost)?'<div style="font-size:0.73rem;color:var(--purple);margin-top:4px;">🔁 +'+this.fmtMoney(r.action.recurring_cost)+'/mo ongoing operating expense</div>':'')+
-((r.action.energy_cost&&r.action.energy_cost!==0)?'<div style="font-size:0.73rem;color:'+(r.action.energy_cost>0?'var(--orange)':'var(--accent)')+';margin-top:4px;">⚡ '+(r.action.energy_cost>0?'−'+r.action.energy_cost+' energy spent':'+'+Math.abs(r.action.energy_cost)+' energy gained')+'</div>':'')+
+((r.action.energy_cost&&r.action.energy_cost!==0&&!r._mastery)?'<div style="font-size:0.73rem;color:'+(r.action.energy_cost>0?'var(--orange)':'var(--accent)')+';margin-top:4px;">⚡ '+(r.action.energy_cost>0?'−'+r.action.energy_cost+' energy spent':'+'+Math.abs(r.action.energy_cost)+' energy gained')+'</div>':'')+
+(r._mastery||'')+
 (chips.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">'+chips.join('')+'</div>':'')+
 (r.beforeAfter?'<div style="margin-top:8px;background:rgba(127,127,127,0.08);border-radius:var(--radius-sm);padding:6px 9px;">'+r.beforeAfter.map(row=>'<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.73rem;padding:2px 0;"><span style="color:var(--text2);">'+row[0]+'</span><span style="white-space:nowrap;"><span style="color:var(--text2);">'+row[1]+'</span> <span style="color:'+(row[3]||'var(--accent)')+';font-weight:700;">→ '+row[2]+'</span></span></div>').join('')+'</div>':'')+
 (firstLesson?'<div style="font-size:0.73rem;color:var(--gold);line-height:1.5;margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;"><strong>💡 Lesson:</strong> '+this.linkTerms(r.action.lesson)+'</div>':'')+
@@ -3634,6 +3662,8 @@ const _evtBefore=this._baSnapshot();
 let effects=Object.assign({},c.effects),protNote='',saleNote='';
 // Selling the company (full acquisition): proceeds are personal income, taxed as capital gains, and you forfeit the equity/upside — not just business cash sitting in the account.
 if(evt.id==='acquisition_offer'&&ci===0){const s=this.state,proceeds=effects.cash||0;delete effects.cash;const tax=Math.round(proceeds*0.238),net=proceeds-tax;s.personal_cash=(s.personal_cash||0)+net;s.personal_tax_ytd=(s.personal_tax_ytd||0)+tax;s.capital_account=0;saleNote='<div class="narrative-box fade-in" style="border-left-color:var(--gold);margin-top:12px;">You sold the company — converting illiquid equity into cash. The <strong>'+this.fmtMoney(proceeds)+'</strong> sale price is <strong>personal</strong> income, less <strong>'+this.fmtMoney(tax)+'</strong> in long-term capital-gains tax (~23.8%: 20% federal + 3.8% NIIT). Net to you: <strong>'+this.fmtMoney(net)+'</strong>. Your equity and its future cash flow now belong to the buyer — your wealth is only what survived the tax.</div>';}
+// Borrowing against your policy to fund a deal: you can only deploy what the policy actually supports (up to ~90% of cash value, less any existing loan). The position funded equals the amount borrowed — and the cash value itself is untouched (it keeps compounding via the monthly tick).
+if(evt.id==='policy_loan_opportunity'&&ci===0){const s=this.state,room=Math.max(0,Math.round(0.9*(s.insurance_cash_value||0)-(s.insurance_loan_balance||0))),want=effects.investment_positions||15000,deploy=Math.min(want,room);delete effects.investment_positions;delete effects.insurance_loan_balance;delete effects.other_monthly_revenue;if(deploy>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+deploy;s.investment_positions=(s.investment_positions||0)+deploy;s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(deploy*0.012);c.outcome_narrative='You borrowed '+this.fmtMoney(deploy)+' tax-free against your policy — up to ~90% of its '+this.fmtMoney(s.insurance_cash_value||0)+' cash value — and deployed it into a passive position throwing off ~'+this.fmtMoney(Math.round(deploy*0.012))+'/mo. The cash value keeps compounding as if you never touched it; the loan is simply netted from your death benefit, never repaid from your pocket.';}else{c.outcome_narrative='Your policy doesn\'t have borrowing room right now — you can borrow up to ~90% of the cash value, less any existing loan. Keep funding the policy and this kind of on-demand, tax-free deal opens back up.';}}
 if(evt.protection){let shielded=false;if(evt.protection.shielded_when)shielded=this.meetsReq(evt.protection.shielded_when);if(!shielded&&evt.protection.shielded_by)shielded=(this.state._completed_actions||[]).includes(evt.protection.shielded_by);
 const safeguard=this._safeguardName(evt.protection.shielded_by||evt.protection.shielded_when);
 if(shielded){const avoided=[];if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];if(typeof v==='number'&&v!==0)avoided.push(MK.includes(k)?this.fmtMoney(Math.abs(v)):Math.abs(v)+' '+this.formatStatName(k));}const savedNote=avoided.length?'<br><span style="color:var(--accent);font-size:0.8rem;">Damage avoided: '+avoided.join(', ')+'.</span>':(evt.protection.shielded_multiplier!=null?'<br><span style="color:var(--accent);font-size:0.8rem;">Damage cut to '+Math.round(evt.protection.shielded_multiplier*100)+'% of what it would have been.</span>':'');protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected — '+safeguard+'.</strong> '+evt.protection.protected_note+savedNote+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
@@ -3692,6 +3722,12 @@ continueFromCheckpoint(){this.month++;this.renderMonth();},
 // Funding rule for life actions: executive health/performance, professional development, thought-leadership and team spend are legitimate BUSINESS expenses (paid from business cash/credit); everything purely personal (family, luxury, spiritual, giving, personal estate) is paid from PERSONAL cash. Keeps personal cash from being drained by what are really business investments. A config `funding` field overrides if present.
 LIFE_BUSINESS_FUNDED:['executive_health_retreat','concierge_medicine','fitness_training','gym_routine','sleep_routine','morning_routine','annual_physical','therapy_coaching','nutrition_coach','learn_new_skill','masterclass_workshop','leadership_coaching','write_book','mentor_others','company_retreat'],
 lifeActionIsPersonal(a){if(!a)return true;if(a.funding)return a.funding!=='business';return !this.LIFE_BUSINESS_FUNDED.includes(a.id);},
+// Personal Mastery impact panel (shared by the quarterly check-in and the delegated-life result card): which dimensions moved + the new mastery score, given before-snapshots.
+_masteryPanel(dB,mB,enB){const dA=this.lifeDims(),mA=this.calcPersonalMastery(),enA=Math.round(this.state.energy);
+let rows=['Body','Mind','Spirit','Heart','Luxury'].filter(k=>dA[k]!==dB[k]).map(k=>{const up=dA[k]>dB[k];return '<div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;"><span style="color:var(--text2)">'+this.LIFE_ICON[k]+' '+k+'</span><span><span style="color:var(--text2)">'+dB[k]+'</span> <span style="color:'+(up?'var(--accent)':'var(--red)')+';font-weight:700;">→ '+dA[k]+'</span></span></div>';}).join('');
+if(enA!==enB)rows+='<div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;"><span style="color:var(--text2)">⚡ Energy</span><span><span style="color:var(--text2)">'+enB+'</span> <span style="color:'+(enA>enB?'var(--accent)':'var(--red)')+';font-weight:700;">→ '+enA+'</span></span></div>';
+if(!rows&&mA===mB)return '';const mUp=mA>=mB;
+return '<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:var(--radius-sm);padding:11px 13px;margin:10px 0 9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:5px;">✨ Personal Mastery '+mB+' → <span style="color:'+(mUp?'var(--accent)':'var(--red)')+'">'+mA+'</span></div>'+rows+'</div>';},
 // Life-action preview: name the Personal Mastery dimension(s) the action builds, plus any other stat it touches (money shows its current value, like the other action menus).
 lifeActionPreview(a){const s=this.state,DIM={lifestyle_health:'Body',fitness_level:'Body',lifestyle_legacy:'Mind',lifestyle_spiritual:'Spirit',lifestyle_philanthropy:'Spirit',lifestyle_relationships:'Heart',lifestyle_experiences:'Luxury'};
 const MONEYISH=['cash','monthly_revenue','insurance_cash_value','investment_positions','real_estate_equity'],LBL={brand_equity:'Brand equity',leads:'Leads',monthly_revenue:'Revenue',cash:'Cash'};
@@ -3721,11 +3757,13 @@ document.getElementById('lifestyle-btn').disabled=true;},
 
 selectLifestyle(id){const list=this._sortedLifestyle||CONFIG.lifestyle_options.actions;this.selectedLifestyle=list.find(a=>a.id===id);document.querySelectorAll('#lifestyle-list .action-card').forEach(c=>c.classList.remove('selected'));const idx=list.findIndex(a=>a.id===id),cards=document.querySelectorAll('#lifestyle-list .action-card');if(cards[idx])cards[idx].classList.add('selected');document.getElementById('lifestyle-btn').disabled=false;document.getElementById('lifestyle-btn').textContent='Choose: '+this.selectedLifestyle.label;},
 
-confirmLifestyle(){if(!this.selectedLifestyle)return;const a=this.selectedLifestyle;this.payCost(a.cash_cost||0,this.lifeActionIsPersonal(a));this.applyEffects(this._scaleLifestyleEffects(a.effects));if(a.recurring_cost&&!this.state._active_lifestyle_costs[a.id]){this.state._active_lifestyle_costs[a.id]=a.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+a.recurring_cost;}
+confirmLifestyle(){if(!this.selectedLifestyle)return;const a=this.selectedLifestyle;const _dB=this.lifeDims(),_mB=this.calcPersonalMastery(),_enB=Math.round(this.state.energy);this.payCost(a.cash_cost||0,this.lifeActionIsPersonal(a));this.applyEffects(this._scaleLifestyleEffects(a.effects));if(a.recurring_cost&&!this.state._active_lifestyle_costs[a.id]){this.state._active_lifestyle_costs[a.id]=a.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+a.recurring_cost;}
 const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_revenue:500},narrative:"Your mentee referred a client to you. 'You helped me — let me return the favor,' she said."},volunteer_time:{delay:2,effects:{brand_equity:8,leads:3},narrative:"Someone from the volunteer site reached out — they need exactly what you offer. 'I liked how you showed up that Saturday.'"},faith_community:{delay:4,effects:{leads:4,brand_equity:3,lifestyle_relationships:5},narrative:"A fellow member mentioned your business to their network. Three warm introductions this week."},family_trip:{delay:1,effects:{energy:10,lifestyle_relationships:5},narrative:"You came back recharged. Your partner said you seem lighter. The clarity is showing up in your work."},therapy_coaching:{delay:2,effects:{energy:8,lifestyle_health:3},narrative:"The patterns your therapist helped you see — you're catching them in real time now."},learn_new_skill:{delay:3,effects:{brand_equity:5,leads:3},narrative:"The class led to an unexpected connection — your instructor runs a business and just became a client."},charity_donation:{delay:2,effects:{brand_equity:8},narrative:"The charity featured your business in their donor spotlight newsletter. 2,000 people saw it."}};
 if(buffs[a.id]){const b=buffs[a.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:a.label});}
 if(!this.state._action_counts)this.state._action_counts={};this.state._action_counts[a.id]=(this.state._action_counts[a.id]||0)+1;
-this.lifestyleHistory.push(a);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Lifestyle — '+a.subcategory;document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+a.label+'</strong><br><br>'+a.narrative+'</div>';this.selectedLifestyle=null;},
+this.lifestyleHistory.push(a);
+const _impact=this._masteryPanel(_dB,_mB,_enB);
+this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Lifestyle — '+a.subcategory;document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+a.label+'</strong><br><br>'+a.narrative+'</div>'+_impact;this.selectedLifestyle=null;},
 
 skipLifestyle(){this.state.lifestyle_health=Math.max(0,(this.state.lifestyle_health||0)-2);this.state.lifestyle_relationships=Math.max(0,(this.state.lifestyle_relationships||0)-2);this.state.energy=Math.max(0,this.state.energy-3);this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Quarterly Check-In — Skipped';document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in">You skipped the life check-in this quarter. The business needed every dollar and every hour. But the people in your life noticed your absence — and so did your body.<br><br><div class="effect-list"><div class="effect-item"><span>Health</span><span style="color:var(--red)">-2</span></div><div class="effect-item"><span>Relationships</span><span style="color:var(--red)">-2</span></div><div class="effect-item"><span>Energy</span><span style="color:var(--red)">-3</span></div></div></div>';},
 

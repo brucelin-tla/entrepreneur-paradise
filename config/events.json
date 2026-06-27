@@ -47,8 +47,8 @@
         },
         {
           "label": "Rest and let the business coast",
-          "effects": { "monthly_revenue": -4000, "customer_base": -3 },
-          "outcome_narrative": "You took the time to heal. Revenue slid and a few clients drifted, but you came back whole."
+          "effects": { "customer_base": -3 },
+          "outcome_narrative": "You took the time to heal. A few clients drifted while you were out, but you came back whole."
         }
       ],
       "protection": {
@@ -84,7 +84,7 @@
         "shielded_by": "keyman_insurance",
         "protected_note": "Your key-man policy paid out, funding a fast, well-paid replacement and bridging the gap. The business barely skipped a beat — which is exactly why you insured the people who matter.",
         "unprotected_note": "With no key-man coverage, there was no money to cushion the loss. You ate the cost and the chaos directly, and a few clients slipped away in the disruption.",
-        "unprotected_extra": { "cash": -8000, "monthly_revenue": -3000 }
+        "unprotected_extra": { "cash": -8000, "customer_base": -3 }
       },
       "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
     },
@@ -265,7 +265,7 @@
       "choices": [
         {
           "label": "Play offense — borrow cheap, grab market share",
-          "effects": { "total_debt": 6000, "customer_base": 9, "monthly_revenue": 3500, "brand_equity": 10, "leads": 8, "energy": -10 },
+          "effects": { "total_debt": 6000, "customer_base": 9, "brand_equity": 10, "leads": 8, "energy": -10 },
           "outcome_narrative": "While competitors went dark, you got loud — funded with the bank's money, not your own. You scooped up their abandoned customers at the cheapest acquisition cost you'll ever see. Recessions transfer market share to whoever has the nerve and the capital to act."
         },
         {
@@ -293,7 +293,7 @@
       "choices": [
         {
           "label": "Take a week off completely",
-          "effects": { "energy": 25, "monthly_revenue": -2000, "lifestyle_health": 5 },
+          "effects": { "energy": 25, "cash": -2000, "lifestyle_health": 5 },
           "outcome_narrative": "You disappeared for seven days. The business survived. You came back with something you'd lost — perspective."
         },
         {
@@ -349,12 +349,12 @@
       "choices": [
         {
           "label": "Take the contract, scale up to deliver",
-          "effects": { "monthly_revenue": 8000, "cash": -3000, "operating_expenses": 3000, "energy": -10, "customer_base": 1, "key_person_dependency": 10 },
+          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
           "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
         },
         {
           "label": "Negotiate better terms first",
-          "effects": { "monthly_revenue": 5000, "operating_expenses": 1500, "brand_equity": 5 },
+          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
           "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
         },
         {
@@ -377,12 +377,12 @@
       "choices": [
         {
           "label": "Accept the partnership (give 30% equity)",
-          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "monthly_revenue": 3000 },
+          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "customer_base": 4 },
           "outcome_narrative": "The deal is signed. $20K in the bank and a Rolodex of connections. But 30% of every future dollar belongs to someone else now."
         },
         {
           "label": "Counter with a revenue-share, no equity",
-          "effects": { "cash": 5000, "monthly_revenue": 2000, "partner_conflict_risk": 10 },
+          "effects": { "cash": 5000, "customer_base": 3, "partner_conflict_risk": 10 },
           "outcome_narrative": "She accepted the rev-share. Less capital upfront, but you kept your equity. Smart — if you can grow without the full injection."
         },
         {
@@ -405,7 +405,7 @@
       "choices": [
         {
           "label": "Make the offer, use available credit",
-          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
+          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
           "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
         },
         {
@@ -456,12 +456,12 @@
       "choices": [
         {
           "label": "Cancel everything for two weeks",
-          "effects": { "energy": 30, "monthly_revenue": -3000, "lifestyle_health": 10 },
+          "effects": { "energy": 30, "cash": -3000, "lifestyle_health": 10 },
           "outcome_narrative": "Two weeks of nothing. The business wobbled but didn't fall. You came back lighter. The ER bill is on the fridge as a reminder."
         },
         {
           "label": "Scale back to half-days",
-          "effects": { "energy": 15, "monthly_revenue": -1000, "lifestyle_health": 5 },
+          "effects": { "energy": 15, "cash": -1000, "lifestyle_health": 5 },
           "outcome_narrative": "Half-days for a month. The urgent things got done. The rest waited. Most of it didn't matter as much as you thought."
         },
         {
@@ -490,12 +490,12 @@
       "choices": [
         {
           "label": "Take on everyone",
-          "effects": { "customer_base": 8, "monthly_revenue": 5000, "energy": -15, "key_person_dependency": 10 },
+          "effects": { "customer_base": 8, "energy": -15, "key_person_dependency": 10 },
           "outcome_narrative": "Eight new clients in a month. Your calendar is a war zone. Revenue is up — so is your blood pressure."
         },
         {
           "label": "Cherry-pick the best fits",
-          "effects": { "customer_base": 4, "monthly_revenue": 3000, "brand_equity": 5 },
+          "effects": { "customer_base": 4, "brand_equity": 5 },
           "outcome_narrative": "You picked four. Said no to the rest — gracefully. The four you took are ideal clients. Quality over quantity."
         }
       ],
@@ -601,9 +601,9 @@
       "narrative": "Your biggest client just called. They're moving to a competitor. They were 20% of your revenue. The conversation was polite, but the damage is immediate.",
       "act": 2,
       "choices": [
-        { "label": "Offer a steep discount to keep them", "effects": { "monthly_revenue": -2000, "brand_equity": -5 }, "outcome_narrative": "They stayed — at 30% less. You kept the revenue but set a precedent. Other clients will hear about this." },
-        { "label": "Let them go, double down on pipeline", "effects": { "monthly_revenue": -5000, "customer_base": -1, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone. It stings. But you redirected that energy into three new prospects. Diversification is a lesson you won't forget." },
-        { "label": "Ask for an exit interview to learn why", "effects": { "monthly_revenue": -5000, "customer_base": -1, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "The feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
+        { "label": "Offer a steep discount to keep them", "effects": { "brand_equity": -8 }, "outcome_narrative": "They stayed — at 30% less. You kept the account but set a precedent that quietly drags your pricing power. Other clients will hear about this." },
+        { "label": "Let them go, double down on pipeline", "effects": { "customer_base": -4, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone — about a fifth of your book walked out the door with them. It stings, and you can feel it in the numbers. But you redirected that energy into new prospects. Diversification is a lesson you won't forget." },
+        { "label": "Ask for an exit interview to learn why", "effects": { "customer_base": -4, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "They still left — that chunk of revenue is gone — but the feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
       ],
       "mitigated_by": ["hire_client_success", "crm_pipeline"]
     },
@@ -666,7 +666,7 @@
       "act": 2,
       "choices": [
         { "label": "Absorb the cost, protect client relationships", "effects": { "cogs": 2000, "brand_equity": 3 }, "outcome_narrative": "You ate the margin hit. Clients don't know anything changed. But your profitability just took a serious dent." },
-        { "label": "Pass the cost to clients", "effects": { "monthly_revenue": 2000, "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced. Three clients left. The rest grumbled but stayed. Revenue actually went up, but trust went down." },
+        { "label": "Pass the cost to clients", "effects": { "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced — you protected your margins instead of eating the vendor hike. Three clients left over it and some goodwill eroded, but the rest grumbled and stayed." },
         { "label": "Find a new vendor immediately", "effects": { "energy": -15, "cogs": 500, "systems_maturity": -3 }, "outcome_narrative": "New vendor found in two weeks. Cheaper, but the transition was messy. Two deliveries were late during the switch." }
       ],
       "mitigated_by": ["vertical_integration", "fulfillment_system"]
@@ -697,7 +697,7 @@
       "narrative": "A private equity firm reached out. They want to buy your company. The offer is serious — 3x annual revenue. But the terms include a 2-year earn-out where you stay on as an employee.",
       "act": 3,
       "choices": [
-        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "monthly_revenue": -10000, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
+        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "customer_base": -10, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
         { "label": "Counter at 5x revenue", "effects": { "brand_equity": 10 }, "outcome_narrative": "They came back at 4x. The negotiation continues. Either way — someone thinks your company is worth buying. That's the real win." },
         { "label": "Decline — this isn't for sale", "effects": { "brand_equity": 5, "energy": 10 }, "outcome_narrative": "You said no. The PE firm respected it. And something crystallized — you're not building to sell. You're building to own." }
       ],
@@ -776,7 +776,7 @@
       "act": 2,
       "choices": [
         { "label": "Emergency retention — raises, equity talk, a real mea culpa", "effects": { "cash": -25000, "operating_expenses": 4000, "company_culture": 22, "energy": -20 }, "outcome_narrative": "You got in a room, owned the failures, and put real money and ownership on the table. Most of them stayed — and the ones who did now trust you more. Expensive lesson: culture isn't a perk, it's the foundation." },
-        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "monthly_revenue": -8000, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
+        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "customer_base": -6, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
       ],
       "mitigated_by": ["build_benefits_package", "grant_stock_incentives", "hire_hr_manager"]
     },
@@ -791,8 +791,8 @@
       "act": 3,
       "choices": [
         { "label": "Enforce the non-compete in court", "effects": { "cash": -20000, "energy": -20, "customer_base": -3, "company_culture": -5 }, "outcome_narrative": "Your lawyers moved fast and slowed them down — but litigation is ugly, expensive, and the team watched the whole thing. You kept most clients; you spent a fortune and a lot of goodwill doing it." },
-        { "label": "Counter-offer hard to keep the clients", "effects": { "monthly_revenue": -5000, "operating_expenses": 2000, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
-        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "monthly_revenue": -7000, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
+        { "label": "Counter-offer hard to keep the clients", "effects": { "operating_expenses": 2000, "brand_equity": -6, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
+        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
       ],
       "mitigated_by": ["grant_stock_incentives", "hire_general_counsel", "hire_client_success"]
     }
