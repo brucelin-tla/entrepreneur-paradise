@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.18 — 2026-06-27
+**Ownership-aware net worth (CFO), Operations gating, Epic-during-tutorial guard**
+
+- **CFO net worth applies ownership % (`showCfoReport`):** `own = 1 − _partner_equity`; net worth uses `valuation × own`, with a new "Your Equity Stake (70%)" line. Dashboard Net Worth unchanged (book equity, already partner-adjusted via the monthly profit skim).
+- **Operations progression:** `do_work_yourself` now requires `needs:["study_business_content"]` (plus a customer) — learn → do → delegate (`hire_first_contractor` still needs `do_work_yourself`).
+- **Epic icon guard:** `#epic-btn` no longer renders while `_tutActive` is true (belt-and-suspenders on top of the `sep && month≥4` reveal gate).
+
 ## v0.23.17 — 2026-06-27
 **Result-screen declutter, tutorial highlight fix, real partnership equity, premium-financing rework, event-text accuracy**
 

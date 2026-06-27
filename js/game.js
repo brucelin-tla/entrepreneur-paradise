@@ -31,6 +31,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.18',d:'2026-06-27 17:15',n:[
+'Net worth is now ownership-aware: the CFO briefing shows your equity stake (e.g., 70% with a partner) and counts only your share of the company’s value — the dashboard Net Worth keeps tracking your real, partner-adjusted retained equity.',
+'Operations has a clearer path: “Do the Work Yourself” now unlocks after “Study Business Content” (learn → do → delegate).',
+'Safety fix: the ⭐ Epic Life icon can no longer appear during the first-month tutorial.',
+]},
 {v:'0.23.17',d:'2026-06-27 16:00',n:[
 'Result screen decluttered: each card now shows the headline, narrative and cost, with the stat-change details and lesson tucked behind a “▾ Details” toggle.',
 'Tutorial highlighting fixed on mobile — the spotlight now lines up with the right element every time, and feature-unlock tips (Business, Life, Net Worth, Epic) point right at the new thing on screen.',
@@ -609,8 +614,9 @@ this.showPopup('Credit Scores',h);},
 showCfoReport(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0;
 const opProfit=Math.max(0,rev-cogs-opex),margin=rev>0?Math.round(opProfit/rev*100):0;
 const valuation=Math.round(Math.max(opProfit*12*3,rev*12*0.5));
+const own=1-(s._partner_equity||0),myStake=Math.round(valuation*own);
 const liquid=(s.cash||0)+(s.personal_cash||0)+(s.investment_positions||0)+(s.insurance_cash_value||0),reEq=s.real_estate_equity||0;
-const debt=(s.total_debt||0)+(s.insurance_loan_balance||0),netWorth=liquid+reEq+valuation-debt;
+const debt=(s.total_debt||0)+(s.insurance_loan_balance||0),netWorth=liquid+reEq+myStake-debt;
 const burn=this.calcMonthlyBurn(),netFlow=rev-cogs-burn;
 const runway=netFlow>=0?'Profitable':(Math.floor(((s.cash||0)+(s.personal_cash||0)+(s.available_credit||0))/Math.max(1,-netFlow))+' mo runway');
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+((s._completed_actions||[]).includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
@@ -623,6 +629,7 @@ const head=(t,c,first)=>'<div style="font-weight:700;color:'+c+';text-transform:
 let h='<div style="font-size:0.72rem;color:var(--text2);font-style:italic;margin-bottom:8px;">Your fractional CFO’s read on the business:</div>';
 h+=head('The Numbers','var(--accent)',true);
 h+=row('Company Value (est.)',this.fmtMoney(valuation),'var(--accent)');
+if(own<1)h+=row('Your Equity Stake ('+Math.round(own*100)+'%)',this.fmtMoney(myStake),'var(--accent)');
 h+=row('Your Net Worth',this.fmtMoney(netWorth),netWorth>=0?'var(--accent)':'var(--red)');
 h+=row('Liquid Assets',this.fmtMoney(liquid));
 if((s.investment_positions||0)>0)h+=row('Investments',this.fmtMoney(s.investment_positions),'var(--accent)');
@@ -657,7 +664,7 @@ CAT_ICON:{marketing:'📣',operations:'⚙️',finance:'💰',lifestyle:'🏖️
 renderCategoryTabs(){const ac=this._activeCats||CATS;
 const tabs=ac.map(c=>{const on=this.currentCategory===c,done=!!this.selectedActions[c];return '<div'+(c==='lifestyle'?' id="life-btn"':'')+' class="cat-tab cat-icon'+(on?' active':done?' done':'')+'" title="'+CL[c]+'" onclick="Game.switchCategory(\''+c+'\')">'+(this.CAT_ICON[c]||'•')+(done&&!on?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>';}).join('');
 const member=!!this.state._epic_life,pendingEpic=!!this.state._epic_enroll_pending;
-const epic=(this._reveal('epic')||member||pendingEpic)?'<div id="epic-btn" class="cat-tab cat-icon" title="Epic Life Membership" style="background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>':'';
+const epic=(!this._tutActive&&(this._reveal('epic')||member||pendingEpic))?'<div id="epic-btn" class="cat-tab cat-icon" title="Epic Life Membership" style="background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>':'';
 document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
