@@ -977,7 +977,7 @@ window.EMBEDDED_CONFIG = {
       "stage": "foundation",
       "one_time": true,
       "label": "Epic Life Membership",
-      "description": "Enroll in Epic Life — a done-for-you wealth concierge. For a flat monthly fee, a team quietly runs your financial infrastructure in the background: credit optimization and debt restructuring as needed, a protective holding structure, banking relationships, the right insurance and a tax-free accumulation policy — switching on passive income once it's ready — and surfacing more investment opportunities. Each month it executes the single highest-priority move for you, so you can focus on the business and your life.",
+      "description": "A done-for-you wealth concierge. Once enrolled, a team runs your financial playbook in the background — credit, debt, protection, banking, insurance, your tax-free policy, then passive income — doing the single most relevant move each month so you can focus on the business.",
       "lesson": "The wealthy don't run the whole financial playbook themselves — they hire specialists who run it for them. A concierge trades a monthly fee for time and flawless execution: the protective and wealth-building moves happen on schedule whether or not you remember them. (This is a real service — the game just lets you feel the value.)",
       "cash_cost": 500,
       "recurring_cost": 300,
@@ -2651,6 +2651,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.3',d:'2026-06-26 18:45',n:[
+'Fixes: business credit now shows “—” until you actually have a business credit line (instead of $0); the tutorial no longer blocks tapping actions on mobile; and the Epic Life Membership card is more compact.',
+]},
 {v:'0.23.2',d:'2026-06-26 18:15',n:[
 'New Finance option — Epic Life Membership ($500 + $300/mo): a done-for-you wealth concierge. Once enrolled it quietly runs your financial playbook in the background — credit optimization, debt restructuring, a protective holding structure, banking, insurance, your tax-free accumulation policy, then switching on passive income — executing the single most relevant move each month and surfacing more investment opportunities. The actions it covers are marked “handled” so you don’t need to pick them. (It’s a real-life service — the game lets you feel the value.)',
 ]},
@@ -2761,13 +2764,14 @@ if(!step){return this.endTutorial();}
 let ov=document.getElementById('tut-overlay');
 if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-tip"></div>';document.body.appendChild(ov);}
 const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip');
-// On "wait" steps the player acts in the real game, so let clicks pass through the overlay; info steps stay modal.
+// On "wait" steps the player acts in the real game, so let clicks pass through the overlay AND the tip (its skip button re-enables itself); info steps stay modal.
 ov.style.pointerEvents=step.wait?'none':'auto';
+tip.style.pointerEvents=step.wait?'none':'auto';
 const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>').join('');
 const backBtn=(i>0&&!step.wait)?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
 const nextLabel=i===steps.length-1?'Got it':'Next';
 const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
-tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
+tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" style="pointer-events:auto" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
 const target=step.sel?document.querySelector(step.sel):null;
 const place=()=>{
 if(target){
@@ -2776,7 +2780,8 @@ hole.style.display='block';hole.classList.add('pulse');
 hole.style.top=(r.top-pad)+'px';hole.style.left=(r.left-pad)+'px';hole.style.width=(r.width+pad*2)+'px';hole.style.height=(r.height+pad*2)+'px';
 const th=tip.offsetHeight,gap=14,vh=window.innerHeight;
 let top;
-if(r.bottom+gap+th<vh-10)top=r.bottom+gap;            // below
+if(step.wait&&r.height>vh*0.5)top=vh-th-12;            // tall target (e.g. action list): pin tip to the bottom so cards stay visible/tappable
+else if(r.bottom+gap+th<vh-10)top=r.bottom+gap;       // below
 else if(r.top-gap-th>10)top=r.top-gap-th;             // above
 else top=Math.max(10,(vh-th)/2);                      // center fallback
 tip.style.top=top+'px';
@@ -2926,7 +2931,7 @@ if(sep){
 B+=subLab('Money');
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
-B+=row('Credit',m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>',"Game.showCreditAvail()");
+B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',"Game.showCreditAvail()");
 B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),"Game.showRevenue()");
 B+=row('Expense/mo',m(bizExp,'var(--gold)'),"Game.showBurn()");
 B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showBurn()");

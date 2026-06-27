@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.3 — 2026-06-26
+**Fixes: business-credit display, mobile tutorial tap-blocking, Epic card size**
+
+- **Business credit display (`renderStats`):** the business "Credit" row now shows `—` when `business_credit_limit` is 0 (no line established yet) instead of a misleading `$0 0%`.
+- **Mobile tutorial tap-blocking (`renderTutorialStep`):** on interactive "wait" steps the tip box is now `pointer-events:none` (the Skip button re-enables itself), so taps pass through to the action cards underneath — previously the tip overlay blocked taps on mobile. Tall-target steps (the action list) also pin the tip to the bottom so cards stay visible.
+- **Epic Life Membership card (`actions_finance.json`):** trimmed the description so the card isn't oversized.
+
 ## v0.23.2 — 2026-06-26
 **Epic Life Membership — a done-for-you wealth concierge that auto-runs the financial playbook**
 
