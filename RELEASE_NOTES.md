@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.24.0 — 2026-06-28
+**Burnout/negative-energy mechanic, illness↔insurance trade-off, dashboard & result icons, layout/copy polish**
+
+- **Overcommit/burnout:** `confirmActions` warns when committed energy (`_turnEnergy`) exceeds available; energy can go negative (floored −40 in `applyEffects` and the resolveMonth charge); dashboard energy gauge shows the real value + "⚠ burnout · high illness risk" sub with a clamped bar.
+- **Ungated low energy:** `canAfford`/`getLockedReason` only block an action when it would breach −40 ("Too exhausted") — low/negative energy otherwise never locks actions.
+- **Illness risk:** `checkEvents` `healthMult` now uses un-floored energy (capped 5×) so deep burnout sharply raises burnout/personal/health event odds; the Business Insurance Stack pays medical reimbursement + critical-illness lump sums (from the earlier health pass).
+- **Icons:** dashboard rows/gauges (`RICON`, gauge labels) and result-screen chips + before/after rows (`_keyIcon`/`_lblIcon`) share the same stat icons.
+- **Net Worth / Owner Equity:** Net Worth row shows only while `calcNetWorth()>0`; its ▲/▼ delta moved to its own line (no overflow into the business column); Owner Equity gets a matching swing via new `_oeStart`.
+- **Action sort:** already-taken repeatables sink below fresh actions (retry → NEW → fresh → taken-before → locked → completed).
+- **Tutorial:** new result-screen step spotlighting `#tut-result-detail` ("Details & lesson").
+- **Copy:** trimmed Build Personal Credit lesson and Business Insurance Stack description/lesson.
+
 ## v0.23.25 — 2026-06-28
 **Turn-flow UX: stay-on-pick, card/tag cleanup, dashboard icons, button labels**
 
