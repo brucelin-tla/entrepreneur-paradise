@@ -89,7 +89,9 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
 #tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
 @keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
-#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6}
+#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6;pointer-events:auto}
+#tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.82rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
+@keyframes tutHint{0%,100%{opacity:0.55}50%{opacity:1}}
 #tut-tip .tut-count{font-size:0.68rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
 #tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:1rem;margin-bottom:6px}
 #tut-tip .tut-body{color:var(--text);font-size:0.84rem;line-height:1.55}

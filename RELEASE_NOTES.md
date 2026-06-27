@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.23.1 — 2026-06-26
+**Interactive first-month tutorial + dashboard UI/UX refinements: at-a-glance net cash flow & runway, grouped stats, color-coded mastery, decluttered action menu**
+
+- **Business-vs-personal funding (`payCost` callers / `lifeActionIsPersonal`):** Marketing/Operations/Finance actions are now always funded by the business (the four personal-wealth finance actions no longer special-cased to personal). Life rewards route by a new classifier — executive health/performance, professional development, thought-leadership and team spend (`LIFE_BUSINESS_FUNDED`) draw from the business; family/luxury/spiritual/giving/personal-estate draw from personal cash. `confirmLifestyle` now routes through `payCost` instead of always hitting business cash. Stops personal cash being drained to ~0 each month. A config `funding` field overrides the default per action.
+- **Accurate "Build Personal Credit" copy:** reworked the description/lesson/narratives (and the in-menu credit preview) to reflect real credit mechanics — dispute *genuine* errors, lower utilization, resolve collections, on-time history — instead of the credit-repair-mill myth of "disputing away" legitimate negative marks. Game mechanic (resolve negatives → ~650, then utilization → 750-800) unchanged.
+- **Clearer action previews (`actionPreview`/`lifeActionPreview`):** reworked to "Stats impacted:" — names every affected stat (full coverage incl. the special finance actions via the `IMPACTS` map; no more blank previews), shows the current value only for money/credit-score stats, and formats credit score as a plain number (not `$`). Life-action cards get the same treatment, mapping their effects to the five Personal Mastery dimensions (💪 Body / 🧠 Mind / 🕊️ Spirit / ❤️ Heart / ✨ Luxury).
+- **Tidier result cost line (`showResults`):** the per-action cost now names the funding pool(s) — `from cash` / `from business credit` / `from personal cash + personal credit` — instead of repeating the dollar amount per source.
+- **Hands-on tutorial (`TUTORIAL_STEPS`/`_tutNotify`/`_tutReposition`):** the month-1 walkthrough now drives the real game loop. "wait" steps make the spotlight overlay click-through (`pointerEvents` toggles per step) and the player's actual selections advance the tour — pick Marketing → Operations → Finance (riding the existing auto-tab-advance), then End Turn, then a closing "that's the loop" tip on the results screen. `selectAction` fires `_tutNotify('select')`, `resolveMonth` fires `_tutNotify('endturn')`.
+- **Net cash flow + runway (`renderStats`/`netRow`):** new Net/mo row on both the Personal and Business sides — income minus expenses, color-coded (green positive / red negative), with a `~Nmo` runway estimate (liquid = cash + available credit ÷ monthly burn) shown when net is negative.
+- **Grouped dashboard (`subLab`):** each side split into labeled sections — Personal → MONEY / CAPACITY, Business → MONEY / OPERATIONS — replacing the unlabeled spacer gaps so the eye lands faster.
+- **Color-coded Personal Mastery sub-stats:** the 💪🧠🕊️❤️✨ dimension row now colors each value (red < 30, gold < 60) and spreads them evenly, so a neglected dimension reads as a warning at a glance.
+- **Decluttered action menu (`actionPreview`/`_cfoHintShown`):** the "🔒 Hire a fractional CFO to forecast results" hint now renders once per menu render instead of repeating on every action card.
+
 ## v0.23.0 — 2026-06-26
 **Personal Mastery system, Company Culture, C-suite AI overhaul, Creditworthiness scoring dimension, Executive Assistant & General Counsel, private-banking deals, full stat transparency**
 

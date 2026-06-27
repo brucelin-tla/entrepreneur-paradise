@@ -158,16 +158,16 @@
       "category": "finance",
       "stage": "foundation",
       "label": "Build Personal Credit",
-      "description": "Hire a credit pro to dispute every negative mark and add tradelines. Disputes take 30-90 days, so the marks fall off — and your score climbs — over the next 2-3 months. Clearing the derogatories is what unlocks a ~650; lowering utilization after that is what carries you toward 750-800.",
-      "lesson": "Your credit score is an asset that prints access to cheap money. Payment history and utilization are 65% of a FICO score — clear the bad marks first (it takes a couple months), then drive utilization down. A file with no negatives has little to repair, so start this early if you're carrying collections.",
+      "description": "Get your credit in shape the legitimate way: pull all three reports and dispute genuine errors, pay down revolving balances to cut utilization, and resolve open collections (settle or set up a plan). Add a positive tradeline if your file is thin. There's no instant fix — corrections clear in 30-90 days and your score rebuilds over 2-3 months as the negatives stop dragging it; lower utilization then carries you toward the 750-800 range.",
+      "lesson": "Building credit is mechanics, not magic. The biggest levers are on-time payments and low utilization — keep card balances well under 30% of the limit. You can dispute genuine errors and resolving collections helps, but accurate negative marks can't simply be 'disputed away,' so be wary of anyone who promises that. Start early if you're carrying collections; the cleanup takes a couple of months to show.",
       "cash_cost": 600,
       "energy_cost": 10,
       "prerequisites": {},
       "effects": {},
       "success_rate": 0.7,
       "failure_effects": { "personal_credit_score": 5 },
-      "narrative_success": "Disputes filed and tradelines reporting. Now you wait — the bureaus take 30-90 days, and you'll watch the marks fall off and your score climb month over month.",
-      "narrative_failure": "Paperwork errors held up the filing — only a little movement this month. Run it again to push the disputes through."
+      "narrative_success": "You pulled all three reports, challenged the genuine errors, knocked down a couple of balances, and put a plan against the collections. The corrections take 30-90 days, and you'll watch your score climb month over month as the file cleans up.",
+      "narrative_failure": "Mixed-up paperwork stalled the disputes and one collection wouldn't budge — only a little movement this month. Run it again to keep the cleanup going."
     },
     {
       "id": "pay_down_debt",

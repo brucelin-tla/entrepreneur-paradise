@@ -96,7 +96,9 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
 #tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
 @keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
-#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6}
+#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6;pointer-events:auto}
+#tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.82rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
+@keyframes tutHint{0%,100%{opacity:0.55}50%{opacity:1}}
 #tut-tip .tut-count{font-size:0.68rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
 #tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:1rem;margin-bottom:6px}
 #tut-tip .tut-body{color:var(--text);font-size:0.84rem;line-height:1.55}
@@ -1126,16 +1128,16 @@ window.EMBEDDED_CONFIG = {
       "category": "finance",
       "stage": "foundation",
       "label": "Build Personal Credit",
-      "description": "Hire a credit pro to dispute every negative mark and add tradelines. Disputes take 30-90 days, so the marks fall off — and your score climbs — over the next 2-3 months. Clearing the derogatories is what unlocks a ~650; lowering utilization after that is what carries you toward 750-800.",
-      "lesson": "Your credit score is an asset that prints access to cheap money. Payment history and utilization are 65% of a FICO score — clear the bad marks first (it takes a couple months), then drive utilization down. A file with no negatives has little to repair, so start this early if you're carrying collections.",
+      "description": "Get your credit in shape the legitimate way: pull all three reports and dispute genuine errors, pay down revolving balances to cut utilization, and resolve open collections (settle or set up a plan). Add a positive tradeline if your file is thin. There's no instant fix — corrections clear in 30-90 days and your score rebuilds over 2-3 months as the negatives stop dragging it; lower utilization then carries you toward the 750-800 range.",
+      "lesson": "Building credit is mechanics, not magic. The biggest levers are on-time payments and low utilization — keep card balances well under 30% of the limit. You can dispute genuine errors and resolving collections helps, but accurate negative marks can't simply be 'disputed away,' so be wary of anyone who promises that. Start early if you're carrying collections; the cleanup takes a couple of months to show.",
       "cash_cost": 600,
       "energy_cost": 10,
       "prerequisites": {},
       "effects": {},
       "success_rate": 0.7,
       "failure_effects": { "personal_credit_score": 5 },
-      "narrative_success": "Disputes filed and tradelines reporting. Now you wait — the bureaus take 30-90 days, and you'll watch the marks fall off and your score climb month over month.",
-      "narrative_failure": "Paperwork errors held up the filing — only a little movement this month. Run it again to push the disputes through."
+      "narrative_success": "You pulled all three reports, challenged the genuine errors, knocked down a couple of balances, and put a plan against the collections. The corrections take 30-90 days, and you'll watch your score climb month over month as the file cleans up.",
+      "narrative_failure": "Mixed-up paperwork stalled the disputes and one collection wouldn't budge — only a little movement this month. Run it again to keep the cleanup going."
     },
     {
       "id": "pay_down_debt",
@@ -2631,6 +2633,17 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.1',d:'2026-06-26 17:30',n:[
+'Money comes from the right pocket: Marketing, Operations and Finance moves are now funded by the business, and life rewards draw from the business only when they’re genuine business spend (executive health, coaching, team retreats) — purely personal treats (vacations, dream car/home) come from your personal cash. Keeps your personal account from getting drained to zero every month.',
+'Reworked the "Build Personal Credit" action to reflect how credit really works — correct genuine errors, lower utilization, and resolve collections — instead of implying you can just dispute legitimate marks away.',
+'Action cards are clearer about what they change: every action now lists the exact stats it impacts. Money & credit-score stats also show your current value for reference; everything else just names the stat (no confusing numbers). Life actions now show which Personal Mastery dimensions (💪🧠🕊️❤️✨) they build, too.',
+'Result screen tidier: the cost line now just says where the money came from (e.g. “from cash” or “from business credit”) instead of repeating the dollar amount per source.',
+'The first-month tutorial is now hands-on: instead of just pointing at the screen, it walks you through actually making your first Marketing, Operations and Finance moves and ending the turn — so you learn the loop by playing it.',
+'Dashboard now shows Net/mo at a glance (income minus expenses, color-coded) with a quick runway estimate (~months of cushion) when you’re burning cash — for both your personal finances and the business.',
+'Cleaner stats layout: each side is now grouped into MONEY and CAPACITY (Operations for the business) so the numbers that matter are easier to scan.',
+'Personal Mastery dimensions (💪🧠🕊️❤️✨) are now color-coded — neglected areas turn red so you can see at a glance what’s being starved.',
+'Decluttered the action menu: the “hire a CFO to forecast results” hint now appears once instead of on every card.',
+]},
 {v:'0.23.0',d:'2026-06-26 16:45',n:[
 'Personal Mastery is now a real system: your life splits into five dimensions (💪 Body, 🧠 Mind, 🕊️ Spirit, ❤️ Heart, ✨ Luxury). Build them up — neglect them and your energy recovery drops, making it hard to act. Cheap habits give diminishing returns; the bigger investments matter.',
 'New Life rewards: company retreats, dream car, dream home, world sabbatical, leadership coaching, nutrition, and more. The end screen shows off "The Life You Built" with badges of honor that also appear on the leaderboard.',
@@ -2712,24 +2725,28 @@ showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remov
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;document.getElementById('popup-container').style.display='block';},
 hidePopup(){document.getElementById('popup-container').style.display='none';},
 TUTORIAL_STEPS:[
-{sel:null,title:'Welcome to Entrepreneur Paradise',body:'You have <strong>up to 36 months</strong> to build wealth and a life you love — but you don\'t have to play them all. At the end of <strong>Year 1, 2, or 3</strong> you can cash out and lock in your score. Let me walk you around the screen.'},
-{sel:'#stats-dashboard',title:'Your dashboard',body:'Cash, credit, energy and <strong>Freedom</strong> live up here. Tap any stat with an ⓘ to see how it\'s calculated, and tap underlined terms to learn what they mean.'},
-{sel:'#cat-tabs',title:'Pick one move per area',body:'Each month you choose one action in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span> (plus Life each quarter). These tabs switch between them — watch for the <span class="new-badge">NEW</span> badge when fresh options unlock.'},
-{sel:'#action-list',title:'Choose your action',body:'Tap a card to select it. Grinding revenue alone hits a ceiling — the real game is to build credit, leverage <em>other people\'s money</em>, fund a cash-value policy and turn it into <strong>passive, tax-free income</strong>. That\'s how you reach paradise.'},
-{sel:'#month-narrative',title:'The story & your mentor',body:'Story beats and your mentor speak here. Events will test you — lawsuits, downturns, opportunities — and the safeguards you build ahead of time (LLC, insurance, systems, credit) are what protect you when they hit.'},
-{sel:'#confirm-actions-btn',title:'End your turn',body:'Once you\'ve picked your moves, tap here to advance the month and see your results. Check 🏆 Achievements anytime to track milestones. Now — go build your empire.'}
+{sel:null,title:'Welcome to Entrepreneur Paradise',body:'You have <strong>up to 36 months</strong> to build wealth and a life you love — cash out at the end of <strong>Year 1, 2, or 3</strong> to lock in your score. Let\'s play your first month together so you get a feel for the game.'},
+{sel:'#stats-dashboard',title:'Your dashboard',body:'Cash, credit, debt and your <strong>Net/mo</strong> (with a runway estimate) live up here, next to Energy and Freedom. Tap any stat with an ⓘ to see how it\'s calculated. Watch Net/mo — if cash and credit both run dry, the game ends.'},
+{sel:'#action-list',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Start with Marketing — it fills your pipeline with leads. <strong>Tap an action below to choose it.</strong>',wait:'select',waitHint:'↓ Pick a Marketing action'},
+{sel:'#action-list',title:'Now — Operations',body:'Operations is how you deliver the work and keep customers happy. <strong>Tap an Operations action to pick it.</strong>',wait:'select',waitHint:'↓ Pick an Operations action'},
+{sel:'#action-list',title:'Now — Finance',body:'Finance is the heart of the game. Grinding revenue alone hits a ceiling — real wealth comes from credit, <em>other people\'s money</em>, and turning it into <strong>passive, tax-free income</strong>. <strong>Tap a Finance action.</strong>',wait:'select',waitHint:'↓ Pick a Finance action'},
+{sel:'#confirm-actions-btn',title:'End your turn',body:'All three moves are set. <strong>Tap End Turn</strong> to play out the month and see what happened.',wait:'endturn',waitHint:'↓ Tap End Turn'},
+{sel:null,title:'That\'s the loop!',body:'Every month: read the story, make your three moves, end the turn, and learn from the results. Build safeguards (LLC, insurance, credit) <em>before</em> events hit, and steer toward passive income. Check 🏆 Achievements anytime — now go build your empire.'}
 ],
-showTutorial(){this._tutStep=0;this.renderTutorialStep();},
+showTutorial(){this._tutStep=0;this._tutActive=true;this.renderTutorialStep();},
 renderTutorialStep(){
 const steps=this.TUTORIAL_STEPS,i=this._tutStep,step=steps[i];
 if(!step){return this.endTutorial();}
 let ov=document.getElementById('tut-overlay');
 if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-tip"></div>';document.body.appendChild(ov);}
 const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip');
+// On "wait" steps the player acts in the real game, so let clicks pass through the overlay; info steps stay modal.
+ov.style.pointerEvents=step.wait?'none':'auto';
 const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>').join('');
-const backBtn=i>0?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
+const backBtn=(i>0&&!step.wait)?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
 const nextLabel=i===steps.length-1?'Got it':'Next';
-tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button></div><div class="tut-dots">'+dots+'</div>';
+const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
+tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
 const target=step.sel?document.querySelector(step.sel):null;
 const place=()=>{
 if(target){
@@ -2752,7 +2769,13 @@ if(target){target.scrollIntoView({block:'center'});setTimeout(place,60);}else{pl
 },
 tutNext(){this._tutStep++;this.renderTutorialStep();},
 tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},
-endTutorial(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
+endTutorial(){this._tutActive=false;this._tutFinalPending=false;const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
+// Interactive tutorial: the player's real game actions drive the walkthrough forward.
+_tutNotify(kind){if(!this._tutActive)return;const step=this.TUTORIAL_STEPS[this._tutStep];if(!step||step.wait!==kind)return;
+if(kind==='endturn'){this._tutFinalPending=true;const ov=document.getElementById('tut-overlay');if(ov)ov.remove();return;}
+this.tutNext();},
+// After a selection auto-switches the active tab/re-renders, keep the spotlight aligned.
+_tutReposition(){if(this._tutActive&&document.getElementById('tut-overlay'))this.renderTutorialStep();},
 showGlossary(t){this.showPopup(t,'<div style="color:var(--text);line-height:1.7;">'+(this.GLOSSARY[t]||'No definition available.')+'</div>');},
 term(w,d){return'<span class="term-link" onclick="Game.showGlossary(\''+w.replace(/'/g,"\\'")+'\')\">'+(d||w)+'</span>';},
 linkTerms(t){const terms=Object.keys(this.GLOSSARY).sort((a,b)=>b.length-a.length);for(const w of terms)t=t.replace(new RegExp('\\b'+w.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'\\b','g'),'<span class="term-link" onclick="Game.showGlossary(\''+w.replace(/'/g,"\\'")+'\')">'+w+'</span>');return t;},
@@ -2859,12 +2882,15 @@ const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
 const row=(label,valHtml,click)=>'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(click?'cursor:pointer;':'')+'"'+(click?' onclick="'+click+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+(click?' <span class="info-btn">i</span>':'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
-let P=colHead('Personal','var(--accent)');
+const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
+const netRow=(label,net,liquid,click)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+=' <span style="font-size:0.55rem;color:var(--text2);font-weight:400;">~'+mo+'mo</span>';}return row(label,v,click);};
+let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',"Game.showCreditScore()");
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',"Game.showCreditAvail()");
 P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),"Game.showRevenue()");
 P+=row('Expense/mo',m(persExp,'var(--gold)'));
+P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,"Game.showRevenue()");
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),"Game.showDebt()");
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),"Game.showCreditAvail()");
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),"Game.showAssets()");
@@ -2872,19 +2898,21 @@ const en=Math.max(0,Math.min(100,s.energy||0)),mas=this.calcPersonalMastery(),fr
 const enC=en>60?'var(--accent)':en>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
 const gauge=(label,v,col,sub)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+(sub?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"></div></div></div>';
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
-const _d=this.lifeDims(),_dsub=Object.keys(_d).map(k=>this.LIFE_ICON[k]+_d[k]).join(' ');
-P+='<div style="height:7px;"></div>'+gauge('Energy',en,enC,'+'+rec+'/mo')+'<div onclick="Game.showMastery()" style="cursor:pointer;">'+gauge('Personal Mastery',mas,masC,'ⓘ')+'</div><div style="font-size:0.5rem;color:var(--text2);text-align:center;margin:-1px 0 2px;">'+_dsub+'</div>'+gauge('Freedom',fr,frC,this.getFounderRole());
+const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
+P+=subLab('Capacity')+gauge('Energy',en,enC,'+'+rec+'/mo')+'<div onclick="Game.showMastery()" style="cursor:pointer;">'+gauge('Personal Mastery',mas,masC,'ⓘ')+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('Freedom',fr,frC,this.getFounderRole());
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
+B+=subLab('Money');
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>',"Game.showCreditAvail()");
 B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),"Game.showRevenue()");
 B+=row('Expense/mo',m(bizExp,'var(--gold)'),"Game.showBurn()");
+B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showBurn()");
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),"Game.showDebt()");
 B+=row('Owner Equity',m(s.capital_account||0,(s.capital_account||0)>=0?'var(--text)':'var(--red)'),"Game.showRevenue()");
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
-B+='<div style="height:7px;"></div>'+cgauge('Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('Culture',Math.round(_cul),_cul,_culC):'');
+B+=subLab('Operations')+cgauge('Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('Culture',Math.round(_cul),_cul,_culC):'');
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
@@ -3148,7 +3176,7 @@ else this._activeCats=base;},
 toggleFocus(){this._focusMode=this._focusMode===false?true:false;this._setupActionMenu();this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
 _bestLifestyle(){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};const opts=(CONFIG.lifestyle_options.actions||[]).filter(a=>(s.cash||0)>=(a.cash_cost||0));if(!opts.length)return null;const score=a=>{let v=0;const ef=a.effects||{};for(const k in ef){if(typeof ef[k]==='number'&&(k.indexOf('lifestyle_')===0||k==='energy'||k==='fitness_level'))v+=ef[k];}v+=(100-(subs[a.subcategory]||0))*0.5;const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.5,1-cnt*0.2);return v;};return opts.slice().sort((a,b)=>score(b)-score(a))[0];},
 boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
-renderActions(){const actions=this.getAvailableActions(this.currentCategory),sel=this.selectedActions[this.currentCategory];
+renderActions(){const actions=this.getAvailableActions(this.currentCategory),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
 const urgency=a=>this._actionUrgency(a);
 const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a),isSel=sel&&sel.id===a.id;const reason=done?'Already completed':locked?this.getLockedReason(a):'';const outgrown=!done&&!locked&&this.isActionOutgrown(a);const cls=done?'completed-action':isSel?'selected':locked?'locked':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const rc=(this.state._action_counts||{})[a.id]||0;const repeatBadge=(!a.one_time&&rc>0)?'<span class="repeat-badge">×'+rc+'</span>':'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ PARTIAL — RETRY</span>':'';
@@ -3191,21 +3219,27 @@ selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a
 
 getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}if(a.energy_cost>0&&s.energy<a.energy_cost)return'Low energy';for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k==='liquid_cash_gte')return'Need '+this.fmtMoney(v)+' in cash';if(k==='cash_gte')return'Need '+this.fmtMoney(v)+' in cash or credit';if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
 actionLabel(id){for(const c of ['actions_marketing','actions_operations','actions_finance']){const a=((CONFIG[c]||{}).actions||[]).find(x=>x.id===id);if(a)return a.label;}return id.replace(/_/g,' ');},
-// Action-card preview: always show which dashboard stats an action impacts + their CURRENT values. The projected RESULT is gated behind hiring a fractional CFO (forecasting is the CFO's job).
+// Action-card preview: name every stat an action impacts. Money & credit-score stats also show the CURRENT value (those need a reference point); operational stats (leads, brand, systems…) just name the stat. The projected RESULT is gated behind hiring a fractional CFO.
 actionPreview(a){const s=this.state,cfo=(s._completed_actions||[]).includes('hire_fractional_cfo');
-const HEAD={leads:['Leads',0],customer_base:['Customers',0],team_size:['Team',0],brand_equity:['Brand equity',0],systems_maturity:['Systems',0],revenue_capacity:['Revenue capacity',1],personal_credit_score:['Credit score',0],business_credit_limit:['Business credit',1],monthly_revenue:['Revenue',1],real_estate_equity:['RE equity',1],investment_positions:['Investments',1],insurance_cash_value:['Cash value',1],cash:['Cash',1]};
-const IMPACTS={business_credit_line:['business_credit_limit'],bank_personal_loan:['cash'],premium_financing:['insurance_cash_value'],debt_restructure:['business_credit_limit','cash'],buy_real_estate:['real_estate_equity'],private_lending:['investment_positions'],build_personal_credit:['personal_credit_score']};
-const keys=[],seen={},add=k=>{if(HEAD[k]&&!seen[k]){seen[k]=1;keys.push(k);}};
+const LBL={leads:'Leads',customer_base:'Customers',team_size:'Team',brand_equity:'Brand equity',systems_maturity:'Systems',revenue_capacity:'Revenue capacity',personal_credit_score:'Credit score',business_credit_limit:'Business credit',monthly_revenue:'Revenue',real_estate_equity:'RE equity',investment_positions:'Investments',insurance_cash_value:'Cash value',life_insurance_cv:'Cash value',cash:'Cash',operating_expenses:'Operating expense',cogs:'COGS',owner_pay:'Owner pay',total_debt:'Debt',available_credit:'Credit available',living_expenses:'Living expense',lifestyle_expenses:'Lifestyle expense',tax_reserve:'Tax reserve',company_culture:'Culture',churn_rate:'Churn',audit_risk:'Audit risk',litigation_exposure:'Lawsuit risk',key_person_dependency:'Key-person risk',personal_guarantee_exposure:'Personal guarantee'};
+// Stats that need a current number to be meaningful: money + credit score.
+const MONEYISH=['cash','monthly_revenue','operating_expenses','cogs','owner_pay','total_debt','available_credit','business_credit_limit','real_estate_equity','investment_positions','insurance_cash_value','life_insurance_cv','living_expenses','lifestyle_expenses','tax_reserve','revenue_capacity'];
+const showVal=k=>MONEYISH.includes(k)||k==='personal_credit_score';
+const label=k=>LBL[k]||this.formatStatName(k);
+const IMPACTS={business_credit_line:['business_credit_limit'],bank_personal_loan:['cash'],premium_financing:['insurance_cash_value'],debt_restructure:['business_credit_limit','cash'],buy_real_estate:['real_estate_equity'],private_lending:['investment_positions'],build_personal_credit:['personal_credit_score'],build_dnb_profile:['business_credit_limit'],pay_down_debt:['total_debt','available_credit','personal_credit_score'],monthly_tax_reserve:['tax_reserve','cash'],activate_passive_income:['cash','insurance_cash_value'],policy_loan:['cash','insurance_cash_value']};
+const keys=[],seen={},add=k=>{if(k[0]==='_'||seen[k])return;seen[k]=1;keys.push(k);};
 const eff=a.effects||{};for(const k in eff)if(typeof eff[k]==='number'&&eff[k]!==0)add(k);(IMPACTS[a.id]||[]).forEach(add);
 const special=this.creditPreview(a.id);
 if(!keys.length&&!special)return '';
-const fmv=k=>HEAD[k][1]?this.fmtMoney(Math.round(s[k]||0)):Math.round(s[k]||0);
-const curLine=keys.length?'<p style="margin:-2px 0 0;font-size:0.72rem;color:var(--text2);">Impacts: '+keys.map(k=>HEAD[k][0]+' <strong style="color:var(--text);">'+fmv(k)+'</strong>').join(' · ')+'</p>':'';
+const fmv=k=>k==='personal_credit_score'?Math.round(s[k]||0):this.fmtMoney(Math.round(s[k]||0));
+const cur=k=>showVal(k)?(label(k)+' <strong style="color:var(--text);">'+fmv(k)+'</strong>'):label(k);
+const curLine=keys.length?'<p style="margin:-2px 0 0;font-size:0.72rem;color:var(--text2);">Stats impacted: '+keys.map(cur).join(' · ')+'</p>':'';
 if(cfo){
 if(special)return curLine+special;
-const scaled=this.scaleActionEffects(eff,a.category),proj=keys.filter(k=>scaled[k]).map(k=>{const after=Math.round((s[k]||0)+scaled[k]);return HEAD[k][0]+' '+fmv(k)+' → ~'+(HEAD[k][1]?this.fmtMoney(after):after);});
+const scaled=this.scaleActionEffects(eff,a.category),proj=keys.filter(k=>scaled[k]).map(k=>{const after=Math.round((s[k]||0)+scaled[k]);return showVal(k)?(label(k)+' '+fmv(k)+' → ~'+this.fmtMoney(after)):(label(k)+' → ~'+after);});
 return proj.length?'<p style="margin:-2px 0 0;font-size:0.72rem;color:var(--gold);font-weight:600;">📊 '+proj.join(' · ')+'</p>':curLine;}
-return curLine+'<p style="margin:1px 0 0;font-size:0.64rem;color:var(--text2);opacity:0.75;">🔒 Hire a fractional CFO to forecast the result</p>';},
+if(this._cfoHintShown)return curLine;this._cfoHintShown=true;
+return curLine+'<p style="margin:1px 0 0;font-size:0.64rem;color:var(--text2);opacity:0.75;">🔒 Hire a fractional CFO to forecast results (this & other actions)</p>';},
 creditPreview(id){const s=this.state,cf=this.calcCreditCapacity(),fm=v=>this.fmtMoney(Math.round(v));let txt='';switch(id){
 case 'business_credit_line':txt='≈ '+fm(15000*cf)+' line, sized to your credit & revenue';break;
 case 'bank_personal_loan':{if(this.isSeparated()){txt='≈ '+fm(25000*cf)+' business term loan, sized to your revenue & credit';}else{const c2=Math.max(0.6,Math.min(2.5,((s.personal_credit_score||600)-560)/120));txt='≈ '+fm(10000*c2)+' personal loan now — larger business loan once you form an LLC';}break;}
@@ -3213,7 +3247,7 @@ case 'premium_financing':{const m=Math.max(1,Math.min(5,(s.monthly_revenue||0)/2
 case 'debt_restructure':txt='≈ '+fm(12000*cf)+' business line + '+fm(5000*cf)+' working cash, sized to your credit';break;
 case 'buy_real_estate':{const m=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));txt='≈ '+fm(100000*m)+' property, '+fm(20000*m)+' equity, sized to your revenue';break;}
 case 'private_lending':{const extra=Math.min(Math.round((s.cash||0)*0.4),180000),pos=20000+(extra>0?extra:0);txt='≈ '+fm(pos)+' deployed from your cash';break;}
-case 'build_personal_credit':{const neg=s.credit_negatives||0;if(neg>0)txt='Disputes '+neg+' negative mark'+(neg>1?'s':'')+' over ~'+Math.ceil(neg/2)+' months → ~650, then utilization lifts it higher';else txt='Clean file — minor boost (+6); your real lever now is utilization';break;}
+case 'build_personal_credit':{const neg=s.credit_negatives||0;if(neg>0)txt='Resolves '+neg+' negative mark'+(neg>1?'s':'')+' over ~'+Math.ceil(neg/2)+' months → ~650, then lower utilization lifts it higher';else txt='Clean file — minor boost (+6); your real lever now is utilization';break;}
 default:return '';}
 return '<p style="margin:-2px 0 0;font-size:0.74rem;color:var(--gold);font-weight:600;">'+txt+'</p>';},
 // Cash can never sit negative: a shortfall auto-draws on available credit (business → personal) as an emergency loan. Returns true if solvent, false if cash/credit ran dry (→ game over).
@@ -3231,7 +3265,7 @@ document.getElementById('epilogue').textContent='The business couldn\'t meet its
 {const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildChoiceLog(this._playLog)+'</div>');
 document.getElementById('end-save').innerHTML='<button class="btn-primary" onclick="location.reload()">Start Over</button>';},
 
-selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(this.selectedActions[cat]&&this.selectedActions[cat].id===id){delete this.selectedActions[cat];if(this._paymentMethods)delete this._paymentMethods[id];}else{this.selectedActions[cat]=action;if(!this._paymentMethods)this._paymentMethods={};this._paymentMethods[action.id]=this._paymentMethod||'cash';const ac=this._activeCats||CATS,ci=ac.indexOf(cat);if(ci<ac.length-1&&!this.selectedActions[ac[ci+1]]){setTimeout(()=>{this.currentCategory=ac[ci+1];this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();window.scrollTo({top:document.getElementById('step-indicator').offsetTop-10,behavior:'smooth'});},200);return;}}this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
+selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(this.selectedActions[cat]&&this.selectedActions[cat].id===id){delete this.selectedActions[cat];if(this._paymentMethods)delete this._paymentMethods[id];}else{this.selectedActions[cat]=action;if(!this._paymentMethods)this._paymentMethods={};this._paymentMethods[action.id]=this._paymentMethod||'cash';this._tutNotify('select');const ac=this._activeCats||CATS,ci=ac.indexOf(cat);if(ci<ac.length-1&&!this.selectedActions[ac[ci+1]]){setTimeout(()=>{this.currentCategory=ac[ci+1];this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();window.scrollTo({top:document.getElementById('step-indicator').offsetTop-10,behavior:'smooth'});this._tutReposition();},200);return;}}this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();this._tutReposition();},
 updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;btn.disabled=false;btn.textContent=count<total?'End Turn ('+count+'/'+total+' actions)':'Confirm Actions →';},
 confirmActions(){const ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;if(count<total){const missing=ac.filter(c=>!this.selectedActions[c]).map(c=>CL[c]).join(', ');if(!window.confirm("You haven't chosen an action for: "+missing+" ("+count+"/"+total+" selected). End the month anyway?"))return;}this.resolveMonth();},
 
@@ -3239,6 +3273,7 @@ coverShortfall(amount){const s=this.state;let need=Math.max(0,Math.round(amount)
 payCost(amount,fromPersonal){const s=this.state;let need=Math.max(0,Math.round(amount));if(fromPersonal&&this.isSeparated()){if((s.personal_cash||0)>0&&need>0){const d=Math.min(s.personal_cash,need);s.personal_cash-=d;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if(need>0)need=this.coverShortfall(need);return need;}const _utilCap=s._cfo_fulltime?0.55:s._cfo_hired?0.42:0.30;const healthy=Math.max(0,Math.floor((s.business_credit_limit||0)*_utilCap)-(s.business_credit_used||0));if(healthy>0&&need>0){const d=Math.min(healthy,need);s.business_credit_used=(s.business_credit_used||0)+d;s.total_debt=(s.total_debt||0)+d;need-=d;}if((s.cash||0)>0&&need>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}if(need>0)need=this.coverShortfall(need);return need;},
 applyDebtRestructure(dr){const s=this.state;dr=dr||{};const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0));const persLim=persRev+(s.available_credit||0);const beforeUtil=persLim>0?Math.round(persRev/persLim*100):0;const movable=Math.max(0,persRev-(s.real_estate_debt||0));let swap=Math.max(0,Math.min(movable,Math.round(persRev-0.22*persLim)));if(swap>0){s._installment_debt=(s._installment_debt||0)+swap;s.available_credit=(s.available_credit||0)+swap;}const afterUtil=this.calcPersUtil();if(swap>0)s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+Math.max(4,Math.round((beforeUtil-afterUtil)/2)));const parts=[];if(dr.lim)parts.push('opened a '+this.fmtMoney(dr.lim)+' business line at 0%');if(swap>0)parts.push('moved '+this.fmtMoney(swap)+' of revolving card debt into a fixed-rate installment loan (utilization '+beforeUtil+'% → '+afterUtil+'%)');if(dr.moveAmt>0)parts.push('shifted '+this.fmtMoney(dr.moveAmt)+' of personal balances onto your business credit, off your personal report');if(dr.cashLoan)parts.push('pulled '+this.fmtMoney(dr.cashLoan)+' in working cash');return parts.length?('Your lending expert '+parts.join('; ')+'. Same debt — restructured into a higher score and usable cash.'):('Your utilization is already healthy at '+beforeUtil+'%. Little revolving debt left to restructure.');},
 resolveMonth(){
+this._tutNotify('endturn');
 const results=[];const _execBonuses=[];
 // Month-start cash/credit snapshot + action-spend accumulator for the end-of-month summary
 const _S0=this.state,_msStart={cash:_S0.cash||0,personalCash:_S0.personal_cash||0,bizUsed:_S0.business_credit_used||0,bizLim:_S0.business_credit_limit||0,avail:_S0.available_credit||0,debt:_S0.total_debt||0};
@@ -3274,7 +3309,8 @@ if(total>0){const parts=['Put '+this.fmtMoney(total)+' of spare cash to work cle
 else s._dyn_narrative='Your utilization ('+beforeUtil+'%) and DTI ('+beforeDti+'%) are already healthy — no high-interest revolving debt worth paying down right now. Keep that cash working elsewhere.';}
 const _cost=action.id==='pay_down_debt'?0:this.actionCashCost(action),_pm=(this._paymentMethods||{})[action.id]||'cash';
 const _payB={cash:this.state.cash||0,pc:this.state.personal_cash||0,bu:this.state.business_credit_used||0,ac:this.state.available_credit||0};
-this.payCost(_cost,cat==='lifestyle'||['fund_accumulation_policy','policy_loan','premium_financing','activate_passive_income'].includes(action.id));
+// Marketing/Operations/Finance always run on the business; only a purely-personal life action draws personal cash.
+this.payCost(_cost,cat==='lifestyle'&&this.lifeActionIsPersonal(action));
 // How this cost was actually funded (business cash, business credit, personal cash, personal credit)
 const _fund={cash:Math.max(0,_payB.cash-(this.state.cash||0)),biz:Math.max(0,(this.state.business_credit_used||0)-_payB.bu),persCash:Math.max(0,_payB.pc-(this.state.personal_cash||0)),persCredit:Math.max(0,_payB.ac-(this.state.available_credit||0))};
 if(_cost>0){_spend.total+=_cost;_spend.cash+=_fund.cash;_spend.biz+=_fund.biz;_spend.pers+=_fund.persCash+_fund.persCredit;}
@@ -3444,7 +3480,7 @@ const firstLesson=r.success&&r.action.lesson&&!(this.state._lessons_shown||[]).i
 html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;">'+
 '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;">'+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.success?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(r.success?'Success':'Partial')+'</span></div>'+
 (r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
-((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push(this.fmtMoney(f.cash)+' cash');if(f.biz>0)src.push(this.fmtMoney(f.biz)+' business credit');if((f.persCash||0)+(f.persCredit||0)>0)src.push(this.fmtMoney((f.persCash||0)+(f.persCredit||0))+' personal');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 Cost <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(', ')+'</span>':'')+'</div>';})():'')+
+((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 Cost <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 (chips.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">'+chips.join('')+'</div>':'')+
 (r.beforeAfter?'<div style="margin-top:8px;background:rgba(127,127,127,0.08);border-radius:var(--radius-sm);padding:6px 9px;">'+r.beforeAfter.map(row=>'<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.73rem;padding:2px 0;"><span style="color:var(--text2);">'+row[0]+'</span><span style="white-space:nowrap;"><span style="color:var(--text2);">'+row[1]+'</span> <span style="color:'+(row[3]||'var(--accent)')+';font-weight:700;">→ '+row[2]+'</span></span></div>').join('')+'</div>':'')+
 (firstLesson?'<div style="font-size:0.73rem;color:var(--gold);line-height:1.5;margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;"><strong>💡 Lesson:</strong> '+this.linkTerms(r.action.lesson)+'</div>':'')+
@@ -3457,7 +3493,8 @@ const posRow=(lbl,b,a,goodUp)=>{const up=Math.round(a)>Math.round(b),down=Math.r
 let rows='';rows+=posRow('Cash',cashThen,cashNow,true);rows+=posRow('Business credit available',bizAvail0,bizAvail1,true);if((s.available_credit||0)||st.avail)rows+=posRow('Personal credit available',st.avail,s.available_credit||0,true);rows+=posRow('Total debt',st.debt,s.total_debt||0,false);
 let spendLine='';if(sp.total>0){const parts=[];if(sp.cash>0)parts.push(fm(sp.cash)+' cash');if(sp.biz>0)parts.push(fm(sp.biz)+' business credit');if(sp.pers>0)parts.push(fm(sp.pers)+' personal');spendLine='<div style="font-size:0.74rem;color:var(--text2);margin-top:7px;border-top:1px dashed var(--border);padding-top:6px;">Action costs this month: <strong style="color:var(--red);">−'+fm(sp.total)+'</strong>'+(parts.length?' · funded by '+parts.join(', '):'')+'</div>';}
 html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:4px;">📊 Cash & Credit — This Month</div>'+rows+spendLine+'</div>';this._monthCashSummary=null;}
-document.getElementById('results-content').innerHTML=html;this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);},
+document.getElementById('results-content').innerHTML=html;this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);
+if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}},
 
 nextMonth(){
 if(this._pendingEvent){const e=this._pendingEvent;this._pendingEvent=null;this.showEvent(e);return;}
@@ -3561,6 +3598,17 @@ setTimeout(()=>{const cv=document.getElementById('cp-radar');if(cv)this.drawRada
 
 continueFromCheckpoint(){this.month++;this.renderMonth();},
 
+// Funding rule for life actions: executive health/performance, professional development, thought-leadership and team spend are legitimate BUSINESS expenses (paid from business cash/credit); everything purely personal (family, luxury, spiritual, giving, personal estate) is paid from PERSONAL cash. Keeps personal cash from being drained by what are really business investments. A config `funding` field overrides if present.
+LIFE_BUSINESS_FUNDED:['executive_health_retreat','concierge_medicine','fitness_training','gym_routine','sleep_routine','morning_routine','annual_physical','therapy_coaching','nutrition_coach','learn_new_skill','masterclass_workshop','leadership_coaching','write_book','mentor_others','company_retreat'],
+lifeActionIsPersonal(a){if(!a)return true;if(a.funding)return a.funding!=='business';return !this.LIFE_BUSINESS_FUNDED.includes(a.id);},
+// Life-action preview: name the Personal Mastery dimension(s) the action builds, plus any other stat it touches (money shows its current value, like the other action menus).
+lifeActionPreview(a){const s=this.state,DIM={lifestyle_health:'Body',fitness_level:'Body',lifestyle_legacy:'Mind',lifestyle_spiritual:'Spirit',lifestyle_philanthropy:'Spirit',lifestyle_relationships:'Heart',lifestyle_experiences:'Luxury'};
+const MONEYISH=['cash','monthly_revenue','insurance_cash_value','investment_positions','real_estate_equity'],LBL={brand_equity:'Brand equity',leads:'Leads',monthly_revenue:'Revenue',cash:'Cash'};
+const eff=a.effects||{},seen={},other=[];
+for(const k in eff){if(typeof eff[k]!=='number'||eff[k]===0||k[0]==='_')continue;if(DIM[k]){seen[DIM[k]]=1;}else if(k==='energy'){if(!seen._en){seen._en=1;other.push('Energy');}}else{const lbl=LBL[k]||this.formatStatName(k);other.push(MONEYISH.includes(k)?(lbl+' <strong style="color:var(--text);">'+this.fmtMoney(Math.round(s[k]||0))+'</strong>'):lbl);}}
+const dimParts=['Body','Mind','Spirit','Heart','Luxury'].filter(d=>seen[d]).map(d=>this.LIFE_ICON[d]+' '+d);
+const parts=dimParts.concat(other);
+return parts.length?'<p style="margin:-2px 0 6px;font-size:0.72rem;color:var(--text2);">Stats impacted: '+parts.join(' · ')+'</p>':'';},
 showLifestyleScreen(){this.showScreen('lifestyle-screen');this.selectedLifestyle=null;const s=this.state;const d=this.lifeDims(),mastery=this.calcPersonalMastery();
 const scores=['Body','Mind','Spirit','Heart','Luxury'].map(k=>({label:this.LIFE_ICON[k]+' '+k,value:d[k],color:d[k]>50?'positive':d[k]>25?'warning':'negative'}));
 document.getElementById('lifestyle-scores').innerHTML='<div style="display:flex;gap:8px;margin-bottom:8px;grid-column:span 3;"><div class="stat-card" style="flex:1;"><div class="stat-value stat-positive" style="font-size:0.9rem;">'+this.fmtMoney(s.cash)+'</div><div class="stat-label">Cash</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" style="font-size:0.9rem;color:'+(mastery>50?'var(--accent)':mastery>25?'var(--gold)':'var(--red)')+';">'+mastery+'</div><div class="stat-label">Personal Mastery</div></div></div>'+scores.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'">'+st.value+'</div><div class="stat-label">'+st.label+'</div></div>').join('');
@@ -3576,13 +3624,13 @@ const outgrown=afford&&(a.cash_cost||0)<3000&&(themeVal[this.LIFE_THEME[a.subcat
 const lrc=(this.state._action_counts||{})[a.id]||0,lRepeat=lrc>0?'<span class="repeat-badge">×'+lrc+'</span>':'';
 const tier=(a.cash_cost||0)>=8000?'Premium':(a.cash_cost||0)>=3000?'Standard':'Basic';
 const tierColor=tier==='Premium'?'var(--gold)':tier==='Standard'?'var(--blue)':'var(--text2)';
-listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p><div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+(a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+' energy</span>':'')+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+'</div></div>';});
+listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p>'+this.lifeActionPreview(a)+'<div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+(a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+' energy</span>':'')+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+'</div></div>';});
 document.getElementById('lifestyle-list').innerHTML=listHtml;
 document.getElementById('lifestyle-btn').disabled=true;},
 
 selectLifestyle(id){const list=this._sortedLifestyle||CONFIG.lifestyle_options.actions;this.selectedLifestyle=list.find(a=>a.id===id);document.querySelectorAll('#lifestyle-list .action-card').forEach(c=>c.classList.remove('selected'));const idx=list.findIndex(a=>a.id===id),cards=document.querySelectorAll('#lifestyle-list .action-card');if(cards[idx])cards[idx].classList.add('selected');document.getElementById('lifestyle-btn').disabled=false;document.getElementById('lifestyle-btn').textContent='Choose: '+this.selectedLifestyle.label;},
 
-confirmLifestyle(){if(!this.selectedLifestyle)return;const a=this.selectedLifestyle;this.state.cash-=(a.cash_cost||0);this.applyEffects(this._scaleLifestyleEffects(a.effects));if(a.recurring_cost&&!this.state._active_lifestyle_costs[a.id]){this.state._active_lifestyle_costs[a.id]=a.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+a.recurring_cost;}
+confirmLifestyle(){if(!this.selectedLifestyle)return;const a=this.selectedLifestyle;this.payCost(a.cash_cost||0,this.lifeActionIsPersonal(a));this.applyEffects(this._scaleLifestyleEffects(a.effects));if(a.recurring_cost&&!this.state._active_lifestyle_costs[a.id]){this.state._active_lifestyle_costs[a.id]=a.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+a.recurring_cost;}
 const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_revenue:500},narrative:"Your mentee referred a client to you. 'You helped me — let me return the favor,' she said."},volunteer_time:{delay:2,effects:{brand_equity:8,leads:3},narrative:"Someone from the volunteer site reached out — they need exactly what you offer. 'I liked how you showed up that Saturday.'"},faith_community:{delay:4,effects:{leads:4,brand_equity:3,lifestyle_relationships:5},narrative:"A fellow member mentioned your business to their network. Three warm introductions this week."},family_trip:{delay:1,effects:{energy:10,lifestyle_relationships:5},narrative:"You came back recharged. Your partner said you seem lighter. The clarity is showing up in your work."},therapy_coaching:{delay:2,effects:{energy:8,lifestyle_health:3},narrative:"The patterns your therapist helped you see — you're catching them in real time now."},learn_new_skill:{delay:3,effects:{brand_equity:5,leads:3},narrative:"The class led to an unexpected connection — your instructor runs a business and just became a client."},charity_donation:{delay:2,effects:{brand_equity:8},narrative:"The charity featured your business in their donor spotlight newsletter. 2,000 people saw it."}};
 if(buffs[a.id]){const b=buffs[a.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:a.label});}
 if(!this.state._action_counts)this.state._action_counts={};this.state._action_counts[a.id]=(this.state._action_counts[a.id]||0)+1;
