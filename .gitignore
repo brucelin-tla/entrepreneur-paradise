@@ -11,3 +11,4 @@ deploy.zip
 # OS / editor cruft
 Thumbs.db
 .DS_Store
+.commitmsg.tmp
