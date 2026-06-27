@@ -6,7 +6,7 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships']],['Sales & Conversion',['webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships']],['Sales & Conversion',['do_sales_yourself','webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
 const MILESTONES=[
 {id:'mk_first_customer',cat:'marketing',title:'First Paying Customer',desc:'Landed your very first customer.',mentor:'Your first paying customer — proof someone will pay for what you do. Everything real starts here.',check:s=>(s.customer_base||0)>=1},
@@ -31,6 +31,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.10',d:'2026-06-26 22:10',n:[
+'New Marketing action under Sales & Conversion — “Do the Sales Yourself”: no cash, just energy. Founder-led selling that turns your pipeline into paying customers when you can’t yet afford a team or a funnel.',
+'Tutorial fix: the tip now sits pinned at the top of the screen and the highlighted area scrolls in just below it, so it no longer covers what it’s pointing at (and you can still tap through on mobile).',
+]},
 {v:'0.23.9',d:'2026-06-26 21:30',n:[
 'Life rewards now clearly show their Personal Mastery impact (which dimensions moved + your new mastery score) — on both the quarterly check-in and when your team frees up a Life slot. Life actions also always land now (no more random “nothing happened”).',
 'Recurring costs read correctly: family office, board, counsel, S/C-corp, bookkeeping, premium financing and every team hire now show as “🔁 +$X/mo ongoing” instead of a confusing one-time charge.',
@@ -180,25 +184,19 @@ const nextLabel=i===steps.length-1?'Got it':'Next';
 const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
 tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" style="pointer-events:auto" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
 const target=step.sel?document.querySelector(step.sel):null;
+// Tip always sits pinned at the top; the highlighted element is scrolled to sit just below it so it's never covered.
 const place=()=>{
+const topY=10,gap=16,th=tip.offsetHeight;
+tip.style.top=topY+'px';tip.style.left='50%';tip.style.transform='translateX(-50%)';
 if(target){
-const r=target.getBoundingClientRect(),pad=8;
-hole.style.display='block';hole.classList.add('pulse');
+let r=target.getBoundingClientRect();
+const delta=r.top-(topY+th+gap);
+if(Math.abs(delta)>4){window.scrollBy(0,delta);r=target.getBoundingClientRect();} // bring the target down below the tip
+const pad=8;hole.style.display='block';hole.classList.add('pulse');
 hole.style.top=(r.top-pad)+'px';hole.style.left=(r.left-pad)+'px';hole.style.width=(r.width+pad*2)+'px';hole.style.height=(r.height+pad*2)+'px';
-const th=tip.offsetHeight,gap=14,vh=window.innerHeight;
-let top;
-if(step.wait&&r.height>vh*0.5)top=vh-th-12;            // tall target (e.g. action list): pin tip to the bottom so cards stay visible/tappable
-else if(r.bottom+gap+th<vh-10)top=r.bottom+gap;       // below
-else if(r.top-gap-th>10)top=r.top-gap-th;             // above
-else top=Math.max(10,(vh-th)/2);                      // center fallback
-tip.style.top=top+'px';
-}else{
-hole.style.display='none';hole.classList.remove('pulse');
-tip.style.top=Math.max(10,(window.innerHeight-tip.offsetHeight)/2)+'px';
-}
-tip.style.left='50%';tip.style.transform='translateX(-50%)';
+}else{hole.style.display='none';hole.classList.remove('pulse');}
 };
-if(target){target.scrollIntoView({block:'center'});setTimeout(place,60);}else{place();}
+setTimeout(place,60);
 },
 tutNext(){this._tutStep++;this.renderTutorialStep();},
 tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},

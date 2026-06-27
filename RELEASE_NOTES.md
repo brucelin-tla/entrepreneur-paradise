@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.23.10 — 2026-06-26
+**New founder-led sales action + tutorial tip placement fix**
+
+- **`do_sales_yourself` (Marketing → Sales & Conversion):** new foundation-stage, repeatable action — $0 cash, 14 energy. Effects `{ customer_base +5, sales_conversion +2, brand_equity +2 }`, 0.85 success. Added to the `ADIR` "Sales & Conversion" group. The scrappy founder-led close option before you can afford a team or funnel.
+- **Tutorial tip placement (`renderTutorialStep`/`place`):** the tip is now pinned to the top (`top:10`) and the highlighted target is scrolled to sit just below it (`window.scrollBy`), so it never covers the element it points at. Tap-through on wait steps preserved.
+
 ## v0.23.9 — 2026-06-26
 **Life-mastery clarity, recurring-cost sweep (Group A+B), event revenue-model fixes, policy-deal fix, popup scroll lock**
 

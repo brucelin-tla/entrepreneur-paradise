@@ -198,6 +198,22 @@
       "narrative_failure": "A couple of partners are producing; the rest signed on but haven't sent anyone yet. Follow up and nurture the network next month."
     },
     {
+      "id": "do_sales_yourself",
+      "category": "marketing",
+      "stage": "foundation",
+      "label": "Do the Sales Yourself",
+      "description": "Get on the phone and on calls and close deals personally. No budget, no team — just you, your energy, and a willingness to ask for the sale.",
+      "lesson": "Before you can afford a sales team or a funnel, you are the sales team. Founder-led selling is the cheapest, highest-converting channel you have early on — and every call teaches you what actually makes people buy.",
+      "cash_cost": 0,
+      "energy_cost": 14,
+      "prerequisites": {},
+      "effects": { "customer_base": 5, "sales_conversion": 2, "brand_equity": 2 },
+      "success_rate": 0.85,
+      "failure_effects": { "customer_base": 1 },
+      "narrative_success": "You closed a handful of deals by sheer hustle — calls, follow-ups, and asking for the sale. It's exhausting, but the pipeline turned into paying customers.",
+      "narrative_failure": "A lot of calls, a few maybes, one yes. Selling is a numbers game and this month the numbers were thin — but you learned what objections to expect."
+    },
+    {
       "id": "webinar_funnel",
       "category": "marketing",
       "stage": "leverage",
