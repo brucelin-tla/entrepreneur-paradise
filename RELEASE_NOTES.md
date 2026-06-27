@@ -1,5 +1,15 @@
 # Release Notes
 
+## v0.23.17 — 2026-06-27
+**Result-screen declutter, tutorial highlight fix, real partnership equity, premium-financing rework, event-text accuracy**
+
+- **Result screen collapse (`showResults`/`toggleResultDetail`):** per-card stat chips + before→after + lesson hidden behind a "▾ Details" toggle; headline/narrative/cost stay visible.
+- **Spotlight placement fix (`_positionSpotlight`):** centers the target and places the tip in whichever gap has room (the old top-pin hid top-of-page elements behind the tip). Unlock tips now spotlight their element (`_spotlightTip` + ids `biz-col`, `life-btn`, `dash-networth`, `epic-btn`).
+- **Delayed Life payoffs (`nextMonth`/`renderMonth`):** apply quietly and surface as a "🌱 …paid off" note atop the next month (no separate "Ripples" screen/extra click).
+- **Partnership equity is real (`_partner_equity`/monthlyTick skim):** accepting a 30% partner now removes 30% of monthly profit from cash + capital account; outcome narrative shows the actual scaled cash received.
+- **Premium Financing rework:** `net_worth_gte` gate (≥$5M, added to `meetsReq`/`getLockedReason`); handler now a policy-secured low-interest loan sized to net worth (funded cash value = borrowed − ~2% COI, no free money; loan via `insurance_loan_balance`, netted from death benefit). `cash_cost` 0, recurring removed; description says "accumulation policy (whole life or IUL)".
+- **Event text accuracy:** genericized flat dollar figures in outcomes that scale (tax attorney, lawsuit settle/fight, IRS audit).
+
 ## v0.23.16 — 2026-06-27
 **Comprehensive onboarding: progressive disclosure + guided first-month tutorial; team-plan energy/Life/icon fixes**
 
