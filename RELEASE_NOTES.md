@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.13 — 2026-06-27
+**Epic Life result-card polish**
+
+- **No energy cost (`_epicLifePick`):** Epic perks run with `energy_cost: 0` — the concierge does the work, so no "energy spent" line.
+- **Premium styling (`showResults`):** Epic result card title + badge render in gold (`⭐ Epic Life`).
+- **Correct money flow (`resolveMonth`):** Epic perks now resolve first (matching their top position in results), so before→after numbers chain in order instead of appearing out of sequence.
+
 ## v0.23.12 — 2026-06-26
 **Epic Life button + plans, "Cash flow/mo" rename, locked-down tutorial**
 

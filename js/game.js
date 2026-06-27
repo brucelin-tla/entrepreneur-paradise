@@ -31,6 +31,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.13',d:'2026-06-27 09:30',n:[
+'Epic Life results polish: the concierge’s monthly move no longer costs you energy, shows in premium gold, and now runs first — so the before→after numbers flow in order from the top of the results instead of looking out of sequence.',
+]},
 {v:'0.23.12',d:'2026-06-26 23:30',n:[
 'Epic Life Membership is now a ⭐ button in the action tabs row — tap it anytime to see what it does, the pricing, and enroll. Two plans: Monthly ($500 + $300/mo) or Annual ($500 + $3,000/yr, save $600).',
 'Cleaner dashboard wording: “Net/mo” is now “Cash flow/mo” — tap it for a plain-English breakdown (money in − money out, and what “runway” means).',
@@ -682,7 +685,7 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if(!spec.need())continue;
  const cost=this.actionCashCost(a),funds=(s.cash||0)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
  if(cost>0&&funds<cost*1.1)continue;
- const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;return perk;}
+ const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;perk.energy_cost=0;return perk;}
 return null;},
 boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
 renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
@@ -792,7 +795,9 @@ this._nwStart=this.calcNetWorth(); // net worth at the start of the month → mo
 const _spend={total:0,cash:0,biz:0,pers:0};
 // Epic Life concierge runs one extra high-priority finance move this month (selected from start-of-turn state), processed through the normal loop so all costs/handlers apply.
 if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selectedActions['epic']=_perk;}
-for(const[cat,action]of Object.entries(this.selectedActions)){
+// Resolve the Epic Life concierge move FIRST so its before→after reflects start-of-month numbers — matching its position at the top of the results.
+const _entries=Object.entries(this.selectedActions),_ordered=_entries.filter(e=>e[0]==='epic').concat(_entries.filter(e=>e[0]!=='epic'));
+for(const[cat,action]of _ordered){
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0};
 const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
 const _lifeDB=cat==='lifestyle'?this.lifeDims():null,_lifeMB=cat==='lifestyle'?this.calcPersonalMastery():null,_lifeEnB=cat==='lifestyle'?Math.round(this.state.energy):null;
@@ -1004,7 +1009,7 @@ for(const r of results){
 const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;if(r._baKeys&&r._baKeys.includes(k))continue;if(k==='personal_credit_score'&&r._scoreMoved)continue;if(r._mastery&&(k.indexOf('lifestyle_')===0||k==='fitness_level'||k==='energy'))continue;/* dimension panel covers these */const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&(!r.action||r.action.category!=='finance'))continue;if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+this.formatStatName(k)+'</span>');}
 const firstLesson=r.success&&r.action.lesson&&!(this.state._lessons_shown||[]).includes(r.action.id);if(firstLesson)(this.state._lessons_shown=(this.state._lessons_shown||[])).push(r.action.id);
 html+='<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;">'+
-'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.success?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(r.action._epic?'Epic Life':(r.success?'Success':'Partial'))+'</span></div>'+
+'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;'+(r.action._epic?'color:var(--gold);':'')+'">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.action._epic?'var(--gold)':(r.success?'var(--accent)':'var(--gold)'))+';white-space:nowrap;">'+(r.action._epic?'⭐ Epic Life':(r.success?'Success':'Partial'))+'</span></div>'+
 (r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
 ((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 '+(r.action.recurring_cost?'Setup':'Cost')+' <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 ((r.success&&r.action.recurring_cost)?'<div style="font-size:0.73rem;color:var(--purple);margin-top:4px;">🔁 +'+this.fmtMoney(r.action.recurring_cost)+'/mo ongoing operating expense</div>':'')+
