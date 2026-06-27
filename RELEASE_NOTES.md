@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.22.7 — 2026-06-26
+**Save/resume in-progress runs, action-history tracking, event before→after**
+
+- **Save & resume (`_snapshot`/`_loadSnapshot`/`saveProgress`/`resumeSave`/`deleteSave`/`renderSaves`/`_savesHtml`):** the Year 1/2 checkpoint has a name+Save box that persists the run (state, month, history, playLog) to `localStorage` (`ep_saves`). A "▶ Continue a Saved Run" list appears on the title screen (`#resume-list`, rendered in `init`) and the leaderboard (`#lb-resume`), so a refresh no longer loses progress. Completing a run clears its in-progress save.
+- **Action history (`_playLog`, `buildChoiceLog`, `showRunDetail`):** every Marketing/Operations/Finance choice is logged `{m,c,l,s}`. The end screen shows a color-coded month-by-month "Your Choices — Full History"; leaderboard entries carry `playLog` and are clickable to view that player's choices in a popup. End-screen inserts wrapped in `#end-extra` to avoid duplication on repeat views.
+- **Event before→after (`_baSnapshot`/`_baRows`/`_baRowsHtml`):** `resolveEvent` snapshots the dashboard before applying effects and renders before→after rows (cash, personal cash, total debt, credit limit/util, credit available, credit score, leads, customers, team, brand equity, systems, revenue capacity), color-coded by direction. Non-tracked effects (energy, audit risk, etc.) still list below.
+
 ## v0.22.6 — 2026-06-26
 **Results-screen financial transparency, CFO-gated forecasts, event dashboard, insolvency/lose condition, realistic company sale, resume-after-early-end, onboarding tweaks**
 
