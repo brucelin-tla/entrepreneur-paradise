@@ -48,7 +48,8 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .cost-energy-gain{background:rgba(16,185,129,0.15);color:var(--accent)}
 .cost-locked{background:rgba(156,163,180,0.15);color:var(--text2)}.cost-done{background:rgba(16,185,129,0.15);color:var(--accent)}
 .cost-recurring{background:rgba(139,92,246,0.15);color:var(--purple)}
-.repeat-badge{font-size:0.7rem;color:var(--gold);margin-left:6px;font-weight:400}
+.repeat-badge{font-size:0.66rem;color:var(--accent);background:rgba(16,185,129,0.15);border-radius:10px;padding:1px 7px;margin-left:6px;font-weight:600;vertical-align:middle}
+.action-card.taken-before{border-left:4px solid var(--accent);background:rgba(16,185,129,0.05)}
 .new-badge{display:inline-block;background:var(--accent);color:#04210f;font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.6px}
 .action-card.is-new{border-color:var(--border)}
 .btn-primary{width:100%;padding:14px;border:none;border-radius:var(--radius);background:var(--accent);color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}

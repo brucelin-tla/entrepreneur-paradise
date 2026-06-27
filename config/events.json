@@ -34,7 +34,7 @@
       "id": "founder_health_crisis",
       "category": "personal",
       "requires": { "monthly_revenue_gte": 6000 },
-      "base_probability": 0.07,
+      "base_probability": 0.035,
       "probability_scales_with": null,
       "scale_factor": 0,
       "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
@@ -55,7 +55,10 @@
         "shielded_when": { "insurance_coverage_gte": 1 },
         "protected_note": "Your income protection policy kicked in, replacing much of your income while you recovered. This is the exact scenario it exists for — you healed without the money stopping.",
         "unprotected_note": "With no income protection, there was no safety net. Every day you couldn't work was a day with nothing coming in — and the bills never paused.",
-        "unprotected_extra": { "cash": -9000, "total_debt": 4000 }
+        "unprotected_extra": { "cash": -9000, "total_debt": 4000 },
+        "claim_pct": 0.8,
+        "critical_illness": true,
+        "recovery_months": 3
       },
       "mitigated_by": ["write_first_sop", "full_systemization"]
     },
@@ -447,8 +450,8 @@
     {
       "id": "health_scare",
       "category": "burnout",
-      "requires": { "lifestyle_health_lte": 15, "energy_lte": 30 },
-      "base_probability": 0.12,
+      "requires": { "energy_lte": 40 },
+      "base_probability": 0.06,
       "probability_scales_with": null,
       "scale_factor": 0,
       "narrative": "You're in the ER. Chest pains that turned out to be stress-induced, not cardiac — this time. The doctor looked at you the way doctors look at people who aren't listening.",
@@ -473,9 +476,12 @@
       "mitigated_by": ["gym_routine", "annual_physical"],
       "protection": {
         "shielded_when": { "insurance_coverage_gte": 1 },
-        "protected_note": "Your income protection covered the lost weeks and the ER bill — you could actually afford to rest. The policy did exactly what it's for.",
+        "protected_note": "Your health & income protection covered the lost weeks and the ER bill — you could actually afford to rest. The policy did exactly what it's for.",
         "unprotected_note": "With no coverage, the ER bill and the missed work both came straight out of pocket. Recovering cost you twice.",
-        "unprotected_extra": { "cash": -4000 }
+        "unprotected_extra": { "cash": -4000 },
+        "claim_pct": 0.85,
+        "critical_illness": true,
+        "recovery_months": 2
       }
     },
     {

@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.20 — 2026-06-27
+**Health-neglect illness risk, insurance cash claims, half-cost retries, taken-before markers, cost-text fixes**
+
+- **Illness risk scales with neglect (`checkEvents`):** new `healthMult = 1 + neglect*2.2` (neglect from low energy + low Body dimension, 0→~1.2) multiplies `burnout`/`personal`/`health_risk` events. `health_scare` gate relaxed to `energy_lte:40` (base 0.12→0.06); `founder_health_crisis` base 0.07→0.035. Verified: healthy 0%, tired ~12.5%/mo, wrecked ~19.7%/mo.
+- **Insurance cash claims (`resolveEvent`, events.json):** shielded health events now (a) reimburse `claim_pct` of the out-of-pocket cost and (b) pay a tax-free critical-illness lump sum (`critical_illness:true`, `recovery_months`) sized to `max(8000, (living+lifestyle expenses)*months)`. Insured `founder_health_crisis` nets +$9,600 vs uninsured −$9,000. `combined_insurance` copy updated to name critical/chronic illness cover.
+- **Half-cost retries:** `isRetry(a)` (action in `_partial_actions`) → `actionCashCost`/`actionEnergyCost` apply 0.5×. Card badge "↻ RETRY — HALF COST", discounted tags, and result energy uses `_ro._energySpent`.
+- **Taken-before markers (`renderActions`):** repeatable actions taken in prior months get a `✓ done ×N` accent pill + `.taken-before` left-border/tint (CSS).
+- **Cost-text accuracy:** `paid_ads_test` description/narrative no longer hardcode $500 (cost scales with business level); `fund_accumulation_policy` description clarifies the shown cost is setup-only, ongoing funding is the monthly auto-fund.
+
 ## v0.23.19 — 2026-06-27
 **Mobile tutorial stability, energy burnout warnings, Net Worth reveal gating**
 

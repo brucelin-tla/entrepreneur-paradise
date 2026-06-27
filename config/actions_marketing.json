@@ -137,7 +137,7 @@
       "category": "marketing",
       "stage": "foundation",
       "label": "Test Paid Ads",
-      "description": "Run a small Facebook or Google ads test. Burn a little cash to learn what message lands and turn it into leads.",
+      "description": "Run a Facebook or Google ads test. Spend on ads to learn what message lands and turn it into leads — the budget scales up as your business grows.",
       "lesson": "Master one channel at a time. Paid ads give the fastest feedback and the fastest leads — pour in there first, build organic in parallel for the long game.",
       "cash_cost": 500,
       "energy_cost": 8,
@@ -146,7 +146,7 @@
       "success_rate": 0.5,
       "failure_effects": { "leads": 6 },
       "narrative_success": "The ads are profitable. Not wildly — but the cost per lead is low enough to pour more in. You've found a lever.",
-      "narrative_failure": "The $500 mostly evaporated. But you learned what doesn't work, which is worth something."
+      "narrative_failure": "The ad budget mostly evaporated. But you learned what doesn't work, which is worth something."
     },
     {
       "id": "lead_magnet",

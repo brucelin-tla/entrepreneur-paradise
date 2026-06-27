@@ -276,8 +276,8 @@
       "stage": "foundation",
       "one_time": true,
       "label": "Business Insurance Stack",
-      "description": "The business buys three policies: income protection (if you can't work, the bills still get paid), key-person life insurance (a payout to the company if it loses you), and general business liability (lawsuits hit the policy, not your balance sheet). All paid by the business.",
-      "lesson": "Protect the engine before you build on it. Income protection covers your earning power, key-person life insurance pays the company if it loses you — the one life policy the business itself buys — and liability coverage absorbs the lawsuits that come with growth. These are business expenses, deducted before tax.",
+      "description": "The business buys a stack of policies: income protection (if you can't work, the bills still get paid), critical & chronic illness cover (pays you a tax-free lump-sum of cash if you get seriously ill — money to live on while you recover), key-person life insurance (a payout to the company if it loses you), and general business liability (lawsuits hit the policy, not your balance sheet). All paid by the business.",
+      "lesson": "Protect the engine before you build on it. Income protection covers your earning power, critical/chronic illness riders pay tax-free cash claims when your health forces you to stop working, key-person life insurance pays the company if it loses you, and liability coverage absorbs the lawsuits that come with growth. These are business expenses, deducted before tax.",
       "cash_cost": 500,
       "recurring_cost": 550,
       "energy_cost": 4,
@@ -285,7 +285,7 @@
       "effects": { "key_person_dependency": -12, "litigation_exposure": -15 },
       "success_rate": 0.92,
       "failure_effects": {},
-      "narrative_success": "Three policies in force, all on the business books. Income protection covers your family for two years if you can't work, the key-person payout would fund your replacement, and the liability policy stands between a lawsuit and everything you've built. Premiums run about $550/mo.",
+      "narrative_success": "The stack is in force, all on the business books. Income protection covers your family if you can't work, critical & chronic illness riders pay you a tax-free lump sum if your health gives out, the key-person payout would fund your replacement, and the liability policy stands between a lawsuit and everything you've built. Premiums run about $550/mo.",
       "narrative_failure": "Applications submitted; underwriting wants more medical records on one. The other two are active. Should fully clear next month."
     },
     {
@@ -398,7 +398,7 @@
       "category": "finance",
       "stage": "foundation",
       "label": "Fund Accumulation Policy",
-      "description": "Open a properly-structured indexed universal life (IUL) policy and start funding it automatically each month — sized to your revenue, cash, and available business credit. About 2% of each contribution covers the cost of insurance; the rest compounds tax-free at ~7%/yr and grows the borrowing base you'll later draw passive, tax-free income from. It only works as a wealth engine if you can feed it (~$50k/yr), so it unlocks once you have the capacity.",
+      "description": "Open a properly-structured indexed universal life (IUL) policy. The cost shown here is just the setup + first contribution — after that it funds automatically from your monthly cash flow (sized to your revenue, ~$50k/yr at scale), which you'll see in your monthly numbers, not as an action cost. About 2% of each contribution covers the cost of insurance; the rest compounds tax-free at ~7%/yr and grows the borrowing base you'll later draw passive, tax-free income from. It only works as a wealth engine if you can feed it, so it unlocks once you have the capacity.",
       "lesson": "This is your tax-advantaged money engine. Build the income and credit capacity FIRST, then open and fund it: a steady monthly contribution (minus a small ~2% cost of insurance) compounds tax-free, and you can borrow against up to 90% of the cash value anytime — no bank approval. Consistency beats lump sums.",
       "cash_cost": 500,
       "energy_cost": 4,
