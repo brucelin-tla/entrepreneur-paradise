@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.23.5 — 2026-06-26
+**Bug fix: business term loan no longer inflates personal credit**
+
+- **`bank_personal_loan` (separated branch):** removed the stray `s.available_credit += 10000×cf` that was bumping personal revolving credit availability (and dropping personal utilization) on what's described as a business term loan. A term loan is now purely `business_installment_debt` + cash + total debt, matching its narrative.
+
 ## v0.23.4 — 2026-06-26
 **Result-screen decision clarity: accessible capital + runway, transparent financing fees, Epic perks first, mentor blurb removed**
 
