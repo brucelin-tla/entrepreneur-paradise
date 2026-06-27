@@ -96,18 +96,18 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
 #tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
 @keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
-#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;width:calc(100% - 40px);max-width:340px;z-index:2001;box-shadow:0 12px 40px rgba(0,0,0,0.6);font-size:0.85rem;line-height:1.6;pointer-events:auto}
-#tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.82rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
+#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;width:calc(100% - 32px);max-width:300px;z-index:2001;box-shadow:0 10px 32px rgba(0,0,0,0.6);font-size:0.78rem;line-height:1.45;pointer-events:auto}
+#tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.76rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
 @keyframes tutHint{0%,100%{opacity:0.55}50%{opacity:1}}
-#tut-tip .tut-count{font-size:0.68rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:4px}
-#tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:1rem;margin-bottom:6px}
-#tut-tip .tut-body{color:var(--text);font-size:0.84rem;line-height:1.55}
-#tut-tip .tut-nav{display:flex;gap:8px;align-items:center;margin-top:14px}
-#tut-tip .tut-skip{flex:0 0 auto;background:none;border:none;color:var(--text2);font-size:0.78rem;cursor:pointer;padding:8px 4px}
+#tut-tip .tut-count{font-size:0.6rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:3px}
+#tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:0.9rem;margin-bottom:4px}
+#tut-tip .tut-body{color:var(--text);font-size:0.76rem;line-height:1.45}
+#tut-tip .tut-nav{display:flex;gap:6px;align-items:center;margin-top:10px}
+#tut-tip .tut-skip{flex:0 0 auto;background:none;border:none;color:var(--text2);font-size:0.72rem;cursor:pointer;padding:6px 3px}
 #tut-tip .tut-spacer{flex:1}
-#tut-tip .tut-back{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:0.82rem;font-weight:600;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer}
-#tut-tip .tut-next{background:var(--accent);border:none;color:#04130d;font-size:0.82rem;font-weight:700;padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer}
-#tut-tip .tut-dots{display:flex;gap:5px;justify-content:center;margin-top:12px}
+#tut-tip .tut-back{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:0.76rem;font-weight:600;padding:6px 11px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-next{background:var(--accent);border:none;color:#04130d;font-size:0.76rem;font-weight:700;padding:6px 13px;border-radius:var(--radius-sm);cursor:pointer}
+#tut-tip .tut-dots{display:flex;gap:4px;justify-content:center;margin-top:9px}
 #tut-tip .tut-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
 #tut-tip .tut-dot.on{background:var(--accent)}
 
@@ -580,6 +580,22 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "A lot of calls, a few maybes, one yes. Selling is a numbers game and this month the numbers were thin — but you learned what objections to expect."
     },
     {
+      "id": "discount_promotion",
+      "category": "marketing",
+      "stage": "foundation",
+      "label": "Offer a Discount to Drive Sales",
+      "description": "Slash your prices and run a loud promo. Customers pour in — but they're bargain-hunters who pay little, expect a lot, and run you ragged.",
+      "lesson": "Discounting is the easiest way to get customers and the hardest way to build a business. Cheap clients are the most demanding and the least loyal — you trade margin, pricing power, and energy for volume that doesn't compound. Use it sparingly, if at all.",
+      "cash_cost": 0,
+      "energy_cost": 22,
+      "prerequisites": {},
+      "effects": { "customer_base": 12, "brand_equity": -8, "sales_conversion": 3 },
+      "success_rate": 0.9,
+      "failure_effects": { "customer_base": 4, "brand_equity": -5 },
+      "narrative_success": "The promo worked — a flood of new customers signed up. But they haggle over every invoice, demand round-the-clock attention, and your margins (and your evenings) took the hit.",
+      "narrative_failure": "The discount pulled in a handful of price-shoppers and cheapened how people see you. A lot of effort for thin, fickle business."
+    },
+    {
       "id": "webinar_funnel",
       "category": "marketing",
       "stage": "leverage",
@@ -685,6 +701,22 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Full-time offer signed; the bigger build is still ramping. Payroll bites from day one."
     },
     {
+      "id": "study_business_content",
+      "category": "operations",
+      "stage": "foundation",
+      "label": "Study Business Content (Books & YouTube)",
+      "description": "Spend your evenings learning the craft — business books, YouTube breakdowns, podcasts. Free education that compounds into how well you run and deliver.",
+      "lesson": "The cheapest leverage there is: a $20 book or a free video can save you months of expensive mistakes. Founders who keep learning out-execute those who wing it — invest your time before you can invest your money.",
+      "cash_cost": 0,
+      "energy_cost": 8,
+      "prerequisites": {},
+      "effects": { "systems_maturity": 6, "brand_equity": 2 },
+      "success_rate": 0.95,
+      "failure_effects": { "systems_maturity": 2 },
+      "narrative_success": "A few late nights with the right books and channels, and ideas start clicking — you spot three things you've been doing the hard way and fix them.",
+      "narrative_failure": "You watched a lot and applied a little. Some of it will stick; consistency is the real lesson."
+    },
+    {
       "id": "do_work_yourself",
       "category": "operations",
       "stage": "foundation",
@@ -706,10 +738,10 @@ window.EMBEDDED_CONFIG = {
       "stage": "foundation",
       "label": "Work With a Vendor Contractor",
       "description": "Use a contractor to deliver the goods & service, so you can focus on revenue generation instead of doing all the work yourself.",
-      "lesson": "Your first hire won't be as good as you — and that's fine. 80% done by someone else beats 100% done by you alone. Trading money for delivery capacity is the whole game.",
+      "lesson": "Your first hire won't be as good as you — and that's fine. 80% done by someone else beats 100% done by you alone. But do the work yourself first: you can't hand off what you don't understand. Trading money for delivery capacity is the whole game.",
       "cash_cost": 1500,
       "energy_cost": 10,
-      "prerequisites": {},
+      "prerequisites": { "needs": ["do_work_yourself"] },
       "effects": { "team_size": 1, "systems_maturity": 5, "key_person_dependency": -10, "revenue_capacity": 5000 },
       "success_rate": 0.65,
       "failure_effects": { "team_size": 1, "systems_maturity": 2 },
@@ -1001,7 +1033,7 @@ window.EMBEDDED_CONFIG = {
       "stage": "foundation",
       "one_time": true,
       "label": "Epic Life Membership",
-      "description": "A done-for-you wealth concierge. Once enrolled, a team runs your financial playbook in the background — credit, debt, protection, banking, insurance, your tax-free policy, then passive income — doing the single most relevant move each month so you can focus on the business.",
+      "description": "A done-for-you wealth concierge. Once enrolled, a team runs your financial playbook in the background — credit, debt, protection, banking, insurance, your tax-free policy, then passive income — doing the single most relevant move each month so you can focus on the business. ⚠️ Very powerful — if it's your first game, try a full run without it so you learn how the money moves yourself.",
       "lesson": "The wealthy don't run the whole financial playbook themselves — they hire specialists who run it for them. A concierge trades a monthly fee for time and flawless execution: the protective and wealth-building moves happen on schedule whether or not you remember them. (This is a real service — the game just lets you feel the value.)",
       "cash_cost": 500,
       "recurring_cost": 300,
@@ -2658,7 +2690,7 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships']],['Sales & Conversion',['do_sales_yourself','webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
 const MILESTONES=[
 {id:'mk_first_customer',cat:'marketing',title:'First Paying Customer',desc:'Landed your very first customer.',mentor:'Your first paying customer — proof someone will pay for what you do. Everything real starts here.',check:s=>(s.customer_base||0)>=1},
@@ -2683,6 +2715,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.11',d:'2026-06-26 22:45',n:[
+'Tutorial now coaches your first moves: it highlights the single best action to tap (a sensible starter, not a trap) instead of the whole list, the tip box is smaller on mobile, and a new slide introduces Epic Life Membership with a heads-up to play your first game without it.',
+'New Operations action — “Study Business Content (Books & YouTube)”: free, costs energy, builds how well you run things. “Work With a Vendor Contractor” now unlocks after you’ve done the work yourself first.',
+'New Marketing action — “Offer a Discount to Drive Sales”: floods you with low-paying, high-maintenance customers and drains lots of energy. Easy volume, but it erodes your pricing power — use sparingly.',
+]},
 {v:'0.23.10',d:'2026-06-26 22:10',n:[
 'New Marketing action under Sales & Conversion — “Do the Sales Yourself”: no cash, just energy. Founder-led selling that turns your pipeline into paying customers when you can’t yet afford a team or a funnel.',
 'Tutorial fix: the tip now sits pinned at the top of the screen and the highlighted area scrolls in just below it, so it no longer covers what it’s pointing at (and you can still tap through on mobile).',
@@ -2814,13 +2851,19 @@ _unlockScroll(){if(!this._scrollLocked)return;this._scrollLocked=false;const b=d
 TUTORIAL_STEPS:[
 {sel:null,title:'Welcome to Entrepreneur Paradise',body:'You have <strong>up to 36 months</strong> to build wealth and a life you love — cash out at the end of <strong>Year 1, 2, or 3</strong> to lock in your score. Let\'s play your first month together so you get a feel for the game.'},
 {sel:'#stats-dashboard',title:'Your dashboard',body:'Cash, credit, debt and your <strong>Net/mo</strong> (with a runway estimate) live up here, next to Energy and Freedom. Tap any stat with an ⓘ to see how it\'s calculated. Watch Net/mo — if cash and credit both run dry, the game ends.'},
-{sel:'#action-list',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Start with Marketing — it fills your pipeline with leads. <strong>Tap an action below to choose it.</strong>',wait:'select',waitHint:'↓ Pick a Marketing action'},
-{sel:'#action-list',title:'Now — Operations',body:'Operations is how you deliver the work and keep customers happy. <strong>Tap an Operations action to pick it.</strong>',wait:'select',waitHint:'↓ Pick an Operations action'},
-{sel:'#action-list',title:'Now — Finance',body:'Finance is the heart of the game. Grinding revenue alone hits a ceiling — real wealth comes from credit, <em>other people\'s money</em>, and turning it into <strong>passive, tax-free income</strong>. <strong>Tap a Finance action.</strong>',wait:'select',waitHint:'↓ Pick a Finance action'},
+{sel:'#action-list',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Marketing fills your pipeline with leads. <strong>We\'ve highlighted a solid first move — tap it to choose it.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:'#action-list',title:'Now — Operations',body:'Operations is how you deliver the work and keep customers happy. <strong>Tap the highlighted action to pick it.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:'#action-list',title:'Now — Finance',body:'Finance is the heart of the game. Grinding revenue alone hits a ceiling — real wealth comes from credit, <em>other people\'s money</em>, and turning it into <strong>passive, tax-free income</strong>. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
+{sel:null,title:'⭐ Epic Life Membership',body:'In Finance you\'ll spot <strong>Epic Life Membership</strong> — a done-for-you concierge that auto-runs your whole financial playbook (credit, protection, banking, insurance, policy, passive income). It\'s very powerful.<br><br><strong>⚠️ Play your first full game WITHOUT it.</strong> Learn how the money actually moves yourself first — then turn it on to feel how the wealthy delegate it.'},
 {sel:'#confirm-actions-btn',title:'End your turn',body:'All three moves are set. <strong>Tap End Turn</strong> to play out the month and see what happened.',wait:'endturn',waitHint:'↓ Tap End Turn'},
 {sel:null,title:'That\'s the loop!',body:'Every month: read the story, make your three moves, end the turn, and learn from the results. Build safeguards (LLC, insurance, credit) <em>before</em> events hit, and steer toward passive income. Check 🏆 Achievements anytime — now go build your empire.'}
 ],
 showTutorial(){this._tutStep=0;this._tutActive=true;this.renderTutorialStep();},
+// During the tutorial, recommend one sensible first move per category (curated, not the raw value-maximizer — so it never points at the discount/“sell yourself” traps). Falls back to the first available non-hire action.
+_tutRecPick(cat){const prefs={marketing:['cold_outreach','basic_social_content','email_campaign'],operations:['do_work_yourself','study_business_content','basic_quality_control'],finance:['establish_business','build_personal_credit','monthly_tax_reserve']}[cat]||[];
+const ok=id=>{const a=this.getAvailableActions(cat).find(x=>x.id===id);return a&&!this.isActionLocked(a)&&!this.isActionCompleted(a);};
+for(const id of prefs)if(ok(id))return id;
+const any=this.getAvailableActions(cat).find(a=>!this.isActionLocked(a)&&!this.isActionCompleted(a)&&!/^(hire_|promote_)/.test(a.id));return any?any.id:null;},
 renderTutorialStep(){
 const steps=this.TUTORIAL_STEPS,i=this._tutStep,step=steps[i];
 if(!step){return this.endTutorial();}
@@ -2835,7 +2878,9 @@ const backBtn=(i>0&&!step.wait)?'<button class="tut-back" onclick="Game.tutPrev(
 const nextLabel=i===steps.length-1?'Got it':'Next';
 const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
 tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" style="pointer-events:auto" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
-const target=step.sel?document.querySelector(step.sel):null;
+let target=step.sel?document.querySelector(step.sel):null;
+// On "pick an action" steps, spotlight the single recommended action card (open its group + scroll to it) instead of the whole list.
+if(step.wait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card)target=card;}}
 // Tip always sits pinned at the top; the highlighted element is scrolled to sit just below it so it's never covered.
 const place=()=>{
 const topY=10,gap=16,th=tip.offsetHeight;

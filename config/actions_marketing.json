@@ -214,6 +214,22 @@
       "narrative_failure": "A lot of calls, a few maybes, one yes. Selling is a numbers game and this month the numbers were thin — but you learned what objections to expect."
     },
     {
+      "id": "discount_promotion",
+      "category": "marketing",
+      "stage": "foundation",
+      "label": "Offer a Discount to Drive Sales",
+      "description": "Slash your prices and run a loud promo. Customers pour in — but they're bargain-hunters who pay little, expect a lot, and run you ragged.",
+      "lesson": "Discounting is the easiest way to get customers and the hardest way to build a business. Cheap clients are the most demanding and the least loyal — you trade margin, pricing power, and energy for volume that doesn't compound. Use it sparingly, if at all.",
+      "cash_cost": 0,
+      "energy_cost": 22,
+      "prerequisites": {},
+      "effects": { "customer_base": 12, "brand_equity": -8, "sales_conversion": 3 },
+      "success_rate": 0.9,
+      "failure_effects": { "customer_base": 4, "brand_equity": -5 },
+      "narrative_success": "The promo worked — a flood of new customers signed up. But they haggle over every invoice, demand round-the-clock attention, and your margins (and your evenings) took the hit.",
+      "narrative_failure": "The discount pulled in a handful of price-shoppers and cheapened how people see you. A lot of effort for thin, fickle business."
+    },
+    {
       "id": "webinar_funnel",
       "category": "marketing",
       "stage": "leverage",

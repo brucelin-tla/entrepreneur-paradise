@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.23.11 — 2026-06-26
+**Tutorial coaching + smaller mobile tip + Epic Life slide; new Operations & Marketing actions**
+
+- **Tutorial recommends the move (`_tutRecPick` / `renderTutorialStep`):** "pick an action" steps now spotlight a single curated recommended card (opens its group, scrolls to it) instead of the whole list — Marketing → Outbound Prospecting, Operations → Study Business Content (or Do the Work Yourself once you have a customer), Finance → Form an LLC. Deliberately curated so it never points at the high-volume/low-value traps.
+- **Smaller tutorial tip on mobile (CSS):** reduced padding/font/width/button sizes.
+- **Epic Life Membership slide:** new tutorial step introduces the concierge with a ⚠️ "play your first game without it" warning; same warning added to the action's description.
+- **New Operations action `study_business_content`** (Capacity & Delivery): $0 cash, 8 energy, builds systems maturity; **`hire_first_contractor` now gated behind `do_work_yourself`** ("master it before you delegate it").
+- **New Marketing action `discount_promotion`** (Sales & Conversion): $0 cash, 22 energy, `{ customer_base +12, brand_equity −8, sales_conversion +3 }` — lots of low-paying customers and an energy drain that erodes pricing power.
+
 ## v0.23.10 — 2026-06-26
 **New founder-led sales action + tutorial tip placement fix**
 
