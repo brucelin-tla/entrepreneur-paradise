@@ -95,6 +95,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 #tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
 #tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
+#tut-hit{position:absolute;z-index:2001;pointer-events:auto;background:transparent;cursor:pointer;border-radius:var(--radius-sm)}
 @keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
 #tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;width:calc(100% - 32px);max-width:300px;z-index:2001;box-shadow:0 10px 32px rgba(0,0,0,0.6);font-size:0.78rem;line-height:1.45;pointer-events:auto}
 #tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.76rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
@@ -2715,6 +2716,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.23.12',d:'2026-06-26 23:30',n:[
+'Epic Life Membership is now a ⭐ button in the action tabs row — tap it anytime to see what it does, the pricing, and enroll. Two plans: Monthly ($500 + $300/mo) or Annual ($500 + $3,000/yr, save $600).',
+'Cleaner dashboard wording: “Net/mo” is now “Cash flow/mo” — tap it for a plain-English breakdown (money in − money out, and what “runway” means).',
+'Tighter tutorial: the screen is now locked during the walkthrough — you can only tap the highlighted spot (or Skip/Next), no scrolling or clicking around. The Epic Life step now points at its button.',
+]},
 {v:'0.23.11',d:'2026-06-26 22:45',n:[
 'Tutorial now coaches your first moves: it highlights the single best action to tap (a sensible starter, not a trap) instead of the whole list, the tip box is smaller on mobile, and a new slide introduces Epic Life Membership with a heads-up to play your first game without it.',
 'New Operations action — “Study Business Content (Books & YouTube)”: free, costs energy, builds how well you run things. “Work With a Vendor Contractor” now unlocks after you’ve done the work yourself first.',
@@ -2854,7 +2860,7 @@ TUTORIAL_STEPS:[
 {sel:'#action-list',title:'Your first move — Marketing',body:'Each month you make one move in <span style="color:var(--accent)">Marketing</span>, <span style="color:var(--blue)">Operations</span> and <span style="color:var(--gold)">Finance</span>. Marketing fills your pipeline with leads. <strong>We\'ve highlighted a solid first move — tap it to choose it.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
 {sel:'#action-list',title:'Now — Operations',body:'Operations is how you deliver the work and keep customers happy. <strong>Tap the highlighted action to pick it.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
 {sel:'#action-list',title:'Now — Finance',body:'Finance is the heart of the game. Grinding revenue alone hits a ceiling — real wealth comes from credit, <em>other people\'s money</em>, and turning it into <strong>passive, tax-free income</strong>. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'↓ Tap the highlighted action'},
-{sel:null,title:'⭐ Epic Life Membership',body:'In Finance you\'ll spot <strong>Epic Life Membership</strong> — a done-for-you concierge that auto-runs your whole financial playbook (credit, protection, banking, insurance, policy, passive income). It\'s very powerful.<br><br><strong>⚠️ Play your first full game WITHOUT it.</strong> Learn how the money actually moves yourself first — then turn it on to feel how the wealthy delegate it.'},
+{sel:'#epic-btn',title:'⭐ Epic Life Membership',body:'This button (top-right) opens <strong>Epic Life Membership</strong> — a done-for-you concierge that auto-runs your whole financial playbook. Tap it anytime to see details and pricing.<br><br><strong>⚠️ Play your first full game WITHOUT it.</strong> Learn how the money actually moves yourself first — then turn it on to feel how the wealthy delegate it.'},
 {sel:'#confirm-actions-btn',title:'End your turn',body:'All three moves are set. <strong>Tap End Turn</strong> to play out the month and see what happened.',wait:'endturn',waitHint:'↓ Tap End Turn'},
 {sel:null,title:'That\'s the loop!',body:'Every month: read the story, make your three moves, end the turn, and learn from the results. Build safeguards (LLC, insurance, credit) <em>before</em> events hit, and steer toward passive income. Check 🏆 Achievements anytime — now go build your empire.'}
 ],
@@ -2868,20 +2874,21 @@ renderTutorialStep(){
 const steps=this.TUTORIAL_STEPS,i=this._tutStep,step=steps[i];
 if(!step){return this.endTutorial();}
 let ov=document.getElementById('tut-overlay');
-if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-tip"></div>';document.body.appendChild(ov);}
-const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip');
-// On "wait" steps the player acts in the real game, so let clicks pass through the overlay AND the tip (its skip button re-enables itself); info steps stay modal.
-ov.style.pointerEvents=step.wait?'none':'auto';
-tip.style.pointerEvents=step.wait?'none':'auto';
+if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div id="tut-hole"></div><div id="tut-hit"></div><div id="tut-tip"></div>';document.body.appendChild(ov);
+ov.addEventListener('touchmove',function(e){if(e.target.id==='tut-overlay'||e.target.id==='tut-hole')e.preventDefault();},{passive:false});}
+const hole=document.getElementById('tut-hole'),tip=document.getElementById('tut-tip'),hit=document.getElementById('tut-hit');
+// The overlay is fully modal: it blocks all taps and scrolling. Only the spotlighted area (via an invisible click-proxy) and the tip's buttons are interactive.
+ov.style.pointerEvents='auto';ov.style.touchAction='none';tip.style.pointerEvents='auto';
 const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>').join('');
 const backBtn=(i>0&&!step.wait)?'<button class="tut-back" onclick="Game.tutPrev()">Back</button>':'';
 const nextLabel=i===steps.length-1?'Got it':'Next';
 const navRight=step.wait?'<span class="tut-wait">'+step.waitHint+'</span>':backBtn+'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
-tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" style="pointer-events:auto" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
-let target=step.sel?document.querySelector(step.sel):null;
-// On "pick an action" steps, spotlight the single recommended action card (open its group + scroll to it) instead of the whole list.
-if(step.wait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card)target=card;}}
-// Tip always sits pinned at the top; the highlighted element is scrolled to sit just below it so it's never covered.
+tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+step.body+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
+let target=step.sel?document.querySelector(step.sel):null,hitAction=null;
+// On "pick an action" steps, spotlight the single recommended action card; tapping it (the only tappable spot) selects that move.
+if(step.wait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card){target=card;hitAction=()=>this.selectActionPayment(cat,recId);}}}
+else if(step.wait==='endturn'){hitAction=()=>this.confirmActions();}
+// Tip pinned at the top; the highlighted element scrolls just below it. An invisible proxy over it is the only place the player can tap.
 const place=()=>{
 const topY=10,gap=16,th=tip.offsetHeight;
 tip.style.top=topY+'px';tip.style.left='50%';tip.style.transform='translateX(-50%)';
@@ -2891,7 +2898,9 @@ const delta=r.top-(topY+th+gap);
 if(Math.abs(delta)>4){window.scrollBy(0,delta);r=target.getBoundingClientRect();} // bring the target down below the tip
 const pad=8;hole.style.display='block';hole.classList.add('pulse');
 hole.style.top=(r.top-pad)+'px';hole.style.left=(r.left-pad)+'px';hole.style.width=(r.width+pad*2)+'px';hole.style.height=(r.height+pad*2)+'px';
-}else{hole.style.display='none';hole.classList.remove('pulse');}
+if(hitAction){hit.style.display='block';hit.style.top=(r.top-pad)+'px';hit.style.left=(r.left-pad)+'px';hit.style.width=(r.width+pad*2)+'px';hit.style.height=(r.height+pad*2)+'px';hit.onclick=hitAction;}
+else{hit.style.display='none';hit.onclick=null;}
+}else{hole.style.display='none';hole.classList.remove('pulse');hit.style.display='none';hit.onclick=null;}
 };
 setTimeout(place,60);
 },
@@ -3013,14 +3022,14 @@ const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
 const row=(label,valHtml,click)=>'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(click?'cursor:pointer;':'')+'"'+(click?' onclick="'+click+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+(click?' <span class="info-btn">i</span>':'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-const netRow=(label,net,liquid,click)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+=' <span style="font-size:0.55rem;color:var(--text2);font-weight:400;">~'+mo+'mo</span>';}return row(label,v,click);};
+const netRow=(label,net,liquid,click)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+=' <span style="font-size:0.55rem;color:var(--text2);font-weight:400;">~'+mo+'mo left</span>';}return row(label,v,click);};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',"Game.showCreditScore()");
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',"Game.showCreditAvail()");
 P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),"Game.showRevenue()");
 P+=row('Expense/mo',m(persExp,'var(--gold)'));
-P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,"Game.showRevenue()");
+P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,"Game.showNetFlow('personal')");
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),"Game.showDebt()");
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),"Game.showCreditAvail()");
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),"Game.showAssets()");
@@ -3039,7 +3048,7 @@ B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',"Game.showCreditAvail()");
 B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),"Game.showRevenue()");
 B+=row('Expense/mo',m(bizExp,'var(--gold)'),"Game.showBurn()");
-B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showBurn()");
+B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showNetFlow('business')");
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),"Game.showDebt()");
 B+=row('Owner Equity',m(s.capital_account||0,(s.capital_account||0)>=0?'var(--text)':'var(--red)'),"Game.showRevenue()");
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
@@ -3146,6 +3155,18 @@ let h='<div style="text-align:center;margin-bottom:10px;"><span style="font-size
 for(const cat of ['marketing','operations','finance']){const col=colOf(cat);h+='<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:12px 0 6px;">'+CATL[cat]+'</div>';
 for(const m of MILESTONES.filter(x=>x.cat===cat)){const got=have[m.id]!==undefined;h+='<div style="display:flex;gap:8px;align-items:flex-start;padding:5px 1px;opacity:'+(got?'1':'0.5')+';"><span style="font-size:0.95rem;line-height:1.2;">'+(got?'🏆':'🔒')+'</span><div style="flex:1;min-width:0;"><div style="font-size:0.82rem;font-weight:600;color:'+(got?'var(--text)':'var(--text2)')+';">'+m.title+(got&&have[m.id]>0?' <span style="font-size:0.62rem;color:var(--text2);font-weight:400;">— month '+have[m.id]+'</span>':'')+'</div><div style="font-size:0.7rem;color:var(--text2);line-height:1.4;">'+m.desc+'</div></div></div>';}}
 this.showPopup('🏆 Achievements',h);},
+showNetFlow(side){const s=this.state,fm=v=>this.fmtMoney(Math.round(v)),sep=this.isSeparated();
+let inLabel,inVal,outVal,liquid;
+if(side==='business'){inLabel='Revenue in';inVal=s.monthly_revenue||0;outVal=(s.operating_expenses||0)+(s.cogs||0);liquid=(s.cash||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));}
+else{const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passiveInc=(s.real_estate_owned||0)*1800+policyPassive+Math.round((s.investment_positions||0)*0.01);inLabel='Income in';inVal=(s.owner_pay||0)+passiveInc;outVal=(s.living_expenses||0)+(s.lifestyle_expenses||0);liquid=(sep?(s.personal_cash||0):(s.cash||0))+(s.available_credit||0);}
+const net=inVal-outVal;
+let h='<div style="font-size:0.85rem;line-height:1.6;margin-bottom:10px;">How much your '+(side==='business'?'business':'personal')+' cash changes each month — money coming in minus money going out. <strong style="color:var(--accent)">Green/positive</strong> = your cash is growing; <strong style="color:var(--red)">red/negative</strong> = you\'re spending it down.</div>';
+h+='<div class="breakdown-row"><span>'+inLabel+'</span><span style="color:var(--accent)">+'+fm(inVal)+'</span></div>';
+h+='<div class="breakdown-row"><span>Expenses out</span><span style="color:var(--red)">−'+fm(outVal)+'</span></div>';
+h+='<div class="breakdown-row breakdown-total"><span>Cash flow / month</span><span style="color:'+(net>=0?'var(--accent)':'var(--red)')+'">'+(net>=0?'+':'−')+fm(Math.abs(net))+'</span></div>';
+if(net<0&&liquid>0)h+='<div class="breakdown-detail" style="margin-top:8px;">At this rate your cash + available credit ('+fm(liquid)+') lasts about <strong>'+Math.floor(liquid/Math.abs(net))+' months</strong> — that\'s the “runway” shown next to it.</div>';
+else if(net>=0)h+='<div class="breakdown-detail" style="margin-top:8px;">You\'re cash-flow positive — no runway clock ticking.</div>';
+this.showPopup((side==='business'?'Business':'Personal')+' Cash Flow',h);},
 showBurn(){const s=this.state,opex=s.operating_expenses||0,cogs=s.cogs||0,pay=s.owner_pay||0,living=s.living_expenses||0,lifestyle=s.lifestyle_expenses||0,interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();
 const taxRes=this.state._completed_actions.includes('monthly_tax_reserve')?Math.round(((s.monthly_revenue||0)-cogs-opex)*(s.tax_rate||0.25)):0;
 let detail='';if(s._active_lifestyle_costs&&Object.keys(s._active_lifestyle_costs).length)detail=Object.entries(s._active_lifestyle_costs).map(([id,cost])=>'<div class="breakdown-detail">· '+id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+': $'+this.fmt(cost)+'/mo</div>').join('');
@@ -3247,7 +3268,24 @@ const grid=cells=>'<div style="display:grid;grid-template-columns:repeat(3,1fr);
 const el=document.getElementById('bars-section');if(el){el.innerHTML='';el.style.display='none';}},
 
 renderStepIndicator(){const ac=this._activeCats||CATS,ci=ac.indexOf(this.currentCategory),total=ac.length;document.getElementById('step-indicator').innerHTML='Step '+(ci+1)+'/'+total+': '+ac.map(c=>{if(this.selectedActions[c])return'<span style="color:var(--accent)">✓ '+CL[c]+'</span>';if(c===this.currentCategory)return'<span class="step-current">→ '+CL[c]+'</span>';return'<span>'+CL[c]+'</span>';}).join(' · ');},
-renderCategoryTabs(){const ac=this._activeCats||CATS;document.getElementById('cat-tabs').innerHTML=ac.map(c=>'<div class="cat-tab '+(this.currentCategory===c?'active':this.selectedActions[c]?'done':'')+'" onclick="Game.switchCategory(\''+c+'\')">'+CL[c]+(this.selectedActions[c]?' ✓':'')+'</div>').join('');},
+renderCategoryTabs(){const ac=this._activeCats||CATS;const tabs=ac.map(c=>'<div class="cat-tab '+(this.currentCategory===c?'active':this.selectedActions[c]?'done':'')+'" onclick="Game.switchCategory(\''+c+'\')">'+CL[c]+(this.selectedActions[c]?' ✓':'')+'</div>').join('');
+const member=!!this.state._epic_life,selectedEpic=this.selectedActions.finance&&this.selectedActions.finance.id==='epic_life_membership';
+const epicLabel=member?'⭐ Epic ✓':(selectedEpic?'⭐ Epic ✓':'⭐ Epic Life');
+const epicBtn='<div id="epic-btn" class="cat-tab" style="margin-left:auto;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">'+epicLabel+'</div>';
+document.getElementById('cat-tabs').innerHTML=tabs+epicBtn;},
+showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
+const member=!!s._epic_life,selected=this.selectedActions.finance&&this.selectedActions.finance.id==='epic_life_membership';
+const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
+let h='<div style="font-size:0.85rem;line-height:1.6;">'+(a.description||'')+'</div>';
+h+='<div style="font-size:0.8rem;line-height:1.55;color:var(--text2);margin-top:8px;">It runs the single highest-priority money move for you each month — building credit, protection, banking, your tax-free policy, then switching on passive income — and surfaces more investment opportunities.</div>';
+h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:var(--radius-sm);font-size:0.78rem;line-height:1.5;"><strong>⚠️ Very powerful.</strong> If this is your first game, try a full run without it so you learn how the money moves yourself first.</div>';
+if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
+else if(selected)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn.</div>';
+else{h+='<div style="margin-top:12px;font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Choose a plan ('+fm(setup)+' setup either way)</div>';
+h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'monthly\')">Monthly — '+fm(setup)+' setup + '+fm(mo)+'/mo</button>';
+h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'annual\')">Annual — '+fm(setup)+' setup + '+fm(yr)+'/yr <span style="font-weight:400;opacity:0.85;">(save '+fm(mo*12-yr)+'/yr)</span></button>';}
+this.showPopup('⭐ Epic Life Membership',h);},
+enrollEpicLife(plan){const a=this.getAvailableActions('finance').find(x=>x.id==='epic_life_membership');if(a&&!this.isActionLocked(a)){this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.selectActionPayment('finance','epic_life_membership');}this.hidePopup();this.renderCategoryTabs();},
 switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();},
 
 isActionOutgrown(a){const s=this.state,sk=s['skill_'+a.category]||0;if(a.stage==='foundation'&&sk>40&&this.getStage(a.category)!=='foundation')return true;
@@ -3282,7 +3320,7 @@ if(this.isActionOutgrown(a))v*=0.3;
 if(a.one_time&&!cnt)v*=1.2; // strategic one-time unlocks are worth grabbing
 v*=(a.success_rate||0.7);
 return v;},
-bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board'].includes(a.id));if(!acts.length)return null;
+bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board','epic_life_membership'].includes(a.id));if(!acts.length)return null;
 // An exec offers its own full-time promotion the moment it's available & affordable — a strategic upgrade, not a repeatable grind.
 const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
@@ -3332,7 +3370,7 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;return perk;}
 return null;},
 boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
-renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
+renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
 const urgency=a=>this._actionUrgency(a);
 const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a),isSel=sel&&sel.id===a.id;const reason=done?'Already completed':locked?this.getLockedReason(a):'';const outgrown=!done&&!locked&&this.isActionOutgrown(a);const cls=done?'completed-action':isSel?'selected':locked?'locked':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const rc=(this.state._action_counts||{})[a.id]||0;const repeatBadge=(!a.one_time&&rc>0)?'<span class="repeat-badge">×'+rc+'</span>':'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ PARTIAL — RETRY</span>':'';
@@ -3482,7 +3520,7 @@ if((success||!action.one_time)&&!this.state._completed_actions.includes(action.i
 if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
 this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
 // Non-lifestyle recurring costs (insurance premiums, memberships) become an ongoing monthly operating expense — added once when first activated.
-if(success&&cat!=='lifestyle'&&action.recurring_cost){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;}}
+if(success&&cat!=='lifestyle'&&action.recurring_cost&&action.id!=='epic_life_membership'){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;}}
 if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','operations','finance'].includes(cat)){const role=cat==='marketing'?'CRO':cat==='operations'?'COO':'CFO';const bonus=Math.max(1000,Math.min(15000,Math.round((this.state.monthly_revenue||0)*0.03)));this.payCost(bonus,false);_execBonuses.push({role,bonus,label:action.label});}
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
@@ -3498,7 +3536,9 @@ if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_f
 if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
 if(action.id==='hire_general_counsel'&&success){this.state._gc_hired=true;}
 if(action.id==='hire_executive_assistant'&&success){this.state._ea_hired=true;this.state._dyn_narrative='Your executive assistant is on board and already owns the financial housekeeping — utilization paydowns, credit and D&B upkeep, and the monthly tax reserve all run on autopilot now. You won\'t spend another turn on these chores.';}
-if(action.id==='epic_life_membership'&&success){this.state._epic_life=true;this.state._dyn_narrative='Epic Life is active. From next month your concierge runs the single highest-priority financial move for you — protection, credit, banking, your policy, then passive income — one piece at a time. The '+this.fmtMoney(action.recurring_cost||300)+'/mo retainer keeps the whole team working in the background.';}
+if(action.id==='epic_life_membership'&&success){const s=this.state;s._epic_life=true;const plan=s._epic_plan||'monthly';
+if(plan==='annual'){this.payCost(3000,false);s._epic_renew_month=this.month+12;s._dyn_narrative='Epic Life is active — annual plan. '+this.fmtMoney(3000)+'/year billed up front (you save '+this.fmtMoney(300*12-3000)+' vs monthly). Your concierge runs the single highest-priority financial move for you each month — protection, credit, banking, your policy, then passive income.';}
+else{s.operating_expenses=(s.operating_expenses||0)+(action.recurring_cost||300);s._dyn_narrative='Epic Life is active — monthly plan at '+this.fmtMoney(action.recurring_cost||300)+'/mo. Your concierge runs the single highest-priority financial move for you each month — protection, credit, banking, your policy, then passive income.';}}
 if(action.id==='build_dnb_profile'&&success){const s=this.state;s._dnb_profile=true;s._dnb_tradelines=(s._dnb_tradelines||0)+3;if(!s.business_credit_profile||s.business_credit_profile==='none')s.business_credit_profile='building';s._dyn_narrative='Your business has its own credit identity now — DUNS number, phone, address, website and socials, plus three net-30 vendor accounts reporting on-time. Your D&B score climbs as the tradelines age and you add more credit history.';}
 if(action.id==='business_credit_line'&&success){const cf=this.calcCreditCapacity(),lim=Math.round(15000*cf);this.state.business_credit_limit=(this.state.business_credit_limit||0)+lim;this.state._dnb_tradelines=(this.state._dnb_tradelines||0)+1;this.state._dyn_narrative='Approved — a '+this.fmtMoney(lim)+' revolving line in the business name. Your credit and revenue did the talking, and the new tradeline deepens your D&B file.';}
 if(action.id==='premium_financing'&&success){const mult=Math.max(1,Math.min(5,(this.state.monthly_revenue||0)/20000)),cv=Math.round(25000*mult),debt=Math.round(20000*mult);this.state.insurance_cash_value=(this.state.insurance_cash_value||0)+cv;this.state.total_debt+=debt;this.state._dyn_narrative='Structured: '+this.fmtMoney(debt)+' borrowed at low rates funds '+this.fmtMoney(cv)+' of tax-free cash value.';}
@@ -3613,6 +3653,8 @@ if(sep&&s.personal_cash<0){s.cash+=s.personal_cash;s.personal_cash=0;} // person
 if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;const _unc=this.coverShortfall(_short);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
 // Owner pays themselves a draw/salary scaled to what the business can afford — covers a living wage once profitable (a draw pre-S-Corp, formal salary after); S-Corp just optimizes its tax treatment
 {const afford=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)),target=Math.min(afford,Math.max((s.living_expenses||0)+1500,Math.round((s.monthly_revenue||0)*0.25)));s.owner_pay=Math.max(0,Math.round(target));}
+// Epic Life annual plan renews once a year (monthly plan is carried in operating_expenses instead).
+if(s._epic_life&&s._epic_plan==='annual'&&s._epic_renew_month&&this.month>=s._epic_renew_month){this.payCost(3000,false);s._epic_renew_month=this.month+12;}
 // Auto-actions from key hires
 const bl=this.calcBusinessLevel();
 if(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')){if(s.business_credit_profile==='building')s.business_credit_profile='established';s.personal_credit_score=Math.min(850,s.personal_credit_score+1);s.business_credit_limit=(s.business_credit_limit||0)+Math.round(500*bl);const pr=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(pr>1000){const as=Math.round(pr*0.05);s._installment_debt=(s._installment_debt||0)+as;s.available_credit=(s.available_credit||0)+Math.round(as*0.8);}}

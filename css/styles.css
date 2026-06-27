@@ -88,6 +88,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 #tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
 #tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
+#tut-hit{position:absolute;z-index:2001;pointer-events:auto;background:transparent;cursor:pointer;border-radius:var(--radius-sm)}
 @keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
 #tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;width:calc(100% - 32px);max-width:300px;z-index:2001;box-shadow:0 10px 32px rgba(0,0,0,0.6);font-size:0.78rem;line-height:1.45;pointer-events:auto}
 #tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.76rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}

@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.23.12 — 2026-06-26
+**Epic Life button + plans, "Cash flow/mo" rename, locked-down tutorial**
+
+- **Epic Life Membership as a tabs-row button (`renderCategoryTabs`/`showEpicLife`/`enrollEpicLife`):** right-aligned ⭐ button opens a popup with details, pricing, the warning, and two plans — Monthly ($500 setup + $300/mo, carried in operating_expenses) or Annual ($500 setup + $3,000/yr billed up front, renews every 12 months via `monthlyTick`; saves $600/yr). Removed from the Finance action menu and from auto-pick; plan stored in `_epic_plan`.
+- **"Net/mo" → "Cash flow/mo" (`renderStats`/`showNetFlow`):** clearer label, runway suffix reads "~Nmo left", and a tap opens a plain-English breakdown (income/revenue in − expenses out, plus what runway means).
+- **Locked-down tutorial (`renderTutorialStep`):** the overlay is now fully modal — blocks all taps and scrolling (`pointer-events:auto`, `touch-action:none`, touchmove guard). Only an invisible click-proxy over the spotlighted element (and the tip's buttons) is interactive. The Epic Life step highlights the new button.
+
 ## v0.23.11 — 2026-06-26
 **Tutorial coaching + smaller mobile tip + Epic Life slide; new Operations & Marketing actions**
 
