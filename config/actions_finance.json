@@ -506,6 +506,42 @@
       "failure_effects": {},
       "narrative_success": "",
       "narrative_failure": ""
+    },
+    {
+      "id": "fast_working_capital",
+      "category": "finance",
+      "stage": "foundation",
+      "one_time": true,
+      "label": "Fast Working Capital",
+      "description": "Cash in your account by tomorrow — no credit check, no collateral, approved in minutes. Bridge a slow month and keep growing while you wait on revenue.",
+      "lesson": "That was a merchant cash advance. The 'fast' $7k came at a brutal factor rate — you repay ~$14k, auto-debited every business day for about 9 months, which strangles your cash flow the whole time. It also dinged your credit and tied up borrowing room. This is the classic bad-debt trap: predatory financing that bleeds you, not fuels you. It DOES end once it's paid off — but the cash you bled and the credit hit are the price. Real capital comes from the credit and banking relationships you build BEFORE you're desperate.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": {},
+      "effects": { "cash": 7000, "personal_credit_score": -25, "available_credit": -2000 },
+      "recurring_cost": 1600,
+      "recurring_term": 9,
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Approved! $7,000 hits your account overnight — that was easy. The repayment terms were in the fine print you skimmed: a fixed payback far above what you borrowed, pulled automatically every business day for the next 9 months.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "offmarket_guaranteed_fund",
+      "category": "finance",
+      "stage": "wealth",
+      "one_time": true,
+      "label": "Off-Market 'Guaranteed' Fund",
+      "description": "An invite-only placement a peer swears by — guaranteed double-digit returns, insider access, closing this week. Put your capital to work in something the public never sees.",
+      "lesson": "Guaranteed + exclusive + closing-this-week is the fingerprint of a scam (often affinity fraud — it reaches you through someone you trust). Real investments are never 'guaranteed,' and pressure to rush is the tell. You lost most of your capital and bought yourself audit and legal exposure. The crown jewel is STRUCTURED, vetted passive income — policy loans, real estate, secured lending — not chasing yield into the dark.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": { "cash_gte": 20000 },
+      "effects": { "cash": -30000, "investment_positions": 3000, "litigation_exposure": 12, "audit_risk": 10 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "You wired the funds before the 'window closed.' The monthly statements looked great — until they stopped coming. The manager is unreachable, the fund's 'assets' can't be verified, and now there are lawyers and the IRS asking questions.",
+      "narrative_failure": ""
     }
   ]
 }

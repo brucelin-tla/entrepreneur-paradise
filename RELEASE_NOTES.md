@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.29.0 — 2026-06-29
+**Hidden trap actions (one per stage ×3 categories), tax-reserve second life, realistic term-limited predatory debt, insolvency-screen polish**
+
+> Player-facing patch notes deliberately keep the traps vague (no spoilers). Dev detail below.
+
+- **6 disguised "trap" actions** — appealing copy, always a setback (`success_rate: 1`, damage in `effects`). One per stage across finance/ops/marketing:
+  - **Foundation:** `fast_working_capital` (finance, merchant cash advance), `vanity_follower_boost` (marketing, bought followers).
+  - **Leverage:** `rapid_offshore_scaleup` (operations, cheap mass hiring → payroll + culture/churn/brand hit), `influencer_megadeal` (marketing, junk reach).
+  - **Wealth:** `offmarket_guaranteed_fund` (finance, affinity-fraud scam: −$30k + lawsuit/audit risk), `national_ad_blitz` (marketing, unmeasured spend).
+  - Each carries a `lesson` that reveals the trap after the fact. They sit in real ADIR groups to blend in; a CFO's card projections expose their true numbers (intended). New `const TRAPS=[…]`; `mk_funnel` milestone filters traps so taking one can't falsely "build a funnel".
+- **Term-limited recurring costs** — new `recurring_term` action field. Registered alongside the recurring cost (`_recurring_expiry`), processed in `monthlyTick`: when the term ends, the cost is removed from `operating_expenses` + `_active_recurring_costs` and a "paid off" ripple posts. `fast_working_capital` uses a 9-month term (strangles cash flow, then falls off); debt double-count removed from its effects.
+- **Tax reserve = second life** — `_tapTaxReserveToSurvive(need)`: when cash + all credit are exhausted, the tax reserve is drained ONLY if it fully covers the gap (a partial drain wouldn't save you, so it's left intact and you still lose). Wired into both insolvency paths (`monthlyTick` cash check + `_settleCashOrLose`). On a save, a 🛟 "Saved by Your Tax Reserve" popup fires (`_taxRescue`), reminding the player the year-end bill still comes.
+- **Insolvency screen polish:** Accessible Capital now renders red when ≤ 0 (`accCol`); the game-over walkthrough is a single `_spotlightTip` step highlighting the negative Accessible Capital (`#result-accessible`) instead of the old 2-step panel→runway sequence.
+- **`pay_down_debt` card fix:** the `$0` plan tag now distinguishes "⚠ no spare cash" (utilization/DTI high but broke) from "already healthy" (genuinely low).
+
 ## v0.28.0 — 2026-06-29
 **Six-pillar end-game scoring (Protection + Freedom added), streamlined insolvency/game-over flow, game-over graphic & walkthrough**
 

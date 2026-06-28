@@ -678,6 +678,57 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "customer_base": 1, "brand_equity": 2 },
       "narrative_success": "The email sequence is converting. Three leads became clients this month — they said your emails made them feel like they already knew you.",
       "narrative_failure": "Open rates are decent, clicks are low. The content needs work, but the infrastructure is built."
+    },
+    {
+      "id": "vanity_follower_boost",
+      "category": "marketing",
+      "stage": "foundation",
+      "one_time": true,
+      "label": "Viral Follower Boost",
+      "description": "Buy 50,000 followers and a flood of likes overnight — instant social proof so prospects take you seriously from day one.",
+      "lesson": "Bought followers are bots, not buyers. Your engagement ratio cratered, real prospects (and the platform) spotted the fake numbers, and your credibility took the hit. Social proof you PURCHASE isn't trust — it's a liability. A small, real, engaged audience beats a huge fake one every time.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": {},
+      "effects": { "cash": -3500, "brand_equity": -15, "sales_conversion": -4 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Your follower count exploded overnight — the screenshots looked impressive. But the likes are from bots in another time zone, your engagement rate fell off a cliff, and a couple of real prospects quietly noticed the numbers didn't add up.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "influencer_megadeal",
+      "category": "marketing",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Celebrity Influencer Megadeal",
+      "description": "Lock in a one-off shoutout from a million-follower creator — instant reach, your brand in front of a massive audience overnight.",
+      "lesson": "A borrowed audience rarely converts. You paid a fortune for raw reach from people who aren't your buyer — a vanity spike that vanished in days while support drowned in tire-kickers. Reach is not pipeline. Owned channels, audience FIT, and follow-up beat a one-off blast to a giant mismatched crowd.",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "prerequisites": {},
+      "effects": { "cash": -18000, "leads": 120, "sales_conversion": -3, "churn_rate": 0.02 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "The post hit millions — a flood of curiosity clicks, a screenshot-worthy spike, a rush of new leads. Then: crickets. The audience wasn't your buyer, the bump evaporated within a week, and the few who did sign up churned fast.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "national_ad_blitz",
+      "category": "marketing",
+      "stage": "wealth",
+      "one_time": true,
+      "label": "National Ad Blitz Rebrand",
+      "description": "A top agency pitches a full rebrand plus a national ad campaign — go big, dominate the category, become a household name.",
+      "lesson": "Big agencies sell spend, not results. A rebrand confused the customers you already had, and national 'awareness' without a tuned, tracked funnel is just money on fire. At scale, ROI-measured channels and retention win — never pour cash into reach you can't measure. Spend that isn't tracked is spend that's lost.",
+      "cash_cost": 0,
+      "energy_cost": 4,
+      "prerequisites": { "cash_gte": 30000 },
+      "effects": { "cash": -45000, "brand_equity": -10 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "The billboards looked incredible and the agency's deck was dazzling. Then the numbers landed: awareness up, sales flat, and your existing customers confused by the new logo and messaging. Forty-five grand, mostly gone, nothing to show on the bottom line.",
+      "narrative_failure": ""
     }
   ]
 }
@@ -1040,6 +1091,23 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "company_culture": 10, "key_person_dependency": -5 },
       "narrative_success": "You handed your key people their grant letters. The energy shifted overnight — they're not working for you anymore, they're building with you. Drama evaporates when everyone owns the outcome.",
       "narrative_failure": "The option pool is set up but only partly granted — the 409A valuation took longer than expected. The intent landed, even if the paperwork lagged."
+    },
+    {
+      "id": "rapid_offshore_scaleup",
+      "category": "operations",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Rapid Offshore Scale-Up",
+      "description": "Stand up a six-person offshore delivery team this week — a fraction of local cost, ready to take work off your plate immediately. Scale capacity overnight.",
+      "lesson": "Cheap headcount without systems, training, or culture is a false economy. You bolted on six people you now pay every month, but quality slipped, customers churned, your culture took a hit, and coordinating it all ate the savings. Scaling PEOPLE before you scale SYSTEMS creates chaos — build SOPs, management, and culture first, then hire into a machine that's ready for them.",
+      "cash_cost": 3000,
+      "energy_cost": 4,
+      "prerequisites": {},
+      "effects": { "team_size": 6, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Six new contractors onboarded in days — capacity jumped instantly. Then the cracks showed: rushed work, inconsistent quality, clients noticing. Payroll is now a heavy fixed cost every single month, and the team has no system to plug into.",
+      "narrative_failure": ""
     }
   ]
 }
@@ -1551,6 +1619,42 @@ window.EMBEDDED_CONFIG = {
       "success_rate": 0.55,
       "failure_effects": {},
       "narrative_success": "",
+      "narrative_failure": ""
+    },
+    {
+      "id": "fast_working_capital",
+      "category": "finance",
+      "stage": "foundation",
+      "one_time": true,
+      "label": "Fast Working Capital",
+      "description": "Cash in your account by tomorrow — no credit check, no collateral, approved in minutes. Bridge a slow month and keep growing while you wait on revenue.",
+      "lesson": "That was a merchant cash advance. The 'fast' $7k came at a brutal factor rate — you repay ~$14k, auto-debited every business day for about 9 months, which strangles your cash flow the whole time. It also dinged your credit and tied up borrowing room. This is the classic bad-debt trap: predatory financing that bleeds you, not fuels you. It DOES end once it's paid off — but the cash you bled and the credit hit are the price. Real capital comes from the credit and banking relationships you build BEFORE you're desperate.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": {},
+      "effects": { "cash": 7000, "personal_credit_score": -25, "available_credit": -2000 },
+      "recurring_cost": 1600,
+      "recurring_term": 9,
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Approved! $7,000 hits your account overnight — that was easy. The repayment terms were in the fine print you skimmed: a fixed payback far above what you borrowed, pulled automatically every business day for the next 9 months.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "offmarket_guaranteed_fund",
+      "category": "finance",
+      "stage": "wealth",
+      "one_time": true,
+      "label": "Off-Market 'Guaranteed' Fund",
+      "description": "An invite-only placement a peer swears by — guaranteed double-digit returns, insider access, closing this week. Put your capital to work in something the public never sees.",
+      "lesson": "Guaranteed + exclusive + closing-this-week is the fingerprint of a scam (often affinity fraud — it reaches you through someone you trust). Real investments are never 'guaranteed,' and pressure to rush is the tell. You lost most of your capital and bought yourself audit and legal exposure. The crown jewel is STRUCTURED, vetted passive income — policy loans, real estate, secured lending — not chasing yield into the dark.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": { "cash_gte": 20000 },
+      "effects": { "cash": -30000, "investment_positions": 3000, "litigation_exposure": 12, "audit_risk": 10 },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "You wired the funds before the 'window closed.' The monthly statements looked great — until they stopped coming. The manager is unreachable, the fund's 'assets' can't be verified, and now there are lawyers and the IRS asking questions.",
       "narrative_failure": ""
     }
   ]
@@ -2790,11 +2894,13 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+// Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
+const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
 const MILESTONES=[
 {id:'mk_first_customer',cat:'marketing',title:'First Paying Customer',desc:'Landed your very first customer.',mentor:'Your first paying customer — proof someone will pay for what you do. Everything real starts here.',check:s=>(s.customer_base||0)>=1},
-{id:'mk_funnel',cat:'marketing',title:'Funnel Built',desc:'An offer, a lead source, and a way to close — a complete funnel.',mentor:'You’ve got a real funnel now: an offer, traffic, and a way to close. That’s a machine you can pour fuel into.',check:s=>{const done=id=>(s._completed_actions||[]).includes(id),grp=n=>(ADIR.marketing.find(x=>x[0]===n)||[null,[]])[1];return done('build_offer')&&grp('Lead Generation').some(done)&&grp('Sales & Conversion').some(done);}},
+{id:'mk_funnel',cat:'marketing',title:'Funnel Built',desc:'An offer, a lead source, and a way to close — a complete funnel.',mentor:'You’ve got a real funnel now: an offer, traffic, and a way to close. That’s a machine you can pour fuel into.',check:s=>{const done=id=>(s._completed_actions||[]).includes(id),grp=n=>((ADIR.marketing.find(x=>x[0]===n)||[null,[]])[1]).filter(id=>!TRAPS.includes(id));return done('build_offer')&&grp('Lead Generation').some(done)&&grp('Sales & Conversion').some(done);}},
 {id:'mk_brand',cat:'marketing',title:'Brand Recognized',desc:'Brand equity passed 50.',mentor:'People know your name before you pitch. Brand is the cheapest salesperson you’ll ever have.',check:s=>(s.brand_equity||0)>=50},
 {id:'mk_demand',cat:'marketing',title:'Demand Engine',desc:'Revenue crossed $50k/mo.',mentor:'$50k a month in demand. The top of your funnel is officially humming.',check:s=>(s.monthly_revenue||0)>=50000},
 {id:'mk_referral',cat:'marketing',title:'Referral Engine',desc:'Built a referral & affiliate partner network.',mentor:'Other people’s audiences now feed your funnel on commission — near-zero-cost leads that compound. The cheapest growth there is.',check:s=>(s._completed_actions||[]).includes('referral_partnerships')},
@@ -2815,6 +2921,13 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.29.0',d:'2026-06-29 17:00',n:[
+'New actions across Marketing, Operations, and Finance at every stage — more decisions to weigh each run. Read the fine print: a tempting shortcut isn\'t always the smart move.',
+'Your tax reserve is now a lifeline: if you\'d otherwise run out of cash and credit, a big enough reserve can pull you back from bankruptcy — a real reward for setting money aside. (The IRS bill still comes.)',
+'Clearer game-over screen: your Accessible Capital is highlighted in red when it goes negative, with a single, focused explanation of why the run ended.',
+'Predatory financing now behaves realistically — high-cost advances strangle your cash flow for a while, then fall off once they\'re paid off.',
+'The "pay down debt" option no longer says "already healthy" when you simply have no spare cash — it now tells you straight.'
+]},
 {v:'0.28.0',d:'2026-06-29 15:30',n:[
 'Your final score is now built on six clear pillars: Passive Income, Leverage, Protection, Freedom, Lifestyle, and Net Worth. Tap any pillar on the results screen to see what it means.',
 'New "Protection" and "Freedom" pillars reward shielding your wealth (entity, trust, insurance, reserves) and building a business that runs without you — not just raw revenue.',
@@ -3076,7 +3189,7 @@ this.state.leads=this.state.leads||0;this.state.tax_reserve=this.state.tax_reser
 this.state.personal_cash=this.state.personal_cash||0;this.state.capital_account=this.state.capital_account||0;this.state._owner_draws_total=this.state._owner_draws_total||0;this.state.personal_tax_ytd=this.state.personal_tax_ytd||0;
 this.state.skill_marketing=this.state.skill_marketing||0;this.state.skill_operations=this.state.skill_operations||0;this.state.skill_finance=this.state.skill_finance||0;
 this.state.credit_negatives=this.state.credit_negatives||0;this.state.company_culture=this.state.company_culture||45;
-this.month=1;this.selectedActions={};this.actionHistory=[];this.eventHistory=[];this.lifestyleHistory=[];this.monthlySnapshots=[];this._playLog=[];this._pendingTax=false;this._lost=false;this.gameOver=false;this._prevAccessible=null;
+this.month=1;this.selectedActions={};this.actionHistory=[];this.eventHistory=[];this.lifestyleHistory=[];this.monthlySnapshots=[];this._playLog=[];this._pendingTax=false;this._lost=false;this.gameOver=false;this._prevAccessible=null;this._taxRescue=0;
 // Straight into month 1 — the opening narrative beat + tutorial both live on the game screen, so a separate opening screen was redundant.
 this.startGame();},
 
@@ -3758,7 +3871,11 @@ const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpNa
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const topInner=grpTag+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
 return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
-(a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;return '<span class="cost-tag cost-cash">'+(est>0?'💵 ~'+this.fmt(est):'already healthy')+'</span>';})():(_cc?'<span class="cost-tag cost-cash">💵 '+this.fmt(_cc)+'</span>':''))+
+(a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
+// est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
+if(est>0)return '<span class="cost-tag cost-cash">💵 ~'+this.fmt(est)+'</span>';
+const unhealthy=this.calcPersUtil()>30||this.calcDTI()>30;
+return '<span class="cost-tag cost-locked">'+(unhealthy?'⚠ no spare cash':'already healthy')+'</span>';})():(_cc?'<span class="cost-tag cost-cash">💵 '+this.fmt(_cc)+'</span>':''))+
 ((this.actionEnergyCost(a))>0?'<span class="cost-tag cost-energy">⚡'+this.actionEnergyCost(a)+'</span>':'')+
 (a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+'</span>':'')+
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
@@ -3830,8 +3947,8 @@ default:return '';}
 return '<p style="margin:-2px 0 0;font-size:0.74rem;color:var(--gold);font-weight:600;">'+txt+'</p>';},
 // Cash can never sit negative: a shortfall auto-draws on available credit (business → personal) as an emergency loan. Returns true if solvent, false if cash/credit ran dry (→ game over).
 _settleCashOrLose(){const s=this.state;
-if(this.isSeparated()&&(s.personal_cash||0)<0){let need=-s.personal_cash;s.personal_cash=0;if((s.cash||0)>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}if(need>0)need=this.coverShortfall(need);if(need>0)s.personal_cash=-need;}
-if((s.cash||0)<0){let need=-s.cash;s.cash=0;if(need>0)need=this.coverShortfall(need);if(need>0)s.cash=-need;}
+if(this.isSeparated()&&(s.personal_cash||0)<0){let need=-s.personal_cash;s.personal_cash=0;if((s.cash||0)>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}if(need>0)need=this.coverShortfall(need);if(need>0)need=this._tapTaxReserveToSurvive(need);if(need>0)s.personal_cash=-need;}
+if((s.cash||0)<0){let need=-s.cash;s.cash=0;if(need>0)need=this.coverShortfall(need);if(need>0)need=this._tapTaxReserveToSurvive(need);if(need>0)s.cash=-need;}
 return !((s.cash||0)<0||(s.personal_cash||0)<0);},
 loseGame(reason){this._lost=true;this.clearAutoSave();this.showScreen('end-screen');const scores=this.calculateFinalScores();
 document.getElementById('end-title').textContent='Insolvent — Game Over';
@@ -3866,6 +3983,8 @@ _checkBurnoutThenResolve(){const te=this._turnEnergy();if(te.left<0){return this
 this.resolveMonth();},
 
 coverShortfall(amount){const s=this.state;let need=Math.max(0,Math.round(amount));const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));if(bizAvail>0&&need>0){const d=Math.min(bizAvail,need),fee=Math.round(d*0.03);s.business_credit_used=(s.business_credit_used||0)+d+fee;s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}return need;},
+// Second life: a player who set aside a tax reserve can drain it to escape game over — but ONLY if it fully covers the gap (a partial drain wouldn't save you, so the reserve stays intact and you lose anyway). The IRS bill still comes (year-end reserve is now smaller). Reward for discipline; surfaced via _taxRescue in showResults.
+_tapTaxReserveToSurvive(need){const s=this.state;if(need<=0)return need;if((s.tax_reserve||0)<need)return need;s.tax_reserve-=need;this._taxRescue=(this._taxRescue||0)+need;return 0;},
 payCost(amount,fromPersonal){const s=this.state;let need=Math.max(0,Math.round(amount));if(fromPersonal&&this.isSeparated()){if((s.personal_cash||0)>0&&need>0){const d=Math.min(s.personal_cash,need);s.personal_cash-=d;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if(need>0)need=this.coverShortfall(need);return need;}
 // Business expense: spend the business's own cash FIRST (don't rack up debt while cash is sitting there), then a little business-credit float (kept under the utilization cap), then the credit backstop. Personal cash is never touched by a business cost.
 if((s.cash||0)>0&&need>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}
@@ -3935,7 +4054,9 @@ if(success&&!this.state._completed_actions.includes(action.id))this.state._compl
 if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
 if(success||cat==='lifestyle')this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
 // Non-lifestyle recurring costs (insurance premiums, memberships) become an ongoing monthly operating expense — added once when first activated.
-if(success&&cat!=='lifestyle'&&action.recurring_cost&&action.id!=='epic_life_membership'){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;}}
+if(success&&cat!=='lifestyle'&&action.recurring_cost&&action.id!=='epic_life_membership'){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;
+// Term-limited recurring cost (e.g. a cash advance that gets paid off): mark when it should stop draining.
+if(action.recurring_term){if(!this.state._recurring_expiry)this.state._recurring_expiry={};this.state._recurring_expiry[action.id]=this.month+action.recurring_term;}}}
 if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','operations','finance'].includes(cat)){const role=cat==='marketing'?'CRO':cat==='operations'?'COO':'CFO';const bonus=Math.max(1000,Math.min(15000,Math.round((this.state.monthly_revenue||0)*0.03)));this.payCost(bonus,false);_execBonuses.push({role,bonus,label:action.label});}
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
@@ -4012,6 +4133,8 @@ monthlyTick(){const s=this.state;
 {const ec=this.calcExecComp(),delta=ec-(s._exec_comp_applied||0);if(delta){s.operating_expenses=Math.max(0,(s.operating_expenses||0)+delta);s._exec_comp_applied=ec;}}
 // Process delayed effects
 if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.month);s._delayed_effects=s._delayed_effects.filter(d=>d.month>this.month);for(const d of ready)this.applyEffects(d.effects);}
+// Term-limited recurring costs falling off (e.g. a merchant cash advance, once it's paid off): stop the monthly drain, drop it from the burn breakdown, and post a "paid off" note.
+if(s._recurring_expiry){for(const id of Object.keys(s._recurring_expiry)){if(this.month>=s._recurring_expiry[id]){const c=(s._active_recurring_costs||{})[id]||0;if(c){s.operating_expenses=Math.max(0,(s.operating_expenses||0)-c);delete s._active_recurring_costs[id];}delete s._recurring_expiry[id];s._pendingRipples=(s._pendingRipples||[]).concat([{source:this.actionLabel(id)||'Financed cost',narrative:'Fully paid off — the recurring payments stop. An expensive way to borrow; lesson learned.'}]);}}}
 // Churn — leaky bucket: a large base with low systems/no retention churns faster
 {const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
 // Lead decay — un-nurtured prospects go cold. The not-yet-converted lead pool shrinks each month, so you can't coast on a one-time pile of leads: without fresh marketing (and retention to slow churn) the customer base erodes. Strong brand keeps prospects warm longer. (DESIGN: only passive TAX-FREE income should arrive without work — business revenue must be worked.)
@@ -4080,7 +4203,7 @@ s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const
 if(s.insurance_loan_balance>0)s.insurance_loan_balance=Math.round(s.insurance_loan_balance*1.0041);
 if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession';s.monthly_revenue=Math.round(s.monthly_revenue*0.85);}else if(r<0.5){s._market_cycle='boom';s.monthly_revenue=Math.round(s.monthly_revenue*1.1);}else s._market_cycle='normal';}
 if(sep&&s.personal_cash<0){s.cash+=s.personal_cash;s.personal_cash=0;} // personal deficit rolls into the business shortfall handler below
-if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;const _unc=this.coverShortfall(_short);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
+if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;let _unc=this.coverShortfall(_short);if(_unc>0)_unc=this._tapTaxReserveToSurvive(_unc);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
 // Owner pays themselves a draw/salary scaled to what the business can afford — covers a living wage once profitable (a draw pre-S-Corp, formal salary after); S-Corp just optimizes its tax treatment
 {const afford=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)),target=Math.min(afford,Math.max((s.living_expenses||0)+1500,Math.round((s.monthly_revenue||0)*0.25)));s.owner_pay=Math.max(0,Math.round(target));}
 // Epic Life annual plan renews once a year (monthly plan is carried in operating_expenses instead).
@@ -4125,12 +4248,12 @@ _brokeGraphic(){return '<div style="text-align:center;background:linear-gradient
 +'<div style="font-weight:800;color:var(--red);letter-spacing:3px;margin-top:10px;font-size:1.1rem;">GAME OVER</div>'
 +'<div style="font-size:0.66rem;color:var(--text2);margin-top:2px;letter-spacing:0.5px;">BANKRUPT — OUT OF CASH &amp; CREDIT</div>'
 +'</div>';},
-// Game-over walkthrough on the final Cash & Credit card: graphic + why the run ends, then point at the 0-month runway.
+// Game-over walkthrough on the final Cash & Credit card: ONE step — graphic + highlight the now-negative accessible capital (cash + all credit), which is what ended the run.
 _gameOverSpotlight(){if(this.state)this.state._gameover_tut_seen=true;
-const steps=[{sel:'#month-cash-panel',t:'💥 Game Over — Insolvent',b:this._brokeGraphic()+'<div style="line-height:1.55;">This month\'s bills were bigger than your <strong>cash + every available credit line</strong> — the business can\'t pay. That\'s <strong style="color:var(--red);">insolvency</strong>, and the run ends here.</div>'}];
-if(document.getElementById('result-runway'))steps.push({sel:'#result-runway',t:'🛬 Runway hit zero',b:'Runway is how many months your money lasts at this burn rate. It\'s now <strong style="color:var(--red);">0</strong> — cash is gone (shown in red) and there\'s no credit left to tap.<br><br>Next time: keep a cash reserve and open credit lines <em>before</em> you need them — and watch this number each month.'});
-if(document.getElementById('month-cash-panel'))this._spotlightSeq(steps,0);
-else this.showPopup('💥 Game Over — Insolvent',this._brokeGraphic()+'<div style="line-height:1.55;font-size:0.9rem;">Your bills outran your <strong>cash + all available credit</strong>. Build a margin of safety next time — reserves, credit lines, insurance — and watch your runway.</div>');},
+const body=this._brokeGraphic()+'<div style="line-height:1.55;">Your <strong>accessible capital</strong> — cash plus every available credit line — has run dry (it\'s now <strong style="color:var(--red);">negative</strong>). With nothing left to cover the bills, the business is insolvent and the run ends here.<br><br>Next time: keep a cash reserve and open credit lines <em>before</em> you need them.</div>';
+const sel=document.getElementById('result-accessible')?'#result-accessible':(document.getElementById('month-cash-panel')?'#month-cash-panel':null);
+if(sel)this._spotlightTip(sel,'💥 Game Over — Insolvent',body);
+else this.showPopup('💥 Game Over — Insolvent',body);},
 toggleResultDetail(id,ev){if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.term-link'))return;/* don't toggle when tapping a glossary term inside the card */const d=document.getElementById(id);if(!d)return;const open=d.style.display!=='none';d.style.display=open?'none':'block';const t=d.previousElementSibling;if(t)t.innerHTML=t.innerHTML.replace(open?'▴':'▾',open?'▾':'▴');},
 showResults(results,triggeredEvent){/* Insolvency no longer jumps straight to game over — we render the results (Cash & Credit shows you went over) and let any triggered event play out first; the game-over fires when you advance (see nextMonth). */
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Month '+this.month+' — Results';
@@ -4180,14 +4303,16 @@ const accSwing=accDelta?'<span style="font-weight:700;color:'+(accDelta>0?'var(-
 const netFlow=(s.monthly_revenue||0)-(s.cogs||0)-this.calcMonthlyBurn();
 const runway=netFlow>=0?'Profitable':(Math.max(0,Math.floor(accessible/Math.max(1,-netFlow)))+' mo');
 const runCol=netFlow>=0?'var(--accent)':(accessible/Math.max(1,-netFlow)<4?'var(--red)':'var(--gold)');
-const capBlock='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border);"><span><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">💰 Accessible capital</div><div style="font-size:1.15rem;font-weight:800;color:var(--accent);white-space:nowrap;">'+fm(accessible)+(accSwing?' <span style="font-size:0.7rem;">'+accSwing+'</span>':'')+'</div><div style="font-size:0.58rem;color:var(--text2);">cash + credit</div></span><span style="text-align:right;"><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Runway</div><div id="result-runway" style="font-size:1.05rem;font-weight:800;color:'+runCol+';">'+runway+'</div><div style="font-size:0.58rem;color:var(--text2);">'+(netFlow>=0?'cash-flow positive':'at current burn')+'</div></span></div>';
+const accCol=accessible<=0?'var(--red)':'var(--accent)';/* out of cash + credit → highlight the number red (the run is over) */const capBlock='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border);"><span><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">💰 Accessible capital</div><div id="result-accessible" style="font-size:1.15rem;font-weight:800;color:'+accCol+';white-space:nowrap;">'+fm(accessible)+(accSwing?' <span style="font-size:0.7rem;">'+accSwing+'</span>':'')+'</div><div style="font-size:0.58rem;color:var(--text2);">cash + credit</div></span><span style="text-align:right;"><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Runway</div><div id="result-runway" style="font-size:1.05rem;font-weight:800;color:'+runCol+';">'+runway+'</div><div style="font-size:0.58rem;color:var(--text2);">'+(netFlow>=0?'cash-flow positive':'at current burn')+'</div></span></div>';
 // Total money out this month: recurring burn (opex + payroll + living/lifestyle + debt service) + COGS + this month's action costs.
 const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=burnOut+cogsOut+sp.total;const fee=Math.max(0,(sp.cash+sp.biz+sp.pers)-sp.total);
 const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('credit');
 const spendLine='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;margin-top:7px;border-top:1px dashed var(--border);padding-top:6px;white-space:nowrap;"><span style="color:var(--text2);">📉 Expenses this month</span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div>';
 const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+capBlock+rows+spendLine+'</div>';this._monthCashSummary=null;}
 document.getElementById('results-content').innerHTML=html;{const nb=document.getElementById('result-next-btn');if(nb){this._ccChecked=false;nb.textContent=document.getElementById('month-cash-panel')?'💳 Check Cash & Credit':'Next Month →';}}this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);
-if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}},
+if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}
+// Second life: your tax reserve just covered a shortfall that would have ended the run. Celebrate the discipline — and remind them the IRS bill is still coming.
+if(this._taxRescue){const amt=this._taxRescue;this._taxRescue=0;const resLeft=this.state.tax_reserve||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Tax Reserve','<div style="line-height:1.6;font-size:0.9rem;">You were about to run out of cash and credit — but you\'d set aside a <strong>tax reserve</strong>, and draining <strong>$'+this.fmt(amt)+'</strong> of it kept you in the game. That discipline just bought you a <strong>second life</strong>.<br><br>But remember: that money was the IRS\'s. Your year-end tax bill is still coming, and there\'s now <strong>$'+this.fmt(resLeft)+'</strong> left in the reserve. Rebuild it when you can.</div>'),260);}},
 
 nextMonth(){
 // Insolvency ends the run immediately after the Cash & Credit card — no event/tax detour first. You already saw HOW it blew up (red panel + game-over walkthrough); piling an event and a tax bill on top before the end screen was just tedious. Clear any queued event/tax and go straight to game over.
