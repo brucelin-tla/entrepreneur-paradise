@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.25.0 — 2026-06-28
+**Tutorial pass — synced with recent UI/balance changes, redundancy removed**
+
+- **Cash-flow step (`#dash-cashflow`):** removed the stale "~X mo left" runway reference (the per-column runway was removed in v0.24.3); now describes monthly burn and points to the breakdown popup for runway.
+- **Result-screen steps de-duplicated:** the separate `#tut-result-card` and `#tut-result-detail` steps both told the player to "tap anywhere on a card" after the whole-card-tap change — merged into one step (with "tap again to collapse"); tutorial went 17→16 steps.
+- **Money panel step (`#month-cash-panel`):** refreshed to match the redesigned panel — accessible capital + runway, then the month-over-month credit-score/cash/credit/debt swings and spend.
+- **Recommendation/explanation alignment (`_tutRecPick`):** operations now prefers `study_business_content` first so the highlighted card always matches the "Why this move?" explanation (previously relied on `do_work_yourself` being locked at month 1). Marketing (`cold_outreach` = "Outbound Prospecting") and finance (`establish_business` = "Form LLC") already matched.
+- **Life unlock tip:** now lists all five Personal Mastery dimensions (added Spirit) and notes that a Life action restores energy when you're low (financeable if cash is tight).
+
 ## v0.24.4 — 2026-06-28
 **Life-action energy rework, accurate burnout calc, recovery safety valve, hiring recurring costs**
 
