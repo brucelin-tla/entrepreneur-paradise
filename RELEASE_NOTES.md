@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.31.0 — 2026-06-29
+**Gentle Start — a thinner first-3-months action menu (onboarding / first-5-minutes drop-off)**
+
+- **Action-menu thinning (`renderActions`):** for the **new** founder archetype in **months 1–3**, the available-actions list now floats the recommended move to the top with a **"⭐ START HERE"** badge (reuses the trap-safe `_tutRecPick`), shows only the **top 4** options (`EARLY_CAP`), and tucks the rest behind a **"Show N more options ▾"** expander (`_earlyExpand`, reset per category in `switchCategory`). The selected action is always kept visible even if it ranks beyond the cap. From month 4 the full menu returns. Purely presentational — no scoring/balance/state changes; `_actions_seen` tracking is unaffected.
+- **Tutorial-safe by construction:** the thinning is gated on `!this._tutActive`, and the scripted tutorial consumes month 1 — so nothing the tutorial spotlights (cash/debt/cashflow/energy rows, the per-category move picks) can be hidden. Harder archetypes (`stuck`, `established`) start mid-game and are unaffected (`archetype.id==='new'` gate).
+- **Reversibility built in:** a top-level **`GENTLE_START`** kill-switch constant (flip to `false`, rebuild/push → feature fully off) plus a git tag on the prior live commit for one-command rollback.
+- **Rationale:** targets first-5-minutes drop-off (the "16 choices, no idea which" wall) identified as the primary churn point. Dashboard simplification deliberately deferred — it couples with the tutorial's dashboard steps and needs its own pass.
+
 ## v0.30.1 — 2026-06-29
 **Cost/label consistency pass, realistic MCA rework (revenue holdback), Cash & Credit panel reorg, copy de-bloat**
 
