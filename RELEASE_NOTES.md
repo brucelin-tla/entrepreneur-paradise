@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.36.1 — 2026-06-30
+**Save version check + one-click update/migration**
+
+- Saves now stamp the game version (`_snapshot().gv = PATCH_NOTES[0].v`). Added `_curVersion()` and a semver `_verLt(a,b)` (a missing `gv` counts as older).
+- **Older-save detection + update flow:** the title-screen "Continue your game" card shows a gold notice + an **"⬆ Update Save to vX"** button when the autosave predates the current build (and each saved run gets a "⚠ older version" tag). The button opens `showSaveUpdate()` — a popup that previews **all patch notes since the save's version** (`_patchNotesSince(gv)`) and an "⬆ Update my save to vX" confirm.
+- **Migration:** `applySaveUpdate()` → `_migrateSave(snap)` fills in fields newer mechanics expect (`_saveDefaults()`, only when missing — never overwrites progress), stamps `gv` to current, and persists. The warning/button then clear. `_loadSnapshot` also runs `_migrateSave` so **resuming any old save auto-updates it**. Most patches "retro-activate" on their own because the engine recomputes from state each tick; migration just makes the state shape current. Verified: an old save (v0.33.0, missing new fields) updates to current, gains the new defaults, keeps existing data (cash etc.), and the notice clears.
+
 ## v0.36.0 — 2026-06-30
 **Epic membership waives advisory fees (with savings shown), realistic debt-restructure pricing, concierge ladder reorder, sales-team closes customers, operations energy dividend**
 
