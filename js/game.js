@@ -9,6 +9,8 @@ const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_
 const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','wyoming_holding_llc','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','key_man_policy','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign','hire_highticket_closer']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup','restructure_team']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
 // Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
 const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
+// Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
+const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
 const MILESTONES=[
 {id:'mk_first_customer',cat:'marketing',title:'First Paying Customer',desc:'Landed your very first customer.',mentor:'Your first paying customer — proof someone will pay for what you do. Everything real starts here.',check:s=>(s.customer_base||0)>=1},
@@ -33,6 +35,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.35.0',d:'2026-06-30 00:30',n:[
+'Your Epic Life roadmap now tracks two separate goals — Funding Ready first, then the Epic Life System — showing one bar at a time as you complete each.',
+'Credit approvals are realistic now: applying for a credit line or term loan can be declined when your personal credit utilization is high (above ~30%), and lenders pull your personal myFICO 3B even for business credit. Each application shows your approximate approval odds up front.'
+]},
 {v:'0.34.0',d:'2026-06-29 23:30',n:[
 'Your personal credit score now tracks the real myFICO model more closely — credit utilization drives about 30% of it, alongside payment history, credit age, mix, and new credit.',
 'Achievements now give a small energy boost when you unlock them — a bit of momentum for hitting a milestone.',
@@ -659,6 +665,11 @@ const hasRev=((s.available_credit||0)>0)||u>0,hasInst=((s._installment_debt||0)>
 const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
 const fNew=s._credit_repair?0.7:0.85;/* new credit (10%): recent credit-seeking / an open repair caps the top a touch */
 return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
+// Real-life credit underwriting for approval actions (lines, cards, term loans): personal utilization is the dominant gate — above 30% approval odds fall off a cliff — and the lender pulls your personal myFICO 3B even for BUSINESS credit (the owner personally guarantees it). Returns the chance of approval.
+_creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.round(s.personal_credit_score||600);
+let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
+const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
+return Math.max(0.04,Math.min(0.95,p*fico));},
 calcDTI(){const s=this.state,svc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018);return (s.monthly_revenue||0)>0?Math.round(svc/s.monthly_revenue*100):0;},
 // Aggressive paydown: spend spare cash to drop revolving utilization toward ≤30%; only touch installment loans if DTI is also >30%.
 _debtPaydownPlan(){const s=this.state,pool=Math.max(0,(s.cash||0))+(this.isSeparated()?Math.max(0,(s.personal_cash||0)):0);let budget=Math.round(pool*0.6);
@@ -962,7 +973,11 @@ else{stage='Paradise';nextNode=null;}
 const groups=[fundingReady,protection,expense,reserve];
 const allNodes=groups.reduce((a,g)=>a+g.length,0)+1/* freedom */,doneNodes=groups.reduce((a,g)=>a+g.filter(n=>n.done).length,0)+(freedomPct>=100?1:0);
 const overallPct=Math.round(doneNodes/allNodes*100);
-return {fundingReady,protection,expense,reserve,frPct,pPct,ePct,rPct,policyPassive,passiveInc,persExp,freedomPct,coverRatio,stage,nextNode,overallPct};},
+// Two tracked progress bars, surfaced one at a time: Funding Ready first, then the Epic Life System (Protection + Expense + Reserve).
+const sysGroups=[protection,expense,reserve],sysAll=sysGroups.reduce((a,g)=>a+g.length,0),sysDone=sysGroups.reduce((a,g)=>a+g.filter(n=>n.done).length,0);
+const systemPct=Math.round(sysDone/sysAll*100);
+const activeLabel=frPct<100?'Funding Ready':'Epic Life System',activePct=frPct<100?frPct:systemPct;
+return {fundingReady,protection,expense,reserve,frPct,pPct,ePct,rPct,policyPassive,passiveInc,persExp,freedomPct,coverRatio,stage,nextNode,overallPct,systemPct,activeLabel,activePct};},
 // Full roadmap rendered in the Epic Life modal. opts.locked dims it + frames it as a preview (for non-members per the upsell).
 _epicRoadmapHtml(opts){opts=opts||{};const locked=!!opts.locked,s=this.state,fmt=v=>this.fmtMoney(v),D=this._epicRoadmapData();
 const bar=(pct,col)=>'<div class="bar-track" style="height:7px;margin:5px 0;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+(col||'var(--gold)')+';"></div></div>';
@@ -995,24 +1010,27 @@ if((s._asset_units||0)>0){const units=s._asset_units||0,kunits=s._keyman_units||
  html+='</div>';}
 html+='</div>';return html;},
 // Compact milestone shown on the result screen — one glanceable bar + the next step, tappable to open the full roadmap. Members see live progress; non-members see a locked teaser that upsells.
-_epicMilestoneCompact(){const s=this.state,member=!!s._epic_life,pending=!!s._epic_enroll_pending;
-if(!member&&!pending&&!this._reveal('epic'))return '';/* don't clutter the early game before the concierge is even a thing */
+_epicMilestoneCompact(){const s=this.state,member=!!s._epic_life,pending=!!s._epic_enroll_pending,mem=member||pending;
+if(!mem&&!this._reveal('epic'))return '';/* don't clutter the early game before the concierge is even a thing */
 const D=this._epicRoadmapData(),paradise=D.stage==='Paradise';
-const head=(member||pending)?'⭐ Concierge Roadmap':'⭐ Epic Life Roadmap 🔒';
-const line=paradise?'🏝️ Paradise — passive income covers your lifestyle':(D.nextNode?'<strong>'+D.stage+'</strong> · next: '+D.nextNode:D.stage);
-const tap=(member||pending)?'':' · tap to preview';
-return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:var(--surface);border:1px solid '+((member||pending)?'var(--gold)':'var(--border)')+';border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;">'
- +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><span style="font-size:0.8rem;font-weight:700;color:'+((member||pending)?'var(--gold)':'var(--text2)')+';">'+head+'</span><span style="font-size:0.78rem;font-weight:700;color:var(--gold);">'+D.overallPct+'%</span></div>'
- +'<div class="bar-track" style="height:5px;margin:5px 0 4px;"><div class="bar-fill" style="width:'+D.overallPct+'%;background:var(--gold);"></div></div>'
+// Show ONE of the two tracked bars at a time: Funding Ready, then the Epic Life System.
+const head=mem?'⭐ '+D.activeLabel:'⭐ Epic Life Roadmap 🔒';
+const line=paradise?'🏝️ Paradise — passive income covers your lifestyle':(D.nextNode?'next: <strong>'+D.nextNode+'</strong>':D.activeLabel+' complete');
+const tap=mem?'':' · tap to preview';
+return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:var(--surface);border:1px solid '+(mem?'var(--gold)':'var(--border)')+';border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;">'
+ +'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><span style="font-size:0.8rem;font-weight:700;color:'+(mem?'var(--gold)':'var(--text2)')+';">'+head+'</span><span style="font-size:0.78rem;font-weight:700;color:var(--gold);">'+D.activePct+'%</span></div>'
+ +'<div class="bar-track" style="height:5px;margin:5px 0 4px;"><div class="bar-fill" style="width:'+D.activePct+'%;background:var(--gold);"></div></div>'
  +'<div style="font-size:0.7rem;color:var(--text2);">'+line+tap+'</div></div>';},
 // Result-screen card (members only): what the concierge ran this month + the roadmap swing (overall %, newly-completed nodes, next step). Tappable to the full roadmap.
 _epicMonthCard(){const s=this.state;if(!s._epic_life)return '';const D=this._epicRoadmapData();
-const startPct=(this._roadmapStart!=null)?this._roadmapStart:D.overallPct,delta=D.overallPct-startPct,did=this._epicLastMove;
+const did=this._epicLastMove;
+// Swing on the currently-active bar (Funding Ready, then Epic Life System) vs its month-start snapshot.
+const active=D.frPct<100?'fr':'sys',startPct=active==='fr'?(this._roadmapStartFr!=null?this._roadmapStartFr:D.frPct):(this._roadmapStartSys!=null?this._roadmapStartSys:D.systemPct),delta=D.activePct-startPct;
 const deltaTxt=delta>0?'<span style="color:var(--accent);font-weight:700;">▲ +'+delta+'%</span>':'<span style="color:var(--text2);">no change</span>';
 let body='';
 if(did&&did.label){body+='<div style="font-size:0.76rem;margin-bottom:4px;"><span style="color:var(--text2);">Your concierge ran:</span> <strong>'+did.label+'</strong></div>';if(did.narrative)body+='<div style="font-size:0.72rem;color:var(--text2);line-height:1.45;margin-bottom:6px;">'+did.narrative+'</div>';}
 else body+='<div style="font-size:0.74rem;color:var(--text2);margin-bottom:6px;">Your concierge held steady this month — the playbook is on track and nothing urgent needed doing. Your membership still covers your protection, banking and policy upkeep in the background.</div>';
-body+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.76rem;border-top:1px solid rgba(127,127,127,0.15);padding-top:6px;"><span style="color:var(--text2);">Roadmap progress</span><span><strong>'+D.overallPct+'%</strong> '+deltaTxt+'</span></div>';
+body+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.76rem;border-top:1px solid rgba(127,127,127,0.15);padding-top:6px;"><span style="color:var(--text2);">'+D.activeLabel+' progress</span><span><strong>'+D.activePct+'%</strong> '+deltaTxt+'</span></div>';
 body+='<div style="font-size:0.72rem;color:var(--text2);margin-top:3px;">'+(D.stage==='Paradise'?'🏝️ Paradise reached — passive income covers your lifestyle':'Next: <strong>'+(D.nextNode||D.stage)+'</strong>')+'</div>';
 return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:5px;">⭐ Your Concierge This Month</div>'+body+'<div style="text-align:right;font-size:0.66rem;color:var(--text2);margin-top:5px;">tap for full roadmap →</div></div>';},
 enrollEpicLife(plan){if(this.state._epic_life)return this.hidePopup();this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.state._epic_enroll_pending=true;this.hidePopup();this.renderCategoryTabs();},
@@ -1144,6 +1162,7 @@ a.id==='fast_working_capital'?'<span class="cost-tag cost-recurring" title="repa
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
 (()=>{const FR=['hire_cro','hire_coo','hire_cfo'],FU=['promote_cro_fulltime','promote_coo_fulltime','promote_cfo_fulltime'];const amt=FR.includes(a.id)?this.calcExecFrac():FU.includes(a.id)?this.calcExecFull():0;return amt?'<span class="cost-tag cost-recurring" title="ongoing executive pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
+(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const ch=Math.round(this._creditApprovalChance()*100),u=this.calcPersUtil(),col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="lenders underwrite on your personal utilization + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(u>30?' · util '+u+'%':'')+'</span>';})():'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
@@ -1268,7 +1287,7 @@ const _S0=this.state,_msStart={cash:_S0.cash||0,personalCash:_S0.personal_cash||
 this._nwStart=this.calcNetWorth(); // net worth at the start of the month → month-over-month trend on the dashboard
 this._oeStart=this.state.capital_account||0; // owner equity at month start → its own trend swing
 // Epic members: snapshot the roadmap (overall % + which nodes are done) at month start and reset the concierge-move capture, so the result-screen "Your Concierge This Month" card can show the swing + what changed.
-this._epicLastMove=null;if(this.state._epic_life){const _D0=this._epicRoadmapData();this._roadmapStart=_D0.overallPct;this._roadmapStartDone=[_D0.fundingReady,_D0.protection,_D0.expense,_D0.reserve].reduce((a,g)=>a.concat(g.filter(n=>n.done).map(n=>n.label)),[]);}
+this._epicLastMove=null;if(this.state._epic_life){const _D0=this._epicRoadmapData();this._roadmapStartFr=_D0.frPct;this._roadmapStartSys=_D0.systemPct;}
 const _spend={total:0,cash:0,biz:0,pers:0};
 // Epic Life concierge runs one extra high-priority finance move this month (selected from start-of-turn state), processed through the normal loop so all costs/handlers apply.
 // Epic Life enrollment resolves as its own move (not your Finance action) so it never conflicts with a finance pick.
@@ -1289,7 +1308,9 @@ const diminishing=isDimExempt?0:Math.min(0.25,repeatCount*0.05);
 const penalty=this.state.energy<0?0.6:this.state.energy<30?0.8:1;
 const retryBoost=(this.state._partial_actions&&this.state._partial_actions[action.id])?0.35:0; // a second attempt after a partial is far more likely to land
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
-const success=cat==='lifestyle'?true:(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
+const _isCreditApp=CREDIT_APPROVAL.includes(action.id);
+// Credit applications are underwritten (utilization + personal myFICO), not skill/energy-modified — a lender doesn't care how rested you are, only how your file reads.
+const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance()):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
 // Low energy also dampens the OUTCOME — even a success delivers less when you're running on empty (and far less in burnout).
@@ -1390,6 +1411,8 @@ if(cat==='lifestyle'){if(action.recurring_cost&&!this.state._active_lifestyle_co
 const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_revenue:500},narrative:"Your mentee referred a client to you."},volunteer_time:{delay:2,effects:{brand_equity:8,leads:3},narrative:"Someone from the volunteer site reached out — they need what you offer."},faith_community:{delay:4,effects:{leads:4,brand_equity:3,lifestyle_relationships:5},narrative:"A fellow member mentioned your business to their network."},family_trip:{delay:1,effects:{energy:10,lifestyle_relationships:5},narrative:"You came back recharged. The clarity is showing up in your work."},therapy_coaching:{delay:2,effects:{energy:8,lifestyle_health:3},narrative:"The patterns your therapist helped you see — you're catching them now."},learn_new_skill:{delay:3,effects:{brand_equity:5,leads:3},narrative:"The class led to an unexpected client connection."},charity_donation:{delay:2,effects:{brand_equity:8},narrative:"The charity featured your business in their donor spotlight."}};
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
+// Credit declined: explain the underwriting reason (high utilization / personal myFICO pull) so the lesson lands.
+if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);this.state._dyn_narrative='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. '+(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Strengthen your score and history, then reapply.');}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund,_execRun:_execRun,_energySpent:(_execRun?0:_energyCost)};
 if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)

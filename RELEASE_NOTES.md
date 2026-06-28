@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.35.0 — 2026-06-30
+**Two-bar roadmap (Funding Ready, then Epic Life System) + realistic credit-approval underwriting**
+
+- **Roadmap = two tracked progress bars, one at a time.** `_epicRoadmapData()` now returns `systemPct` (Protection + Expense + Reserve completion), plus `activeLabel`/`activePct`: **Funding Ready** until it hits 100%, then **Epic Life System**. The compact milestone (result screen + Finance menu) and the "Your Concierge This Month" card now show the active bar's label, %, and swing (month-start snapshot split into `_roadmapStartFr`/`_roadmapStartSys`) instead of a single blended overall %.
+- **Credit approvals are underwritten on personal utilization + myFICO 3B.** New `_creditApprovalChance()` — **at or under 30% utilization there is no penalty** (the healthy zone); the cliff is only above it: ≤30%→0.92, >30%→0.50, >50%→0.30, >70%→0.07, then scaled by personal FICO (≥760→×1.1 … <600→×0.3), because lenders pull the owner's personal credit and personal guarantee **even for business credit**. `CREDIT_APPROVAL = ['bank_personal_loan','business_credit_line']`; these now use the approval chance (not the flat 0.6 success_rate, and not skill/energy-modified). Verified (FICO 720): u5/u15/u29/u30 all → 92% (flat), u31→50%, u55→15%; a poor FICO still drags approval even at low utilization.
+  - **Legibility:** each application card shows a `~N% approval` chip (red ⚠ below 45%, with the current util%); a decline writes a dynamic narrative explaining the utilization / personal-FICO reason.
+  - `business_credit_line` failure now withholds the line (was granting a $5k consolation) and applies a small hard-inquiry score ding, matching a real decline.
+
 ## v0.34.0 — 2026-06-29
 **myFICO-weighted credit score (utilization = 30%), achievement energy boost, milestone-banner declutter**
 

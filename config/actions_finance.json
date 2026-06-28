@@ -250,9 +250,9 @@
       "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp"], "personal_credit_score_gte": 650 },
       "effects": { "business_credit_profile": "building" },
       "success_rate": 0.6,
-      "failure_effects": { "business_credit_limit": 5000, "business_credit_profile": "building" },
+      "failure_effects": { "business_credit_profile": "building", "personal_credit_score": -2 },
       "narrative_success": "Approved for $15,000. The banker shook your hand and said 'come back when you need more.' You will.",
-      "narrative_failure": "Approved, but only for $5,000. Your revenue history is too short for more. Build the relationship."
+      "narrative_failure": "Declined — the bank pulled your personal credit and didn't like what it saw. The hard inquiry dinged your score a couple points. Pay down utilization and reapply."
     },
     {
       "id": "banking_relationship",
