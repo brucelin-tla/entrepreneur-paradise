@@ -2925,8 +2925,6 @@ window.EMBEDDED_CONFIG = {
 let CONFIG={};
 async function loadConfig(){const files=['starting_positions','actions_marketing','actions_operations','actions_finance','lifestyle_options','events','stage_thresholds','scoring_weights','archetypes','characters','narrative_beats'];let ue=false;for(const f of files){if(!ue){try{const r=await fetch('config/'+f+'.json');if(!r.ok)throw 0;CONFIG[f]=await r.json();continue;}catch(e){ue=true;}}if(ue&&window.EMBEDDED_CONFIG&&window.EMBEDDED_CONFIG[f])CONFIG[f]=window.EMBEDDED_CONFIG[f];}}
 const CATS=['marketing','operations','finance'],CL={marketing:'Marketing',operations:'Operations',finance:'Finance',lifestyle:'Life'};
-// Gentle Start: thins the action menu for the first 3 months (new founder) — recommended move + a few options, rest behind "Show more". Flip to false to fully disable.
-const GENTLE_START=true;
 const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve'];
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
@@ -2958,11 +2956,6 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.31.0',d:'2026-06-29 20:30',n:[
-'Gentler first 3 months: the action menu now leads with a recommended “⭐ Start here” move and a few clear options, with the rest tucked behind “Show more” — no more wall of choices early on.',
-'Your suggested opening move is highlighted each month, so there’s always an obvious next step.',
-'Nothing is taken away — every option is one tap away under “Show more options,” and the full menu returns from month 4.'
-]},
 {v:'0.30.1',d:'2026-06-29 19:30',n:[
 'Clearer costs everywhere: actions now show their upfront price and any ongoing monthly cost with consistent tags — on the card and on the results screen.',
 'Cleaner end-of-month Cash & Credit panel: credit, cash and debt grouped in the middle; business revenue and your total expenses (cash-advance repayments included) grouped at the bottom.',
@@ -3822,7 +3815,7 @@ h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpic
 this.showPopup('⭐ Epic Life Membership',h);},
 enrollEpicLife(plan){if(this.state._epic_life)return this.hidePopup();this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.state._epic_enroll_pending=true;this.hidePopup();this.renderCategoryTabs();},
 cancelEpicLife(){this.state._epic_enroll_pending=false;this.hidePopup();this.renderCategoryTabs();},
-switchCategory(c){this.currentCategory=c;this._showAllActions=false;this._earlyExpand=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();const _b=document.getElementById('confirm-actions-btn');if(_b)_b.classList.remove('btn-flash');},
+switchCategory(c){this.currentCategory=c;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();const _b=document.getElementById('confirm-actions-btn');if(_b)_b.classList.remove('btn-flash');},
 
 isActionOutgrown(a){const s=this.state,sk=s['skill_'+a.category]||0;if(a.stage==='foundation'&&sk>40&&this.getStage(a.category)!=='foundation')return true;
 const rules={customer_acquisition_sprint:sk>30&&s.customer_base>20,build_delivery_foundation:sk>30&&(s.team_size||0)>1,build_content_presence:sk>40&&s.brand_equity>40,automate_tasks:(s.systems_maturity||0)>30};return rules[a.id]||false;},
@@ -3930,8 +3923,7 @@ const selBadge=isSel?'<span class="new-badge" style="background:var(--accent);co
 const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpName+'</span>':'';
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const rescueBadge=(!done&&!locked&&a.id==='restructure_team'&&this._needsRestructure())?'<span class="new-badge" style="background:var(--red);color:#fff;">'+(this.state._toxic_closer?'⚠ FIRE THE CLOSER':'⚠ CUT PAYROLL — FIX THIS')+'</span>':'';
-const recBadge=(!done&&!locked&&this._earlyRec&&this._earlyRec===a.id)?'<span class="new-badge" style="background:var(--accent);color:#04130d;">⭐ START HERE</span>':'';
-const topInner=recBadge+grpTag+rescueBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
+const topInner=grpTag+rescueBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
 return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
 // est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
@@ -3963,26 +3955,8 @@ const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a
 const locked=actions.filter(a=>!this.isActionCompleted(a)&&this.isActionLocked(a));
 const completed=actions.filter(a=>this.isActionCompleted(a));
 const lockRow=a=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';
-// Gentle Start (first 3 months, new founder): float the recommended move to the top with a "⭐ Start here" badge, show only the top few options, tuck the rest behind "Show more". The tutorial month is excluded so nothing it spotlights can vanish. Kill-switch: GENTLE_START.
-const earlyThin=GENTLE_START&&this.archetype&&this.archetype.id==='new'&&this.month<=3&&!this._tutActive;
-const recId=earlyThin?this._tutRecPick(this.currentCategory):null;this._earlyRec=recId;
-if(earlyThin&&recId){const ri=avail.findIndex(a=>a.id===recId);if(ri>0){const[r]=avail.splice(ri,1);avail.unshift(r);}}
-// Keep disguised traps out of the curated short list for brand-new players — they stay reachable under "Show more", just not featured. (Stable sort: traps sink to the back, everything else holds its order.)
-if(earlyThin)avail.sort((a,b)=>(TRAPS.indexOf(a.id)>=0?1:0)-(TRAPS.indexOf(b.id)>=0?1:0));
-// In early-thin mode, cap BOTH the available cards AND the long "Unlocks next" list (finance has ~8 locked rows in month 2 — that grey wall, not the 4 live cards, is what overwhelms). One expander at the bottom reveals everything.
-let shownAvail=avail,shownLocked=locked,earlyHidden=0;const EARLY_CAP=4,EARLY_LOCK=2;
-if(earlyThin&&!this._earlyExpand){
-  // Curated short list = safe (non-trap) options only, capped. Traps + overflow + most locked rows go into the "Show more" bucket. A trap the player already selected stays visible.
-  let keep=avail.filter(a=>TRAPS.indexOf(a.id)<0).slice(0,EARLY_CAP);
-  if(sel){const sa=avail.find(a=>a.id===sel.id);if(sa&&keep.indexOf(sa)<0)keep.push(sa);}
-  shownAvail=keep;
-  shownLocked=locked.slice(0,EARLY_LOCK);
-  earlyHidden=(avail.length-shownAvail.length)+(locked.length-shownLocked.length);
-}
-listHtml+=shownAvail.length?shownAvail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No moves available here right now.</div>';
-if(shownLocked.length)listHtml+='<div style="padding:10px 12px 2px;font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;">Unlocks next</div>'+shownLocked.map(lockRow).join('');
-if(earlyThin&&earlyHidden>0)listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--blue);cursor:pointer;font-size:0.85rem;font-weight:600;" onclick="Game._earlyExpand=true;Game.renderActions();">Show '+earlyHidden+' more '+(earlyHidden>1?'options':'option')+' ▾</span></div>';
-else if(earlyThin&&this._earlyExpand&&(avail.length>EARLY_CAP||locked.length>EARLY_LOCK))listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._earlyExpand=false;Game.renderActions();">Show fewer ▴</span></div>';
+listHtml+=avail.length?avail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No moves available here right now.</div>';
+if(locked.length)listHtml+='<div style="padding:10px 12px 2px;font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;">Unlocks next</div>'+locked.map(lockRow).join('');
 if(completed.length){if(this._showAllActions)listHtml+=hdr('Completed')+completed.map(card).join('')+'<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=false;Game.renderActions();">Show less ▴</span></div>';else listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=true;Game.renderActions();">Show '+completed.length+' completed ▾</span></div>';}
 // Unified "Your Team's Plan" panel — one place that shows every exec's pick (and the board/lifestyle), with a single button to run the month. Replaces the old separate focus-toggle + board-button.
 const s2=this.state,allExec=s2._cro_hired&&s2._coo_hired&&s2._cfo_hired,teamMode=allExec||s2._board_active;let banner='';
