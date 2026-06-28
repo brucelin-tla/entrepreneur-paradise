@@ -31,6 +31,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.24.4',d:'2026-06-28 19:00',n:[
+'Life actions reworked around energy: every life action now gives a real, balanced energy boost (shown as a green ⚡ tag on the bottom-right of each card), with good variety across all five Personal Mastery areas — big restorative trips/retreats give the most, smaller habits give a steady bump.',
+'Burnout warning is accurate now: if you pick a Life action that restores energy, that energy counts toward your turn — so it won\'t falsely warn you about burning out when you\'re actually recharging.',
+'You can always recover when you need to: when your energy runs low, the Life check-in opens even off its normal schedule, surfaces your strongest energy-restoring options first, and lets you finance a recovery on credit if cash is tight (yes, even the expensive ones).',
+'Hiring is now an ongoing cost: hiring a Salesperson and a Vendor Contractor add a monthly salary like every other hire — no more free permanent staff from a one-time fee.'
+]},
 {v:'0.24.3',d:'2026-06-28 18:00',n:[
 'Tap any dashboard stat to understand it: Credit, Debt, Income, Burn, Net Worth, Credit Score, Cash Flow, Owner Equity and Personal Mastery now each open with a plain-English one-liner explaining what it is and why it matters. Your business D&B score is now tappable too.',
 'Owner Equity now opens its own clear explainer (your stake in the business — how it grows and shrinks) instead of the revenue screen.',
@@ -370,7 +376,11 @@ canAfford(a){const bizAvail=Math.max(0,(this.state.business_credit_limit||0)-(th
 getAvailableActions(cat){let pool;if(cat==='marketing')pool=CONFIG.actions_marketing.actions;else if(cat==='operations')pool=CONFIG.actions_operations.actions;else if(cat==='finance')pool=CONFIG.actions_finance.actions;
 else if(cat==='lifestyle'){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};
 const weakest=Object.entries(subs).sort((a,b)=>a[1]-b[1]).slice(0,3).map(e=>e[0]);
-const all=CONFIG.lifestyle_options.actions.filter(a=>(s.cash||0)>=(a.cash_cost||0));
+// Affordability counts credit (like business actions), so you can always finance a recovery action — even an expensive one — when you need it.
+const all=CONFIG.lifestyle_options.actions.filter(a=>!this.isActionCompleted(a)&&this.canAfford(a));
+const energyOf=a=>(a.effects&&a.effects.energy>0)?a.effects.energy:(a.energy_cost<0?-a.energy_cost:0);
+// Running low on energy → surface the strongest energy-restoring options first so recovery is always within reach.
+if((s.energy||0)<=30)return[...all].sort((a,b)=>energyOf(b)-energyOf(a)).slice(0,6);
 const prioritized=all.filter(a=>weakest.includes(a.subcategory));
 const others=all.filter(a=>!weakest.includes(a.subcategory));
 return[...prioritized,...others].slice(0,6);}
@@ -455,7 +465,7 @@ isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions
 actionCashCost(a){const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
 actionEnergyCost(a){const e=a.energy_cost||0;if(e<=0)return e;return this.isRetry(a)?Math.round(e*0.5):e;},
 // Total energy your currently-picked moves will spend this turn (exec/team-run picks cost you none), vs what you have.
-_turnEnergy(){let used=0;for(const[c,act]of Object.entries(this.selectedActions||{})){const execRun=(this._autoPicked&&this._autoPicked[c]===act.id)||(c==='finance'&&this._cfoPick===act.id);if(!execRun)used+=Math.max(0,this.actionEnergyCost(act));}const have=Math.min(100,this.state.energy||0);return{used,have,left:have-used};},
+_turnEnergy(){let used=0;for(const[c,act]of Object.entries(this.selectedActions||{})){const execRun=(this._autoPicked&&this._autoPicked[c]===act.id)||(c==='finance'&&this._cfoPick===act.id);if(execRun)continue;if(c==='lifestyle'){const g=(act.effects&&act.effects.energy>0)?act.effects.energy:(act.energy_cost<0?-act.energy_cost:0);used-=g;/* a selected Life action RESTORES energy — net it against the turn's drain so the burnout warning is accurate */}else used+=Math.max(0,this.actionEnergyCost(act));}const have=Math.min(100,this.state.energy||0);return{used,have,left:Math.min(100,have-used)};},
 scaleEventEffects(effects,skipCap){const scaled=JSON.parse(JSON.stringify(effects)),level=this.calcBusinessLevel(),s=this.state;for(const k in scaled){if(typeof scaled[k]!=='number')continue;if(k==='cash'||k==='monthly_revenue'||k==='investment_positions'||k==='real_estate_equity'||k==='other_monthly_revenue')scaled[k]=Math.round(scaled[k]*Math.min(6,level));else if(k==='operating_expenses'||k==='cogs')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='total_debt')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='customer_base')scaled[k]=Math.round(scaled[k]*Math.min(3,Math.max(1,(s.customer_base||1)/20)));}
 // Early-game cushion: ramp down RANDOM negative shocks in months 1-9 (~30% at the start, fading to full strength by month 9) so early bad luck isn't fatal before you've built reserves. Opt-in opportunities (skipCap) are untouched.
 if(!skipCap&&this.month<=9){const em=Math.min(1,0.7+0.033*(this.month-1));if(scaled.cash&&scaled.cash<0)scaled.cash=Math.round(scaled.cash*em);for(const k of['operating_expenses','cogs','total_debt'])if(scaled[k]>0)scaled[k]=Math.round(scaled[k]*em);}
@@ -844,8 +854,9 @@ if(this._autoPicked.marketing){const gn=grpOf('marketing',this._autoPicked.marke
 if(this._autoPicked.operations){const gn=grpOf('operations',this._autoPicked.operations);if(gn)this._openDir.operations=gn;}
 if(this._cfoPick){const gn=grpOf('finance',this._cfoPick);if(gn)this._openDir.finance=gn;}
 // Life-action cadence scales with how hands-off you've made the business: a full board frees you EVERY month, a full C-suite every OTHER month, otherwise the default quarterly check-in.
+// Safety valve: if you're running low on energy, the Life check-in opens off-cadence so you can always choose to recover (financeable if cash is tight).
 const _allExec=s._cro_hired&&s._coo_hired&&s._cfo_hired;
-const _lifeOpen=s._board_active?true:(_allExec?(this.month%2===0):this._isQuarterlyMonth);
+const _lifeOpen=s._board_active?true:((_allExec?(this.month%2===0):this._isQuarterlyMonth)||(s.energy||0)<=30);
 const base=_lifeOpen?['marketing','operations','finance','lifestyle']:['marketing','operations','finance'];
 const allExec=s._cro_hired&&s._coo_hired&&s._cfo_hired;
 if(allExec&&this._focusMode!==false){this._activeCats=base.filter(c=>c!=='marketing'&&c!=='operations');if(!this._activeCats.includes(this.currentCategory))this.currentCategory='finance';}
@@ -1434,7 +1445,8 @@ const outgrown=afford&&(a.cash_cost||0)<3000&&(themeVal[this.LIFE_THEME[a.subcat
 const lrc=(this.state._action_counts||{})[a.id]||0,lRepeat=lrc>0?'<span class="repeat-badge">×'+lrc+'</span>':'';
 const tier=(a.cash_cost||0)>=8000?'Premium':(a.cash_cost||0)>=3000?'Standard':'Basic';
 const tierColor=tier==='Premium'?'var(--gold)':tier==='Standard'?'var(--blue)':'var(--text2)';
-listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p>'+this.lifeActionPreview(a)+'<div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+(a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+' energy</span>':'')+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+'</div></div>';});
+const egain=(a.effects&&a.effects.energy>0)?a.effects.energy:(a.energy_cost<0?-a.energy_cost:0);// energy this life action actually restores (effects.energy is what's applied)
+listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p>'+this.lifeActionPreview(a)+'<div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+(egain>0?'<span class="cost-tag cost-energy-gain" style="margin-left:auto;">⚡ +'+egain+' energy</span>':'')+'</div></div>';});
 document.getElementById('lifestyle-list').innerHTML=listHtml;
 document.getElementById('lifestyle-btn').disabled=true;},
 

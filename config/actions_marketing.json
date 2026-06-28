@@ -254,6 +254,7 @@
       "lesson": "A dedicated closer lifts conversion on the leads you already have — more customers from the same pipeline. But sales talent is paid on results: their cost rises as revenue rises, so the real leverage comes from a better product and a warm pipeline, not just adding salespeople.",
       "cash_cost": 3000,
       "energy_cost": 10,
+      "recurring_cost": 3000,
       "prerequisites": { "needs": ["build_offer"], "customer_base_gte": 8 },
       "effects": { "team_size": 1, "revenue_capacity": 8000, "key_person_dependency": -10, "leads": 8, "sales_conversion": 7 },
       "success_rate": 0.6,

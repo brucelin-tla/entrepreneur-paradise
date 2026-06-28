@@ -76,6 +76,7 @@
       "lesson": "Your first hire won't be as good as you — and that's fine. 80% done by someone else beats 100% done by you alone. But do the work yourself first: you can't hand off what you don't understand. Trading money for delivery capacity is the whole game.",
       "cash_cost": 1500,
       "energy_cost": 10,
+      "recurring_cost": 1500,
       "prerequisites": { "needs": ["do_work_yourself"] },
       "effects": { "team_size": 1, "systems_maturity": 5, "key_person_dependency": -10, "revenue_capacity": 5000 },
       "success_rate": 0.65,

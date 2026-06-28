@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.24.4 — 2026-06-28
+**Life-action energy rework, accurate burnout calc, recovery safety valve, hiring recurring costs**
+
+- **Life action energy boosts — all real & balanced:** 10 Mind(legacy)/Spirit(philanthropy) actions previously showed an energy gain that was never applied (`effects.energy` missing). All now have a real, applied `effects.energy` (+5–8), with `energy_cost` aligned. Every one of the 39 life actions now gives a genuine energy boost, with variety across all five Personal Mastery dimensions (Body +5–25, Mind +6–8, Spirit +5–20, Heart +5–25, Luxury +5–30).
+- **Energy gain shown bottom-right of life cards (`showLifestyleScreen`):** the `⚡ +N energy` badge is `margin-left:auto` (bottom-right) and reads from `effects.energy` (the value actually applied) rather than the unused `energy_cost`.
+- **Burnout warning nets Life energy (`_turnEnergy`):** previously `Math.max(0,energy_cost)` clamped a selected Life action's restorative energy to 0. Now a selected Life action's energy gain is netted against the turn's drain, so the `⚡ left` tag and the burnout confirm are accurate (and `left` is capped at 100).
+- **Recovery is always reachable:**
+  - `getAvailableActions('lifestyle')` affordability now counts credit (`canAfford`, was cash-only) — an expensive recovery action can be financed when cash is tight.
+  - When energy ≤30, the life option list surfaces the strongest energy-restoring actions first (sorted by energy gain) instead of the usual weakest-dimension priority.
+  - `_lifeOpen` now opens the Life check-in off-cadence when energy ≤30, so you can proactively recharge in a crisis month instead of waiting for the quarterly cadence.
+- **Hiring recurring costs:** `build_sales_team` ("Hire a Salesperson", +$3,000/mo) and `hire_first_contractor` ("Vendor Contractor", +$1,500/mo) now carry a monthly salary like every other hire — previously a one-time fee bought permanent headcount for free. (C-suite hires were already recurring via the exec-comp mechanic; other staff hires already had `recurring_cost`.)
+
 ## v0.24.3 — 2026-06-28
 **Dashboard info-screen audit + plain-language descriptions, result-screen color fix**
 
