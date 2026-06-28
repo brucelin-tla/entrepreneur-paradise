@@ -69,24 +69,25 @@
       "base_probability": 0.08,
       "probability_scales_with": "key_person_dependency",
       "scale_factor": 0.001,
-      "narrative": "The one team member who holds half the operation in their head is suddenly gone — poached by a competitor. Critical knowledge walked out the door with them.",
+      "narrative": "Your right hand — the one team member who holds half the operation in their head — is suddenly out: a serious health emergency has put them on indefinite leave, and it's unclear if they'll be back. Overnight, critical knowledge and your biggest client relationships went dark.",
       "act": 2,
       "choices": [
         {
           "label": "Scramble to cover the gap",
           "effects": { "energy": -15, "systems_maturity": -5, "customer_base": -2 },
-          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing. Mostly, it worked."
+          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing while your colleague recovers. Mostly, it worked."
         },
         {
           "label": "Hire a replacement fast",
           "effects": { "cash": -6000, "energy": -8 },
-          "outcome_narrative": "You paid up to fill the role quickly. The new hire needs ramp time, but the bleeding stopped."
+          "outcome_narrative": "You paid up to backfill the role quickly. The new hire needs ramp time, but the bleeding stopped."
         }
       ],
       "protection": {
         "shielded_by": "keyman_insurance",
-        "protected_note": "Your key-man policy paid out, funding a fast, well-paid replacement and bridging the gap. The business barely skipped a beat — which is exactly why you insured the people who matter.",
-        "unprotected_note": "With no key-man coverage, there was no money to cushion the loss. You ate the cost and the chaos directly, and a few clients slipped away in the disruption.",
+        "payout": 25000,
+        "protected_note": "This is exactly what key-person insurance is for: when a critical person is lost to illness, injury, or death, the policy pays the business a lump sum. It funded a fast, well-paid replacement and bridged the gap — the business barely skipped a beat.",
+        "unprotected_note": "With no key-person coverage, there was no benefit to cushion the blow. You ate the cost and the chaos directly, and a few clients slipped away during the scramble.",
         "unprotected_extra": { "cash": -8000, "customer_base": -3 }
       },
       "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
@@ -505,6 +506,50 @@
           "outcome_narrative": "You picked four. Said no to the rest — gracefully. The four you took are ideal clients. Quality over quantity."
         }
       ],
+      "mitigated_by": []
+    },
+    {
+      "id": "crypto_friend_scam",
+      "category": "opportunity",
+      "requires": { "monthly_revenue_gte": 5000 },
+      "base_probability": 0.05,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A friend who's suddenly driving a new car says he's made a killing on a crypto coin — 'guaranteed 10x, it's already mooning.' He needs you to buy in TODAY through his guy, before it's too late. The site looks slick. The returns look unreal.",
+      "act": 2,
+      "choices": [
+        { "label": "Go all in — don't miss out", "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
+        { "label": "Risk only what you can afford to lose", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You threw in a small bet, half expecting this. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
+        { "label": "Pass — guaranteed + urgent = scam", "effects": { "energy": 3 }, "outcome_narrative": "You said no. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
+      ],
+      "protection": {
+        "shielded_by": "hire_fractional_cfo",
+        "shielded_multiplier": 0.15,
+        "protected_note": "Your CFO took the 'fund' apart in ten minutes — no audited returns, anonymous team, gated withdrawals. She flagged it as a rug pull and kept your exposure to almost nothing.",
+        "unprotected_note": "With no one to sanity-check it, the FOMO won. A trusted advisor — even a fractional CFO — is exactly who catches a too-good-to-be-true pitch before your money does."
+      },
+      "mitigated_by": []
+    },
+    {
+      "id": "coworker_investment_scam",
+      "category": "opportunity",
+      "requires": { "monthly_revenue_gte": 12000 },
+      "base_probability": 0.04,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A well-connected acquaintance pitches a 'private fund' paying a steady 4% a month, guaranteed. He shows you statements — early investors are getting paid like clockwork — and can 'squeeze you in' if you wire funds this week.",
+      "act": 2,
+      "choices": [
+        { "label": "Wire a big chunk — those returns are incredible", "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
+        { "label": "Invest a modest, survivable amount", "effects": { "cash": -3000 }, "outcome_narrative": "You wired a little and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
+        { "label": "Decline — steady guaranteed returns don't exist", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You passed, politely. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
+      ],
+      "protection": {
+        "shielded_by": "setup_family_office",
+        "shielded_multiplier": 0.1,
+        "protected_note": "Your family office ran due diligence and flagged it as a textbook Ponzi — no real custodian, returns too smooth to be real. They kept you almost entirely out.",
+        "unprotected_note": "Nobody vetted the deal for you. Real wealth runs every 'opportunity' through advisors and custodians — guaranteed, too-smooth returns are the oldest red flag there is."
+      },
       "mitigated_by": []
     },
     {

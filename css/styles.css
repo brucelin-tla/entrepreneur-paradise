@@ -23,6 +23,13 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .stat-card .stat-value{font-size:1.05rem;font-weight:700}.stat-card .stat-label{font-size:0.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.3px}
 .stat-positive{color:var(--accent)}.stat-negative{color:var(--red)}.stat-warning{color:var(--gold)}.stat-neutral{color:var(--text)}
 .info-btn{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text2);font-size:0.6rem;text-align:center;line-height:16px;cursor:pointer;margin-left:4px;vertical-align:middle;font-weight:700}
+.info-btn.info-new{background:var(--gold);color:#1a1205;animation:infoPulse 1.6s ease-in-out infinite}
+@keyframes infoPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,0.55)}50%{box-shadow:0 0 0 4px rgba(212,175,55,0)}}
+.scope-chip{display:inline-block;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 9px;border-radius:999px;margin-bottom:9px}
+.scope-chip.personal{background:rgba(16,185,129,0.15);color:var(--accent)}
+.scope-chip.business{background:rgba(59,130,246,0.15);color:var(--blue)}
+.stat-footer{margin-top:12px;border-top:1px solid var(--border);padding-top:9px;text-align:center}
+.stat-footer button{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer}
 .term-link{color:var(--blue);text-decoration:underline dotted;cursor:pointer;text-decoration-thickness:1px;text-underline-offset:2px}
 .popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:999}
 .popup-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;z-index:1000;max-width:340px;width:calc(100% - 32px);font-size:0.85rem;line-height:1.6;box-shadow:0 10px 40px rgba(0,0,0,0.5);max-height:80vh;overflow-y:auto}

@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.26.0 — 2026-06-28
+**Dashboard stat-info system, life-action economy overhaul, energy/spending/partial fixes, scam events, key-person fix**
+
+- **Dashboard stat-info (`renderStats`, popups, `statInfo`):** clickable stat rows route through `Game.statInfo(key)` → scoped popup (personal vs business split for credit score, credit, debt, income/revenue, burn; single-scope for net worth, owner equity, mastery, cash flow). Each popup leads with a concise intro + a PERSONAL/BUSINESS scope chip + a "Mark all as viewed" footer. Unviewed stats pulse an `info-new` ⓘ badge; `_statsViewed` tracks per-key, `renderStats()` re-renders to clear badges. D&B Score now clickable. Personal credit labeled **MyFICO 3B**.
+- **Life-action economy:** Life menu (`getAvailableActions('lifestyle')`) now shows a balanced spread — cheapest option per subcategory (weakest dims first) + cheapest fill, cap 10 — so basics (sleep, gym, meditation, hike) are always reachable (fixes "sleep gated"). Meditation now free. New low-cost recovery actions: nature_hike (free), treat_dessert, retail_therapy, spa_massage, home_cooking, rec_sports_league. All 39→45 actions now have a real applied `effects.energy`; energy badge bottom-right of cards. Each card tagged 👤 Personal / 🏢 Business (`lifeActionIsPersonal`). Costs realism pass (recurring vs one-time; trimmed steep personal splurges: vacation 15k→9k, sabbatical 30k→18k, yacht 60k→38k, etc.). `calcEnergyRecovery` slope 0.12→0.16 (mastery matters more: ~10→26/mo).
+- **Energy mechanics:** low energy now raises failure risk (penalty 0.8 <30, 0.6 in burnout) AND dampens success outcome (×0.85 / ×0.7); gauge/tutorial reworded from "weaker" to "fails more & delivers less". `_turnEnergy` nets a selected Life action's energy gain so the burnout warning is accurate; Life opens off-cadence and surfaces strongest recovery when energy ≤30; lifestyle affordability counts credit.
+- **Scam events:** `crypto_friend_scam` and `coworker_investment_scam` (opportunity category). Going all-in hits hard (large scaled cash loss + new debt + credit-score hit + energy); `protection.shielded_by` a fractional CFO / family office with `shielded_multiplier` cuts the loss to ~10-15%. New `protection.payout` handler in `resolveEvent`.
+- **Key-person insurance fix:** `key_person_loss` rewritten from "poached" (a departure) to a health emergency / illness / injury / death — the situations key-person insurance actually covers — and added a real `payout` lump sum (+$25k) when covered; the resignation event (`key_employee_quits`) stays payout-free.
+- **Spending order (`payCost`):** business expenses now spend business **cash first**, then a little business-credit float (≤util cap), then the credit backstop — no surprise debt; personal cash never touched by a business cost.
+- **Hiring costs visible:** `build_sales_team` / `hire_first_contractor` recurring salaries (prior release); C-suite hires (fractional CRO/COO/CFO + full-time promotes) now show an estimated "🔁 ~$X/mo pay" tag from `calcExecFrac`/`calcExecFull` (they charge via the exec-comp mechanic, so it's an estimate, not a fixed `recurring_cost`).
+- **Turn button consistency (`updateConfirmButton`):** "End Turn →" when all categories picked; otherwise primary navigates and the secondary shows count + skip ("Skip Turn (0/N)" / "Skip {rest} & End Turn ({done}/{N})"), scaling with 3 or 4 active categories.
+- **Partial handling:** result badge "Partial" → "Didn't finish"; a partial no longer marks an action done (`_completed_actions`/`_action_counts` only increment on success), so it doesn't satisfy capability gates or show "done ×N" — still retryable at half cost.
+- **Build Personal Credit:** description no longer says "cut utilization"; now a card issuer may auto-raise your limit (~45% chance) — implemented as an `available_credit` bump that lowers utilization.
+- **Tutorial Back button** restored and made safe (revisiting a picked action shows "Next" without deselecting; disabled across the resolved-month boundary).
+
 ## v0.25.0 — 2026-06-28
 **Tutorial pass — synced with recent UI/balance changes, redundancy removed**
 

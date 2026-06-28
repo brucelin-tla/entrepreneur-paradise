@@ -31,6 +31,16 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.26.0',d:'2026-06-28 21:30',n:[
+'Tap any dashboard stat to learn it — popups are now split Personal vs Business with a short, plain-language explanation; stats you haven\'t opened pulse with an ⓘ badge, and each popup has a “Mark all as viewed” button. (Personal credit is shown as your MyFICO 3B score.)',
+'Life check-in shows a balanced spread across all five areas, so basics like sleep, gym and meditation are always reachable; meditation is now free, and there are more low-cost ways to recharge (a hike, dessert, retail therapy, a spa day, cooking at home, a rec sports league).',
+'Life actions are clearer: each is tagged 👤 Personal or 🏢 Business expense, several over-priced personal splurges were brought down to earth, and energy boosts were rebalanced so every life action genuinely restores energy. Building Personal Mastery now speeds your monthly energy recovery more noticeably.',
+'Low energy now means moves are more likely to FAIL and deliver LESS (worse in burnout) — clearer than the old “weaker.” A picked Life action’s energy now counts toward your turn, so the burnout warning is accurate, and when you’re low the Life check-in opens off-schedule so you can always recover (financeable if cash is tight).',
+'New scam events: a friend’s “guaranteed 10x” crypto and a coworker’s Ponzi “private fund.” Go all-in and it really hurts (lost cash, new debt, a credit hit); a fractional CFO or family office sees through it and shields you.',
+'Key-person insurance fixed: it pays out when a key person is lost to illness, injury or death (not when they simply quit) — with a real lump-sum benefit to fund the transition.',
+'Spending uses your business’s own cash first before adding any credit/debt; hiring a salesperson, contractor, and the whole C-suite now clearly show their ongoing monthly pay.',
+'Turn button is consistent: “End Turn” once everything’s picked, otherwise it shows your progress and what you’d skip (e.g. “Skip 1 & End Turn (2/3)” / “Skip Turn (0/4)”). A partial result is no longer marked “done” and reads “Didn’t finish” (retry at half cost). Tutorial gets a working Back button.'
+]},
 {v:'0.25.0',d:'2026-06-28 20:00',n:[
 'First-time tutorial refreshed to match the current game: the cash-flow step no longer references the old “months left” readout, the results walkthrough is tighter (one clear “tap the card to expand” step instead of two), and the end-of-month money panel step now describes what it actually shows (accessible capital, runway, and your credit-score/cash/credit/debt swings).',
 'Tutorial guidance is consistent: the recommended first Operations move and its explanation now always match, and the Life check-in tip covers all five Personal Mastery areas plus how a Life action restores energy when you’re running low.'
@@ -285,7 +295,7 @@ TUTORIAL_STEPS:[
 {sel:'#action-list',cat:'finance',title:'Now — Finance',body:'Finance is the heart of the game — credit, leverage, and turning money into <strong>passive income</strong>. <strong>Tap the highlighted action.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
 {cat:'finance',explain:true,title:'Why this move?',body:'<strong>Form an LLC</strong> makes your business its own legal entity — it shields your personal assets and <strong>unlocks the entire Business side</strong> of your dashboard (business cash, credit, customers). It\'s the foundation everything else is built on.'},
 {sel:'#confirm-actions-btn',title:'End your turn',body:function(){var b=document.getElementById('confirm-actions-btn');var t=(b&&b.textContent.trim())||'Confirm Actions';return 'All three moves are set. <strong>Tap "'+t+'"</strong> to play out the month and see what happened.';},wait:'endturn',waitHint:'__btn__'},
-{sel:'#tut-result-card',title:'Your results',body:'Each move you made plays out here — what changed and what it cost. <strong>Tap anywhere on a card</strong> to expand the exact stat changes (before → after) and a short <strong>lesson</strong> with the real-world tip behind the move; tap again to collapse. This is where you learn what actually works.'},
+{sel:'#tut-result-card',_noBack:true,title:'Your results',body:'Each move you made plays out here — what changed and what it cost. <strong>Tap anywhere on a card</strong> to expand the exact stat changes (before → after) and a short <strong>lesson</strong> with the real-world tip behind the move; tap again to collapse. This is where you learn what actually works.'},
 {sel:'#month-cash-panel',title:'Your money this month',body:'This panel sums up the month: your total <strong>accessible capital</strong> and <strong>runway</strong> up top, then the month-over-month swing in your <strong>credit score, cash, credit and debt</strong>, and what you spent. Glance at it every month to stay solvent.'},
 {sel:null,title:'That\'s the loop!',body:'Every month: read the story, make your three moves, end the turn, and learn from the results. Build safeguards (LLC, insurance, credit) <em>before</em> events hit, and steer toward passive income. New features unlock as you grow — now go build your empire.'}
 ],
@@ -308,17 +318,22 @@ const dots=steps.map((s,k)=>'<span class="tut-dot'+(k===i?' on':'')+'"></span>')
 const nextLabel=i===steps.length-1?'Got it':'Next';
 let hintBase=step.waitHint||'';
 if(hintBase==='__btn__'){var _cb=document.getElementById('confirm-actions-btn');hintBase='Tap "'+((_cb&&_cb.textContent.trim())||'Confirm Actions')+'"';}
-// No Back button: this is an interactive tour where real game moves drive it forward; reversing across a completed action broke the flow. Every step advances one way — tap the highlight, or tap Next.
-const navRight=step.wait?'<span class="tut-wait"><span id="tut-arrow">↓</span> '+hintBase+'</span>':'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
+// A "select" step whose move is already chosen (e.g. you tapped Back onto it) is treated as done — show Next instead of asking you to re-tap (re-tapping would deselect it).
+const selDone=step.wait==='select'&&step.cat&&!!this.selectedActions[step.cat];
+const effWait=selDone?null:step.wait;
+// Back is available except on the very first step and after the month has resolved (you can't un-resolve a turn — result-phase steps carry _noBack).
+const canBack=i>0&&!step._noBack;
+const backBtn=canBack?'<button class="tut-back" onclick="Game.tutPrev()">← Back</button>':'';
+const navRight=effWait?'<span class="tut-wait"><span id="tut-arrow">↓</span> '+hintBase+'</span>':'<button class="tut-next" onclick="Game.tutNext()">'+nextLabel+'</button>';
 const bodyHtml=(typeof step.body==='function')?step.body.call(this):step.body;
-tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+bodyHtml+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+navRight+'</div><div class="tut-dots">'+dots+'</div>';
+tip.innerHTML='<div class="tut-count">Step '+(i+1)+' of '+steps.length+'</div><div class="tut-title">'+step.title+'</div><div class="tut-body">'+bodyHtml+'</div><div class="tut-nav"><button class="tut-skip" onclick="Game.endTutorial()">Skip tour</button><div class="tut-spacer"></div>'+backBtn+navRight+'</div><div class="tut-dots">'+dots+'</div>';
 // The tutorial drives the category itself (auto-advance is paused during the tour) so each pick stays put for its explanation.
 if(step.cat&&this.currentCategory!==step.cat){this.currentCategory=step.cat;this._showAllActions=false;this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();}
 let target=step.sel?document.querySelector(step.sel):null,hitAction=null;
 // On "pick an action" steps, spotlight the single recommended action card; tapping it (the only tappable spot) selects that move.
-if(step.wait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card){target=card;hitAction=()=>this.selectActionPayment(cat,recId);}}}
-else if(step.explain){const card=document.querySelector('#action-list .action-card.selected');if(card)target=card;} // pause on the just-picked action while we explain why
-else if(step.wait==='endturn'){hitAction=()=>this.confirmActions();}
+if(effWait==='select'){const cat=this.currentCategory,recId=this._tutRecPick(cat);if(recId){const grp=(ADIR[cat]||[]).find(g=>g[1].includes(recId));if(grp){this._openDir=this._openDir||{};this._openDir[cat]=grp[0];this.renderActions();}const card=document.querySelector('#action-list .action-card[onclick*="\''+recId+'\'"]');if(card){target=card;hitAction=()=>this.selectActionPayment(cat,recId);}}}
+else if(step.explain||selDone){const card=document.querySelector('#action-list .action-card.selected');if(card)target=card;} // pause on the just-picked action (incl. when revisited via Back) — highlight it, no re-tap
+else if(effWait==='endturn'){hitAction=()=>this.confirmActions();}
 // Scroll the target into view ONCE, then re-place from the settled rect WITHOUT re-scrolling — re-scrolling on every pass is what made the box jump up and down on mobile. Extra late passes catch slow first-load layout (fonts/SVG) so "Month 1 — Operator" lines up.
 const place=(doScroll)=>this._positionSpotlight(target,hitAction,doScroll);
 setTimeout(()=>place(true),60);
@@ -378,15 +393,19 @@ meetsReq(r){if(!r||Object.keys(r).length===0)return true;for(const[k,v]of Object
 canAfford(a){const bizAvail=Math.max(0,(this.state.business_credit_limit||0)-(this.state.business_credit_used||0));const totalFunds=(this.state.cash||0)+(this.state.available_credit||0)+bizAvail;const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return false;const ec=this.actionEnergyCost(a);if(ec>0&&(this.state.energy||0)-ec<-40)return false;/* low/negative energy no longer blocks — you can push into burnout — unless it would breach the -40 floor */return true;},
 getAvailableActions(cat){let pool;if(cat==='marketing')pool=CONFIG.actions_marketing.actions;else if(cat==='operations')pool=CONFIG.actions_operations.actions;else if(cat==='finance')pool=CONFIG.actions_finance.actions;
 else if(cat==='lifestyle'){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};
-const weakest=Object.entries(subs).sort((a,b)=>a[1]-b[1]).slice(0,3).map(e=>e[0]);
 // Affordability counts credit (like business actions), so you can always finance a recovery action — even an expensive one — when you need it.
 const all=CONFIG.lifestyle_options.actions.filter(a=>!this.isActionCompleted(a)&&this.canAfford(a));
 const energyOf=a=>(a.effects&&a.effects.energy>0)?a.effects.energy:(a.energy_cost<0?-a.energy_cost:0);
+const CAP=10;
 // Running low on energy → surface the strongest energy-restoring options first so recovery is always within reach.
-if((s.energy||0)<=30)return[...all].sort((a,b)=>energyOf(b)-energyOf(a)).slice(0,6);
-const prioritized=all.filter(a=>weakest.includes(a.subcategory));
-const others=all.filter(a=>!weakest.includes(a.subcategory));
-return[...prioritized,...others].slice(0,6);}
+if((s.energy||0)<=30)return[...all].sort((a,b)=>energyOf(b)-energyOf(a)).slice(0,CAP);
+// Balanced spread: pick the two cheapest options from EACH area (weakest dimensions first) so basics like sleep, gym, meditation stay reachable, then fill the rest with the cheapest remaining.
+const byCat={};all.forEach(a=>{(byCat[a.subcategory]=byCat[a.subcategory]||[]).push(a);});
+const cats=Object.keys(subs).filter(c=>byCat[c]&&byCat[c].length).sort((x,y)=>subs[x]-subs[y]);
+const reps=[];cats.forEach(c=>{const cheapest=byCat[c].slice().sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0))[0];if(cheapest)reps.push(cheapest);});
+const repIds=new Set(reps.map(a=>a.id));
+const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0));
+return[...reps,...rest].slice(0,CAP);}
 const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
 isActionLocked(a){return this._epicHandled(a)||this.isActionCompleted(a)||!this.meetsReq(a.prerequisites||{})||!this.canAfford(a);},
@@ -409,7 +428,7 @@ if(on)s._revealed[f]=true;return on;},
 _maybeShowUnlockTip(){const s=this.state;if(this._tutActive)return;if(!s._tips_shown)s._tips_shown=[];
 const _rec=this.calcEnergyRecovery();
 const tips=[
-{k:'energy_low',show:(s.energy<=45),sel:'#dash-energy',t:'⚡ Watch Your Energy',b:'Heads up — your energy is getting low. Most moves cost energy but it only recovers <strong>+'+_rec+'/mo</strong>, so stacking high-energy actions every month will drain you. Below <strong>30</strong> your moves get <strong>~15% weaker</strong>, and the more run-down you are the <strong>easier you get sick</strong> (a medical/burnout event that costs cash and time). Recharge by investing in your 🏖️ <strong>Life</strong> (raises Mastery → faster recovery), and carry <strong>health/income protection insurance</strong> so a claim is covered when it happens.'},
+{k:'energy_low',show:(s.energy<=45),sel:'#dash-energy',t:'⚡ Watch Your Energy',b:'Heads up — your energy is getting low. Most moves cost energy but it only recovers <strong>+'+_rec+'/mo</strong>, so stacking high-energy actions every month will drain you. Below <strong>30</strong> your moves are <strong>more likely to fail and deliver less</strong> (and far worse once you push into the red), and the more run-down you are the <strong>easier you get sick</strong> (a medical/burnout event that costs cash and time). Recharge by investing in your 🏖️ <strong>Life</strong> (raises Mastery → faster recovery), and carry <strong>health/income protection insurance</strong> so a claim is covered when it happens.'},
 {k:'business',show:this.isSeparated(),sel:'#biz-col',seq:[
 {sel:'#biz-money',t:'🔓 Business Unlocked — the Money',b:'Your business is now its own legal entity, with finances kept <strong>separate</strong> from your personal side. Read these first: <strong>cash</strong>, <strong>revenue</strong>, <strong>credit</strong>, monthly <strong>expenses</strong>, <strong>debt</strong>, and your <strong>owner equity</strong> (your stake in it). This is the health of the engine — and it pays you a salary/draw into your personal account.'},
 {sel:'#biz-ops',t:'Leads → Customers → Staff',b:'And this is what drives the money: <strong>Leads</strong> come in from Marketing, convert into paying <strong>Customers</strong>, and your <strong>Staff</strong> delivers the work (watch team <strong>Culture</strong> once you hire). Growing revenue means moving these up — more leads, better conversion, and the capacity to deliver.'}
@@ -439,7 +458,7 @@ LIFE_THEME:{health:'Body',relationships:'Heart',spiritual:'Spirit',philanthropy:
 LIFE_ICON:{Body:'💪',Mind:'🧠',Spirit:'🕊️',Heart:'❤️',Luxury:'✨'},
 calcPersonalMastery(){const d=this.lifeDims();return Math.round((d.Body+d.Mind+d.Spirit+d.Heart+d.Luxury)/5);},
 // Energy recovery is driven by Personal Mastery — neglect your life and you recover slowly (firm but recoverable); invest in it and you run on a full tank.
-calcEnergyRecovery(){const m=this.calcPersonalMastery();return Math.max(5,Math.round(10+m*0.12));},
+calcEnergyRecovery(){const m=this.calcPersonalMastery();return Math.max(5,Math.round(10+m*0.16));},
 calcFreedom(){const s=this.state,c=id=>s._completed_actions&&s._completed_actions.includes(id);
 // Low dependency still matters, but a real team/exec layer + governance is what actually frees the founder.
 let f=(100-(s.key_person_dependency||100))*0.5
@@ -515,40 +534,41 @@ const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.re
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
 const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
-const row=(label,valHtml,click,id)=>'<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(click?'cursor:pointer;':'')+'"'+(click?' onclick="'+click+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(click?' <span class="info-btn">i</span>':'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';
+const _vs=s._statsViewed||{};
+const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-const netRow=(label,net,liquid,click,id)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id);};
+const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
-P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',"Game.showCreditScore()");
+P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
-P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',"Game.showCreditAvail()");
-P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),"Game.showRevenue()");
+P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
+P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
 P+=row('Expense/mo',m(persExp,'var(--gold)'));
-P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,"Game.showNetFlow('personal')",'dash-cashflow');
-P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),"Game.showDebt()",'dash-debt');
-if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),"Game.showCreditAvail()");
-if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),"Game.showAssets()");
-{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:var(--accent)">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* show only while net worth is actually positive; delta on its own line so it can't overflow into the business column */if(this._reveal('networth')&&nwNow>0)P+=row('Net Worth',nwHtml,"Game.showAssets()",'dash-networth');}
+P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
+if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
+{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:var(--accent)">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* show only while net worth is actually positive; delta on its own line so it can't overflow into the business column */if(this._reveal('networth')&&nwNow>0)P+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
 const gauge=(label,v,col,sub,id,subBelow)=>'<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+((sub&&!subBelow)?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+col+'"></div></div>'+((sub&&subBelow)?'<div style="font-size:0.54rem;color:'+col+';font-weight:600;margin-top:3px;line-height:1.2;">'+sub+'</div>':'')+'</div>';
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
-const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves weaker':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
+const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
 P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
-if(this._reveal('mastery'))P+='<div onclick="Game.showMastery()" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,'ⓘ')+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
+if(this._reveal('mastery'))P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
-B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',"Game.showCreditScore()");
+B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
-B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',"Game.showCreditAvail()");
-B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),"Game.showRevenue()");
-B+=row('Expense/mo',m(bizExp,'var(--gold)'),"Game.showBurn()");
-B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showNetFlow('business')");
-B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),"Game.showDebt()");
-{const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,"Game.showOwnerEquity()");}
+B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
+B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),null,null,'b_revenue');
+B+=row('Expense/mo',m(bizExp,'var(--gold)'),null,null,'b_expense');
+B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
+{const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 B+='</div><div id="biz-ops">'+subLab('Operations')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
@@ -569,19 +589,27 @@ const targetBal=0.29*(persRev+avail),payRev=Math.max(0,Math.min(Math.round(persR
 let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_debt||0,budget);
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
-showCreditAvail(){const s=this.state,pa=s.available_credit||0,persUsed=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persUsed+pa;
+// Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;try{this.renderStats();}catch(e){}this[d.fn](d.scope);},
+_statsUnviewed(){const vs=this.state._statsViewed||{};return Object.keys(this.STAT_INFO).filter(k=>!vs[k]).length;},
+markAllStatsViewed(){if(!this.state._statsViewed)this.state._statsViewed={};Object.keys(this.STAT_INFO).forEach(k=>this.state._statsViewed[k]=true);try{this.renderStats();}catch(e){}this.hidePopup();},
+_scopeChip(scope){return scope?('<div><span class="scope-chip '+scope+'">'+(scope==='business'?'Business':'Personal')+'</span></div>'):'';},
+_statFooter(){const left=this._statsUnviewed();return '<div class="stat-footer"><button onclick="Game.markAllStatsViewed()">✓ Mark all stats as viewed'+(left>0?' ('+left+' left)':'')+'</button></div>';},
+showCreditAvail(scope){const s=this.state,pa=s.available_credit||0,persUsed=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persUsed+pa;
 const ba=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),bu=s.business_credit_used||0,bl=s.business_credit_limit||0;
 const icv=s.insurance_cash_value||0,pla=Math.max(0,Math.round(icv*0.9)-(s.insurance_loan_balance||0)),ilb=s.insurance_loan_balance||0;
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Credit you can still borrow right now — across personal cards, your business line, and (with a policy) your insurance cash value. Keeping <strong>utilization</strong> (how much of your limit is used) low protects your credit score.</div>';
-h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Credit</div>';
+const pers=scope!=='business',biz=scope!=='personal';
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Credit you can still borrow right now'+(pers&&biz?' — personal cards, your business line, and (with a policy) your insurance cash value':biz?' on your business line of credit':' on your personal cards and (with a policy) your insurance cash value')+'. Keeping <strong>utilization</strong> (how much of your limit is used) low protects your credit score.</div>';
+if(pers){h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Credit</div>';
 h+='<div class="breakdown-row"><span>Available</span><span>'+this.fmtMoney(pa)+'</span></div>';
 h+='<div class="breakdown-row"><span>Used / Limit</span><span>'+this.fmtMoney(persUsed)+' / '+this.fmtMoney(persLim)+'</span></div>';
-h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span style="color:'+(this.calcPersUtil()>30?'var(--gold)':'var(--accent)')+'">'+this.calcPersUtil()+'%</span></div>';
-h+='<div style="font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--blue);padding-bottom:3px;margin:14px 0 6px;">Business Credit</div>';
+h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span style="color:'+(this.calcPersUtil()>30?'var(--gold)':'var(--accent)')+'">'+this.calcPersUtil()+'%</span></div>';}
+if(biz){h+='<div style="font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--blue);padding-bottom:3px;margin:14px 0 6px;">Business Credit</div>';
 h+='<div class="breakdown-row"><span>Available</span><span>'+this.fmtMoney(ba)+'</span></div>';
 h+='<div class="breakdown-row"><span>Used / Limit</span><span>'+this.fmtMoney(bu)+' / '+this.fmtMoney(bl)+'</span></div>';
-h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span style="color:'+(this.calcBizUtil()>50?'var(--gold)':'var(--accent)')+'">'+this.calcBizUtil()+'%</span></div>';
-if(icv>0){h+='<div style="font-weight:700;color:var(--gold);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--gold);padding-bottom:3px;margin:14px 0 6px;">Policy</div>';
+h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span style="color:'+(this.calcBizUtil()>50?'var(--gold)':'var(--accent)')+'">'+this.calcBizUtil()+'%</span></div>';}
+if(pers&&icv>0){h+='<div style="font-weight:700;color:var(--gold);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--gold);padding-bottom:3px;margin:14px 0 6px;">Policy</div>';
 h+='<div class="breakdown-row"><span>Cash Value</span><span>'+this.fmtMoney(icv)+'</span></div>';
 h+='<div class="breakdown-detail">Grows ~7%/yr, tax-free — compounds even while borrowed against.</div>';
 h+='<div class="breakdown-row"><span>Loan Available (90%)</span><span>'+this.fmtMoney(pla)+'</span></div>';
@@ -589,45 +617,49 @@ if(ilb>0){h+='<div class="breakdown-row"><span>Loan Outstanding</span><span styl
 if(s._passive_income_active){const moP=Math.round(icv*0.06/12);h+='<div class="breakdown-row"><span>Monthly Passive Income</span><span style="color:var(--accent)">'+this.fmtMoney(moP)+'/mo</span></div>';h+='<div class="breakdown-row"><span>Cumulative Policy Loans</span><span style="color:var(--text2)">'+this.fmtMoney(s.insurance_passive_loan_total||0)+'</span></div>';h+='<div class="breakdown-detail" style="font-style:italic;">Tax-free income from insurer. Cash value grows ~7%/yr; the loan accrues ~5%/yr and is netted from the death benefit only.</div>';}
 else h+='<div class="breakdown-detail">Activate tax-free passive income with the "Activate Tax-Free Passive Income" finance action.</div>';
 if(s.insurance_coverage)h+='<div class="breakdown-row"><span>Protection Coverage</span><span>'+this.fmtMoney(s.insurance_coverage)+'</span></div>';}
-h+='<div class="breakdown-row breakdown-total"><span>Total Available</span><span style="color:var(--accent)">'+this.fmtMoney(pa+ba+pla)+'</span></div>';
-this.showPopup('Credit Available',h);},
+h+='<div class="breakdown-row breakdown-total"><span>Total Available</span><span style="color:var(--accent)">'+this.fmtMoney((pers?pa+pla:0)+(biz?ba:0))+'</span></div>';
+h+=this._statFooter();
+this.showPopup('Credit Available'+(scope?(' — '+(biz&&!pers?'Business':'Personal')):''),h);},
 
-showDebt(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),persInst=s._installment_debt||0;
+showDebt(scope){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),persInst=s._installment_debt||0;
 const bizRev=s.business_credit_used||0,bizInst=s.business_installment_debt||0,reDbt=s.real_estate_debt||0;
 const insLoan=s.insurance_loan_balance||0,pbLoan=s.private_bank_loan||0,totalAll=(s.total_debt||0)+insLoan+pbLoan,moPay=this.calcDebtInterest()+this.calcDebtPrincipal();
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything you owe, by type. <strong>Revolving</strong> (cards/lines) hurts your score when you use too much of the limit; <strong>installment</strong> (fixed loans) is gentler. Less debt — and the right structure — means healthier credit and lower payments.</div>';
-h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Debt</div>';
+const pers=scope!=='business',biz=scope!=='personal';
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything you owe, by type. <strong>Revolving</strong> (cards/lines) hurts your score when you use too much of the limit; <strong>installment</strong> (fixed loans) is gentler. Less debt — and the right structure — means healthier credit and lower payments.</div>';
+if(pers){h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Debt</div>';
 h+='<div class="breakdown-row"><span>Revolving (cards)</span><span style="color:var(--red)">'+this.fmtMoney(persRev)+'</span></div>';
-h+='<div class="breakdown-row"><span>Installment (loans)</span><span style="color:var(--gold)">'+this.fmtMoney(persInst)+'</span></div>';
-h+='<div style="font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--blue);padding-bottom:3px;margin:14px 0 6px;">Business Debt</div>';
+h+='<div class="breakdown-row"><span>Installment (loans)</span><span style="color:var(--gold)">'+this.fmtMoney(persInst)+'</span></div>';}
+if(biz){h+='<div style="font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--blue);padding-bottom:3px;margin:14px 0 6px;">Business Debt</div>';
 h+='<div class="breakdown-row"><span>Revolving (LOC)</span><span style="color:var(--red)">'+this.fmtMoney(bizRev)+'</span></div>';
-h+='<div class="breakdown-row"><span>Installment (loans)</span><span style="color:var(--gold)">'+this.fmtMoney(bizInst)+'</span></div>';
-if(reDbt>0){h+='<div style="font-weight:600;color:var(--text);margin:10px 0 6px;border-top:1px solid var(--border);padding-top:8px;">Real Estate (property-secured)</div>';
+h+='<div class="breakdown-row"><span>Installment (loans)</span><span style="color:var(--gold)">'+this.fmtMoney(bizInst)+'</span></div>';}
+if(pers&&reDbt>0){h+='<div style="font-weight:600;color:var(--text);margin:10px 0 6px;border-top:1px solid var(--border);padding-top:8px;">Real Estate (property-secured)</div>';
 h+='<div class="breakdown-row"><span>Mortgage/HELOC</span><span style="color:var(--blue)">'+this.fmtMoney(reDbt)+'</span></div>';
 h+='<div class="breakdown-detail">Does not impact business loan qualification</div>';}
-if(insLoan>0)h+='<div class="breakdown-row"><span>Policy Loan</span><span style="color:var(--text2)">'+this.fmtMoney(insLoan)+'</span></div>';
-if(pbLoan>0){h+='<div class="breakdown-row"><span>Private Bank Line (1%)</span><span style="color:var(--accent)">'+this.fmtMoney(pbLoan)+'</span></div>';h+='<div class="breakdown-detail">Backed by your deposit — just ~1%/yr, the cheapest leverage you have.</div>';}
-h+='<div class="breakdown-row breakdown-total"><span>Total Outstanding</span><span style="color:var(--red)">'+this.fmtMoney(totalAll)+'</span></div>';
+if(pers&&insLoan>0)h+='<div class="breakdown-row"><span>Policy Loan</span><span style="color:var(--text2)">'+this.fmtMoney(insLoan)+'</span></div>';
+if(pers&&pbLoan>0){h+='<div class="breakdown-row"><span>Private Bank Line (1%)</span><span style="color:var(--accent)">'+this.fmtMoney(pbLoan)+'</span></div>';h+='<div class="breakdown-detail">Backed by your deposit — just ~1%/yr, the cheapest leverage you have.</div>';}
+const _debtTotal=(pers?(persRev+persInst+reDbt+insLoan+pbLoan):0)+(biz?(bizRev+bizInst):0);
+h+='<div class="breakdown-row breakdown-total"><span>Total Outstanding</span><span style="color:var(--red)">'+this.fmtMoney(_debtTotal)+'</span></div>';
 h+='<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px;">';
 h+='<div class="breakdown-row"><span>Monthly Payments</span><span>'+this.fmtMoney(moPay)+'</span></div>';
 const persLim=persRev+(s.available_credit||0),pu=this.calcPersUtil(),bu=this.calcBizUtil();
-h+='<div class="breakdown-row"><span>Personal '+this.term('Utilization')+'</span><span style="color:'+(pu>30?'var(--gold)':'var(--accent)')+'">'+pu+'% ('+this.fmtMoney(persRev)+'/'+this.fmtMoney(persLim)+')</span></div>';
-if((s.business_credit_limit||0)>0)h+='<div class="breakdown-row"><span>Business '+this.term('Utilization')+'</span><span style="color:'+(bu>50?'var(--gold)':'var(--accent)')+'">'+bu+'% ('+this.fmtMoney(bizRev)+'/'+this.fmtMoney(s.business_credit_limit||0)+')</span></div>';
+if(pers)h+='<div class="breakdown-row"><span>Personal '+this.term('Utilization')+'</span><span style="color:'+(pu>30?'var(--gold)':'var(--accent)')+'">'+pu+'% ('+this.fmtMoney(persRev)+'/'+this.fmtMoney(persLim)+')</span></div>';
+if(biz&&(s.business_credit_limit||0)>0)h+='<div class="breakdown-row"><span>Business '+this.term('Utilization')+'</span><span style="color:'+(bu>50?'var(--gold)':'var(--accent)')+'">'+bu+'% ('+this.fmtMoney(bizRev)+'/'+this.fmtMoney(s.business_credit_limit||0)+')</span></div>';
 const bizMoPay=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),dti=(s.monthly_revenue||0)>0?Math.round((bizMoPay/s.monthly_revenue)*100):0;
-h+='<div class="breakdown-row"><span>DTI (excl RE)</span><span style="color:'+(dti>50?'var(--red)':dti>36?'var(--gold)':'var(--accent)')+'">'+dti+'%</span></div></div>';
-this.showPopup('Debt Breakdown',h);},
+if(biz)h+='<div class="breakdown-row"><span>DTI (excl RE)</span><span style="color:'+(dti>50?'var(--red)':dti>36?'var(--gold)':'var(--accent)')+'">'+dti+'%</span></div>';h+='</div>';
+h+=this._statFooter();this.showPopup('Debt Breakdown'+(scope?(' — '+(biz&&!pers?'Business':'Personal')):''),h);},
 
 showEbitda(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0,ebitda=rev-cogs-opex;this.showPopup(this.term('EBITDA'),'<div class="breakdown-row"><span>Revenue</span><span style="color:var(--accent)">$'+this.fmt(rev)+'</span></div><div class="breakdown-row"><span>- '+this.term('COGS')+'</span><span style="color:var(--red)">$'+this.fmt(cogs)+'</span></div><div class="breakdown-row"><span>- Operating Expenses</span><span style="color:var(--red)">$'+this.fmt(opex)+'</span></div><div class="breakdown-row breakdown-total"><span>= '+this.term('EBITDA')+'</span><span style="color:'+(ebitda>=0?'var(--accent)':'var(--red)')+'">$'+this.fmt(ebitda)+'</span></div>');},
 
-showRevenue(){const s=this.state,biz=s.monthly_revenue||0,cust=s.customer_base||0,perCust=cust>0?Math.round(biz/cust):0,cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);
+showRevenue(scope){const s=this.state,biz=s.monthly_revenue||0,cust=s.customer_base||0,perCust=cust>0?Math.round(biz/cust):0,cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);
 const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passive=(s.other_monthly_revenue||0)+policyPassive,salary=s.owner_pay||0;
-const head=(t,col)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(t.indexOf('Business')===0?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Where your money comes from each month — your <strong>business revenue</strong> (customers × value each) and your <strong>personal income</strong> (your pay plus any passive/asset income).</div>';
-h+=head('Business Revenue','var(--blue)');
+const wantP=scope!=='business',wantB=scope!=='personal';
+const head=(t,col)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:0 0 6px;">'+t+'</div>';
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Where your money comes from each month — your <strong>business revenue</strong> (customers × value each)'+(wantP&&wantB?' and your <strong>personal income</strong> (your pay plus any passive/asset income)':'')+'.</div>';
+if(wantB){h+=head('Business Revenue','var(--blue)');
 h+='<div class="breakdown-row"><span>'+cust+' '+(cust===1?'customer':'customers')+' × ~'+this.fmtMoney(perCust)+'/mo</span><span style="color:var(--accent)">'+this.fmtMoney(biz)+'</span></div>';
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)h+='<div class="breakdown-detail">Seasonal Q4 dip applied (−15%)</div>';
-h+='<div class="breakdown-detail">Delivery capacity '+this.fmtMoney(cap)+'/mo — demand past this is heavily dampened.</div>';
-h+=head('Personal Income','var(--accent)');
+h+='<div class="breakdown-detail">Delivery capacity '+this.fmtMoney(cap)+'/mo — demand past this is heavily dampened.</div>';}
+if(wantP){h+=head('Personal Income','var(--accent)');
 if(salary>0)h+='<div class="breakdown-row"><span>Owner salary / draw</span><span style="color:var(--accent)">'+this.fmtMoney(salary)+'</span></div>';
 if(passive>0){if((s.real_estate_owned||0)>0)h+='<div class="breakdown-detail">· '+s.real_estate_owned+' rental propert'+(s.real_estate_owned>1?'ies':'y')+'</div>';
 if((s.investment_positions||0)>0)h+='<div class="breakdown-detail">· Private lending ('+this.fmtMoney(s.investment_positions)+' deployed)</div>';
@@ -635,11 +667,11 @@ if(policyPassive>0)h+='<div class="breakdown-detail">· Tax-free policy income</
 h+='<div class="breakdown-row"><span>Passive / asset income</span><span style="color:var(--accent)">'+this.fmtMoney(passive)+'</span></div>';}
 if(salary===0&&passive===0)h+='<div class="breakdown-detail">No personal income yet — put yourself on payroll (S-Corp) and switch on passive income.</div>';
 h+='<div class="breakdown-row breakdown-total"><span>Personal income/mo</span><span style="color:var(--accent)">'+this.fmtMoney(salary+passive)+'</span></div>';
-if(this.isSeparated())h+='<div class="breakdown-detail" style="margin-top:6px;">Owner draws to date '+this.fmtMoney(s._owner_draws_total||0)+' · Capital account '+this.fmtMoney(s.capital_account||0)+' · Pass-through tax paid '+this.fmtMoney(s.personal_tax_ytd||0)+'</div>';
-this.showPopup('Income Sources',h);},
+if(this.isSeparated())h+='<div class="breakdown-detail" style="margin-top:6px;">Owner draws to date '+this.fmtMoney(s._owner_draws_total||0)+' · Capital account '+this.fmtMoney(s.capital_account||0)+' · Pass-through tax paid '+this.fmtMoney(s.personal_tax_ytd||0)+'</div>';}
+h+=this._statFooter();this.showPopup((wantB&&!wantP?'Business Revenue':wantP&&!wantB?'Personal Income':'Income Sources'),h);},
 // Plain-language explainer for Owner Equity (the capital account) — a new owner clicking the dashboard row should learn what it is, not land on the revenue screen.
-showOwnerEquity(){const s=this.state,cap=s.capital_account||0;
-let h='<div style="line-height:1.6;color:var(--text2);font-size:0.86rem;margin-bottom:10px;"><strong style="color:var(--text);">Owner Equity</strong> is your <strong>stake in the business</strong> — the slice of the company\'s value that actually belongs to you (its retained worth, like the equity you\'d have in a house you own).<br><br>It <strong>grows</strong> when the business keeps profit (revenue minus costs, your pay, and taxes) and <strong>shrinks</strong> when you take money out as an owner draw'+(s._partner_equity>0?' or pay your partner their share':'')+'. It rolls into your overall <strong>Net Worth</strong>.</div>';
+showOwnerEquity(scope){const s=this.state,cap=s.capital_account||0;
+let h=this._scopeChip(scope||'business')+'<div style="line-height:1.6;color:var(--text2);font-size:0.86rem;margin-bottom:10px;"><strong style="color:var(--text);">Owner Equity</strong> is your <strong>stake in the business</strong> — the slice of the company\'s value that actually belongs to you (its retained worth, like the equity you\'d have in a house you own).<br><br>It <strong>grows</strong> when the business keeps profit (revenue minus costs, your pay, and taxes) and <strong>shrinks</strong> when you take money out as an owner draw'+(s._partner_equity>0?' or pay your partner their share':'')+'. It rolls into your overall <strong>Net Worth</strong>.</div>';
 const retain=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s.owner_pay||0));
 h+='<div class="breakdown-row breakdown-total"><span>Owner Equity (your stake)</span><span style="color:'+(cap>=0?'var(--accent)':'var(--red)')+'">'+this.fmtMoney(cap)+'</span></div>';
 h+='<div class="breakdown-row"><span>Retained profit this month</span><span style="color:'+(retain>=0?'var(--accent)':'var(--red)')+'">'+(retain>=0?'+':'−')+this.fmtMoney(Math.abs(retain))+'</span></div>';
@@ -648,10 +680,10 @@ h+='<div class="breakdown-row"><span>Owner draws to date</span><span style="colo
 h+='<div class="breakdown-detail">Cash you\'ve taken out for yourself — puts money in your pocket but lowers your equity.</div>';
 if(s._partner_equity>0)h+='<div class="breakdown-row"><span>Partner owns</span><span style="color:var(--gold)">'+Math.round(s._partner_equity*100)+'%</span></div>';
 h+='<div class="breakdown-detail" style="margin-top:8px;">💡 High equity means a valuable company you own — but equity isn\'t cash in hand. Turning it into personal wealth (draws, a sale, or borrowing against it) is the real game.</div>';
-this.showPopup('Owner Equity',h);},
-showAssets(){const s=this.state,cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,debt=(s.total_debt||0)+(s.insurance_loan_balance||0)+(s.private_bank_loan||0),gross=cash+inv+re+cv+cap+pbb,net=gross-debt;
+h+=this._statFooter();this.showPopup('Owner Equity',h);},
+showAssets(scope){const s=this.state,cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,debt=(s.total_debt||0)+(s.insurance_loan_balance||0)+(s.private_bank_loan||0),gross=cash+inv+re+cv+cap+pbb,net=gross-debt;
 const r=(l,v,d)=>'<div class="breakdown-row"><span>'+l+'</span><span style="color:var(--accent)">'+this.fmtMoney(v)+'</span></div>'+(d?'<div class="breakdown-detail">'+d+'</div>':'');
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>net worth</strong> — everything you own (cash, investments, property, policy value, your business stake) minus everything you owe. The real scoreboard of the wealth you\'re building.</div>';
+let h=this._scopeChip(scope||'personal')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>net worth</strong> — everything you own (cash, investments, property, policy value, your business stake) minus everything you owe. The real scoreboard of the wealth you\'re building.</div>';
 h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Assets</div>';
 h+=r('Cash (personal + business)',cash);
 if(pbb>0)h+=r('Private Bank Deposit',pbb,'Earns ~5%/yr (~'+this.fmtMoney(Math.round(pbb*0.004))+'/mo) and backs your 1% credit line.');
@@ -663,7 +695,7 @@ h+='<div class="breakdown-row"><span style="color:var(--text2)">Gross Assets</sp
 h+='<div class="breakdown-row"><span>− Total Debt</span><span style="color:var(--red)">'+this.fmtMoney(debt)+'</span></div>';
 h+='<div class="breakdown-row breakdown-total"><span>Net Worth</span><span style="color:var(--accent)">'+this.fmtMoney(net)+'</span></div>';
 if(s.trust_structure&&!['none','basic_llc',undefined].includes(s.trust_structure))h+='<div class="breakdown-detail" style="margin-top:6px;">🛡 Held in your '+(s.trust_structure==='dynasty'?'dynasty trust':'trust')+' — protected from lawsuits and estate tax.</div>';
-this.showPopup('Your Assets',h);},
+h+=this._statFooter();this.showPopup('Your Assets',h);},
 showAchievements(){const s=this.state,have={};(s._milestones_achieved||[]).forEach(m=>have[m.id]=m.month);const total=MILESTONES.length,done=Object.keys(have).length;const CATL={marketing:'Marketing',operations:'Operations',finance:'Finance'},colOf=c=>c==='marketing'?'var(--accent)':c==='operations'?'var(--blue)':'var(--gold)';
 let h='<div style="text-align:center;margin-bottom:10px;"><span style="font-size:1.5rem;font-weight:800;color:var(--gold);">'+done+' / '+total+'</span><div style="font-size:0.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Milestones Unlocked</div></div>';
 for(const cat of ['marketing','operations','finance']){const col=colOf(cat);h+='<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:12px 0 6px;">'+CATL[cat]+'</div>';
@@ -674,39 +706,40 @@ let inLabel,inVal,outVal,liquid;
 if(side==='business'){inLabel='Revenue in';inVal=s.monthly_revenue||0;outVal=(s.operating_expenses||0)+(s.cogs||0);liquid=(s.cash||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));}
 else{const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passiveInc=(s.real_estate_owned||0)*1800+policyPassive+Math.round((s.investment_positions||0)*0.01);inLabel='Income in';inVal=(s.owner_pay||0)+passiveInc;outVal=(s.living_expenses||0)+(s.lifestyle_expenses||0);liquid=(sep?(s.personal_cash||0):(s.cash||0))+(s.available_credit||0);}
 const net=inVal-outVal;
-let h='<div style="font-size:0.85rem;line-height:1.6;margin-bottom:10px;">How much your '+(side==='business'?'business':'personal')+' cash changes each month — money coming in minus money going out. <strong style="color:var(--accent)">Green/positive</strong> = your cash is growing; <strong style="color:var(--red)">red/negative</strong> = you\'re spending it down.</div>';
+let h=this._scopeChip(side==='business'?'business':'personal')+'<div style="font-size:0.85rem;line-height:1.6;margin-bottom:10px;">How much your '+(side==='business'?'business':'personal')+' cash changes each month — money coming in minus money going out. <strong style="color:var(--accent)">Green/positive</strong> = your cash is growing; <strong style="color:var(--red)">red/negative</strong> = you\'re spending it down.</div>';
 h+='<div class="breakdown-row"><span>'+inLabel+'</span><span style="color:var(--accent)">+'+fm(inVal)+'</span></div>';
 h+='<div class="breakdown-row"><span>Expenses out</span><span style="color:var(--red)">−'+fm(outVal)+'</span></div>';
 h+='<div class="breakdown-row breakdown-total"><span>Cash flow / month</span><span style="color:'+(net>=0?'var(--accent)':'var(--red)')+'">'+(net>=0?'+':'−')+fm(Math.abs(net))+'</span></div>';
 if(net<0&&liquid>0)h+='<div class="breakdown-detail" style="margin-top:8px;">At this rate your cash + available credit ('+fm(liquid)+') lasts about <strong>'+Math.floor(liquid/Math.abs(net))+' months</strong> — that\'s the “runway” shown next to it.</div>';
 else if(net>=0)h+='<div class="breakdown-detail" style="margin-top:8px;">You\'re cash-flow positive — no runway clock ticking.</div>';
-this.showPopup((side==='business'?'Business':'Personal')+' Cash Flow',h);},
-showBurn(){const s=this.state,opex=s.operating_expenses||0,cogs=s.cogs||0,pay=s.owner_pay||0,living=s.living_expenses||0,lifestyle=s.lifestyle_expenses||0,interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();
+h+=this._statFooter();this.showPopup((side==='business'?'Business':'Personal')+' Cash Flow',h);},
+showBurn(scope){const s=this.state,opex=s.operating_expenses||0,cogs=s.cogs||0,pay=s.owner_pay||0,living=s.living_expenses||0,lifestyle=s.lifestyle_expenses||0,interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();
 const taxRes=this.state._completed_actions.includes('monthly_tax_reserve')?Math.round(((s.monthly_revenue||0)-cogs-opex)*(s.tax_rate||0.25)):0;
 let detail='';if(s._active_lifestyle_costs&&Object.keys(s._active_lifestyle_costs).length)detail=Object.entries(s._active_lifestyle_costs).map(([id,cost])=>'<div class="breakdown-detail">· '+id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+': $'+this.fmt(cost)+'/mo</div>').join('');
 const bizTotal=opex+cogs+pay+interest+principal+taxRes,persTotal=living+lifestyle;
 const head=(t,col,first)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(first?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything that goes out each month — business costs plus your personal living and lifestyle. This is your <strong>burn</strong>: the number your income has to clear before you\'re actually building wealth.</div>';
-h+=head('Business','var(--blue)',true);
+const wantP=scope!=='business',wantB=scope!=='personal';
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything that goes out each month'+(wantP&&wantB?' — business costs plus your personal living and lifestyle':wantB?' to run the business':' on your personal living and lifestyle')+'. This is your <strong>burn</strong>: the number your income has to clear before you\'re actually building wealth.</div>';
+if(wantB){h+=head('Business','var(--blue)',true);
 h+='<div class="breakdown-row"><span>Operating Expenses</span><span>$'+this.fmt(opex)+'</span></div>';
 if(cogs>0)h+='<div class="breakdown-row"><span>COGS</span><span>$'+this.fmt(cogs)+'</span></div>';
 if(pay>0)h+='<div class="breakdown-row"><span>Owner Salary / Draw</span><span>$'+this.fmt(pay)+'</span></div>';
 h+='<div class="breakdown-row"><span>Debt Service</span><span>$'+this.fmt(interest+principal)+'</span></div>';
 if(taxRes)h+='<div class="breakdown-row"><span>Tax Reserve ('+Math.round((s.tax_rate||0.25)*100)+'%)</span><span>$'+this.fmt(taxRes)+'</span></div>';
-h+='<div class="breakdown-row"><span style="color:var(--text2)">Business subtotal</span><span style="color:var(--text2)">$'+this.fmt(bizTotal)+'</span></div>';
-h+=head('Personal','var(--accent)');
+h+='<div class="breakdown-row"><span style="color:var(--text2)">Business subtotal</span><span style="color:var(--text2)">$'+this.fmt(bizTotal)+'</span></div>';}
+if(wantP){h+=head('Personal','var(--accent)',!wantB);
 h+='<div class="breakdown-row"><span>'+this.term('Living Expenses')+'</span><span>$'+this.fmt(living)+'</span></div>';
 h+='<div class="breakdown-row"><span>Lifestyle Expenses</span><span>$'+this.fmt(lifestyle)+'</span></div>'+detail;
-h+='<div class="breakdown-row"><span style="color:var(--text2)">Personal subtotal</span><span style="color:var(--text2)">$'+this.fmt(persTotal)+'</span></div>';
-h+='<div class="breakdown-row breakdown-total"><span>Total</span><span style="color:var(--red)">$'+this.fmt(bizTotal+persTotal)+'</span></div>';
-this.showPopup(this.term('Monthly Burn'),h);},
+h+='<div class="breakdown-row"><span style="color:var(--text2)">Personal subtotal</span><span style="color:var(--text2)">$'+this.fmt(persTotal)+'</span></div>';}
+h+='<div class="breakdown-row breakdown-total"><span>Total</span><span style="color:var(--red)">$'+this.fmt((wantB?bizTotal:0)+(wantP?persTotal:0))+'</span></div>';
+h+=this._statFooter();this.showPopup((wantB&&!wantP?'Business Expenses':wantP&&!wantB?'Personal Expenses':this.term('Monthly Burn')),h);},
 
 showMastery(){const d=this.lifeDims(),m=this.calcPersonalMastery(),rec=this.calcEnergyRecovery();const bar=(k)=>{const v=d[k],col=v>60?'var(--accent)':v>30?'var(--gold)':'var(--red)';return '<div style="margin:7px 0;"><div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:2px;"><span>'+this.LIFE_ICON[k]+' '+k+'</span><span style="font-weight:700;color:'+col+';">'+v+'</span></div><div class="bar-track" style="height:6px;"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"></div></div></div>';};
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">A life well-lived across five dimensions. Your <strong>Personal Mastery</strong> is their average — and it drives how fast your energy recovers each month (<strong>+'+rec+'/mo</strong> right now).</div>';
+let h=this._scopeChip('personal')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">A life well-lived across five dimensions. Your <strong>Personal Mastery</strong> is their average — and it drives how fast your energy recovers each month (<strong>+'+rec+'/mo</strong> right now).</div>';
 h+=['Body','Mind','Spirit','Heart','Luxury'].map(bar).join('');
 h+='<div style="font-size:0.78rem;color:var(--gold);background:rgba(212,175,55,0.08);border-radius:var(--radius-sm);padding:8px 10px;margin-top:8px;">Neglect your life — coasting on cheap habits — and energy recovery falls, making it hard to act. Invest in yourself (especially the bigger, unlocked experiences) and you run on a full tank.</div>';
-this.showPopup('Personal Mastery — '+m+'/100',h);},
-showCreditScore(){const s=this.state,score=Math.round(s.personal_credit_score),biz=this.calcBizCreditScore();
+h+=this._statFooter();this.showPopup('Personal Mastery — '+m+'/100',h);},
+showCreditScore(scope){const s=this.state,score=Math.round(s.personal_credit_score),biz=this.calcBizCreditScore();const wantP=scope!=='business',wantB=scope!=='personal';
 const cm={positive:'var(--accent)',negative:'var(--red)',warning:'var(--gold)',neutral:'var(--text2)'},im={positive:'↑',negative:'↓',warning:'~',neutral:'·'};
 const frow=x=>'<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="color:'+cm[x.i]+';font-weight:600;">'+im[x.i]+' '+x.l+'</div><div style="font-size:0.75rem;color:var(--text2);">'+x.d+'</div></div>';
 const head=(t,col,first)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(first?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
@@ -730,13 +763,13 @@ else bf.push({l:'Established business credit',i:'positive',d:'Strong history'});
 if(['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))bf.push({l:'Entity established',i:'positive',d:s.entity_structure.replace(/_/g,' ').toUpperCase()});
 if(s._banker_state==='trusted'||s._banker_state==='champion')bf.push({l:'Strong banking relationship',i:'positive',d:'Banker trusts you'});
 if(!bf.length)bf.push({l:'No business credit yet',i:'neutral',d:'Form an LLC and open business credit'});
-let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>credit score</strong> is how lenders judge your reliability — it sets how much you can borrow and how cheaply. The biggest levers are paying on time and keeping <strong>utilization</strong> low. Here\'s what\'s helping or hurting yours right now.</div>';
-h+=head('Personal — FICO','var(--accent)',true);
-h+='<div style="font-size:1.1rem;font-weight:700;color:'+(score>=700?'var(--accent)':score>=620?'var(--gold)':'var(--red)')+'">'+score+' <span style="font-size:0.7rem;color:var(--text2);">/ 850</span></div>'+pf.map(frow).join('');
-h+=head('Business — D&B','var(--blue)');
-h+='<div style="font-size:1.1rem;font-weight:700;color:'+(biz>=70?'var(--accent)':biz>=40?'var(--gold)':'var(--text2)')+'">'+(biz?biz+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span>':'—')+'</div>'+bf.map(frow).join('');
-h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);font-style:italic;">FICO (300–850) is your personal score; D&B (0–100) rates your <strong>business</strong> — build it and the company can borrow on its own name, without your personal guarantee. Utilization = revolving credit only; DTI = all debt vs income.</div>';
-this.showPopup('Credit Scores',h);},
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">'+(wantB&&!wantP?'Your <strong>D&B score</strong> rates your business\'s creditworthiness — build it and the company can borrow on its own name, without your personal guarantee.':'Your <strong>credit score</strong> is how lenders judge your reliability — it sets how much you can borrow and how cheaply. The biggest levers are paying on time and keeping <strong>utilization</strong> low.')+' Here\'s what\'s helping or hurting it right now.</div>';
+if(wantP){h+=head('Personal — MyFICO 3B','var(--accent)',true);
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(score>=700?'var(--accent)':score>=620?'var(--gold)':'var(--red)')+'">'+score+' <span style="font-size:0.7rem;color:var(--text2);">/ 850</span></div>'+pf.map(frow).join('');}
+if(wantB){h+=head('Business — D&B','var(--blue)',!wantP);
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(biz>=70?'var(--accent)':biz>=40?'var(--gold)':'var(--text2)')+'">'+(biz?biz+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span>':'—')+'</div>'+bf.map(frow).join('');}
+h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);font-style:italic;">'+(wantP?'MyFICO 3B (300–850) is your personal score across all three bureaus. ':'')+(wantB?'D&B (0–100) rates your <strong>business</strong> — build it and the company can borrow on its own name, without your personal guarantee. ':'')+'Utilization = revolving credit only; DTI = all debt vs income.</div>';
+h+=this._statFooter();this.showPopup(wantB&&!wantP?'Business Credit Score (D&B)':wantP&&!wantB?'Personal Credit Score (MyFICO 3B)':'Credit Scores',h);},
 showCfoReport(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0;
 const opProfit=Math.max(0,rev-cogs-opex),margin=rev>0?Math.round(opProfit/rev*100):0;
 const valuation=Math.round(Math.max(opProfit*12*3,rev*12*0.5));
@@ -799,9 +832,9 @@ let h='<div style="font-size:0.85rem;line-height:1.6;">'+(a.description||'')+'</
 h+='<div style="font-size:0.8rem;line-height:1.55;color:var(--text2);margin-top:8px;">It runs the single highest-priority money move for you each month — building credit, protection, banking, your tax-free policy, then switching on passive income — and surfaces more investment opportunities.</div>';
 h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:var(--radius-sm);font-size:0.78rem;line-height:1.5;"><strong>⚠️ Very powerful.</strong> If this is your first game, try a full run without it so you learn how the money moves yourself first.</div>';
 if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
-else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action).</div>';
+else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action or any energy — your team handles it).</div>';
 h+='<button class="btn-secondary" style="margin-top:8px;" onclick="Game.cancelEpicLife()">Cancel enrollment</button>';}
-else{h+='<div style="margin-top:12px;font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Choose a plan ('+fm(setup)+' setup either way) — enrolling doesn’t use your Finance action</div>';
+else{h+='<div style="margin-top:12px;font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Choose a plan ('+fm(setup)+' setup either way) — enrolling doesn’t use your Finance action or energy</div>';
 h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'monthly\')">Monthly — '+fm(setup)+' setup + '+fm(mo)+'/mo</button>';
 h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpicLife(\'annual\')">Annual — '+fm(setup)+' setup + '+fm(yr)+'/yr <span style="font-weight:400;opacity:0.85;">(save '+fm(mo*12-yr)+'/yr)</span></button>';}
 this.showPopup('⭐ Epic Life Membership',h);},
@@ -915,6 +948,7 @@ return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(o
 ((this.actionEnergyCost(a))>0?'<span class="cost-tag cost-energy">⚡'+this.actionEnergyCost(a)+'</span>':'')+
 (a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+'</span>':'')+
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
+(()=>{const FR=['hire_cro','hire_coo','hire_cfo'],FU=['promote_cro_fulltime','promote_coo_fulltime','promote_cfo_fulltime'];const amt=FR.includes(a.id)?this.calcExecFrac():FU.includes(a.id)?this.calcExecFull():0;return amt?'<span class="cost-tag cost-recurring" title="ongoing executive pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
@@ -1005,17 +1039,22 @@ _nextUnselectedCat(){const ac=this._activeCats||CATS,start=ac.indexOf(this.curre
 primaryActionBtn(){const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory){this.switchCategory(nxt);return this._focusActionList();}return this._focusActionList();/* last pick is on this screen — nudge the cards rather than end the turn */},
 // Pull the player's eye to the actual choices: scroll the action cards into view and give them a brief highlight (not just flip the category icon).
 _focusActionList(){const list=document.getElementById('action-list'),ind=document.getElementById('step-indicator');const anchor=ind||list;if(anchor&&anchor.scrollIntoView)anchor.scrollIntoView({behavior:'smooth',block:'start'});if(list){list.classList.remove('attn-flash');void list.offsetWidth;list.classList.add('attn-flash');setTimeout(()=>list.classList.remove('attn-flash'),900);}},
-updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]),done=ac.length-unsel.length;btn.disabled=false;
-if(!unsel.length){btn.textContent='Confirm Actions →';if(sec)sec.style.display='none';return;}
+updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,total=ac.length,unsel=ac.filter(c=>!this.selectedActions[c]),done=total-unsel.length;btn.disabled=false;
+// All moves chosen → the primary button ends the turn. Otherwise it navigates to the next move, and the secondary button consistently shows how many are picked and that ending now skips the rest.
+if(!unsel.length){btn.textContent='End Turn →';if(sec)sec.style.display='none';return;}
 const nxt=this._nextUnselectedCat();
-btn.textContent='Next: '+CL[nxt]+' →';if(sec)sec.style.display='block';},
+btn.textContent='Next: '+CL[nxt]+' →';
+if(sec){sec.style.display='block';sec.textContent=done===0?('Skip Turn (0/'+total+')'):('Skip '+unsel.length+' & End Turn ('+done+'/'+total+')');}},
 confirmActions(){const ac=this._activeCats||CATS,count=Object.keys(this.selectedActions).length,total=ac.length;if(count<total){const missing=ac.filter(c=>!this.selectedActions[c]).map(c=>CL[c]).join(', ');return this._confirm('End the month early?','You haven\'t chosen an action for: <strong>'+missing+'</strong> ('+count+'/'+total+' selected).<br><br>End the month anyway?','End month',()=>this._checkBurnoutThenResolve());}
 this._checkBurnoutThenResolve();},
 _checkBurnoutThenResolve(){const te=this._turnEnergy();if(te.left<0){return this._confirm('⚠️ Burnout warning','Your moves this month need <strong>'+te.used+'</strong> energy but you only have <strong>'+te.have+'</strong>. You\'ll push into the red (<strong>'+te.left+'</strong>) — and running on empty makes you much more likely to get sick this month.<br><br>Push through anyway?','Push through',()=>this.resolveMonth());}
 this.resolveMonth();},
 
 coverShortfall(amount){const s=this.state;let need=Math.max(0,Math.round(amount));const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));if(bizAvail>0&&need>0){const d=Math.min(bizAvail,need),fee=Math.round(d*0.03);s.business_credit_used=(s.business_credit_used||0)+d+fee;s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}return need;},
-payCost(amount,fromPersonal){const s=this.state;let need=Math.max(0,Math.round(amount));if(fromPersonal&&this.isSeparated()){if((s.personal_cash||0)>0&&need>0){const d=Math.min(s.personal_cash,need);s.personal_cash-=d;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if(need>0)need=this.coverShortfall(need);return need;}const _utilCap=s._cfo_fulltime?0.55:s._cfo_hired?0.42:0.30;const healthy=Math.max(0,Math.floor((s.business_credit_limit||0)*_utilCap)-(s.business_credit_used||0));if(healthy>0&&need>0){const d=Math.min(healthy,need);s.business_credit_used=(s.business_credit_used||0)+d;s.total_debt=(s.total_debt||0)+d;need-=d;}if((s.cash||0)>0&&need>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}if(need>0)need=this.coverShortfall(need);return need;},
+payCost(amount,fromPersonal){const s=this.state;let need=Math.max(0,Math.round(amount));if(fromPersonal&&this.isSeparated()){if((s.personal_cash||0)>0&&need>0){const d=Math.min(s.personal_cash,need);s.personal_cash-=d;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(s.available_credit,need),fee=Math.round(d*0.03);s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}if(need>0)need=this.coverShortfall(need);return need;}
+// Business expense: spend the business's own cash FIRST (don't rack up debt while cash is sitting there), then a little business-credit float (kept under the utilization cap), then the credit backstop. Personal cash is never touched by a business cost.
+if((s.cash||0)>0&&need>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}
+const _utilCap=s._cfo_fulltime?0.55:s._cfo_hired?0.42:0.30;const healthy=Math.max(0,Math.floor((s.business_credit_limit||0)*_utilCap)-(s.business_credit_used||0));if(healthy>0&&need>0){const d=Math.min(healthy,need);s.business_credit_used=(s.business_credit_used||0)+d;s.total_debt=(s.total_debt||0)+d;need-=d;}if(need>0)need=this.coverShortfall(need);return need;},
 applyDebtRestructure(dr){const s=this.state;dr=dr||{};const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0));const persLim=persRev+(s.available_credit||0);const beforeUtil=persLim>0?Math.round(persRev/persLim*100):0;const movable=Math.max(0,persRev-(s.real_estate_debt||0));let swap=Math.max(0,Math.min(movable,Math.round(persRev-0.22*persLim)));if(swap>0){s._installment_debt=(s._installment_debt||0)+swap;s.available_credit=(s.available_credit||0)+swap;}const afterUtil=this.calcPersUtil();if(swap>0)s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+Math.max(4,Math.round((beforeUtil-afterUtil)/2)));const parts=[];if(dr.lim)parts.push('opened a '+this.fmtMoney(dr.lim)+' business line at 0%');if(swap>0)parts.push('moved '+this.fmtMoney(swap)+' of revolving card debt into a fixed-rate installment loan (utilization '+beforeUtil+'% → '+afterUtil+'%)');if(dr.moveAmt>0)parts.push('shifted '+this.fmtMoney(dr.moveAmt)+' of personal balances onto your business credit, off your personal report');if(dr.cashLoan)parts.push('pulled '+this.fmtMoney(dr.cashLoan)+' in working cash');return parts.length?('Your lending expert '+parts.join('; ')+'. Same debt — restructured into a higher score and usable cash.'):('Your utilization is already healthy at '+beforeUtil+'%. Little revolving debt left to restructure.');},
 resolveMonth(){
 this._tutNotify('endturn');
@@ -1040,12 +1079,15 @@ const repeatCount=(this.state._action_counts||{})[action.id]||0;
 const EXEMPT_DIM=['debt_restructure','banking_relationship','fund_accumulation_policy','policy_loan','pay_down_debt','build_personal_credit'];
 const isDimExempt=action.one_time||EXEMPT_DIM.includes(action.id);
 const diminishing=isDimExempt?0:Math.min(0.25,repeatCount*0.05);
-const penalty=this.state.energy<30?0.85:1;
+// Running low on energy raises your failure risk; pushing into the red (burnout) raises it sharply.
+const penalty=this.state.energy<0?0.6:this.state.energy<30?0.8:1;
 const retryBoost=(this.state._partial_actions&&this.state._partial_actions[action.id])?0.35:0; // a second attempt after a partial is far more likely to land
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
 const success=cat==='lifestyle'?true:(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
+// Low energy also dampens the OUTCOME — even a success delivers less when you're running on empty (and far less in burnout).
+if(cat!=='lifestyle'&&success&&this.state.energy<30){const perf=this.state.energy<0?0.7:0.85;for(const k in effects){if(typeof effects[k]==='number'&&effects[k]>0&&k!=='team_size'&&k!=='energy')effects[k]=Math.max(1,Math.round(effects[k]*perf));}}
 if(!isDimExempt&&repeatCount>2){const dimMult=Math.max(0.4,1-repeatCount*0.1);for(const k in effects){if(typeof effects[k]==='number'&&effects[k]>0&&k!=='team_size')effects[k]=Math.round(effects[k]*dimMult);}}
 const DELAY_IDS=['customer_acquisition_sprint','build_content_presence','build_delivery_foundation','scale_delivery','sales_infrastructure','hire_specialists','scale_beyond_limits'];
 if(DELAY_IDS.includes(action.id)){const immediate={},delayed={};for(const k in effects){if(typeof effects[k]==='number'){if(k==='energy'||k==='cash'||k==='operating_expenses'||k==='team_size'||k==='key_person_dependency'){immediate[k]=effects[k];}else{delayed[k]=effects[k];}}else{immediate[k]=effects[k];}}
@@ -1073,9 +1115,10 @@ if(_cost>0){_spend.total+=_cost;_spend.cash+=_fund.cash;_spend.biz+=_fund.biz;_s
 const _execRun=(this._autoPicked&&this._autoPicked[cat]===action.id)||(cat==='finance'&&this._cfoPick===action.id);
 const _energyCost=this.actionEnergyCost(action);if(_energyCost>0&&!_execRun)this.state.energy=Math.max(-40,this.state.energy-_energyCost);/* energy can go negative (burnout) down to a floor */
 // One-time actions only "complete" (and lock) on a full success — a partial leaves them available to retry. Repeatable actions register as before.
-if((success||!action.one_time)&&!this.state._completed_actions.includes(action.id))this.state._completed_actions.push(action.id);
+// Only a SUCCESS counts as "done" — a partial result isn't marked complete (doesn't satisfy capability gates) and doesn't get a "done ×N" pill; you can retry it.
+if(success&&!this.state._completed_actions.includes(action.id))this.state._completed_actions.push(action.id);
 if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
-this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
+if(success||cat==='lifestyle')this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
 // Non-lifestyle recurring costs (insurance premiums, memberships) become an ongoing monthly operating expense — added once when first activated.
 if(success&&cat!=='lifestyle'&&action.recurring_cost&&action.id!=='epic_life_membership'){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;}}
 if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','operations','finance'].includes(cat)){const role=cat==='marketing'?'CRO':cat==='operations'?'COO':'CFO';const bonus=Math.max(1000,Math.min(15000,Math.round((this.state.monthly_revenue||0)*0.03)));this.payCost(bonus,false);_execBonuses.push({role,bonus,label:action.label});}
@@ -1087,7 +1130,9 @@ if(action.id==='hire_fractional_cfo'&&success)this.state._dyn_narrative='Your fr
 // Credit repair: disputes take 30-90 days. On success, schedule the marks to fall off over ~3 months (2/mo); the score climbs each month until the file is clean (~650), after which utilization carries it higher. A clean file has little to repair → minor boost.
 if(action.id==='build_personal_credit'&&success){const s=this.state,neg=s.credit_negatives||0;
 if(neg>0){const startScore=s.personal_credit_score||0,gainPer=Math.max(12,Math.round((650-startScore)/neg)),months=Math.ceil(neg/2);s._credit_repair={remaining:neg,per:2,gainPer,floor:650,startMonth:this.month+1};s._dyn_narrative='Disputes filed on all '+neg+' negative marks, and new tradelines are reporting. Nothing changes this month — the bureaus take 30-90 days. Starting next month you\'ll watch the marks fall off and your score climb over ~'+months+' months. Clearing them gets you near 650; after that, lowering utilization is what carries you toward 750-800.';}
-else{const before=s.personal_credit_score||0;s.personal_credit_score=Math.min(850,before+6);s._dyn_narrative='Your file is already clean — no negatives to dispute. New tradelines and rent reporting nudged you '+before+' → '+s.personal_credit_score+'. With nothing to repair, the gains are small; your real lever now is keeping utilization low.';}}
+else{const before=s.personal_credit_score||0;s.personal_credit_score=Math.min(850,before+6);s._dyn_narrative='Your file is already clean — no negatives to dispute. New tradelines and rent reporting nudged you '+before+' → '+s.personal_credit_score+'. With nothing to repair, the gains are small; your real lever now is keeping utilization low.';}
+// Active credit management sometimes prompts a card issuer to auto-raise your limit — free utilization relief that quietly lifts the score (happens from time to time, not every time).
+if(Math.random()<0.45){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),lim=persRev+(s.available_credit||0),bump=Math.round(Math.max(1500,lim*0.15));s.available_credit=(s.available_credit||0)+bump;s._dyn_narrative=(s._dyn_narrative||'')+' <strong>Bonus:</strong> a card issuer automatically raised your limit by '+this.fmtMoney(bump)+' — that drops your utilization and quietly lifts your score, no payment required.';}}
 if(success){const _reg={establish_business:['form_llc','open_business_account','basic_bookkeeping'],build_personal_credit:['build_personal_credit_repair','build_personal_credit_optimize'],elect_s_corp:['payroll_setup','s_corp_election'],asset_protection_stack:['multi_entity','asset_protection']}[action.id];if(_reg)_reg.forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';}
 if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
@@ -1269,7 +1314,7 @@ const _lesH=firstLesson?'<div style="font-size:0.73rem;color:var(--gold);line-he
 const _det=_chipsH+_baH+_lesH;
 const _detBlock=_det?'<div'+(_firstCard?' id="tut-result-detail"':'')+' style="margin-top:7px;font-size:0.72rem;color:var(--blue);font-weight:600;">▾ Tap card for details'+(firstLesson?' & lesson':'')+'</div><div id="rdet'+_ci+'" style="display:none;">'+_det+'</div>':'';
 html+='<div class="fade-in"'+(_firstCard?' id="tut-result-card"':'')+(_det?' onclick="Game.toggleResultDetail(\'rdet'+_ci+'\',event)"':'')+' style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;'+(_det?'cursor:pointer;':'')+'">'+
-'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;'+(r.action._epic?'color:var(--gold);':'')+'">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.action._epic?'var(--gold)':(r.success?'var(--accent)':'var(--gold)'))+';white-space:nowrap;">'+(r.action._epic?'⭐ Epic Life':(r.success?'Success':'Partial'))+'</span></div>'+
+'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;'+(r.action._epic?'color:var(--gold);':'')+'">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.action._epic?'var(--gold)':(r.success?'var(--accent)':'var(--gold)'))+';white-space:nowrap;">'+(r.action._epic?'⭐ Epic Life':(r.success?'Success':'Didn\'t finish'))+'</span></div>'+
 (r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
 ((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 '+(r.action.recurring_cost?'Setup':'Cost')+' <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 ((r.success&&r.action.recurring_cost)?'<div style="font-size:0.73rem;color:var(--purple);margin-top:4px;">🔁 +'+this.fmtMoney(r.action.recurring_cost)+'/mo ongoing operating expense</div>':'')+
@@ -1363,6 +1408,8 @@ if(shielded){const avoided=[];if(evt.protection.unprotected_extra)for(const k in
 let claimNote='';if(evt.protection.claim_pct&&typeof effects.cash==='number'&&effects.cash<0){const claim=Math.round(-effects.cash*evt.protection.claim_pct);effects.cash+=claim;claimNote='<br><span style="color:var(--accent);font-size:0.8rem;">Medical claim paid: +'+this.fmtMoney(claim)+'.</span>';}
 // Critical/chronic-illness riders in the stack pay a tax-free LUMP SUM — extra cash to live on while you can't work. Sized to a few months of your living costs.
 if(evt.protection.critical_illness){const months=evt.protection.recovery_months||2;const monthlyLiving=(this.state.living_expenses||3200)+(this.state.lifestyle_expenses||0);const benefit=Math.round(Math.max(8000,monthlyLiving*months));effects.cash=(typeof effects.cash==='number'?effects.cash:0)+benefit;claimNote+='<br><span style="color:var(--accent);font-size:0.8rem;">Critical-illness benefit paid: +'+this.fmtMoney(benefit)+' tax-free — '+months+' month'+(months===1?'':'s')+' of living costs covered while you recover.</span>';}
+// Key-person policy lump-sum benefit: pays the business a fixed sum (on death/disability/critical illness of a key person) to fund the transition.
+if(evt.protection.payout){const pb=Math.round(evt.protection.payout);effects.cash=(typeof effects.cash==='number'?effects.cash:0)+pb;claimNote+='<br><span style="color:var(--accent);font-size:0.8rem;">Key-person policy paid out: +'+this.fmtMoney(pb)+' to fund the transition.</span>';}
 protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected — '+safeguard+'.</strong> '+evt.protection.protected_note+savedNote+claimNote+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
 else{protNote='<div class="narrative-box fade-in" style="border-left-color:var(--red);margin-top:12px;"><strong>Unprotected.</strong> '+evt.protection.unprotected_note+'<br><span style="color:var(--gold);font-size:0.8rem;">How to prepare next time: '+safeguard+'.</span></div>';if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];effects[k]=(typeof effects[k]==='number'?effects[k]:0)+v;}}}
 this.applyEffects(effects);
@@ -1449,7 +1496,7 @@ const lrc=(this.state._action_counts||{})[a.id]||0,lRepeat=lrc>0?'<span class="r
 const tier=(a.cash_cost||0)>=8000?'Premium':(a.cash_cost||0)>=3000?'Standard':'Basic';
 const tierColor=tier==='Premium'?'var(--gold)':tier==='Standard'?'var(--blue)':'var(--text2)';
 const egain=(a.effects&&a.effects.energy>0)?a.effects.energy:(a.energy_cost<0?-a.energy_cost:0);// energy this life action actually restores (effects.energy is what's applied)
-listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p>'+this.lifeActionPreview(a)+'<div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+(egain>0?'<span class="cost-tag cost-energy-gain" style="margin-left:auto;">⚡ +'+egain+' energy</span>':'')+'</div></div>';});
+listHtml+='<div class="action-card '+(afford?'':'locked')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+(afford?"Game.selectLifestyle('"+a.id+"')":'')+'"><h4>'+a.label+lRepeat+(active?' <span style="color:var(--accent);font-size:0.75rem;">(active)</span>':'')+' <span style="font-size:0.65rem;color:'+tierColor+'">'+tier+'</span></h4><p>'+a.description+'</p>'+this.lifeActionPreview(a)+'<div class="action-costs">'+(a.cash_cost?'<span class="cost-tag cost-cash">$'+this.fmt(a.cash_cost)+'</span>':'')+'<span class="cost-tag" style="background:rgba(127,127,127,0.12);color:var(--text2);font-size:0.62rem;" title="which pocket pays for this">'+(this.lifeActionIsPersonal(a)?'👤 Personal':'🏢 Business')+'</span>'+(a.recurring_cost&&!active?'<span class="cost-tag cost-recurring">$'+a.recurring_cost+'/mo ongoing</span>':'')+(outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+(egain>0?'<span class="cost-tag cost-energy-gain" style="margin-left:auto;">⚡ +'+egain+' energy</span>':'')+'</div></div>';});
 document.getElementById('lifestyle-list').innerHTML=listHtml;
 document.getElementById('lifestyle-btn').disabled=true;},
 
