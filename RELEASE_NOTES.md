@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.24.3 — 2026-06-28
+**Dashboard info-screen audit + plain-language descriptions, result-screen color fix**
+
+- **Dashboard info popups — concise intros added:** `showCreditAvail`, `showDebt`, `showRevenue`, `showBurn`, `showAssets`, `showCreditScore` now each lead with a one-sentence plain-language explanation of what the stat is and why it matters. (`showNetFlow`, `showMastery`, `showOwnerEquity` already had intros.)
+- **Owner Equity explainer (`showOwnerEquity`):** the Owner Equity row now opens a dedicated beginner-friendly popup (your stake in the business; grows from retained profit, shrinks from owner draws / partner share; rolls into Net Worth) with live numbers — instead of (confusingly) opening the Revenue screen.
+- **D&B Score now tappable:** the Business D&B row opens the Credit Scores popup (which has the Business–D&B section); footnote clarified that D&B rates the *business* so the company can borrow on its own name without a personal guarantee.
+- **Result-screen color fix (`resolveMonth` before→after rows):** rows for credit score, credit limit, business/personal utilization, credit available, and all status-bar stats (leads, customers, team, brand equity, systems, revenue capacity) were pushed without a color and defaulted to green. Now colored by direction — utilization **up = red**, all the "good when up" stats **down = red** (e.g. brand equity falling now shows red, rising utilization shows red). The event-outcome rows and Cash & Credit panel already handled direction correctly.
+- **Dashboard cleanup (`netRow`):** removed the per-column "~X mo left" runway under Personal/Business Cash flow/mo — the two columns used different liquid pools and showed conflicting, misleading numbers. Full runway still lives on the result-screen Cash & Credit panel and the cash-flow breakdown popup.
+
 ## v0.24.2 — 2026-06-28
 **No-coasting fix: lead decay so business revenue must be worked**
 

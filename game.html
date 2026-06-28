@@ -2731,6 +2731,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.24.3',d:'2026-06-28 18:00',n:[
+'Tap any dashboard stat to understand it: Credit, Debt, Income, Burn, Net Worth, Credit Score, Cash Flow, Owner Equity and Personal Mastery now each open with a plain-English one-liner explaining what it is and why it matters. Your business D&B score is now tappable too.',
+'Owner Equity now opens its own clear explainer (your stake in the business — how it grows and shrinks) instead of the revenue screen.',
+'Result screen color fix: a rising credit utilization now shows red (it\'s bad), and a falling stat like brand equity shows red too — colors finally match good vs. bad in every direction.',
+'Cleaner dashboard: removed the per-column “months left” under Personal/Business cash flow, which showed two different numbers and was misleading (full runway still lives on the result screen and the cash-flow breakdown).'
+]},
 {v:'0.24.2',d:'2026-06-28 17:00',n:[
 'No more coasting: your customers don\'t stick around for free. Leads go cold over time, so if you stop marketing — and stop supporting clients — your customer base and revenue slowly erode. Keep generating demand and invest in retention (client success, systems, strong brand) to hold your ground. The only income that truly arrives without work is passive, tax-free income — the endgame you\'re building toward.'
 ]},
@@ -3199,7 +3205,7 @@ const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'�
 const row=(label,valHtml,click,id)=>'<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(click?'cursor:pointer;':'')+'"'+(click?' onclick="'+click+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(click?' <span class="info-btn">i</span>':'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-const netRow=(label,net,liquid,click,id)=>{const c=net>=0?'var(--accent)':'var(--red)';let v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';if(net<0&&liquid>0){const mo=Math.floor(liquid/Math.abs(net));v+='<br><span style="font-size:0.52rem;color:var(--text2);font-weight:400;">~'+mo+'mo left</span>';}return row(label,v,click,id);};
+const netRow=(label,net,liquid,click,id)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id);};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',"Game.showCreditScore()");
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
@@ -3222,14 +3228,14 @@ if(this._reveal('mastery'))P+='<div onclick="Game.showMastery()" style="cursor:p
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
-B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>');
+B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',"Game.showCreditScore()");
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',"Game.showCreditAvail()");
 B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),"Game.showRevenue()");
 B+=row('Expense/mo',m(bizExp,'var(--gold)'),"Game.showBurn()");
 B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,"Game.showNetFlow('business')");
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),"Game.showDebt()");
-{const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,"Game.showRevenue()");}
+{const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,"Game.showOwnerEquity()");}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 B+='</div><div id="biz-ops">'+subLab('Operations')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
@@ -3253,7 +3259,8 @@ return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 showCreditAvail(){const s=this.state,pa=s.available_credit||0,persUsed=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persUsed+pa;
 const ba=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),bu=s.business_credit_used||0,bl=s.business_credit_limit||0;
 const icv=s.insurance_cash_value||0,pla=Math.max(0,Math.round(icv*0.9)-(s.insurance_loan_balance||0)),ilb=s.insurance_loan_balance||0;
-let h='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Credit</div>';
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Credit you can still borrow right now — across personal cards, your business line, and (with a policy) your insurance cash value. Keeping <strong>utilization</strong> (how much of your limit is used) low protects your credit score.</div>';
+h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Credit</div>';
 h+='<div class="breakdown-row"><span>Available</span><span>'+this.fmtMoney(pa)+'</span></div>';
 h+='<div class="breakdown-row"><span>Used / Limit</span><span>'+this.fmtMoney(persUsed)+' / '+this.fmtMoney(persLim)+'</span></div>';
 h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span style="color:'+(this.calcPersUtil()>30?'var(--gold)':'var(--accent)')+'">'+this.calcPersUtil()+'%</span></div>';
@@ -3275,7 +3282,8 @@ this.showPopup('Credit Available',h);},
 showDebt(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),persInst=s._installment_debt||0;
 const bizRev=s.business_credit_used||0,bizInst=s.business_installment_debt||0,reDbt=s.real_estate_debt||0;
 const insLoan=s.insurance_loan_balance||0,pbLoan=s.private_bank_loan||0,totalAll=(s.total_debt||0)+insLoan+pbLoan,moPay=this.calcDebtInterest()+this.calcDebtPrincipal();
-let h='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Debt</div>';
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything you owe, by type. <strong>Revolving</strong> (cards/lines) hurts your score when you use too much of the limit; <strong>installment</strong> (fixed loans) is gentler. Less debt — and the right structure — means healthier credit and lower payments.</div>';
+h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Personal Debt</div>';
 h+='<div class="breakdown-row"><span>Revolving (cards)</span><span style="color:var(--red)">'+this.fmtMoney(persRev)+'</span></div>';
 h+='<div class="breakdown-row"><span>Installment (loans)</span><span style="color:var(--gold)">'+this.fmtMoney(persInst)+'</span></div>';
 h+='<div style="font-weight:700;color:var(--blue);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--blue);padding-bottom:3px;margin:14px 0 6px;">Business Debt</div>';
@@ -3301,7 +3309,8 @@ showEbitda(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.o
 showRevenue(){const s=this.state,biz=s.monthly_revenue||0,cust=s.customer_base||0,perCust=cust>0?Math.round(biz/cust):0,cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);
 const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passive=(s.other_monthly_revenue||0)+policyPassive,salary=s.owner_pay||0;
 const head=(t,col)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(t.indexOf('Business')===0?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
-let h=head('Business Revenue','var(--blue)');
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Where your money comes from each month — your <strong>business revenue</strong> (customers × value each) and your <strong>personal income</strong> (your pay plus any passive/asset income).</div>';
+h+=head('Business Revenue','var(--blue)');
 h+='<div class="breakdown-row"><span>'+cust+' '+(cust===1?'customer':'customers')+' × ~'+this.fmtMoney(perCust)+'/mo</span><span style="color:var(--accent)">'+this.fmtMoney(biz)+'</span></div>';
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)h+='<div class="breakdown-detail">Seasonal Q4 dip applied (−15%)</div>';
 h+='<div class="breakdown-detail">Delivery capacity '+this.fmtMoney(cap)+'/mo — demand past this is heavily dampened.</div>';
@@ -3315,9 +3324,22 @@ if(salary===0&&passive===0)h+='<div class="breakdown-detail">No personal income 
 h+='<div class="breakdown-row breakdown-total"><span>Personal income/mo</span><span style="color:var(--accent)">'+this.fmtMoney(salary+passive)+'</span></div>';
 if(this.isSeparated())h+='<div class="breakdown-detail" style="margin-top:6px;">Owner draws to date '+this.fmtMoney(s._owner_draws_total||0)+' · Capital account '+this.fmtMoney(s.capital_account||0)+' · Pass-through tax paid '+this.fmtMoney(s.personal_tax_ytd||0)+'</div>';
 this.showPopup('Income Sources',h);},
+// Plain-language explainer for Owner Equity (the capital account) — a new owner clicking the dashboard row should learn what it is, not land on the revenue screen.
+showOwnerEquity(){const s=this.state,cap=s.capital_account||0;
+let h='<div style="line-height:1.6;color:var(--text2);font-size:0.86rem;margin-bottom:10px;"><strong style="color:var(--text);">Owner Equity</strong> is your <strong>stake in the business</strong> — the slice of the company\'s value that actually belongs to you (its retained worth, like the equity you\'d have in a house you own).<br><br>It <strong>grows</strong> when the business keeps profit (revenue minus costs, your pay, and taxes) and <strong>shrinks</strong> when you take money out as an owner draw'+(s._partner_equity>0?' or pay your partner their share':'')+'. It rolls into your overall <strong>Net Worth</strong>.</div>';
+const retain=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s.owner_pay||0));
+h+='<div class="breakdown-row breakdown-total"><span>Owner Equity (your stake)</span><span style="color:'+(cap>=0?'var(--accent)':'var(--red)')+'">'+this.fmtMoney(cap)+'</span></div>';
+h+='<div class="breakdown-row"><span>Retained profit this month</span><span style="color:'+(retain>=0?'var(--accent)':'var(--red)')+'">'+(retain>=0?'+':'−')+this.fmtMoney(Math.abs(retain))+'</span></div>';
+h+='<div class="breakdown-detail">Revenue − costs − operating expenses − your pay. Kept in the business, this builds your equity.</div>';
+h+='<div class="breakdown-row"><span>Owner draws to date</span><span style="color:var(--gold)">'+this.fmtMoney(s._owner_draws_total||0)+'</span></div>';
+h+='<div class="breakdown-detail">Cash you\'ve taken out for yourself — puts money in your pocket but lowers your equity.</div>';
+if(s._partner_equity>0)h+='<div class="breakdown-row"><span>Partner owns</span><span style="color:var(--gold)">'+Math.round(s._partner_equity*100)+'%</span></div>';
+h+='<div class="breakdown-detail" style="margin-top:8px;">💡 High equity means a valuable company you own — but equity isn\'t cash in hand. Turning it into personal wealth (draws, a sale, or borrowing against it) is the real game.</div>';
+this.showPopup('Owner Equity',h);},
 showAssets(){const s=this.state,cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,debt=(s.total_debt||0)+(s.insurance_loan_balance||0)+(s.private_bank_loan||0),gross=cash+inv+re+cv+cap+pbb,net=gross-debt;
 const r=(l,v,d)=>'<div class="breakdown-row"><span>'+l+'</span><span style="color:var(--accent)">'+this.fmtMoney(v)+'</span></div>'+(d?'<div class="breakdown-detail">'+d+'</div>':'');
-let h='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Assets</div>';
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>net worth</strong> — everything you own (cash, investments, property, policy value, your business stake) minus everything you owe. The real scoreboard of the wealth you\'re building.</div>';
+h+='<div style="font-weight:700;color:var(--accent);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;margin-bottom:6px;">Assets</div>';
 h+=r('Cash (personal + business)',cash);
 if(pbb>0)h+=r('Private Bank Deposit',pbb,'Earns ~5%/yr (~'+this.fmtMoney(Math.round(pbb*0.004))+'/mo) and backs your 1% credit line.');
 if(inv>0)h+=r('Investments',inv,'Private equity, private lending & managed portfolio'+(s._family_office?' — optimized by your family office':'')+'. Throws off ~'+this.fmtMoney(Math.round(inv*0.01))+'/mo passive.');
@@ -3351,7 +3373,8 @@ const taxRes=this.state._completed_actions.includes('monthly_tax_reserve')?Math.
 let detail='';if(s._active_lifestyle_costs&&Object.keys(s._active_lifestyle_costs).length)detail=Object.entries(s._active_lifestyle_costs).map(([id,cost])=>'<div class="breakdown-detail">· '+id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+': $'+this.fmt(cost)+'/mo</div>').join('');
 const bizTotal=opex+cogs+pay+interest+principal+taxRes,persTotal=living+lifestyle;
 const head=(t,col,first)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(first?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
-let h=head('Business','var(--blue)',true);
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Everything that goes out each month — business costs plus your personal living and lifestyle. This is your <strong>burn</strong>: the number your income has to clear before you\'re actually building wealth.</div>';
+h+=head('Business','var(--blue)',true);
 h+='<div class="breakdown-row"><span>Operating Expenses</span><span>$'+this.fmt(opex)+'</span></div>';
 if(cogs>0)h+='<div class="breakdown-row"><span>COGS</span><span>$'+this.fmt(cogs)+'</span></div>';
 if(pay>0)h+='<div class="breakdown-row"><span>Owner Salary / Draw</span><span>$'+this.fmt(pay)+'</span></div>';
@@ -3394,11 +3417,12 @@ else bf.push({l:'Established business credit',i:'positive',d:'Strong history'});
 if(['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))bf.push({l:'Entity established',i:'positive',d:s.entity_structure.replace(/_/g,' ').toUpperCase()});
 if(s._banker_state==='trusted'||s._banker_state==='champion')bf.push({l:'Strong banking relationship',i:'positive',d:'Banker trusts you'});
 if(!bf.length)bf.push({l:'No business credit yet',i:'neutral',d:'Form an LLC and open business credit'});
-let h=head('Personal — FICO','var(--accent)',true);
+let h='<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>credit score</strong> is how lenders judge your reliability — it sets how much you can borrow and how cheaply. The biggest levers are paying on time and keeping <strong>utilization</strong> low. Here\'s what\'s helping or hurting yours right now.</div>';
+h+=head('Personal — FICO','var(--accent)',true);
 h+='<div style="font-size:1.1rem;font-weight:700;color:'+(score>=700?'var(--accent)':score>=620?'var(--gold)':'var(--red)')+'">'+score+' <span style="font-size:0.7rem;color:var(--text2);">/ 850</span></div>'+pf.map(frow).join('');
 h+=head('Business — D&B','var(--blue)');
 h+='<div style="font-size:1.1rem;font-weight:700;color:'+(biz>=70?'var(--accent)':biz>=40?'var(--gold)':'var(--text2)')+'">'+(biz?biz+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span>':'—')+'</div>'+bf.map(frow).join('');
-h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);font-style:italic;">FICO (300–850) is personal; D&B (0–100) is your business score. Utilization = revolving credit only; DTI = all debt vs income.</div>';
+h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);font-style:italic;">FICO (300–850) is your personal score; D&B (0–100) rates your <strong>business</strong> — build it and the company can borrow on its own name, without your personal guarantee. Utilization = revolving credit only; DTI = all debt vs income.</div>';
 this.showPopup('Credit Scores',h);},
 showCfoReport(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0;
 const opProfit=Math.max(0,rev-cogs-opex),margin=rev>0?Math.round(opProfit/rev*100):0;
@@ -3786,16 +3810,16 @@ if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Cash this action moved (cost paid, or loan/sale proceeds added)
 if(Math.round(af.cash)!==Math.round(_cb.cash)){rows.push([sep?'Business cash':'Cash',this.fmtMoney(_cb.cash),this.fmtMoney(af.cash),af.cash<_cb.cash?RED:GRN]);_ro._baKeys.push('cash');}
 if(sep&&Math.round(af.pcash)!==Math.round(_cb.pcash)){rows.push(['Personal cash',this.fmtMoney(_cb.pcash),this.fmtMoney(af.pcash),af.pcash<_cb.pcash?RED:GRN]);_ro._baKeys.push('personal_cash');}
-if(af.persScore!==_cb.persScore)rows.push(['Personal credit score',''+_cb.persScore,''+af.persScore]);
-if(af.bizLim!==_cb.bizLim)rows.push(['Business credit limit',this.fmtMoney(_cb.bizLim),this.fmtMoney(af.bizLim)]);
-if(af.bizLim>0&&af.bizUtil!==_cb.bizUtil)rows.push(['Business utilization',_cb.bizUtil+'%',af.bizUtil+'%']);
-if(af.persUtil!==_cb.persUtil)rows.push(['Personal utilization',_cb.persUtil+'%',af.persUtil+'%']);
-if(af.avail!==_cb.avail&&af.bizLim===_cb.bizLim)rows.push(['Personal credit available',this.fmtMoney(_cb.avail),this.fmtMoney(af.avail)]);
+if(af.persScore!==_cb.persScore)rows.push(['Personal credit score',''+_cb.persScore,''+af.persScore,af.persScore>=_cb.persScore?GRN:RED]);
+if(af.bizLim!==_cb.bizLim)rows.push(['Business credit limit',this.fmtMoney(_cb.bizLim),this.fmtMoney(af.bizLim),af.bizLim>=_cb.bizLim?GRN:RED]);
+if(af.bizLim>0&&af.bizUtil!==_cb.bizUtil)rows.push(['Business utilization',_cb.bizUtil+'%',af.bizUtil+'%',af.bizUtil<=_cb.bizUtil?GRN:RED]);
+if(af.persUtil!==_cb.persUtil)rows.push(['Personal utilization',_cb.persUtil+'%',af.persUtil+'%',af.persUtil<=_cb.persUtil?GRN:RED]);
+if(af.avail!==_cb.avail&&af.bizLim===_cb.bizLim)rows.push(['Personal credit available',this.fmtMoney(_cb.avail),this.fmtMoney(af.avail),af.avail>=_cb.avail?GRN:RED]);
 // Total debt this action moved (e.g. a loan adds debt without touching the credit limit)
 if(Math.round(af.debt)!==Math.round(_cb.debt)){rows.push(['Total debt',this.fmtMoney(_cb.debt),this.fmtMoney(af.debt),af.debt>_cb.debt?RED:GRN]);_ro._baKeys.push('total_debt');}
 // Status-bar stats this action moved directly (leads, customers, team, etc.)
 const _sbLbl={leads:'Leads',customer_base:'Customers',team_size:'Team size',brand_equity:'Brand equity',systems_maturity:'Systems maturity',revenue_capacity:'Revenue capacity'};
-for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av)]);_ro._baKeys.push(k);}}
+for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av),av>=bv?GRN:RED]);_ro._baKeys.push(k);}}
 if(rows.length)_ro.beforeAfter=rows;}
 results.push(_ro);if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
 delete this.selectedActions['epic'];delete this.selectedActions['epicbuy'];
