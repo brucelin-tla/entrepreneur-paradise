@@ -2,6 +2,19 @@
   "version": "1.0.0",
   "events": [
     {
+      "id": "key_operator_loss",
+      "category": "people",
+      "requires": { "_asset_units_gte": 1 },
+      "base_probability": 0.04,
+      "probability_scales_with": "_asset_units",
+      "scale_factor": 0.03,
+      "narrative": "The operator running one of your income properties is suddenly out — a serious illness, then weeks in the hospital. They can't run the asset, tenants are calling, and the mortgage on that building doesn't pause for anyone.",
+      "act": 3,
+      "choices": [
+        { "label": "Handle the fallout", "effects": {}, "outcome_narrative": "You step in to stabilize the property and sort out what the policies cover." }
+      ]
+    },
+    {
       "id": "liability_lawsuit",
       "category": "litigation",
       "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },

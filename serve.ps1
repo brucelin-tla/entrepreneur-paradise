@@ -14,6 +14,8 @@ while ($listener.IsListening) {
         $rel = [System.Uri]::UnescapeDataString($ctx.Request.Url.AbsolutePath.TrimStart('/'))
         if ([string]::IsNullOrEmpty($rel)) { $rel = "index.html" }
         $path = Join-Path $root $rel
+        # No-cache for local dev so edits to js/css/config always reload fresh (the live GitHub Pages site is unaffected).
+        $ctx.Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate")
         if (Test-Path $path -PathType Leaf) {
             $bytes = [System.IO.File]::ReadAllBytes($path)
             $ext = [System.IO.Path]::GetExtension($path).ToLower()

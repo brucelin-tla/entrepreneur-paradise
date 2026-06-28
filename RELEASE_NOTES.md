@@ -1,5 +1,48 @@
 # Release Notes
 
+## v0.33.0 — 2026-06-29
+**Roadmap surfacing (result-screen milestone + non-member preview) and the Key-Man Leverage loop (Phase 2, hybrid framing)**
+
+**Roadmap UX (items 1 & 2):**
+- Refactored the roadmap into a shared `_epicRoadmapData()` (single source of truth) consumed by the full modal view and a new compact view.
+- **`_epicMilestoneCompact()`** — a glanceable card: overall % bar + current stage + next node, tappable to open the full roadmap. Shown to **non-members** on the result screen (locked teaser/upsell) and to **members on the Finance action menu** (replacing the old "Epic Life Membership handles these for you" list, which was redundant).
+- **`_epicMonthCard()`** — a richer card at the **top of the result screen for members**: what the concierge ran this month (`_epicLastMove`, captured when the epic move resolves) + its narrative, the **roadmap swing** (overall % vs `_roadmapStart` snapshot taken at month start), any **newly-completed nodes** (diff vs `_roadmapStartDone`), and the next milestone. Tappable to the full roadmap. (Members get this instead of the compact teaser; non-members keep the teaser.)
+- **Non-member locked preview:** `_epicRoadmapHtml({locked})` renders the roadmap (with the player's real progress) for non-members too, dimmed + framed as "🔒 Concierge Roadmap — Preview" with an upsell line. Wired into `showEpicLife` for everyone.
+
+**Key-Man Leverage loop (Phase 2 — hybrid, as agreed):**
+- **Portfolio tracking:** each `buy_real_estate` adds a leveraged, operator-run unit (`_asset_units`, `_asset_income`).
+- **New action `key_man_policy`** (finance, wealth, repeatable, `_asset_units_gte: 1`, in "Wealth & Passive Income"): covers operators up to the current portfolio (`_keyman_units = _asset_units`); premium scales at ~$180/mo per covered operator, reconciled into `operating_expenses` by delta so re-taking just tops up.
+- **New event `key_operator_loss`** (people, `requires _asset_units_gte 1`, probability scales with `_asset_units`): custom resolution in `resolveEvent`. Losing an operator **always** stops that asset's income (`other_monthly_revenue -= perUnitIncome`, unit removed). **Covered** → the policy retires that property's *specific* mortgage (`real_estate_debt`/`total_debt -= min(perUnitDebt, …)`, one policy consumed, `_keyman_claims_total += claim`) — contained, **never net-positive** (you lose the income stream in exchange). **Uncovered** → the loan remains while its income is gone, plus a ~2×-income scramble cash hit. Verified both paths: covered retires exactly the per-unit loan; uncovered leaves debt unchanged.
+- **Visibility ("tracked and visible"):** a **🏗️ Leverage Engine** panel in the roadmap — income-property count, asset debt, 🔑 key-operator coverage (n/units · %, color-coded), a red uninsured-operators warning pointing to the action, and a claims-to-date note ("covering each specific loan, never a windfall").
+- **Phase 3+ (not built):** private-lending/PE are unlevered (no per-asset loan) so they're outside the key-man-debt loop for now; accumulation-policy/key-man-on-people-running-other-asset-types could extend later.
+
+**Dev infra:** `serve.ps1` now sends `Cache-Control: no-cache` so local edits always reload fresh (no effect on the live GitHub Pages site).
+
+## v0.32.0 — 2026-06-29
+**Epic Life "Concierge Roadmap" — the golden path made visible (progress bars + coverage gauge + Freedom finish line)**
+
+- **New `_epicRoadmapHtml()`**, rendered inside the Epic Life modal (`showEpicLife`) for active members. Visualizes the golden path as nested progress bars, surfaced one stage/layer at a time by % completion. Every node maps to existing game state/flags (no new subsystems) — purely a read-only view.
+  - **Bar 1 — Funding Ready** (gates Bar 2): Credit optimization (`credit_negatives===0 && score≥680`) · Debt restructure (`debt_restructure`) · Holding company (`wyoming_holding_llc` / `_holding_company` / `entity ∈ {c_corp, multi_entity}` / `setup_family_office`) · Banking relationship (`banking_relationship` or banker trusted/champion). Below 100% it shows only this bar + an unlock hint.
+- **New action — `wyoming_holding_llc`** (finance, leverage stage, "Tax & Protection" group): a Wyoming holding LLC (registered agent, business address, operating agreement, NAICS code). Effects: sets `_holding_company`, `litigation_exposure −20`, `personal_guarantee_exposure −12k`, `business_credit_limit +12k` (better bank access), `audit_risk +2`; $3k one-time, 90% success. Distinct from `asset_protection_stack` (the wealth-stage full holding+trust+umbrella) — this is the earlier *funding-ready* structural layer. Wired into the menu, `EPIC_HANDLED`, the concierge `_epicLifePick` ladder (built before the protection stack), and the roadmap's Holding-company node. (Player wrote "NAIC" — modeled as **NAICS** industry code, the identifier banks actually use.)
+- **Debt-coverage gauge:** kept **inclusive** (passive + business profit) ÷ debt service, per decision — the lenient reading.
+- **Emergency fund → 3 months:** the roadmap Reserve node and the v0.31.0 pay-yourself-first auto-cushion now both target **3× living expenses** (floor of the 3–6 month range), up from 2×.
+  - **Bar 2 — Epic Life System**, layers revealed as each fills: **Protection** (insurance / entity / counsel / asset-protection trust) → **Expense** (lower taxes / lower debt service / reserve discipline) → **Reserve** (accumulation policy / investments / emergency fund).
+  - **Payoff readouts** (once reserve underway or passive active): a **Debt-coverage gauge** = (passive income + business profit) ÷ monthly debt service, color-coded (≥1.25× green, ≥1× gold, <1 red) — the safety signal as leverage/debt grows; and a **Freedom bar** = passive income ÷ lifestyle cost, with the tax-free policy portion called out, culminating in a **🏝️ Paradise** banner at 100%.
+- Verified across early / funding-complete / fully-built states (layers gate correctly, coverage + Freedom + Paradise render); no console errors.
+- **Scope:** Phase 1 of the larger Epic Life vision — visualizes the *existing* path. The key-man / income-producing-asset / mortality-claim mechanics are a planned Phase 2 (agreed framing: **hybrid** — an asset's key-man/loan-protection policy covers that asset's specific loan on a person loss, but is never net-positive overall; asset cash flow stays the primary debt-payer, insurance the backstop).
+
+## v0.31.0 — 2026-06-29
+**Solvency correctness (false-insolvency + negative-credit bugs) + earned second chances (personal cushion, earlier runway warning)**
+
+> Triggered by a player report: a run ended "Insolvent — Out of Cash & Credit" while $1,914 cash and +$1,885 accessible capital remained. Two bugs reproduced it exactly.
+
+- **Bug — false insolvency (the report):** the solvency check (`_settleCashOrLose` + the `monthlyTick` cash check) only considered the *business's* cash + credit + tax reserve. A business shortfall declared game-over **without ever tapping the owner's personal cash**, even though accessible capital (which includes personal cash) was positive — contradicting the game-over screen's own "cash + all available credit" definition. Fix: new `_tapPersonalToSurvive(need)` — a last-resort owner capital contribution from `personal_cash`, run after business cash → credit → tax reserve, before declaring `_pendingLose`. Reached only when otherwise insolvent, so a normal month never touches the cushion. A truly broke owner (no cash, no credit) still correctly goes insolvent (verified).
+- **Bug — negative available credit:** drawing the *full* remaining credit line subtracted the 3% cash-advance fee **on top of** the limit, leaving `available_credit` at `-fee` (the reported "−$29"). Fixed in all four draw sites (`coverShortfall` ×2, `payCost` personal branch, the `monthlyTick` personal-credit draw): principal is now capped at `floor(avail/1.03)` so principal + fee ≤ the limit and credit floors cleanly at $0.
+- **Earned cushion (pay-yourself-first):** owner pay now adds a small, bounded draw in profitable months to build a personal emergency fund up to ~3 months of living costs (`reserveTarget = living×3`, cushion ≤ 10% of revenue, capped by affordability), then stops once funded. Verified: cushion engages early, backs off when the fund is full; still capped by `afford` so it never hands out free money or hollows out retained equity.
+- **Earlier runway warning:** `showResults` stashes the month's runway (`_lastRunwayMo`); when it falls to ≤3 months, `resultPrimary` fires a one-time `_lowRunwaySpotlight` on the runway figure (how to act before the cliff). Re-arms only after runway recovers to ≥6 months / cash-flow positive (`state._runwayWarned`) — loud, not nagging.
+- **Second-life note:** mirrors the tax-reserve rescue — a "🛟 Saved by Your Personal Savings" popup (`_ownerRescue`) when personal cash covers a would-be-fatal shortfall, nudging the player to fix the burn.
+- Deliberately did **not** raise the base pay scale (a blanket forgiveness lever that dilutes the margin-of-safety lesson and shifts equity out of the business). Second chances stay *earned*.
+
 ## v0.30.1 — 2026-06-29
 **Cost/label consistency pass, realistic MCA rework (revenue holdback), Cash & Credit panel reorg, copy de-bloat**
 
