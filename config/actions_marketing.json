@@ -273,9 +273,9 @@
       "cash_cost": 800,
       "energy_cost": 12,
       "prerequisites": { "customer_base_gte": 15 },
-      "effects": { "systems_maturity": 10, "churn_rate": -0.03, "revenue_capacity": 5000, "sales_conversion": 6 },
+      "effects": { "customer_base": 3, "systems_maturity": 10, "churn_rate": -0.03, "revenue_capacity": 5000, "sales_conversion": 6 },
       "success_rate": 0.8,
-      "failure_effects": { "systems_maturity": 3 },
+      "failure_effects": { "systems_maturity": 3, "customer_base": 1 },
       "narrative_success": "For the first time, you can see every prospect, where they are, and what happens next. Three forgotten leads turned into deals.",
       "narrative_failure": "The CRM is set up but half your data is still in sticky notes. Partial improvement — you'll migrate the rest next month."
     },

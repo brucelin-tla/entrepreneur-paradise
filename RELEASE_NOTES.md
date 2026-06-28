@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.36.0 — 2026-06-30
+**Epic membership waives advisory fees (with savings shown), realistic debt-restructure pricing, concierge ladder reorder, sales-team closes customers, operations energy dividend**
+
+- **Epic concierge waives professional fees.** `EPIC_WAIVED = ['wyoming_holding_llc','build_personal_credit','debt_restructure']` — when the concierge runs these, the member pays **$0** (cost zeroed in `_epicLifePick`). The would-be professional fee (`_epicServiceFee`: holding $3,000; credit-repair `min(2500, 600 + derogatories×300)`; debt-restructure the success fee) is recorded as `_epicSavings` (month) + `state._epic_savings_total` (lifetime) and shown on the "Your Concierge This Month" card ("💰 Saved you $X … $Y to date"). Verified: concierge runs the Wyoming LLC free and books $3,000 saved.
+- **Debt-restructure priced realistically** (`_debtRestructureFee` = `min(2000, round(0.10 × 17000 × creditCapacity))` — a lending expert's ~10% success fee on the ~$17k×capacity credit/loan it qualifies, capped at $2k). `actionCashCost` special-cases `debt_restructure` (→ fee for manual, $0 for Epic). Replaces the old flat cost.
+- **Concierge ladder reorder:** `wyoming_holding_llc` now comes **before** `banking_relationship`, and banking is gated on the holding company existing — the bank sees the clean parent LLC first.
+- **Sales & Conversion → customers, not just leads:**
+  - `build_sales_team` monthly handler now **closes** customers (`min(3×businessLevel, available leads)`) in addition to generating leads — a dedicated closer converts pipeline. Verified +7 customers/mo contribution.
+  - `crm_pipeline` now adds `customer_base: 3` (failure 1) to match its own "three forgotten leads turned into deals" narrative (previously it only lifted `sales_conversion`, adding customers indirectly via the monthly conversion rate). Audit: all other Sales & Conversion actions already add customers directly.
+- **Operations energy dividend:** `actionEnergyCost` now applies a systems discount — `disc = min(0.4, systems_maturity/250)` — so hands-on moves cost up to ~40% less energy as you systemize. Verified: a 10-energy action costs 10 / 8 / 6 at systems 0 / 50 / 100. (Invest energy in systems now → cheaper actions later.)
+
 ## v0.35.0 — 2026-06-30
 **Two-bar roadmap (Funding Ready, then Epic Life System) + realistic credit-approval underwriting**
 

@@ -657,9 +657,9 @@ window.EMBEDDED_CONFIG = {
       "cash_cost": 800,
       "energy_cost": 12,
       "prerequisites": { "customer_base_gte": 15 },
-      "effects": { "systems_maturity": 10, "churn_rate": -0.03, "revenue_capacity": 5000, "sales_conversion": 6 },
+      "effects": { "customer_base": 3, "systems_maturity": 10, "churn_rate": -0.03, "revenue_capacity": 5000, "sales_conversion": 6 },
       "success_rate": 0.8,
-      "failure_effects": { "systems_maturity": 3 },
+      "failure_effects": { "systems_maturity": 3, "customer_base": 1 },
       "narrative_success": "For the first time, you can see every prospect, where they are, and what happens next. Three forgotten leads turned into deals.",
       "narrative_failure": "The CRM is set up but half your data is still in sticky notes. Partial improvement — you'll migrate the rest next month."
     },
@@ -2980,6 +2980,8 @@ const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Fo
 const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
+// Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
+const EPIC_WAIVED=['wyoming_holding_llc','build_personal_credit','debt_restructure'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
 const MILESTONES=[
 {id:'mk_first_customer',cat:'marketing',title:'First Paying Customer',desc:'Landed your very first customer.',mentor:'Your first paying customer — proof someone will pay for what you do. Everything real starts here.',check:s=>(s.customer_base||0)>=1},
@@ -3004,6 +3006,13 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.36.0',d:'2026-06-30 02:00',n:[
+'Epic Life membership now covers the professional fees for the services your concierge runs in-house — your holding-company setup, credit optimization, and debt restructuring cost you nothing, and your monthly results show how much you saved.',
+'Debt restructuring is priced like real life now — a lending expert’s ~10% success fee on the credit/loan you qualify for, capped at $2,000 (free for Epic members).',
+'Your concierge now sets up the holding company first, then builds your banking relationship on the new LLC.',
+'A dedicated salesperson now closes deals into paying customers each month, not just leads — and installing a CRM converts a few forgotten leads into customers too.',
+'Operations pays an energy dividend: the more you systemize, the less energy your hands-on moves cost (up to ~40% at full systems maturity). Spend energy building systems now to spend far less later.'
+]},
 {v:'0.35.0',d:'2026-06-30 00:30',n:[
 'Your Epic Life roadmap now tracks two separate goals — Funding Ready first, then the Epic Life System — showing one bar at a time as you complete each.',
 'Credit approvals are realistic now: applying for a credit line or term loan can be declined when your personal credit utilization is high (above ~30%), and lenders pull your personal myFICO 3B even for business credit. Each application shows your approximate approval odds up front.'
@@ -3528,8 +3537,11 @@ _scaleLifestyleEffects(effects){const s=this.state,LK=['lifestyle_health','lifes
 // Late-game cost scaling: repeatable marketing/ops actions cost more as the company grows, so they stay a real decision instead of pocket change (effects scale too, via scaleActionEffects).
 // A second attempt after a partial costs half — you've already done most of the legwork, just need to finish the job.
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
-actionCashCost(a){const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
-actionEnergyCost(a){const e=a.energy_cost||0;if(e<=0)return e;return this.isRetry(a)?Math.round(e*0.5):e;},
+actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
+actionEnergyCost(a){let e=a.energy_cost||0;if(e<=0)return e;if(this.isRetry(a))e*=0.5;
+// Operational systems pay an energy DIVIDEND: documented SOPs, project management and automation mean your hands-on moves drain less energy as systems_maturity rises (up to ~40% off at full maturity). You spend energy building systems now to spend less on everything later.
+const disc=Math.min(0.4,(this.state.systems_maturity||0)/250);e*=(1-disc);
+return Math.max(1,Math.round(e));},
 // Total energy your currently-picked moves will spend this turn (exec/team-run picks cost you none), vs what you have.
 _turnEnergy(){let used=0;for(const[c,act]of Object.entries(this.selectedActions||{})){const execRun=(this._autoPicked&&this._autoPicked[c]===act.id)||(c==='finance'&&this._cfoPick===act.id);if(execRun)continue;if(c==='lifestyle'){const g=(act.effects&&act.effects.energy>0)?act.effects.energy:(act.energy_cost<0?-act.energy_cost:0);used-=g;/* a selected Life action RESTORES energy — net it against the turn's drain so the burnout warning is accurate */}else used+=Math.max(0,this.actionEnergyCost(act));}const have=Math.min(100,this.state.energy||0);return{used,have,left:Math.min(100,have-used)};},
 scaleEventEffects(effects,skipCap){const scaled=JSON.parse(JSON.stringify(effects)),level=this.calcBusinessLevel(),s=this.state;for(const k in scaled){if(typeof scaled[k]!=='number')continue;if(k==='cash'||k==='monthly_revenue'||k==='investment_positions'||k==='real_estate_equity'||k==='other_monthly_revenue')scaled[k]=Math.round(scaled[k]*Math.min(6,level));else if(k==='operating_expenses'||k==='cogs')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='total_debt')scaled[k]=Math.round(scaled[k]*Math.min(3,level));else if(k==='customer_base')scaled[k]=Math.round(scaled[k]*Math.min(3,Math.max(1,(s.customer_base||1)/20)));}
@@ -3639,6 +3651,14 @@ _creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.roun
 let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
 return Math.max(0.04,Math.min(0.95,p*fico));},
+// Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
+_debtRestructureFee(){return Math.min(2000,Math.round(0.10*17000*this.calcCreditCapacity()));},
+// What an outside professional would charge for a service the Epic concierge performs in-house — shown to members as money saved.
+_epicServiceFee(id){const s=this.state;
+if(id==='wyoming_holding_llc')return 3000;/* formation attorney + registered agent + operating agreement */
+if(id==='build_personal_credit')return Math.min(2500,600+(s.credit_negatives||0)*300);/* credit-repair service: setup + per-derogatory */
+if(id==='debt_restructure')return this._debtRestructureFee();/* lending expert's success fee */
+const a=CONFIG.actions_finance.actions.find(x=>x.id===id);return a?this.actionCashCost(a):0;},
 calcDTI(){const s=this.state,svc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018);return (s.monthly_revenue||0)>0?Math.round(svc/s.monthly_revenue*100):0;},
 // Aggressive paydown: spend spare cash to drop revolving utilization toward ≤30%; only touch installment loans if DTI is also >30%.
 _debtPaydownPlan(){const s=this.state,pool=Math.max(0,(s.cash||0))+(this.isSeparated()?Math.max(0,(s.personal_cash||0)):0);let budget=Math.round(pool*0.6);
@@ -3999,6 +4019,8 @@ const deltaTxt=delta>0?'<span style="color:var(--accent);font-weight:700;">▲ +
 let body='';
 if(did&&did.label){body+='<div style="font-size:0.76rem;margin-bottom:4px;"><span style="color:var(--text2);">Your concierge ran:</span> <strong>'+did.label+'</strong></div>';if(did.narrative)body+='<div style="font-size:0.72rem;color:var(--text2);line-height:1.45;margin-bottom:6px;">'+did.narrative+'</div>';}
 else body+='<div style="font-size:0.74rem;color:var(--text2);margin-bottom:6px;">Your concierge held steady this month — the playbook is on track and nothing urgent needed doing. Your membership still covers your protection, banking and policy upkeep in the background.</div>';
+const saved=this._epicSavings||0,savedTot=s._epic_savings_total||0;
+if(saved>0)body+='<div style="font-size:0.74rem;color:var(--accent);margin-bottom:6px;background:rgba(16,185,129,0.08);border-radius:var(--radius-sm);padding:6px 9px;line-height:1.4;">💰 Saved you <strong>'+this.fmtMoney(saved)+'</strong> in professional fees this month — done in-house, no charge'+(savedTot>saved?' · <strong>'+this.fmtMoney(savedTot)+'</strong> saved to date':'')+'.</div>';
 body+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.76rem;border-top:1px solid rgba(127,127,127,0.15);padding-top:6px;"><span style="color:var(--text2);">'+D.activeLabel+' progress</span><span><strong>'+D.activePct+'%</strong> '+deltaTxt+'</span></div>';
 body+='<div style="font-size:0.72rem;color:var(--text2);margin-top:3px;">'+(D.stage==='Paradise'?'🏝️ Paradise reached — passive income covers your lifestyle':'Next: <strong>'+(D.nextNode||D.stage)+'</strong>')+'</div>';
 return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:5px;">⭐ Your Concierge This Month</div>'+body+'<div style="text-align:right;font-size:0.66rem;color:var(--text2);margin-top:5px;">tap for full roadmap →</div></div>';},
@@ -4082,9 +4104,9 @@ const specs=[
  {id:'build_personal_credit',need:()=>(s.credit_negatives||0)>0&&!s._credit_repair},
  {id:'debt_restructure',need:()=>util>45&&persRev()>2000},
  {id:'pay_down_debt',need:()=>util>30&&(s.cash||0)>2000},
- {id:'banking_relationship',once:true,need:()=>true},
- // Holding company before the full protection stack — the funding-ready structural layer (bank access + liability shield).
+ // Holding company FIRST — then the banking relationship is built on the new LLC (so the bank sees the clean parent entity).
  {id:'wyoming_holding_llc',need:()=>this.isSeparated()&&(!stuck||stable)},
+ {id:'banking_relationship',once:true,need:()=>!!s._holding_company||(s._completed_actions||[]).includes('wyoming_holding_llc')},
  {id:'asset_protection_stack',need:()=>this.isSeparated()&&(!stuck||stable)},
  {id:'combined_insurance',need:()=>this.isSeparated()&&(!stuck||stable)},
  {id:'fund_accumulation_policy',need:()=>profit()>3000},
@@ -4098,7 +4120,10 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if(!spec.need())continue;
  const cost=this.actionCashCost(a);
  if(cost>0&&(s.cash||0)-cost<reserve)continue; // wait until you can pay from cash and still keep a month's cushion
- const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;perk.energy_cost=0;return perk;}
+ const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;perk.energy_cost=0;
+ // Concierge covers advisory/setup fees in-house — the member pays nothing; record the would-be professional fee to surface as savings.
+ if(EPIC_WAIVED.includes(a.id)){perk.cash_cost=0;perk._waivedFee=this._epicServiceFee(a.id);}
+ return perk;}
 return null;},
 boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
 renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
@@ -4256,7 +4281,7 @@ const _S0=this.state,_msStart={cash:_S0.cash||0,personalCash:_S0.personal_cash||
 this._nwStart=this.calcNetWorth(); // net worth at the start of the month → month-over-month trend on the dashboard
 this._oeStart=this.state.capital_account||0; // owner equity at month start → its own trend swing
 // Epic members: snapshot the roadmap (overall % + which nodes are done) at month start and reset the concierge-move capture, so the result-screen "Your Concierge This Month" card can show the swing + what changed.
-this._epicLastMove=null;if(this.state._epic_life){const _D0=this._epicRoadmapData();this._roadmapStartFr=_D0.frPct;this._roadmapStartSys=_D0.systemPct;}
+this._epicLastMove=null;this._epicSavings=0;if(this.state._epic_life){const _D0=this._epicRoadmapData();this._roadmapStartFr=_D0.frPct;this._roadmapStartSys=_D0.systemPct;}
 const _spend={total:0,cash:0,biz:0,pers:0};
 // Epic Life concierge runs one extra high-priority finance move this month (selected from start-of-turn state), processed through the normal loop so all costs/handlers apply.
 // Epic Life enrollment resolves as its own move (not your Finance action) so it never conflicts with a finance pick.
@@ -4400,7 +4425,7 @@ if(Math.round(af.debt)!==Math.round(_cb.debt)){rows.push(['Total debt',this.fmtM
 const _sbLbl={leads:'Leads',customer_base:'Customers',team_size:'Team size',brand_equity:'Brand equity',systems_maturity:'Systems maturity',revenue_capacity:'Revenue capacity'};
 for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av),av>=bv?GRN:RED]);_ro._baKeys.push(k);}}
 if(rows.length)_ro.beforeAfter=rows;}
-results.push(_ro);if(cat==='epic'||cat==='epicbuy')this._epicLastMove={label:action.label,narrative:_ro.narrative,success:success};if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
+results.push(_ro);if(cat==='epic'||cat==='epicbuy')this._epicLastMove={label:action.label,narrative:_ro.narrative,success:success};if(action._waivedFee){this._epicSavings=(this._epicSavings||0)+action._waivedFee;this.state._epic_savings_total=(this.state._epic_savings_total||0)+action._waivedFee;}if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
 delete this.selectedActions['epic'];delete this.selectedActions['epicbuy'];
 for(const b of _execBonuses){results.push({action:{label:b.role+' Performance Bonus'},success:true,effects:{cash:-b.bonus},narrative:'Your '+b.role+' hit their targets executing “'+b.label+'” — you paid a '+this.fmtMoney(b.bonus)+' performance bonus. Great executives earn their keep.'});}
 this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro)dr.ro.narrative=n;}}this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
@@ -4501,7 +4526,7 @@ if(s._epic_life&&s._epic_plan==='annual'&&s._epic_renew_month&&this.month>=s._ep
 const bl=this.calcBusinessLevel();
 if(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')){if(s.business_credit_profile==='building')s.business_credit_profile='established';s.personal_credit_score=Math.min(850,s.personal_credit_score+1);s.business_credit_limit=(s.business_credit_limit||0)+Math.round(500*bl);const pr=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(pr>1000){const as=Math.round(pr*0.05);s._installment_debt=(s._installment_debt||0)+as;s.available_credit=(s.available_credit||0)+Math.round(as*0.8);}}
 if(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')&&this.month%3===0&&s.monthly_revenue>(s.team_size||0)*5000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-3);}
-if(s._completed_actions&&s._completed_actions.includes('build_sales_team')){s.cash-=Math.round((s.monthly_revenue||0)*0.04);s.leads=(s.leads||0)+Math.round(6*bl);}
+if(s._completed_actions&&s._completed_actions.includes('build_sales_team')){s.cash-=Math.round((s.monthly_revenue||0)*0.04);s.leads=(s.leads||0)+Math.round(6*bl);/* a dedicated sales team prospects AND closes — it converts pipeline into paying customers, not just leads */const _closed=Math.min(Math.round(3*bl),Math.max(0,(s.leads||0)-(s.customer_base||0)));if(_closed>0)s.customer_base=(s.customer_base||0)+_closed;}
 if(s._completed_actions&&s._completed_actions.includes('hire_client_success')){s.churn_rate=Math.max(0.01,(s.churn_rate||0)-0.005);}
 // FULL-TIME executives build the business on their own each month — team, capacity, pipeline, brand. Fractional execs only pick moves; the active engine is what you pay full-time pay for.
 if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl);s.systems_maturity=Math.min(100,(s.systems_maturity||0)+1);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-1);if(s.monthly_revenue>(s.team_size||0)*6000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-2);}}
