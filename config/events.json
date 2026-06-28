@@ -519,8 +519,8 @@
       "act": 2,
       "choices": [
         { "label": "Go all in — don't miss out", "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
-        { "label": "Risk only what you can afford to lose", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You threw in a small bet, half expecting this. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
-        { "label": "Pass — guaranteed + urgent = scam", "effects": { "energy": 3 }, "outcome_narrative": "You said no. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
+        { "label": "Put in a small starter position", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You tried a small position to see how it played out. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
+        { "label": "Tell him you'll think about it", "effects": { "energy": 3 }, "outcome_narrative": "You held off. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
       ],
       "protection": {
         "shielded_by": "hire_fractional_cfo",
@@ -541,8 +541,8 @@
       "act": 2,
       "choices": [
         { "label": "Wire a big chunk — those returns are incredible", "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
-        { "label": "Invest a modest, survivable amount", "effects": { "cash": -3000 }, "outcome_narrative": "You wired a little and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
-        { "label": "Decline — steady guaranteed returns don't exist", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You passed, politely. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
+        { "label": "Start with a modest position", "effects": { "cash": -3000 }, "outcome_narrative": "You put in a little to test it and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
+        { "label": "Ask to see audited returns first", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You asked for audited statements and a real custodian. He got evasive, so you passed. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
       ],
       "protection": {
         "shielded_by": "setup_family_office",

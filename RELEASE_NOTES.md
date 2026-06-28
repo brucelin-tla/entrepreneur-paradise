@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.27.0 — 2026-06-29
+**Autosave/resume, energy realism rebalance, real-estate fixes, results-before-game-over, dashboard/expense fixes**
+
+- **Autosave & resume:** the run autosaves each month to `ep_autosave` (written at the END of `renderMonth`, after unlock tips are marked, so a refresh doesn't replay them). Title screen shows a "↩ Continue your game" card (`_autoSaveHtml`/`resumeAuto`/`discardAuto`); cleared on `endGame`/`loseGame`. Added a `beforeunload` warning during a live game.
+- **Energy rebalance (config):** retuned `energy_cost` across all action sets on the principle *founder-involved = higher energy, pay-to-delegate = lower*. Big drops on delegated/paid actions (hire delivery team 15→6, middle mgmt 12→6, contractor 10→6, content engine 8→6, family office 8→5, asset protection 12→6, dynasty/c-corp/s-corp/advanced-tax/premium-financing lowered, RE/acquisition 12→8, debt restructure 12→8); trimmed extremes (discount promo 22→12, webinar 18→12, full systemization 15→10, fulfillment 14→9, vertical integration 14→8); DIY stays high (do-it-yourself 18, cold outreach 15). Lower overall drain means the off-cadence Life check-in (energy ≤30) is no longer effectively forced mid/late game.
+- **Real estate:** passive income now displays correctly — dashboard Income/mo and `showNetFlow` use actual `other_monthly_revenue` (+ policy + private-bank interest) instead of a legacy `real_estate_owned×1800` formula that was never set. Added a **depreciation write-off** to `buy_real_estate` (~building/27.5yr) that reduces taxable income with narrative.
+- **Results before game-over:** insolvency no longer short-circuits to the end screen. `showResults` renders normally, the triggered event story plays, and `loseGame` fires when the player advances (`nextMonth` checks `_pendingLose` after events/tax). Event-caused insolvency (`resolveEvent`) now sets `_pendingLose` and renders the outcome story first.
+- **Net Worth persistence:** once revealed (on a positive month) the dashboard row stays even when net worth goes negative (shown red).
+- **Debt breakdown:** real estate, policy loans, and private-bank line now always listed under a "Secured & Other Debt" section regardless of personal/business scope; total reflects all shown.
+- **Staff & payroll:** `hire_executive_assistant` and `hire_general_counsel` now grant `team_size +1`. `showBurn` itemizes Operating Expenses into each recurring salary (`_active_recurring_costs`) + executive pay (`calcExecComp`). Result Cash & Credit panel adds a "📈 Business revenue" row with MoM swing (`_msStart.rev`).
+- **Scam events:** going all-in now hits hard (large scaled cash loss + new debt + credit-score hit + energy); shielded by CFO/family office via `shielded_multiplier` + new `payout` handler. Reworded choices so the conservative option doesn't telegraph the scam ("Put in a small starter position", "Ask to see audited returns first").
+- **Build Personal Credit:** description fixed (no "cut utilization"); ~45% chance of an automatic credit-limit increase (raises `available_credit`, lowering utilization).
+- **Low energy:** raises failure risk (0.8 <30, 0.6 in burnout) AND dampens outcome (×0.85 / ×0.7); reworded "weaker" → "fails more & deliver less".
+- **Fixes:** `owner_pay` removed from action "Stats impacted" (auto-managed) and dropped from `elect_s_corp` effects; Life unlock tip no longer double-fires; tapping a stat clears its ⓘ on whichever dashboard is visible (incl. event screen).
+
 ## v0.26.0 — 2026-06-28
 **Dashboard stat-info system, life-action economy overhaul, energy/spending/partial fixes, scam events, key-person fix**
 
