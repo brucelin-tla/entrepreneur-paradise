@@ -38,6 +38,10 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
   title screen version line and "What's New" panel derive from it automatically — never
   hand-edit the version in index.html. Keep old entries (the changelog accumulates).
   Also add a matching entry to `RELEASE_NOTES.md`. (The `/release` command does this.)
+- **ALSO bump `version.json`** (`{"v":"X.Y.Z"}`) to match the new `PATCH_NOTES[0].v` every
+  release. The live game fetches it (cache-busted) via `_checkForUpdate()` to detect new
+  builds and show the "🔄 Update now" bar — if it drifts from `PATCH_NOTES`, update
+  detection silently stops working.
 - Live site uses `index.html` + `css/` + `js/` + `config/` directly — just commit and push.
 - `build.ps1` regenerates `game.html` (offline single-file). It is idempotent.
   (It previously had a bug that stacked duplicate config blobs — fixed; keep it idempotent.)

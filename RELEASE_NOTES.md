@@ -1,5 +1,23 @@
 # Release Notes
 
+## v0.37.0 — 2026-06-30
+**New Game+ (sandbox start-customizer)**
+
+- **Unlock:** reaching **month 12+ as the New Business Owner** sets `localStorage.ep_ngplus` (persists across runs). `isNgPlusUnlocked()`.
+- **Title card:** `_ngPlusCardHtml()` (gold "🔁 New Game+ — UNLOCKED") prepended in `renderSaves`, opens `showNewGamePlus()`.
+- **Customizer popup** (`showNewGamePlus`) — two groups per the agreed scope:
+  - **A · Starting position:** sliders for starting cash ($0–150k), personal credit score (500–820), available credit, starting debt (handicap), living expenses, energy; selects for business-at-start (zero / small ~$8k / established ~$40k) and entity (none / LLC / S-Corp).
+  - **B · Head-start perks** (toggles): ⭐ Epic Life membership, fractional CFO, established business credit (+$20k line + D&B), funded cash-value policy ($15k cash value), banking relationship.
+- **Start** (`startNgPlus`): clones the `new` archetype into an `ngplus` position, applies the slider/select values to `initial_state`, runs `selectArchetype(p, /*noStart*/true)`, then applies perks + `_tutorial_seen=true` (**no tutorial**) + `_ngplus=true`, and launches. `selectArchetype` gained a `noStart` param so perks can be applied before `startGame()`.
+- **Sandbox / unranked:** NG+ runs set `state._ngplus`; the end screen replaces the leaderboard save with a "sandbox run — not ranked" note (a custom starting hand would skew rankings).
+- Verified: unlock card shows, form renders all controls, starting applies cash/score/entity/business/perks correctly, tutorial skipped, ngplus flagged. No console errors.
+- **Year-1 unlock notice:** `showCheckpoint()` shows a "🔁 New Game+ Unlocked!" panel (next to Save & resume) when finishing year 1 as the New Business Owner — prompts the player to save this run, then try NG+.
+- **Scope note:** groups C (world/difficulty) and D (carryover) were intentionally deferred per design discussion.
+
+**Update detection (cache/version awareness)**
+- New `version.json` (`{"v":"0.37.0"}`) — **must be bumped on every release** alongside `PATCH_NOTES`. `_checkForUpdate()` (called in `init`) fetches it cache-busted (`no-store`), so even a browser running cached/old `game.js` learns a newer build is live and shows a fixed "🔄 A new version is available — Update now" bar (`_showUpdateBanner` → `_applyUpdate` reloads). `loadConfig` now appends `?v=<PATCH_NOTES[0].v>` to config fetches so config stays consistent with the loaded code version.
+- **Caveat:** the reload gets fresh assets once GitHub Pages' ~10-min asset cache has expired (almost always true by detection time). For *guaranteed-instant* freshness, version the `js/game.js`/`css` URLs in `index.html` (would also need a matching `build.ps1` change) — deferred to keep the load path / offline build untouched.
+
 ## v0.36.1 — 2026-06-30
 **Save version check + one-click update/migration**
 
