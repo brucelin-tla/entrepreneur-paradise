@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.38.0 — 2026-06-30
+**Factor-based credit in New Game+ (computed score), hard-inquiry mechanic, Epic inquiry-removal perk**
+
+- **New Game+ credit = computed, not picked.** Replaced the raw "credit score" slider with a **credit-profile** section that mirrors a 3B report: available credit (limit), revolving balance owed (→ utilization), derogatory marks (0–6), credit history (weak/average/strong), and hard inquiries (none / under 5 / 5+). A live **"Estimated myFICO 3B"** readout (`_ngpUpdateScore` → `_estimateScore`) recomputes on every change using the same factor weights as `calcFicoTarget`. `startNgPlus` sets `credit_negatives`, `_credit_history_base`, `credit_inquiries` and **computes** `personal_credit_score` from them.
+- **Hard-inquiry mechanic** (`credit_inquiries`):
+  - Every credit application (`CREDIT_APPROVAL` actions) is a hard pull → `+1` inquiry.
+  - **Approval:** `_creditApprovalChance` adds `inqMult` — `≥5 → ×0.5`, `≥2 → ×0.85` (5+ roughly halves odds). Verified: 92% → 78% → 46% at 0 / 3 / 5+ inquiries.
+  - **Score:** `calcFicoTarget`'s new-credit factor now `0.85 − min(0.45, inq×0.06)`; length-of-history factor uses a `_credit_history_base` baseline (so NG+ "weak↔strong history" is real). Defaults preserve normal play (inq 0, base 0.45).
+- **Epic Life exclusive — inquiry removal:** in `monthlyTick`, every 6 months an Epic member's concierge clears all hard inquiries, **+$1,000** to `_epicSavings`/`_epic_savings_total`, and a "🧹 Inquiries Cleared · Epic Life" result banner (`_inquiriesCleared`). Verified Epic clears (4→0, +$1k); non-Epic keeps them.
+- `_saveDefaults` adds `credit_inquiries:0` for migrated saves.
+
 ## v0.37.0 — 2026-06-30
 **New Game+ (sandbox start-customizer)**
 
