@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.28.0 — 2026-06-29
+**Six-pillar end-game scoring (Protection + Freedom added), streamlined insolvency/game-over flow, game-over graphic & walkthrough**
+
+- **Scoring rewrite to six pillars** (`config/scoring_weights.json` v3, `calculateFinalScores`): **Passive Income** (0.26, crown jewel — tax-free quality folded in), **Leverage** (0.18), **Protection** (0.14, NEW), **Freedom** (0.14, NEW), **Lifestyle** (0.16, also gates), **Net Worth** (0.12). Standalone `tax_efficiency` and `creditworthiness` removed — credit folds into Leverage/Protection as an enabler, tax-free quality into Passive Income & Protection. `business_revenue` dropped from scored output (computed inline in `determineArchetype` for flavor only).
+- **New Protection score:** legal entity (LLC→S/C-corp→multi-entity) + asset-protection trust (basic/full/dynasty) + insurance coverage (vs ~$500k) + cash reserves (~6 months of burn), 25 pts each.
+- **New Freedom score:** surfaces existing `calcFreedom()` (owner-independence) as a first-class scored pillar.
+- **Definitions without revealing scoring:** each pillar card on the year checkpoint and both end screens is tappable (`showDimInfo` → `_renderScoreCards`), opening a plain-English `player_description` from config — no weights or formulas shown. "Tap any pillar" hint added.
+- **Radar + archetype updated** to the six pillars; `drawRadarOn` now plots 6 axes (was 7 with Revenue/Tax/Credit); `determineArchetype` rewritten to use protection/freedom.
+- **Insolvency flow streamlined:** `_pendingLose` now short-circuits at the top of `nextMonth`, clearing any queued event/tax — the run ends right after the Cash & Credit card instead of forcing an event and tax bill first.
+- **Game-over teaching on the final Cash & Credit card** (`_gameOverSpotlight`, fired from `resultPrimary` on a losing month): red panel border + "❌ Insolvent" header, negative cash/credit rendered red (`posRow` valRed), and a 2-step spotlight (why the run ends → the 0-month runway). Redundant `loseGame` pop-up suppressed once the walkthrough ran (`_gameover_tut_seen`).
+- **Bankruptcy graphic** (`_brokeGraphic`): replaced the crude stick-figure SVG with a clean emoji hero (😩 + 💸💸💸 + "GAME OVER" / "BANKRUPT — OUT OF CASH & CREDIT") in a red-tinted card. Used in the spotlight and the score-screen fallback popup.
+- **Tighter final month:** no random events in month 36 (`checkEvents` returns null at `month>=36`); the month-36 year checkpoint is skipped (go straight to the final score — it duplicated the end screen).
+- **First-event onboarding** upgraded from a single pop-up to a 2-step guided spotlight (the situation → your choices).
+
 ## v0.27.1 — 2026-06-29
 **Tutorial resume + concise copy, progress-aware event onboarding, game-over explainer**
 

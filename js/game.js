@@ -31,6 +31,14 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.28.0',d:'2026-06-29 15:30',n:[
+'Your final score is now built on six clear pillars: Passive Income, Leverage, Protection, Freedom, Lifestyle, and Net Worth. Tap any pillar on the results screen to see what it means.',
+'New "Protection" and "Freedom" pillars reward shielding your wealth (entity, trust, insurance, reserves) and building a business that runs without you — not just raw revenue.',
+'Going broke is no longer a slog: insolvency now ends the run right after the Cash & Credit card — no more event or tax bill popping up after you\'ve already lost.',
+'Clearer game-over screen: a bankruptcy graphic, your cash and credit shown in red, and a short walkthrough of why the run ended and the 0-month runway.',
+'Tighter final month — no random event in month 36, and the year-end recap no longer shows before your final score (one less screen).',
+'Your very first event now walks you through the situation and your choices step by step.'
+]},
 {v:'0.27.1',d:'2026-06-29 14:00',n:[
 'Tutorial no longer disappears if you refresh during your first month — it resumes where it left off, and the step text is tighter and to the point.',
 'Events now respect your progress: none in month 1, and they only happen once your business is real — no "an employee quit" when you have no staff, no "recession" before you have revenue. Your first event is introduced with a quick pop-up explaining how events work.',
@@ -1045,13 +1053,12 @@ loseGame(reason){this._lost=true;this.clearAutoSave();this.showScreen('end-scree
 document.getElementById('end-title').textContent='Insolvent — Game Over';
 document.getElementById('end-subtitle').textContent=reason||'You ran out of cash and credit.';
 this.drawRadarOn(document.getElementById('radar-canvas'),scores);
-const labels={net_worth:'Net Worth',business_revenue:'Revenue',passive_income:'Passive Income',leverage_efficiency:'Leverage',tax_efficiency:'Tax Efficiency',creditworthiness:'Creditworthiness',lifestyle:'Lifestyle'};
-document.getElementById('score-breakdown').innerHTML=Object.entries(scores).map(([k,v])=>'<div class="stat-card"><div class="stat-value" style="color:var(--accent)">'+Math.round(v)+'</div><div class="stat-label">'+(labels[k]||k)+'</div></div>').join('');
+document.getElementById('score-breakdown').innerHTML=this._renderScoreCards(scores);
 document.getElementById('epilogue').textContent='The business couldn\'t meet its obligations — cash and credit both ran dry. Every empire needs a margin of safety: build the reserve and the credit lines before you need them, not when the bill comes due.';
 {const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildChoiceLog(this._playLog)+'</div>');
 document.getElementById('end-save').innerHTML='<button class="btn-primary" onclick="location.reload()">Start Over</button>';
-// Explain WHY the run ended, in a clear pop-up over the score screen.
-setTimeout(()=>this.showPopup('💥 Game Over — Insolvent','<div style="line-height:1.6;font-size:0.9rem;"><strong style="color:var(--red);">'+(reason||'You ran out of cash and credit.')+'</strong><br><br>When a month\'s bills exceed your <strong>cash + all available credit</strong>, the business can\'t pay — and the run ends. Avoid it with a <strong>margin of safety</strong> built ahead of time: keep a cash reserve, open credit lines <em>before</em> you need them, insure the big risks, and don\'t over-leverage. Watch your <strong>runway</strong> on the Cash &amp; Credit panel each month — when it gets short, pull back.</div>'),250);},
+// Explain WHY the run ended, in a clear pop-up over the score screen — unless the on-card game-over walkthrough already covered it.
+if(!(this.state&&this.state._gameover_tut_seen))setTimeout(()=>this.showPopup('💥 Game Over — Insolvent',this._brokeGraphic()+'<div style="line-height:1.6;font-size:0.9rem;"><strong style="color:var(--red);">'+(reason||'You ran out of cash and credit.')+'</strong><br><br>When a month\'s bills exceed your <strong>cash + all available credit</strong>, the business can\'t pay — and the run ends. Avoid it with a <strong>margin of safety</strong> built ahead of time: keep a cash reserve, open credit lines <em>before</em> you need them, insure the big risks, and don\'t over-leverage. Watch your <strong>runway</strong> on the Cash &amp; Credit panel each month — when it gets short, pull back.</div>'),250);},
 
 selectAction(cat,id){const actions=this.getAvailableActions(cat),action=actions.find(a=>a.id===id);if(!action||this.isActionLocked(action))return;let justPicked=false;if(this.selectedActions[cat]&&this.selectedActions[cat].id===id){delete this.selectedActions[cat];if(this._paymentMethods)delete this._paymentMethods[id];}else{this.selectedActions[cat]=action;if(!this._paymentMethods)this._paymentMethods={};this._paymentMethods[action.id]=this._paymentMethod||'cash';this._tutNotify('select');justPicked=true;}this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();this._tutReposition();
 // Stay on the move they just picked so they can read it — but pulse the "Next: …" button to invite them onward.
@@ -1310,6 +1317,8 @@ updateRelationships(){const s=this.state;if(s.monthly_revenue>10000&&s.dscr>1.5)
 checkEvents(){const cs=this.state;
 // No events in month 1 — the first month is for learning the core loop (and the tutorial). Events unlock from month 2 on.
 if(this.month<2)return null;
+// No events in the final month — the run is wrapping up; an unrecoverable surprise right before scoring is just noise (keeps the end-game tight).
+if(this.month>=36)return null;
 cs._bad_debt=Math.max(0,(cs.total_debt||0)-(cs.real_estate_debt||0)-(cs.business_installment_debt||0)-(cs.insurance_loan_balance||0)-(cs._installment_debt||0));const passers=[];const cul=this.state.company_culture==null?45:this.state.company_culture,culMult=Math.max(0.2,1+(50-cul)/50*0.8);/* low culture nearly doubles people-problem odds; strong culture cuts them ~80% */
 // Health neglect → illness risk. The lower your energy and Body, the more an illness/burnout event compounds. Healthy founders are barely exposed; run-down ones get sick often. (Insurance pays the claim when it hits.)
 const _en=Math.min(100,cs.energy||0),_body=this.lifeDims().Body;const _neglect=Math.max(0,(60-_en))/60*0.6+Math.max(0,(50-_body))/50*0.6;/* 0 (healthy) .. >1.2 once you run the energy negative */const healthMult=Math.min(5,1+_neglect*2.2);/* up to ~3.6x run-down, higher (capped 5x) once energy goes negative */
@@ -1319,9 +1328,25 @@ if(!cs._first_event_seen&&!passers.length&&((cs.customer_base||0)>=1||(cs.monthl
 return passers.length?passers[Math.floor(Math.random()*passers.length)]:null;},
 
 // Result screen primary button — two-tap: first tap jumps to the Cash & Credit panel, second advances the month.
-resultPrimary(){if(!this._ccChecked&&document.getElementById('month-cash-panel')){this._ccChecked=true;const nb=document.getElementById('result-next-btn');if(nb)nb.textContent='Next Month →';this.checkCashCredit();return;}this.nextMonth();},
+resultPrimary(){if(!this._ccChecked&&document.getElementById('month-cash-panel')){this._ccChecked=true;const nb=document.getElementById('result-next-btn');if(nb)nb.textContent='Next Month →';this.checkCashCredit();
+// Losing month: the moment you open the Cash & Credit card, walk through WHY the run is ending — the red cash/credit and the 0-month runway.
+if(this._pendingLose)setTimeout(()=>this._gameOverSpotlight(),650);return;}this.nextMonth();},
 // Result screen: jump to the end-of-month Cash & Credit panel and flash it.
 checkCashCredit(){const el=document.getElementById('month-cash-panel');if(!el)return;el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.remove('attn-flash');void el.offsetWidth;el.classList.add('attn-flash');setTimeout(()=>el.classList.remove('attn-flash'),900);},
+// Bankruptcy graphic — a clean emoji-art hero (defeated founder, money flying away). Emojis render as the platform's polished artwork. Decorative; shown in the game-over walkthrough.
+// To swap in a real illustration later: drop a PNG at assets/game-over.png and replace the inner markup with <img src="assets/game-over.png" ...>.
+_brokeGraphic(){return '<div style="text-align:center;background:linear-gradient(180deg,rgba(239,68,68,0.12),rgba(239,68,68,0));border:1px solid rgba(239,68,68,0.25);border-radius:14px;padding:16px 12px 12px;margin:2px auto 10px;max-width:260px;">'
++'<div style="font-size:60px;line-height:1;">😩</div>'
++'<div style="font-size:26px;line-height:1;margin-top:4px;letter-spacing:6px;">💸💸💸</div>'
++'<div style="font-weight:800;color:var(--red);letter-spacing:3px;margin-top:10px;font-size:1.1rem;">GAME OVER</div>'
++'<div style="font-size:0.66rem;color:var(--text2);margin-top:2px;letter-spacing:0.5px;">BANKRUPT — OUT OF CASH &amp; CREDIT</div>'
++'</div>';},
+// Game-over walkthrough on the final Cash & Credit card: graphic + why the run ends, then point at the 0-month runway.
+_gameOverSpotlight(){if(this.state)this.state._gameover_tut_seen=true;
+const steps=[{sel:'#month-cash-panel',t:'💥 Game Over — Insolvent',b:this._brokeGraphic()+'<div style="line-height:1.55;">This month\'s bills were bigger than your <strong>cash + every available credit line</strong> — the business can\'t pay. That\'s <strong style="color:var(--red);">insolvency</strong>, and the run ends here.</div>'}];
+if(document.getElementById('result-runway'))steps.push({sel:'#result-runway',t:'🛬 Runway hit zero',b:'Runway is how many months your money lasts at this burn rate. It\'s now <strong style="color:var(--red);">0</strong> — cash is gone (shown in red) and there\'s no credit left to tap.<br><br>Next time: keep a cash reserve and open credit lines <em>before</em> you need them — and watch this number each month.'});
+if(document.getElementById('month-cash-panel'))this._spotlightSeq(steps,0);
+else this.showPopup('💥 Game Over — Insolvent',this._brokeGraphic()+'<div style="line-height:1.55;font-size:0.9rem;">Your bills outran your <strong>cash + all available credit</strong>. Build a margin of safety next time — reserves, credit lines, insurance — and watch your runway.</div>');},
 toggleResultDetail(id,ev){if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.term-link'))return;/* don't toggle when tapping a glossary term inside the card */const d=document.getElementById(id);if(!d)return;const open=d.style.display!=='none';d.style.display=open?'none':'block';const t=d.previousElementSibling;if(t)t.innerHTML=t.innerHTML.replace(open?'▴':'▾',open?'▾':'▴');},
 showResults(results,triggeredEvent){/* Insolvency no longer jumps straight to game over — we render the results (Cash & Credit shows you went over) and let any triggered event play out first; the game-over fires when you advance (see nextMonth). */
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Month '+this.month+' — Results';
@@ -1359,9 +1384,9 @@ _detBlock+
 const _mc=this._monthCashSummary;if(_mc){const s=this.state,st=_mc.start,sp=_mc.spend,sep=this.isSeparated(),fm=v=>this.fmtMoney(Math.round(v));
 const cashThen=st.cash+(sep?st.personalCash:0),cashNow=(s.cash||0)+(sep?(s.personal_cash||0):0);
 const bizAvail0=Math.max(0,st.bizLim-st.bizUsed),bizAvail1=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
-const posRow=(icon,lbl,b,a,goodUp,fmtFn)=>{const F=fmtFn||fm,up=Math.round(a)>Math.round(b),down=Math.round(a)<Math.round(b),col=(!up&&!down)?'var(--text2)':((up===!!goodUp)?'var(--accent)':'var(--red)'),d=Math.round(a-b),swing=d!==0?' <span style="color:'+col+';font-weight:700;">'+(d>0?'▲':'▼')+F(Math.abs(d))+'</span>':'';return'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">'+icon+' '+lbl+'</span><span><span style="font-weight:700;">'+F(a)+'</span>'+swing+'</span></div>';};
+const posRow=(icon,lbl,b,a,goodUp,fmtFn,rowId)=>{const F=fmtFn||fm,up=Math.round(a)>Math.round(b),down=Math.round(a)<Math.round(b),col=(!up&&!down)?'var(--text2)':((up===!!goodUp)?'var(--accent)':'var(--red)'),d=Math.round(a-b),swing=d!==0?' <span style="color:'+col+';font-weight:700;">'+(d>0?'▲':'▼')+F(Math.abs(d))+'</span>':'';const valRed=Math.round(a)<=0&&!!goodUp;/* a "more is better" position at zero/negative = danger → red */return'<div'+(rowId?' id="'+rowId+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">'+icon+' '+lbl+'</span><span><span style="font-weight:700;'+(valRed?'color:var(--red);':'')+'">'+F(a)+'</span>'+swing+'</span></div>';};
 const _n=v=>Math.round(v);
-let rows='';if((s.monthly_revenue||0)>0||(st.rev||0)>0)rows+=posRow('📈','Business revenue',st.rev||0,s.monthly_revenue||0,true);rows+=posRow('📊','Credit score',st.persScore,s.personal_credit_score||0,true,_n);rows+=posRow('💵','Cash',cashThen,cashNow,true);rows+=posRow('💳','Credit available',bizAvail0+(st.avail||0),bizAvail1+(s.available_credit||0),true);rows+=posRow('🏦','Total debt',st.debt,s.total_debt||0,false);
+let rows='';if((s.monthly_revenue||0)>0||(st.rev||0)>0)rows+=posRow('📈','Business revenue',st.rev||0,s.monthly_revenue||0,true);rows+=posRow('📊','Credit score',st.persScore,s.personal_credit_score||0,true,_n);rows+=posRow('💵','Cash',cashThen,cashNow,true,null,'result-cash-row');rows+=posRow('💳','Credit available',bizAvail0+(st.avail||0),bizAvail1+(s.available_credit||0),true,null,'result-credit-row');rows+=posRow('🏦','Total debt',st.debt,s.total_debt||0,false);
 // Total accessible capital (cash + all available credit) and how long it lasts at the current burn — the two numbers that drive decisions.
 const accessible=cashNow+(s.available_credit||0)+bizAvail1;
 // Month-over-month swing in accessible capital (vs the start of this month).
@@ -1371,31 +1396,35 @@ const accSwing=accDelta?'<span style="font-weight:700;color:'+(accDelta>0?'var(-
 const netFlow=(s.monthly_revenue||0)-(s.cogs||0)-this.calcMonthlyBurn();
 const runway=netFlow>=0?'Profitable':(Math.max(0,Math.floor(accessible/Math.max(1,-netFlow)))+' mo');
 const runCol=netFlow>=0?'var(--accent)':(accessible/Math.max(1,-netFlow)<4?'var(--red)':'var(--gold)');
-const capBlock='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border);"><span><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">💰 Accessible capital</div><div style="font-size:1.15rem;font-weight:800;color:var(--accent);white-space:nowrap;">'+fm(accessible)+(accSwing?' <span style="font-size:0.7rem;">'+accSwing+'</span>':'')+'</div><div style="font-size:0.58rem;color:var(--text2);">cash + credit</div></span><span style="text-align:right;"><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Runway</div><div style="font-size:1.05rem;font-weight:800;color:'+runCol+';">'+runway+'</div><div style="font-size:0.58rem;color:var(--text2);">'+(netFlow>=0?'cash-flow positive':'at current burn')+'</div></span></div>';
+const capBlock='<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--border);"><span><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">💰 Accessible capital</div><div style="font-size:1.15rem;font-weight:800;color:var(--accent);white-space:nowrap;">'+fm(accessible)+(accSwing?' <span style="font-size:0.7rem;">'+accSwing+'</span>':'')+'</div><div style="font-size:0.58rem;color:var(--text2);">cash + credit</div></span><span style="text-align:right;"><div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Runway</div><div id="result-runway" style="font-size:1.05rem;font-weight:800;color:'+runCol+';">'+runway+'</div><div style="font-size:0.58rem;color:var(--text2);">'+(netFlow>=0?'cash-flow positive':'at current burn')+'</div></span></div>';
 // Total money out this month: recurring burn (opex + payroll + living/lifestyle + debt service) + COGS + this month's action costs.
 const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=burnOut+cogsOut+sp.total;const fee=Math.max(0,(sp.cash+sp.biz+sp.pers)-sp.total);
 const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('credit');
 const spendLine='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;margin-top:7px;border-top:1px dashed var(--border);padding-top:6px;white-space:nowrap;"><span style="color:var(--text2);">📉 Expenses this month</span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div>';
-html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">📊 Cash & Credit — This Month</div>'+capBlock+rows+spendLine+'</div>';this._monthCashSummary=null;}
+const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+capBlock+rows+spendLine+'</div>';this._monthCashSummary=null;}
 document.getElementById('results-content').innerHTML=html;{const nb=document.getElementById('result-next-btn');if(nb){this._ccChecked=false;nb.textContent=document.getElementById('month-cash-panel')?'💳 Check Cash & Credit':'Next Month →';}}this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);
 if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}},
 
 nextMonth(){
+// Insolvency ends the run immediately after the Cash & Credit card — no event/tax detour first. You already saw HOW it blew up (red panel + game-over walkthrough); piling an event and a tax bill on top before the end screen was just tedious. Clear any queued event/tax and go straight to game over.
+if(this._pendingLose){const r=this._pendingLose;this._pendingLose=null;this._pendingEvent=null;this._pendingTax=false;return this.loseGame(r);}
 if(this._pendingEvent){const e=this._pendingEvent;this._pendingEvent=null;this.showEvent(e);return;}
 if(this._pendingTax){this._pendingTax=false;this.showTaxEvent();return;}
-// You went insolvent — but only NOW (after you've seen the results + event story explaining how) does the run actually end.
-if(this._pendingLose){const r=this._pendingLose;this._pendingLose=null;return this.loseGame(r);}
 // Delayed lifestyle payoffs apply quietly and surface as a small note atop next month — no extra screen/click.
 const triggered=(this.state._lifestyle_buffs||[]).filter(b=>b.trigger_month<=this.month);
 if(triggered.length){this.state._lifestyle_buffs=(this.state._lifestyle_buffs||[]).filter(b=>b.trigger_month>this.month);
 for(const buff of triggered)this.applyEffects(buff.effects);
 this.state._pendingRipples=(this.state._pendingRipples||[]).concat(triggered.map(b=>({source:b.source,narrative:b.narrative})));}
-if(this.month===12||this.month===24||this.month===36){this.showCheckpoint();return;}
+// Year checkpoints at 12 & 24 only. Month 36 skips the checkpoint and goes straight to the final score — the end screen already shows the composite, radar, and debrief, so a checkpoint first was a redundant extra screen.
+if(this.month===12||this.month===24){this.showCheckpoint();return;}
 this.month++;if(this.month>36){this.endGame();return;}this.renderMonth();},
 
 showEvent(evt){this.showScreen('event-screen');this.renderStats('event-dashboard');document.getElementById('event-month-label').textContent='Month '+this.month+' — Event';document.getElementById('event-box').innerHTML='<div class="event-category">'+evt.category+'</div><div class="event-narrative">'+evt.narrative+'</div>';let note=this._mitigationNote(evt);
 // First event ever → explain the mechanic with a one-time pop-up (events start from month 2).
-if(!this.state._first_event_seen){this.state._first_event_seen=true;setTimeout(()=>this.showPopup('📣 Events Happen','<div style="line-height:1.6;font-size:0.9rem;">Every business hits the unexpected — a lawsuit, a windfall, a key person out sick. You can\'t prevent them, but your <strong>choice</strong> here and the <strong>safeguards you set up beforehand</strong> (LLC, insurance, cash reserves) decide how they land. Read the situation and pick your move.</div>'),120);}
+if(!this.state._first_event_seen){this.state._first_event_seen=true;setTimeout(()=>this._spotlightSeq([
+{sel:'#event-box',t:'📣 Events Happen',b:'Every business hits the unexpected — a lawsuit, a windfall, a key person out sick. <strong>This is the situation.</strong> Read it carefully; the details and your dashboard hint at the smart move.'},
+{sel:'#event-choices',t:'Your call',b:'Choose how to respond. Your <strong>choice</strong> — and the <strong>safeguards you set up beforehand</strong> (LLC, insurance, cash reserves) — decide how it lands. There\'s often no perfect option; pick the smartest one.'}
+],0),140);}
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects,evt.category==='opportunity')}));
 // Choices no longer reveal the outcome numbers — you decide from the narrative + your dashboard, then see results after. The ONE exception is a deal/offer (an opportunity): you should see the terms on the table (price, financing, equity), but not the downstream stat impacts.
 const isOffer=evt.category==='opportunity',OFFER_KEYS=['cash','total_debt','available_credit','real_estate_equity','investment_positions','insurance_cash_value','business_credit_limit'];
@@ -1488,8 +1517,7 @@ const scores=this.calculateFinalScores(),composite=this.calcComposite(scores),ye
 let html='<div class="month-header"><h2>Year '+year+' Complete</h2></div>';
 html+='<div class="checkpoint-label">COMPOSITE SCORE</div><div class="checkpoint-score">'+composite+' <span style="font-size:0.9rem;color:var(--text2)">/ 600</span></div>';
 html+='<div class="radar-wrap"><canvas id="cp-radar" width="260" height="260"></canvas></div>';
-const labels={net_worth:'Net Worth',business_revenue:'Revenue',passive_income:'Passive',leverage_efficiency:'Leverage',tax_efficiency:'Tax Eff.',creditworthiness:'Credit',lifestyle:'Lifestyle'};
-html+='<div class="stats-grid">'+Object.entries(scores).map(([k,v])=>'<div class="stat-card"><div class="stat-value" style="color:var(--accent)">'+Math.round(v)+'</div><div class="stat-label">'+(labels[k]||k)+'</div></div>').join('')+'</div>';
+html+='<div class="stats-grid">'+this._renderScoreCards(scores)+'</div>';
 html+=this.buildDebrief();
 if(this.month<36){html+='<button class="btn-primary" onclick="Game.continueFromCheckpoint()">Keep Going — Year '+(year+1)+'</button>';
 html+='<button class="btn-outline" onclick="Game.endGame()" style="margin-top:8px;">🏁 End Here — Lock In My Final Score</button>';
@@ -1580,8 +1608,7 @@ this.clearAutoSave();// the run is over — don't offer to resume it
 this.showScreen('end-screen');const scores=this.calculateFinalScores(),arch=this.determineArchetype(scores),composite=this.calcComposite(scores);
 document.getElementById('end-title').textContent=arch.title;document.getElementById('end-subtitle').textContent=arch.subtitle;
 this.drawRadarOn(document.getElementById('radar-canvas'),scores);
-const labels={net_worth:'Net Worth',business_revenue:'Revenue',passive_income:'Passive Income',leverage_efficiency:'Leverage',tax_efficiency:'Tax Efficiency',creditworthiness:'Creditworthiness',lifestyle:'Lifestyle'};
-document.getElementById('score-breakdown').innerHTML='<div class="stat-card wide"><div class="stat-value" style="color:var(--gold);font-size:1.5rem;">'+composite+' <span style="font-size:0.8rem;color:var(--text2)">/ 600</span></div><div class="stat-label">Composite Score</div></div>'+Object.entries(scores).map(([k,v])=>'<div class="stat-card"><div class="stat-value" style="color:var(--accent)">'+Math.round(v)+'</div><div class="stat-label">'+(labels[k]||k)+'</div></div>').join('');
+document.getElementById('score-breakdown').innerHTML='<div class="stat-card wide"><div class="stat-value" style="color:var(--gold);font-size:1.5rem;">'+composite+' <span style="font-size:0.8rem;color:var(--text2)">/ 600</span></div><div class="stat-label">Composite Score</div></div>'+this._renderScoreCards(scores);
 document.getElementById('epilogue').textContent=arch.epilogue;
 {const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildLifeShowcase()+this.buildDebrief()+this.buildChoiceLog(this._playLog)+this.buildStatsDump(this._statSnapshot())+'</div>');
 document.getElementById('end-save').innerHTML='<input id="player-name" class="name-input" placeholder="Enter your name for the leaderboard" maxlength="20"><button class="btn-primary" onclick="Game.saveToLeaderboard()">Save to Leaderboard</button>';
@@ -1676,6 +1703,12 @@ renderLBList(){const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]')
 document.getElementById('lb-list').innerHTML=filtered.length?filtered.map((e,i)=>'<div class="lb-entry fade-in" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')"><span class="lb-rank">#'+(i+1)+'</span><span class="lb-name">'+e.name+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>').join(''):'<div style="text-align:center;color:var(--text2);padding:30px;">No runs completed yet for this category.</div>';},
 
 // v2 scoring — see DESIGN.md. Capital efficiency wins, not raw revenue.
+// The six scored pillars, in display order (radar + breakdown). Definitions live in config/scoring_weights.json (player_description) — no weights/formulas shown.
+scoreDims:['passive_income','leverage_efficiency','protection','freedom','lifestyle','net_worth'],
+_dimMeta(k){const d=(CONFIG.scoring_weights&&CONFIG.scoring_weights.dimensions&&CONFIG.scoring_weights.dimensions[k])||{};return{label:d.label||this.formatStatName(k),desc:d.player_description||''};},
+showDimInfo(k){const m=this._dimMeta(k);this.showPopup(m.label,'<div style="line-height:1.65;font-size:0.9rem;color:var(--text);">'+(m.desc||'')+'</div>');},
+// Tappable pillar cards (each opens its plain-English definition). Used on the year checkpoint and both end screens.
+_renderScoreCards(scores){return '<div style="grid-column:1/-1;text-align:center;font-size:0.72rem;color:var(--text2);margin-bottom:2px;">Tap any pillar to see what it measures</div>'+this.scoreDims.map(k=>{const m=this._dimMeta(k);return '<div class="stat-card" onclick="Game.showDimInfo(\''+k+'\')" style="cursor:pointer;"><div class="stat-value" style="color:var(--accent)">'+Math.round(scores[k]||0)+'</div><div class="stat-label">'+m.label+' <span style="opacity:0.45;">ⓘ</span></div></div>';}).join('');},
 calculateFinalScores(){const s=this.state;
 const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.real_estate_equity||0,reDebt=s.real_estate_debt||0,invest=s.investment_positions||0,polLoan=s.insurance_loan_balance||0,pbBal=s.private_bank_balance||0,pbLoan=s.private_bank_loan||0,bd=s.debt_breakdown||{};
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
@@ -1687,21 +1720,27 @@ const controlled=reEquity+reDebt+invest+cv+pbBal,goodDebt=reDebt+(s.business_ins
 const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));
 // Net worth, leverage-aware: mortgage already netted inside reEquity; bad debt counts fully, other debt half, good debt not subtracted
 const nw=(s.cash||0)+(s.personal_cash||0)+reEquity+invest+cv+pbBal-polLoan-pbLoan-badDebt-otherDebt*0.5+(s.available_credit||0)*0.1;
-const taxFreeBonus=passiveMonthly>0?Math.min(20,passiveMonthly/300):0;
-// Creditworthiness — the financial foundation: personal score, business (D&B) credit, and low utilization. Rewards keeping the engine clean.
-const persScoreN=Math.max(0,Math.min(100,((s.personal_credit_score||300)-500)/3.5)),dnbN=this.calcBizCreditScore(),utilN=Math.max(0,100-this.calcPersUtil()*1.5);
-const creditworthiness=Math.max(0,Math.min(100,Math.round(persScoreN*0.45+dnbN*0.3+utilN*0.25)));
-return{net_worth:Math.min(100,Math.max(0,(nw/250000)*100)),business_revenue:Math.min(100,(s.monthly_revenue||0)/600),passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.round(lev),tax_efficiency:Math.min(100,Math.max(0,30+(['s_corp','c_corp','multi_entity'].includes(s.entity_structure)?20:0)+((s.trust_structure&&s.trust_structure!=='none')?15:0)-(s._audit_events||0)*10+((0.25-(s.tax_rate||0.25))*200)+taxFreeBonus)),creditworthiness:creditworthiness,lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15)};},
+// Protection — how well the wealth is shielded: legal entity (liability separation) + asset-protection trust + insurance coverage + cash reserves. Credit/tax structure fold in here as the "don't lose it" pillar.
+const ent=s.entity_structure,trust=s.trust_structure;
+const entPts=(ent==='multi_entity')?25:(ent==='c_corp')?23:(ent==='s_corp')?21:(ent==='llc')?15:0;
+const trustPts=(trust==='dynasty')?25:(trust==='full')?19:(trust==='basic_llc')?11:0;
+const insPts=Math.min(25,((s.insurance_coverage||0)/500000)*25);
+const burnP=Math.max(1,this.calcMonthlyBurn()),reserves=(s.tax_reserve||0)+Math.max(0,(s.cash||0)+(s.personal_cash||0));
+const resvPts=Math.min(25,(reserves/burnP/6)*25);/* ~6 months of burn held in reserve/cash = full */
+const protection=Math.round(Math.min(100,entPts+trustPts+insPts+resvPts));
+// Six end-game pillars (DESIGN.md). Passive tax-free income is the crown jewel; freedom (owner-independence) + leverage encode "max wealth & lifestyle with the least of your own money and time."
+return{passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.min(100,Math.max(0,(nw/250000)*100))};},
 // Strong lifestyle gate: a wrecked life caps the final score (no "paradise" if you burned out). lifestyle 65+ = full, ~32 = half, floored at 0.3.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
 determineArchetype(scores){const A=id=>CONFIG.archetypes.win_archetypes.find(a=>a.id===id)||CONFIG.archetypes.win_archetypes[0];
-const nw=scores.net_worth||0,rev=scores.business_revenue||0,pas=scores.passive_income||0,lev=scores.leverage_efficiency||0,tax=scores.tax_efficiency||0,life=scores.lifestyle||0;
+const nw=scores.net_worth||0,pas=scores.passive_income||0,lev=scores.leverage_efficiency||0,prot=scores.protection||0,life=scores.lifestyle||0,free=scores.freedom||0;
+const rev=Math.min(100,(this.state.monthly_revenue||0)/600);/* fuel, not a scored pillar — inline for archetype flavor only */
 const moneyStrong=Math.max(nw,rev,pas,lev)>=45;
-const efficient=pas>=45&&lev>=40&&tax>=45; // mastered the point: OPM leverage + finance efficiency
+const efficient=pas>=45&&lev>=40&&prot>=40; // mastered the point: OPM leverage + protected, passive-income engine
 // 1. Won the money, wrecked the life
 if(life<30&&moneyStrong)return A('burnout_billionaire');
-// 2. Brute-forced revenue, skipped leverage/passive/tax — missed the whole point
-if(rev>=50&&lev<35&&pas<35&&tax<55)return A('the_grinder');
+// 2. Brute-forced revenue, skipped leverage/passive/protection — missed the whole point
+if(rev>=50&&lev<35&&pas<35&&prot<45)return A('the_grinder');
 // 3. The full win: efficient leverage + finance AND the lifestyle/toys
 if(efficient&&life>=50)return A('freedom_architect');
 // 4. Passive income is the standout (the crown jewel)
@@ -1714,7 +1753,7 @@ if(rev>=40)return A('empire_builder');
 const top=Math.max(nw,rev,pas,lev,life);
 if(top===life)return A('freedom_architect');if(top===pas)return A('cashflow_king');if(top===rev)return A('the_grinder');return A('leverage_master');},
 
-drawRadarOn(canvas,scores){const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-30;const lb=['Net Worth','Passive','Leverage','Tax Eff.','Credit','Lifestyle','Revenue'],vl=[scores.net_worth,scores.passive_income,scores.leverage_efficiency,scores.tax_efficiency,scores.creditworthiness,scores.lifestyle,scores.business_revenue],n=7;ctx.clearRect(0,0,w,h);for(let ring=1;ring<=4;ring++){ctx.beginPath();for(let i=0;i<=n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,rr=r*ring/4;i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}ctx.strokeStyle='#2d3a50';ctx.lineWidth=1;ctx.stroke();}for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));ctx.strokeStyle='#2d3a50';ctx.stroke();ctx.fillStyle='#9ca3b4';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lb[i],cx+(r+20)*Math.cos(a),cy+(r+20)*Math.sin(a));}ctx.beginPath();for(let i=0;i<=n;i++){const idx=i%n,a=(Math.PI*2*idx/n)-Math.PI/2,v=(vl[idx]/100)*r;i===0?ctx.moveTo(cx+v*Math.cos(a),cy+v*Math.sin(a)):ctx.lineTo(cx+v*Math.cos(a),cy+v*Math.sin(a));}ctx.fillStyle='rgba(16,185,129,0.2)';ctx.fill();ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.stroke();for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,v=(vl[i]/100)*r;ctx.beginPath();ctx.arc(cx+v*Math.cos(a),cy+v*Math.sin(a),3,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();}},
+drawRadarOn(canvas,scores){const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2,r=w/2-30;const lb=['Passive','Leverage','Protection','Freedom','Lifestyle','Net Worth'],vl=[scores.passive_income,scores.leverage_efficiency,scores.protection,scores.freedom,scores.lifestyle,scores.net_worth],n=6;ctx.clearRect(0,0,w,h);for(let ring=1;ring<=4;ring++){ctx.beginPath();for(let i=0;i<=n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,rr=r*ring/4;i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}ctx.strokeStyle='#2d3a50';ctx.lineWidth=1;ctx.stroke();}for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));ctx.strokeStyle='#2d3a50';ctx.stroke();ctx.fillStyle='#9ca3b4';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lb[i],cx+(r+20)*Math.cos(a),cy+(r+20)*Math.sin(a));}ctx.beginPath();for(let i=0;i<=n;i++){const idx=i%n,a=(Math.PI*2*idx/n)-Math.PI/2,v=(vl[idx]/100)*r;i===0?ctx.moveTo(cx+v*Math.cos(a),cy+v*Math.sin(a)):ctx.lineTo(cx+v*Math.cos(a),cy+v*Math.sin(a));}ctx.fillStyle='rgba(16,185,129,0.2)';ctx.fill();ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.stroke();for(let i=0;i<n;i++){const a=(Math.PI*2*i/n)-Math.PI/2,v=(vl[i]/100)*r;ctx.beginPath();ctx.arc(cx+v*Math.cos(a),cy+v*Math.sin(a),3,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();}},
 
 fmt(n){n=Math.round(n);const a=Math.abs(n);return a>=1000?a.toLocaleString():a.toString();},
 fmtMoney(n){n=Math.round(n);const a=Math.abs(n),str=a>=1000?a.toLocaleString():a.toString();return(n<0?'-$':'$')+str;},
