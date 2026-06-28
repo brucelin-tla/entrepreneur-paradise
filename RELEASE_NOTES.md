@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.24.2 — 2026-06-28
+**No-coasting fix: lead decay so business revenue must be worked**
+
+- **Lead decay (`monthlyTick`):** the not-yet-converted lead pool now goes stale each month (~5–18%/mo, reduced by brand equity: `decay = max(0.05, 0.18 − brand_equity/1000)`). Previously leads were a permanent reservoir that auto-reconverted churned customers for free, so a built-up base reached an equilibrium where revenue held forever with zero input (verified: coasting *grew* customers 120→128 and held revenue at $38,400/mo indefinitely). Now coasting causes gradual decline (sim: 120→82 customers / −33% revenue over 10 idle months), while active marketing (fresh leads each turn) easily sustains it. Retention levers still matter — lower churn (client success, systems maturity) slows the bleed; strong brand keeps leads warm longer. Aligns with DESIGN.md: only passive *tax-free* income should arrive without work; raw business revenue is fuel, not the goal.
+- Known minor follow-up: the CFO revenue forecast (`showCfoReport`) uses a separate rough projection that doesn't model lead decay, so it may slightly overstate a coasting player's outlook.
+
 ## v0.24.1 — 2026-06-28
 **Result-screen Cash & Credit redesign, tap-to-expand cards, balance + immersion polish**
 

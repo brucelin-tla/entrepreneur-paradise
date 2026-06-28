@@ -31,6 +31,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.24.2',d:'2026-06-28 17:00',n:[
+'No more coasting: your customers don\'t stick around for free. Leads go cold over time, so if you stop marketing — and stop supporting clients — your customer base and revenue slowly erode. Keep generating demand and invest in retention (client success, systems, strong brand) to hold your ground. The only income that truly arrives without work is passive, tax-free income — the endgame you\'re building toward.'
+]},
 {v:'0.24.1',d:'2026-06-28 16:00',n:[
 'Result screen, cleaner Cash & Credit panel: icon rows on a single line showing your credit score, cash, available credit and debt — each with an up/down swing — plus accessible capital vs last month and this month\'s expenses with how they were paid (cash or credit).',
 'Tap anywhere on a result card now expands its details & lesson (no more hunting for the small toggle).',
@@ -1110,6 +1113,8 @@ monthlyTick(){const s=this.state;
 if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.month);s._delayed_effects=s._delayed_effects.filter(d=>d.month>this.month);for(const d of ready)this.applyEffects(d.effects);}
 // Churn — leaky bucket: a large base with low systems/no retention churns faster
 {const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
+// Lead decay — un-nurtured prospects go cold. The not-yet-converted lead pool shrinks each month, so you can't coast on a one-time pile of leads: without fresh marketing (and retention to slow churn) the customer base erodes. Strong brand keeps prospects warm longer. (DESIGN: only passive TAX-FREE income should arrive without work — business revenue must be worked.)
+{const decay=Math.max(0.05,0.18-(s.brand_equity||0)/1000);const pool=Math.max(0,(s.leads||0)-(s.customer_base||0));const stale=Math.floor(pool*decay);if(stale>0)s.leads=Math.max(s.customer_base||0,(s.leads||0)-stale);}
 // Lead conversion — leads are CUMULATIVE contacts you keep; only the not-yet-converted pool turns into customers, so leads never go below customers.
 const baseConv=0.05,skillConv=(s.skill_marketing||0)/300,brandConv=(s.brand_equity||0)/1000,salesConv=Math.min(0.20,(s.sales_conversion||0)*0.01);
 const convRate=Math.min(0.5,baseConv+skillConv+brandConv+salesConv);const pool=Math.max(0,(s.leads||0)-(s.customer_base||0));const converted=Math.floor(pool*convRate);
