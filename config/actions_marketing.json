@@ -345,6 +345,23 @@
       "failure_effects": {},
       "narrative_success": "The billboards looked incredible and the agency's deck was dazzling. Then the numbers landed: awareness up, sales flat, and your existing customers confused by the new logo and messaging. Forty-five grand, mostly gone, nothing to show on the bottom line.",
       "narrative_failure": ""
+    },
+    {
+      "id": "hire_highticket_closer",
+      "category": "marketing",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Hire a High-Ticket Closer",
+      "description": "A legendary closer who guarantees he'll 10x your premium sales — books big-ticket deals on day one. Commission-heavy, but he pays for himself, right?",
+      "lesson": "A closer who hard-sells on fake promises and 'guarantees' books revenue today and poisons your business tomorrow — refunds, chargebacks, churn, a wrecked reputation, and lawsuit exposure from claims you can't keep. He's expensive, a culture-killer, and he won't leave quietly. The fix is the painful one: fire him through Restructure & Downsize in Operations and absorb the legal threat. Lesson: never let someone buy short-term revenue with your integrity — hire for fit and honesty, not just a closing rate.",
+      "cash_cost": 0,
+      "energy_cost": 4,
+      "prerequisites": {},
+      "effects": { "sales_conversion": 8, "customer_base": 8, "team_size": 1, "operating_expenses": 9000, "company_culture": -18, "_toxic_closer": true },
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "He closed three premium deals in his first week — the revenue looks incredible. But he's promising clients the moon: guaranteed results, money-back-no-matter-what, things you can't deliver. He's abrasive with the team, his pay is eating $9,000/month, and you have a bad feeling about what happens when those guarantees come due.",
+      "narrative_failure": ""
     }
   ]
 }

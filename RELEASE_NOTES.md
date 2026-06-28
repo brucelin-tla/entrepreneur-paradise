@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.30.0 — 2026-06-29
+**Voluntary downsizing action, offshore-trap payroll fix, "high-ticket closer" trap wired to the payroll mechanic**
+
+> Patch notes keep the traps vague (no spoilers). Dev detail below.
+
+- **New `restructure_team` action** (operations, `team_size_gte: 4`, repeatable) — the missing recovery path for over-hiring. Dynamic handler in `resolveMonth`: cuts up to 4 heads, trims `operating_expenses` ~$2k/head, charges ~$1.5k/head severance (via `coverShortfall`), +key-person dependency, −8 culture. Sets `_dyn_narrative`.
+- **Offshore trap fix:** `rapid_offshore_scaleup` now adds `operating_expenses: 12000` (team_size alone never created payroll opex, so the "heavy fixed cost" narrative was false). Now taking it genuinely flips you cash-flow negative.
+- **New "high-ticket closer" trap** (`hire_highticket_closer`, marketing/leverage, in `TRAPS`): bait is +8 conversion / +8 customers, but +$9k/mo payroll, −18 culture, and sets `_toxic_closer` (boolean rides in `effects`, hidden from preview since `_`-prefixed). While employed, `monthlyTick` applies churn +0.03, brand −3, litigation +6 each month. He can only be removed via `restructure_team`, which now **prioritizes firing the closer**: clears the flag, −$9k opex, but +25 litigation and ~$12k legal/settlement (he threatens to sue), culture +10 relief. `isActionLocked` force-opens `restructure_team` whenever `_toxic_closer` is set (fireable even with a tiny team).
+- **Rescue surfacing generalized** to `_needsRestructure()` (overstaffed-and-bleeding OR toxic closer): floats `restructure_team` to the top (urgency +25), shows a red badge ("⚠ FIRE THE CLOSER" / "⚠ CUT PAYROLL — FIX THIS"), and fires a one-time spotlight tip.
+- **Reusable `recurring_term`** (shipped 0.29.0, used here conceptually): term-limited recurring costs fall off when paid.
+
 ## v0.29.0 — 2026-06-29
 **Hidden trap actions (one per stage ×3 categories), tax-reserve second life, realistic term-limited predatory debt, insolvency-screen polish**
 

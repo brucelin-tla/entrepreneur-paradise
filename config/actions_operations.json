@@ -364,14 +364,30 @@
       "one_time": true,
       "label": "Rapid Offshore Scale-Up",
       "description": "Stand up a six-person offshore delivery team this week — a fraction of local cost, ready to take work off your plate immediately. Scale capacity overnight.",
-      "lesson": "Cheap headcount without systems, training, or culture is a false economy. You bolted on six people you now pay every month, but quality slipped, customers churned, your culture took a hit, and coordinating it all ate the savings. Scaling PEOPLE before you scale SYSTEMS creates chaos — build SOPs, management, and culture first, then hire into a machine that's ready for them.",
+      "lesson": "Cheap headcount without systems, training, or culture is a false economy. You bolted on six people you now pay ~$12,000 every single month, but quality slipped, customers churned, your culture took a hit, and coordinating it all ate the savings. Scaling PEOPLE before you scale SYSTEMS creates chaos — build SOPs, management, and culture first, then hire into a machine that's ready for them. Overstaffed and bleeding? Use 'Restructure & Downsize' in Operations to cut the payroll back.",
       "cash_cost": 3000,
       "energy_cost": 4,
       "prerequisites": {},
-      "effects": { "team_size": 6, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
+      "effects": { "team_size": 6, "operating_expenses": 12000, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
       "success_rate": 1,
       "failure_effects": {},
-      "narrative_success": "Six new contractors onboarded in days — capacity jumped instantly. Then the cracks showed: rushed work, inconsistent quality, clients noticing. Payroll is now a heavy fixed cost every single month, and the team has no system to plug into.",
+      "narrative_success": "Six new contractors onboarded in days — capacity jumped instantly. Then the cracks showed: rushed work, inconsistent quality, clients noticing. And payroll just jumped ~$12,000/month with no system for the team to plug into. That's a heavy fixed cost dragging on you every single month now.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "restructure_team",
+      "category": "operations",
+      "stage": "foundation",
+      "label": "Restructure & Downsize",
+      "description": "Trim an oversized team back to a lean core — cut the payroll that's dragging you down and refocus on the people who actually move the needle.",
+      "lesson": "Over-hiring is easy to do and painful to undo. Cutting headcount frees up cash fast, but it's never free: severance, a morale hit, and more work back on your plate. The real lesson is to scale people INTO systems and revenue — never ahead of them.",
+      "cash_cost": 0,
+      "energy_cost": 6,
+      "prerequisites": { "team_size_gte": 4 },
+      "effects": {},
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "",
       "narrative_failure": ""
     }
   ]
