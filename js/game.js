@@ -33,6 +33,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.34.0',d:'2026-06-29 23:30',n:[
+'Your personal credit score now tracks the real myFICO model more closely — credit utilization drives about 30% of it, alongside payment history, credit age, mix, and new credit.',
+'Achievements now give a small energy boost when you unlock them — a bit of momentum for hitting a milestone.',
+'Cleaner results screen: when several achievements unlock in the same month they collapse into one banner instead of stacking into a wall.'
+]},
 {v:'0.33.0',d:'2026-06-29 22:30',n:[
 'Epic Life members get a “Your Concierge This Month” card atop the results — what your concierge did this month, your roadmap progress swing, anything newly completed, and your next milestone. The concierge roadmap also shows on your Finance menu now.',
 'Not a member yet? You can now see a locked preview of the Epic Life roadmap on the results screen, so you know what the concierge would build for you.',
@@ -645,6 +650,15 @@ const _dash=document.getElementById(targetId||'stats-dashboard');_dash.style.dis
 
 calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},
 calcBizUtil(){const s=this.state,bizUsed=s.business_credit_used||0,bizLim=s.business_credit_limit||0;return bizLim>0?Math.round((bizUsed/bizLim)*100):0;},
+// myFICO 3B-style target score: the five FICO factors at their real weights — payment history 35%, amounts owed / utilization 30%, length of history 15%, credit mix 10%, new credit 10%. The live personal_credit_score drifts toward this each month (monthlyTick), so utilization moves ~30% of the score, exactly like the real model.
+calcFicoTarget(){const s=this.state,u=this.calcPersUtil(),neg=s.credit_negatives||0;
+const fPay=Math.max(0,1-neg*0.18);/* payment history (35%): derogatories dominate */
+const fUtil=u===0?0.9:u<=9?1:u<=29?0.8:u<=49?0.55:u<=74?0.3:0.1;/* amounts owed / utilization (30%): a hair of usage scores a touch better than literally 0% */
+const fLen=Math.min(1,0.45+(Math.min(this.month,48)/48)*0.55);/* length of history (15%): the file ages over the run */
+const hasRev=((s.available_credit||0)>0)||u>0,hasInst=((s._installment_debt||0)>0)||((s.business_installment_debt||0)>0),hasBiz=(s.business_credit_limit||0)>0,types=(hasRev?1:0)+(hasInst?1:0)+(hasBiz?1:0);
+const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
+const fNew=s._credit_repair?0.7:0.85;/* new credit (10%): recent credit-seeking / an open repair caps the top a touch */
+return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 calcDTI(){const s=this.state,svc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018);return (s.monthly_revenue||0)>0?Math.round(svc/s.monthly_revenue*100):0;},
 // Aggressive paydown: spend spare cash to drop revolving utilization toward ≤30%; only touch installment loans if DTI is also >30%.
 _debtPaydownPlan(){const s=this.state,pool=Math.max(0,(s.cash||0))+(this.isSeparated()?Math.max(0,(s.personal_cash||0)):0);let budget=Math.round(pool*0.6);
@@ -994,14 +1008,11 @@ return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:var(
 // Result-screen card (members only): what the concierge ran this month + the roadmap swing (overall %, newly-completed nodes, next step). Tappable to the full roadmap.
 _epicMonthCard(){const s=this.state;if(!s._epic_life)return '';const D=this._epicRoadmapData();
 const startPct=(this._roadmapStart!=null)?this._roadmapStart:D.overallPct,delta=D.overallPct-startPct,did=this._epicLastMove;
-const curDone=[D.fundingReady,D.protection,D.expense,D.reserve].reduce((a,g)=>a.concat(g.filter(n=>n.done).map(n=>n.label)),[]);
-const startDone=this._roadmapStartDone||curDone,newly=curDone.filter(l=>startDone.indexOf(l)<0);
 const deltaTxt=delta>0?'<span style="color:var(--accent);font-weight:700;">▲ +'+delta+'%</span>':'<span style="color:var(--text2);">no change</span>';
 let body='';
 if(did&&did.label){body+='<div style="font-size:0.76rem;margin-bottom:4px;"><span style="color:var(--text2);">Your concierge ran:</span> <strong>'+did.label+'</strong></div>';if(did.narrative)body+='<div style="font-size:0.72rem;color:var(--text2);line-height:1.45;margin-bottom:6px;">'+did.narrative+'</div>';}
 else body+='<div style="font-size:0.74rem;color:var(--text2);margin-bottom:6px;">Your concierge held steady this month — the playbook is on track and nothing urgent needed doing. Your membership still covers your protection, banking and policy upkeep in the background.</div>';
 body+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.76rem;border-top:1px solid rgba(127,127,127,0.15);padding-top:6px;"><span style="color:var(--text2);">Roadmap progress</span><span><strong>'+D.overallPct+'%</strong> '+deltaTxt+'</span></div>';
-if(newly.length)body+='<div style="font-size:0.72rem;color:var(--accent);margin-top:3px;">✓ Completed: '+newly.join(' · ')+'</div>';
 body+='<div style="font-size:0.72rem;color:var(--text2);margin-top:3px;">'+(D.stage==='Paradise'?'🏝️ Paradise reached — passive income covers your lifestyle':'Next: <strong>'+(D.nextNode||D.stage)+'</strong>')+'</div>';
 return '<div onclick="Game.showEpicLife()" style="cursor:pointer;background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:5px;">⭐ Your Concierge This Month</div>'+body+'<div style="text-align:right;font-size:0.66rem;color:var(--text2);margin-top:5px;">tap for full roadmap →</div></div>';},
 enrollEpicLife(plan){if(this.state._epic_life)return this.hidePopup();this.state._epic_plan=(plan==='annual'?'annual':'monthly');this.state._epic_enroll_pending=true;this.hidePopup();this.renderCategoryTabs();},
@@ -1476,7 +1487,7 @@ s._lastCreditRepair=null;
 if(s._credit_repair&&this.month>=(s._credit_repair.startMonth||0)){const cr=s._credit_repair,before=s.personal_credit_score||0,remove=Math.min(cr.per,cr.remaining);cr.remaining-=remove;s.credit_negatives=Math.max(0,(s.credit_negatives||0)-remove);s.personal_credit_score=Math.min(850,before+cr.gainPer*remove);
 if(cr.remaining<=0){if(s.personal_credit_score<cr.floor)s.personal_credit_score=cr.floor;if(s.debt_breakdown)delete s.debt_breakdown.collections;s._credit_repair=null;}
 s._lastCreditRepair={month:this.month,removed:remove,remaining:(s._credit_repair?s._credit_repair.remaining:0),before:Math.round(before),after:Math.round(s.personal_credit_score)};}
-else if((s.credit_negatives||0)===0&&!s._credit_repair){const u=this.calcPersUtil(),ceiling=u===0?780:u<=9?800:u<=29?760:u<=49?710:660,cur=s.personal_credit_score||0;if(cur<ceiling)s.personal_credit_score=Math.min(ceiling,cur+9);else if(cur>ceiling+15)s.personal_credit_score=Math.max(ceiling,cur-4);}
+else{const target=this.calcFicoTarget(),cur=s.personal_credit_score||0;if(cur<target)s.personal_credit_score=Math.min(target,cur+9);else if(cur>target+10)s.personal_credit_score=Math.max(target,cur-4);}/* drift toward the myFICO-weighted target (utilization ~30%); the repair branch above handles active derogatory removal */
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
 if(s.insurance_cash_value>0)s.insurance_cash_value=Math.round(s.insurance_cash_value*1.0057);
 if(s._family_office&&(s.investment_positions||0)>0)s.investment_positions=Math.round(s.investment_positions*1.004); // family office optimizes allocation — portfolio appreciates ~5%/yr
@@ -1504,6 +1515,8 @@ if(s._completed_actions&&s._completed_actions.includes('hire_client_success')){s
 if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl);s.systems_maturity=Math.min(100,(s.systems_maturity||0)+1);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-1);if(s.monthly_revenue>(s.team_size||0)*6000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-2);}}
 if(s._cro_fulltime){s.leads=(s.leads||0)+Math.round(5*bl);s.revenue_capacity=(s.revenue_capacity||0)+Math.round(600*bl);s.brand_equity=Math.min(100,(s.brand_equity||0)+1);}
 this.state._milestones_new=this.checkMilestones();
+// Hitting a milestone is a morale win — a minor energy boost on each unlock (capped), surfaced on the milestone banner.
+this._milestoneEnergy=0;if(this.state._milestones_new.length){const boost=Math.min(12,this.state._milestones_new.length*4);this.state.energy=Math.min(100,(this.state.energy||0)+boost);this._milestoneEnergy=boost;}
 },
 
 updateRelationships(){const s=this.state;if(s.monthly_revenue>10000&&s.dscr>1.5){if(s._banker_state==='stranger')s._banker_state='neutral';else if(s._banker_state==='neutral')s._banker_state='trusted';else if(s._banker_state==='trusted'&&this.month>20)s._banker_state='champion';}else if(s.dscr<1.0)s._banker_state='skeptical';const ls=s.lifestyle_health+s.lifestyle_relationships;if(ls>80)s._family_state='thriving';else if(ls>50)s._family_state='stable';else if(ls>25)s._family_state='coping';else s._family_state='strained';},
@@ -1556,8 +1569,11 @@ if(!results.length)html+='<div class="result-narrative fade-in">You took the mon
 this._pendingCharLine=null;
 // Epic Life concierge moves show first, above your own Marketing/Operations/Finance/Life results.
 results=results.filter(r=>r.action&&r.action._epic).concat(results.filter(r=>!(r.action&&r.action._epic)));
-// Compact milestone banners
-const _newMs=(this.state._milestones_new||[]).map(id=>MILES_BY_ID[id]).filter(Boolean);if(_newMs.length){for(const m of _newMs){const col=m.cat==='marketing'?'var(--accent)':m.cat==='operations'?'var(--blue)':'var(--gold)';html+='<div class="fade-in" style="background:rgba(212,175,55,0.08);border:1px solid '+col+';border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.88rem;font-weight:700;">🏆 '+m.title+' <span style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">'+m.cat+'</span></div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">'+m.mentor+'</div></div>';}this.state._milestones_new=[];}
+// Milestone banner(s): a single unlock gets its full moment (title + mentor line); multiple unlocks in one month collapse into ONE compact banner (titles listed + the lead mentor line) so the result screen doesn't become a wall of trophy cards.
+const _newMs=(this.state._milestones_new||[]).map(id=>MILES_BY_ID[id]).filter(Boolean);
+if(_newMs.length===1){const m=_newMs[0],col=m.cat==='marketing'?'var(--accent)':m.cat==='operations'?'var(--blue)':'var(--gold)';html+='<div class="fade-in" style="background:rgba(212,175,55,0.08);border:1px solid '+col+';border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.88rem;font-weight:700;">🏆 '+m.title+' <span style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;font-weight:600;letter-spacing:0.5px;">'+m.cat+'</span>'+(this._milestoneEnergy>0?' <span style="font-size:0.62rem;color:var(--accent);font-weight:700;">⚡ +'+this._milestoneEnergy+'</span>':'')+'</div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">'+m.mentor+'</div></div>';}
+else if(_newMs.length>1){html+='<div class="fade-in" style="background:rgba(212,175,55,0.08);border:1px solid var(--gold);border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.88rem;font-weight:700;color:var(--gold);">🏆 '+_newMs.length+' Milestones Unlocked'+(this._milestoneEnergy>0?' <span style="font-size:0.66rem;color:var(--accent);">⚡ +'+this._milestoneEnergy+' energy</span>':'')+'</div><div style="font-size:0.76rem;color:var(--text);margin-top:4px;line-height:1.5;">'+_newMs.map(m=>m.title).join(' · ')+'</div><div style="font-size:0.72rem;color:var(--text2);margin-top:4px;line-height:1.45;">'+_newMs[0].mentor+'</div></div>';}
+if(_newMs.length)this.state._milestones_new=[];
 // Compact passive-income banner
 const _lp=this.state._lastPassive;if(_lp&&_lp.month===this.month&&_lp.amt>0)html+='<div class="fade-in" style="background:rgba(16,185,129,0.07);border:1px solid var(--accent);border-left-width:3px;border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;color:var(--accent);">Tax-Free Passive Income · +'+this.fmtMoney(_lp.amt)+'</div><div style="font-size:0.74rem;color:var(--text2);margin-top:3px;line-height:1.45;">Paid to you tax-free ('+this.fmtMoney(_lp.before)+' → '+this.fmtMoney(_lp.after)+'), borrowed against cash value that keeps growing ~7%/yr.</div></div>';
 // Credit-repair progress banner — marks falling off and the score climbing month by month

@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.34.0 — 2026-06-29
+**myFICO-weighted credit score (utilization = 30%), achievement energy boost, milestone-banner declutter**
+
+- **Credit score follows the real myFICO 3B factor weights.** New `calcFicoTarget()` composes the five FICO factors — payment history 35% (`credit_negatives`), **amounts owed / utilization 30%** (`calcPersUtil`), length of history 15% (scales with `month`), credit mix 10% (revolving + installment + business), new credit 10% (capped lower during an open repair) — into a 300–850 target. `monthlyTick` now drifts `personal_credit_score` toward that target (±9/−4 per month) whenever a credit repair isn't actively running (the repair branch still handles derogatory removal). Verified: utilization alone swings the target ~148 pts (5%→90%) = `0.30 × 0.9 × 550`, i.e. exactly its 30% share. Replaces the old utilization-only ceiling.
+- **Achievement energy boost:** unlocking milestones grants a minor energy bump (+4 each, capped +12/month) in `monthlyTick` (`_milestoneEnergy`), surfaced as a `⚡ +N` chip on the milestone banner. A little morale momentum for progress.
+- **Milestone-banner declutter:** multiple milestones unlocking in one month now collapse into a single "🏆 N Milestones Unlocked" banner (titles listed + lead mentor line) instead of one full card each — fixes the wall of trophy cards under the concierge card. A single unlock still gets its full moment.
+- **Concierge card trim:** dropped the "✓ Completed:" roadmap-node line from the "Your Concierge This Month" card — it overlapped with the achievement banner directly below it. The card keeps what the concierge ran + the roadmap % swing + the next step.
+
 ## v0.33.0 — 2026-06-29
 **Roadmap surfacing (result-screen milestone + non-member preview) and the Key-Man Leverage loop (Phase 2, hybrid framing)**
 
