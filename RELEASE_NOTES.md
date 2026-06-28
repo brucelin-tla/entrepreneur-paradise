@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.39.0 — 2026-06-30
+**Real-game main menu + credit/loan realism pass (4 fixes)**
+
+**Main menu redesign:** title screen restructured to a proper menu (`renderMainMenu`): **New Game** → `showProfileSelect()` (the 3 archetypes move to a sub-view with a Back button), conditional **New Game+** / **Continue** (autosave) / **Load Game** (named saves → `showLoadGame` → `renderSaves` now the Load view), **Leaderboard**, **What's New** (`showWhatsNew` popup of the full changelog), and a footer with version + an **update indicator** (`_renderUpdateIcon`; glows gold when `_checkForUpdate` finds a newer build). `init` renders the menu; leaderboard Back → `showMainMenu`. Offline `game.html` build verified.
+
+**Credit/loan realism (all 4 audited fixes):**
+- **Risk-based interest** (`calcDebtInterest` rewritten): rate now varies by debt type AND credit score. Unsecured personal revolving (credit cards) ~18–26% APR by score; term/business debt risk-priced (`riskMult` 0.7→1.6) so **good credit = cheaper money** (verified term APR 6.7% at 760 vs 15.4% at 560); real estate cheap secured (~6%/yr); policy/private-bank near-free.
+- **Income/DTI in approval** (`_creditApprovalChance`): added `dtiMult` (≤36→1, ≤43→0.85, ≤55→0.6, else 0.35) and a DSCR guard (`<1 → ×0.65`). Verified: same 10% utilization / 720 score, approval 92% at high income vs 55% at 48% DTI.
+- **Hard inquiries fade** (`monthlyTick`): non-Epic members now drop 1 inquiry every 6 months (Epic still clears all + $1k), so only recent credit-shopping drags approval. Verified 4→3 after 6 months.
+- **Punishing card APR:** unsecured revolving charged ~18–26% (was the ~9.6% business rate) — makes carrying card balances the real wealth-killer it is. (Watch the Stuck archetype's card load on playtest.)
+
 ## v0.38.1 — 2026-06-30
 **Derogatory marks tuned to real life — diminishing score impact, hard approval gate**
 
