@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.38.1 — 2026-06-30
+**Derogatory marks tuned to real life — diminishing score impact, hard approval gate**
+
+- **Score (diminishing/capped):** new `_payHistoryFactor(neg) = 1 − 0.45·(1 − e^(−neg·0.55))` replaces the old linear `1 − neg·0.18` in both `calcFicoTarget` and `_estimateScore`. First mark hits hardest, marginal damage tapers, floors ~0.55. Verified per-negative score drops: −37 / −21 / −12 / ~−5, score floors ~696 at 6 marks (was tanking toward the 400s).
+- **Approval (the real bite):** `_creditApprovalChance` now multiplies by `negMult` — `0→1, 1→0.6, 2→0.4, 3→0.25, 4→0.15, 5+→0.08`. Verified approval (good utilization): 92% → 50% → 33% → 21% → **6%** at 0/1/2/3/5+ negatives. One mark stings; several nearly block new credit — matching real lender behavior. Credit repair / Epic Life (which clears negatives) is the path back in.
+
 ## v0.38.0 — 2026-06-30
 **Factor-based credit in New Game+ (computed score), hard-inquiry mechanic, Epic inquiry-removal perk**
 

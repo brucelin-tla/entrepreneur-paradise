@@ -37,6 +37,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.38.1',d:'2026-06-30 05:30',n:[
+'Derogatory marks now behave like real life: the first one dings your score the most, then each additional mark hurts less and the damage caps — your score won’t bottom out just from a few negatives.',
+'But negatives are now an approval killer where it counts: even one hurts your odds, and several (collections, charge-offs) nearly shut you out of new credit — exactly like a real lender. Clearing them (credit repair / Epic Life) is the way back in.'
+]},
 {v:'0.38.0',d:'2026-06-30 05:00',n:[
 'New Game+ credit is realistic now: you don’t pick a score — you set your utilization, derogatory marks, credit history, and hard inquiries (like reading your own 3B report), and your myFICO is computed live from them.',
 'New mechanic — hard inquiries: every credit application is a hard pull, and stacking up 5 or more meaningfully drags your approval odds (and dips your score). Customize your starting inquiries in New Game+ (none / under 5 / 5+).',
@@ -730,9 +734,11 @@ const _dash=document.getElementById(targetId||'stats-dashboard');_dash.style.dis
 
 calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},
 calcBizUtil(){const s=this.state,bizUsed=s.business_credit_used||0,bizLim=s.business_credit_limit||0;return bizLim>0?Math.round((bizUsed/bizLim)*100):0;},
+// Payment-history factor (the 35% pillar): real derogatories hit hardest on the FIRST mark, then the marginal damage tapers and floors out (a file with 6 collections isn't 6× worse than one). Diminishing curve from 1.0 → ~0.55. Their REAL bite is on approvals (see _creditApprovalChance), not bottomless score loss.
+_payHistoryFactor(neg){neg=Math.max(0,neg||0);return 1-0.45*(1-Math.exp(-neg*0.55));},
 // myFICO 3B-style target score: the five FICO factors at their real weights — payment history 35%, amounts owed / utilization 30%, length of history 15%, credit mix 10%, new credit 10%. The live personal_credit_score drifts toward this each month (monthlyTick), so utilization moves ~30% of the score, exactly like the real model.
 calcFicoTarget(){const s=this.state,u=this.calcPersUtil(),neg=s.credit_negatives||0;
-const fPay=Math.max(0,1-neg*0.18);/* payment history (35%): derogatories dominate */
+const fPay=this._payHistoryFactor(neg);/* payment history (35%): first derogatory hurts most, then caps */
 const fUtil=u===0?0.9:u<=9?1:u<=29?0.8:u<=49?0.55:u<=74?0.3:0.1;/* amounts owed / utilization (30%): a hair of usage scores a touch better than literally 0% */
 const fLen=Math.min(1,(s._credit_history_base!=null?s._credit_history_base:0.45)+(Math.min(this.month,48)/48)*0.55);/* length of history (15%): a starting baseline (weak↔strong, customizable in New Game+) that ages over the run */
 const hasRev=((s.available_credit||0)>0)||u>0,hasInst=((s._installment_debt||0)>0)||((s.business_installment_debt||0)>0),hasBiz=(s.business_credit_limit||0)>0,types=(hasRev?1:0)+(hasInst?1:0)+(hasBiz?1:0);
@@ -743,10 +749,12 @@ return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));
 _creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.round(s.personal_credit_score||600);
 let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
 const inq=s.credit_inquiries||0,inqMult=inq>=5?0.5:inq>=2?0.85:1;/* a stack of recent hard inquiries reads as credit-hungry — 5+ roughly halves approval odds */
+// Derogatories are an approval KILLER in real life — lenders decline on active collections/charge-offs almost regardless of the score. One mark stings; a few nearly shut you out. (Clearing them — credit repair / Epic — is the path back in.)
+const neg=s.credit_negatives||0,negMult=neg<=0?1:neg===1?0.6:neg===2?0.4:neg===3?0.25:neg===4?0.15:0.08;
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
-return Math.max(0.04,Math.min(0.95,p*fico*inqMult));},
+return Math.max(0.03,Math.min(0.95,p*fico*inqMult*negMult));},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
-_estimateScore(util,neg,histBase,inq){const fPay=Math.max(0,1-neg*0.18),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
+_estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
 _debtRestructureFee(){return Math.min(2000,Math.round(0.10*17000*this.calcCreditCapacity()));},
 // What an outside professional would charge for a service the Epic concierge performs in-house — shown to members as money saved.
