@@ -260,7 +260,7 @@
     {
       "id": "market_recession",
       "category": "macro",
-      "requires": {},
+      "requires": { "monthly_revenue_gte": 10000, "customer_base_gte": 8 },
       "base_probability": 0.04,
       "probability_scales_with": null,
       "scale_factor": 0,

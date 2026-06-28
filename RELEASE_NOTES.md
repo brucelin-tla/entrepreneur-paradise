@@ -1,5 +1,12 @@
 # Release Notes
 
+## v0.27.1 — 2026-06-29
+**Tutorial resume + concise copy, progress-aware event onboarding, game-over explainer**
+
+- **Tutorial resume fix:** `_tutorial_seen` is now set only on `endTutorial` (which also `autoSave()`s), instead of when the tour starts — so refreshing mid-month-1 resumes the tutorial instead of skipping it. Re-show guarded by `!this._tutActive`. All step bodies trimmed for concision.
+- **Progress-aware events:** `checkEvents` returns null in month 1. `market_recession` (previously `requires: {}`) now requires `monthly_revenue_gte 10000` + `customer_base_gte 8`. The forced first event only fires once there's a real business (`customer_base>=1 || monthly_revenue>0`), excludes `macro`, prefers gentle categories, and respects every event's `requires` — so no nonsensical events (employee quits with no staff, recession pre-revenue). First event ever shows a one-time "📣 Events Happen" explainer (`_first_event_seen`).
+- **Game-over explainer (`loseGame`):** a "💥 Game Over — Insolvent" pop-up now appears over the score screen, leading with the specific `_pendingLose` reason and explaining how to avoid it (margin of safety: reserves, credit lines before you need them, insurance, watch runway).
+
 ## v0.27.0 — 2026-06-29
 **Autosave/resume, energy realism rebalance, real-estate fixes, results-before-game-over, dashboard/expense fixes**
 
