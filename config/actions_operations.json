@@ -364,14 +364,15 @@
       "one_time": true,
       "label": "Rapid Offshore Scale-Up",
       "description": "Stand up a six-person offshore delivery team this week — a fraction of local cost, ready to take work off your plate immediately. Scale capacity overnight.",
-      "lesson": "Cheap headcount without systems, training, or culture is a false economy. You bolted on six people you now pay ~$12,000 every single month, but quality slipped, customers churned, your culture took a hit, and coordinating it all ate the savings. Scaling PEOPLE before you scale SYSTEMS creates chaos — build SOPs, management, and culture first, then hire into a machine that's ready for them. Overstaffed and bleeding? Use 'Restructure & Downsize' in Operations to cut the payroll back.",
+      "lesson": "Cheap headcount without systems is a false economy: you now pay ~$12k/month for six people while quality slips, customers churn, and culture frays. Scale SYSTEMS before people — SOPs, management, culture — then hire into a machine that's ready. Overstaffed and bleeding? Use 'Restructure & Downsize' to cut payroll back.",
       "cash_cost": 3000,
+      "recurring_cost": 12000,
       "energy_cost": 4,
       "prerequisites": {},
-      "effects": { "team_size": 6, "operating_expenses": 12000, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
+      "effects": { "team_size": 6, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
       "success_rate": 1,
       "failure_effects": {},
-      "narrative_success": "Six new contractors onboarded in days — capacity jumped instantly. Then the cracks showed: rushed work, inconsistent quality, clients noticing. And payroll just jumped ~$12,000/month with no system for the team to plug into. That's a heavy fixed cost dragging on you every single month now.",
+      "narrative_success": "Six contractors onboarded in days — capacity jumped. Then the cracks showed: rushed work, slipping quality, clients noticing. And payroll just jumped ~$12,000/month, with no system for them to plug into.",
       "narrative_failure": ""
     },
     {

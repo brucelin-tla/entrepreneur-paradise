@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.30.1 — 2026-06-29
+**Cost/label consistency pass, realistic MCA rework (revenue holdback), Cash & Credit panel reorg, copy de-bloat**
+
+- **Cost-field consistency:** new actions were mislabeled (cash prices buried in `effects.cash`, ongoing payroll in `effects.operating_expenses`) so cards/results showed no proper tags. Fixed to the native pattern — one-time price → `cash_cost` (vanity $3.5k, influencer $18k, national $45k, off-market $30k); ongoing payroll → `recurring_cost` (offshore $12k/mo, closer $9k/mo). Now each shows the 💵 cost tag + funding source, or the 🔁 recurring tag + "ongoing operating expense" result line + burn itemization. `restructure_team` shows a dynamic cost tag (severance / legal). Added `_clearRecurring(id)` + `_reduceRecurring(amount)` so firing/downsizing keeps `_active_recurring_costs` in sync with `operating_expenses`.
+- **MCA reworked to model reality** (`fast_working_capital`): now a $25,000 advance repaid at a 1.3× factor (~$32,500, 30% fee) via a **20% revenue holdback** each month until cleared, then it falls off. No credit-score or credit-line hit (pre-approved on revenue). Gated `monthly_revenue_gte: 10000`. New `mca_factor`/`mca_holdback` config fields; `_mca_balance`/`_mca_holdback`/`_mca_paid` state; holdback processed in `monthlyTick` after revenue finalizes; card tag "🔁 X% of revenue till repaid".
+- **Cash & Credit panel reorganized:** middle section = credit score, credit available, cash, total debt; bottom section = business revenue, then total expenses this month with the MCA holdback **folded into the total** (footnoted with `#` + balance remaining) instead of a separate line.
+- **Copy de-bloat:** trimmed all new trap lessons/narratives/tips to the house length (lessons now 219–349 chars vs the existing 222 avg).
+
 ## v0.30.0 — 2026-06-29
 **Voluntary downsizing action, offshore-trap payroll fix, "high-ticket closer" trap wired to the payroll mechanic**
 
