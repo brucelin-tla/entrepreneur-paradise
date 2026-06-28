@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.24.1 — 2026-06-28
+**Result-screen Cash & Credit redesign, tap-to-expand cards, balance + immersion polish**
+
+- **Cash & Credit panel redesign (`showResults`):** simplified to icon rows on a single line (`white-space:nowrap`, no before→after) — 📊 Credit score, 💵 Cash, 💳 Credit available (business+personal combined), 🏦 Total debt — each with a colored ▲/▼ delta chip (`posRow` takes an optional formatter; `_msStart` now captures `persScore`). 💰 Accessible capital shows a **true month-over-month** swing (vs `this._prevAccessible`, the stored prior-month end value; reset in `selectArchetype`; no swing in month 1). 📉 Expenses-this-month line shows funding source (· cash / credit).
+- **Tap-to-expand result cards:** whole card is clickable to toggle details (`onclick`+`cursor:pointer` when a detail block exists); removed the separate toggle. `toggleResultDetail(id,ev)` ignores `.term-link` taps so glossary terms still work. Result tutorial steps updated to "tap anywhere on a card".
+- **Merged result button:** single two-tap `#result-next-btn` → `resultPrimary()` — first tap flashes the Cash & Credit panel ("💳 Check Cash & Credit"), second advances ("Next Month →").
+- **Balance — established start:** cash 45k→60k, available_credit 10k→25k, operating_expenses 18k→14k. Established was the most fragile archetype (started cash-flow −$2.1k/mo on ~1.5mo runway → death-spiraled on early events); now ~+$1.9k/mo baseline with slack. Lifestyle-creep trap (owner_pay=25% of revenue) still provides the danger.
+- **Balance — early-game cushion (`scaleEventEffects`):** RANDOM negative shocks in months 1-9 scaled down ~30% (fading to full by m9); opt-in opportunities untouched.
+- **Immersion:** native `window.confirm` (missing-picks + burnout) replaced with the in-game styled popup (`_confirm`/`_confirmYes`; `confirmActions` split into `_checkBurnoutThenResolve`). Energy gauge warning sub-text now renders on its own row below the bar (`gauge` `subBelow` param) so it doesn't overflow into the business column on mobile.
+- **Fixes:** Net Worth tutorial tip gated on live `calcNetWorth()>0` (matches the row's render condition); result before→after no longer shows an unchanged "Business credit limit" row when an action is financed on credit (decoupled limit/utilization rows); new-month navigator button reads "Next: Marketing →" (`_nextUnselectedCat` includes the current category); `_lost`/`gameOver` reset on new game.
+
 ## v0.24.0 — 2026-06-28
 **Burnout/negative-energy mechanic, illness↔insurance trade-off, dashboard & result icons, layout/copy polish**
 
