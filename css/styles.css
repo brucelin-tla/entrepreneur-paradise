@@ -101,6 +101,47 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .skill-row .skill-name{width:70px;text-align:right}.skill-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
 .skill-fill{height:100%;border-radius:2px;background:var(--purple)}
 
+/* ---- Shared title sub-page chrome (consistent header + back button everywhere) ---- */
+.page-head{display:flex;align-items:center;gap:10px;margin:2px 0 16px}
+.page-head .page-title{font-weight:700;font-size:1rem;color:var(--text)}
+.page-head .page-title.accent{color:var(--accent)}.page-head .page-title.gold{color:var(--gold)}
+.back-chip{flex:0 0 auto;width:auto;margin:0;padding:7px 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text2);font-size:0.82rem;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s,transform .1s}
+.back-chip:hover{border-color:var(--accent);color:var(--text)}.back-chip:active{transform:scale(0.96)}
+/* ---- Menu rows (main-menu navigation) ---- */
+.menu-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,transform .1s;text-align:left}
+.menu-item:hover{border-color:var(--accent)}.menu-item:active{transform:scale(0.99)}
+.menu-item.gold{border-color:var(--gold)}
+.menu-item .mi-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0}
+.menu-item .mi-body{flex:1;min-width:0}
+.menu-item .mi-label{font-weight:700;font-size:0.92rem;display:block}
+.menu-item.gold .mi-label{color:var(--gold)}
+.menu-item .mi-sub{font-size:0.66rem;color:var(--text2);display:block}
+.menu-item .mi-chev{color:var(--text2);font-size:1.1rem;flex-shrink:0}
+/* ---- Founder (archetype) cards — uniform layout + at-a-glance stats ---- */
+.archetype-card:hover{border-color:var(--accent)}
+.archetype-card .arch-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.archetype-card .arch-av{flex-shrink:0;line-height:0}
+.archetype-card .arch-head{flex:1;min-width:0}
+.archetype-card .arch-title-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.archetype-card .arch-title-row h3{margin:0;font-size:1.1rem}
+.arch-diff{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border:1px solid;border-radius:999px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.archetype-card .arch-desc{color:var(--text2);font-size:0.85rem;line-height:1.5;margin:0 0 12px;min-height:3.8em}
+.arch-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border-top:1px solid var(--border);padding-top:11px}
+.arch-stat{text-align:center}
+.arch-stat .as-val{display:block;font-size:0.95rem;font-weight:700;line-height:1.2}
+.arch-stat .as-label{display:block;font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
+/* ---- Leaderboard scope toggle + medals + states ---- */
+.lb-scope{display:flex;gap:4px;margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:3px}
+.lb-scope .lb-seg{flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:0.8rem;font-weight:700;cursor:pointer;color:var(--text2);transition:background .15s,color .15s}
+.lb-scope .lb-seg.active{background:var(--accent);color:#fff}
+.lb-entry.me{border:1px solid var(--accent);background:rgba(16,185,129,0.1)}
+.lb-rank.lb-medal{font-size:1.05rem}
+.lb-note{text-align:center;color:var(--text2);font-size:0.82rem;padding:26px 16px;line-height:1.6}
+.lb-note strong{color:var(--text)}
+/* Leaderboard sits as a centered column with breathing room up top, like the other title sub-pages */
+#leaderboard-screen{padding-top:6vh}
+#lb-content{max-width:420px;margin:0 auto}
+
 /* Interactive spotlight tutorial */
 #tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}

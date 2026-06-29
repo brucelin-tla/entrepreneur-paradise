@@ -3,10 +3,10 @@
   "positions": [
     {
       "id": "stuck",
-      "label": "The Stuck Business Owner",
+      "label": "Stuck Founder",
       "tagline": "Rebuild from the wreckage",
       "difficulty": "Hard",
-      "description": "Bad credit and a rough first year left you tight on cash and buried in debt. The business still runs — but you're boxed out of capital. Hard mode: fix your credit and restructure the debt the smart way to dig out.",
+      "description": "Bad credit and a brutal first year left you cash-tight and buried in debt. The business still turns a little, but lenders have shut you out completely. The hardest road there is: rebuild your credit, restructure the debt the smart way, and claw back to where capital works for you again.",
       "opening_narrative": "Six months ago, everything fell apart. The divorce settlement gutted your savings. The business credit card you'd been juggling finally caught up. Your credit score reads like a failing grade, and the bank that used to return your calls doesn't anymore.\n\nBut you've built something before. You know how to sell, how to deliver, how to grind. What you need now isn't a new idea — it's a new foundation under the one you already have.",
       "initial_state": {
         "cash": 7000,
@@ -78,10 +78,10 @@
     },
     {
       "id": "new",
-      "label": "The New Business Owner",
+      "label": "New Founder",
       "tagline": "Build from zero",
       "difficulty": "Easy",
-      "description": "You're starting fresh. No business credit, no track record, no playbook. You have an idea and the will to make it real. Everything is ahead of you.",
+      "description": "Starting from zero — no customers, no track record, just some savings and an idea. The cleanest slate there is, and the gentlest way to learn the game.",
       "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
       "initial_state": {
         "cash": 10000,
@@ -153,10 +153,10 @@
     },
     {
       "id": "established",
-      "label": "The Established Business Owner",
+      "label": "Established Founder",
       "tagline": "Optimize what you've built",
       "difficulty": "Medium",
-      "description": "Two years in: profitable, a small team, and good personal income — but built on decent-not-optimal choices. You're overworked, under-structured, and your wealth is exposed. Medium difficulty: cover the blind spots and add real financial infrastructure.",
+      "description": "Two profitable years and a small team — but built on good-enough choices. You're overworked, under-structured, and the wealth you've earned sits dangerously exposed. Plug the leaks and add the financial infrastructure you skipped.",
       "opening_narrative": "The business did $480,000 last year. On paper, you should feel great. In practice, you haven't taken a real vacation in three years, your accountant keeps warning you about your tax exposure, and last month's close call with that client dispute reminded you that everything you've built sits on a foundation of... hope, mostly.\n\nYou don't need more revenue. You need to stop bleeding what you've already earned — to taxes, to inefficiency, to risk you haven't bothered to insure against. And maybe, if you're honest, you need to remember why you started this in the first place.",
       "initial_state": {
         "cash": 60000,

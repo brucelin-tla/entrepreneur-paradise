@@ -1,6 +1,6 @@
 # serve.ps1 — minimal static file server (no Node/Python required).
 # Serves the project directory over HTTP for local preview/testing.
-param([int]$Port = 3000)
+param([int]$Port = $(if ($env:PORT) { [int]$env:PORT } else { 3000 }))
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
 $listener = New-Object System.Net.HttpListener

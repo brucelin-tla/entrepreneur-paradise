@@ -108,6 +108,47 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .skill-row .skill-name{width:70px;text-align:right}.skill-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
 .skill-fill{height:100%;border-radius:2px;background:var(--purple)}
 
+/* ---- Shared title sub-page chrome (consistent header + back button everywhere) ---- */
+.page-head{display:flex;align-items:center;gap:10px;margin:2px 0 16px}
+.page-head .page-title{font-weight:700;font-size:1rem;color:var(--text)}
+.page-head .page-title.accent{color:var(--accent)}.page-head .page-title.gold{color:var(--gold)}
+.back-chip{flex:0 0 auto;width:auto;margin:0;padding:7px 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text2);font-size:0.82rem;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s,transform .1s}
+.back-chip:hover{border-color:var(--accent);color:var(--text)}.back-chip:active{transform:scale(0.96)}
+/* ---- Menu rows (main-menu navigation) ---- */
+.menu-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,transform .1s;text-align:left}
+.menu-item:hover{border-color:var(--accent)}.menu-item:active{transform:scale(0.99)}
+.menu-item.gold{border-color:var(--gold)}
+.menu-item .mi-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0}
+.menu-item .mi-body{flex:1;min-width:0}
+.menu-item .mi-label{font-weight:700;font-size:0.92rem;display:block}
+.menu-item.gold .mi-label{color:var(--gold)}
+.menu-item .mi-sub{font-size:0.66rem;color:var(--text2);display:block}
+.menu-item .mi-chev{color:var(--text2);font-size:1.1rem;flex-shrink:0}
+/* ---- Founder (archetype) cards — uniform layout + at-a-glance stats ---- */
+.archetype-card:hover{border-color:var(--accent)}
+.archetype-card .arch-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.archetype-card .arch-av{flex-shrink:0;line-height:0}
+.archetype-card .arch-head{flex:1;min-width:0}
+.archetype-card .arch-title-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.archetype-card .arch-title-row h3{margin:0;font-size:1.1rem}
+.arch-diff{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border:1px solid;border-radius:999px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
+.archetype-card .arch-desc{color:var(--text2);font-size:0.85rem;line-height:1.5;margin:0 0 12px;min-height:3.8em}
+.arch-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border-top:1px solid var(--border);padding-top:11px}
+.arch-stat{text-align:center}
+.arch-stat .as-val{display:block;font-size:0.95rem;font-weight:700;line-height:1.2}
+.arch-stat .as-label{display:block;font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
+/* ---- Leaderboard scope toggle + medals + states ---- */
+.lb-scope{display:flex;gap:4px;margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:3px}
+.lb-scope .lb-seg{flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:0.8rem;font-weight:700;cursor:pointer;color:var(--text2);transition:background .15s,color .15s}
+.lb-scope .lb-seg.active{background:var(--accent);color:#fff}
+.lb-entry.me{border:1px solid var(--accent);background:rgba(16,185,129,0.1)}
+.lb-rank.lb-medal{font-size:1.05rem}
+.lb-note{text-align:center;color:var(--text2);font-size:0.82rem;padding:26px 16px;line-height:1.6}
+.lb-note strong{color:var(--text)}
+/* Leaderboard sits as a centered column with breathing room up top, like the other title sub-pages */
+#leaderboard-screen{padding-top:6vh}
+#lb-content{max-width:420px;margin:0 auto}
+
 /* Interactive spotlight tutorial */
 #tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
 #tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
@@ -136,7 +177,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 <div id="title-bg" aria-hidden="true"><svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ep-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#080b12"/><stop offset="0.5" stop-color="#0f1726"/><stop offset="0.7" stop-color="#1b2335"/><stop offset="0.83" stop-color="#3a2f33"/></linearGradient><radialGradient id="ep-sun" cx="0.5" cy="0.8" r="0.5"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.5"/><stop offset="0.45" stop-color="#f97316" stop-opacity="0.16"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient><radialGradient id="ep-halo" cx="0.5" cy="0.24" r="0.55"><stop offset="0" stop-color="#2563a6" stop-opacity="0.34"/><stop offset="0.55" stop-color="#10b981" stop-opacity="0.08"/><stop offset="1" stop-color="#2563a6" stop-opacity="0"/></radialGradient><linearGradient id="ep-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0e17" stop-opacity="0"/><stop offset="0.8" stop-color="#0a0e17" stop-opacity="0.9"/><stop offset="1" stop-color="#0a0e17"/></linearGradient></defs><rect width="400" height="800" fill="url(#ep-sky)"/><rect width="400" height="800" fill="url(#ep-halo)"/><rect width="400" height="800" fill="url(#ep-sun)"/><g fill="#e8ecf2" opacity="0.45"><circle cx="40" cy="70" r="1"/><circle cx="110" cy="120" r="0.8"/><circle cx="300" cy="55" r="1.1"/><circle cx="350" cy="140" r="0.7"/><circle cx="210" cy="95" r="0.9"/><circle cx="75" cy="180" r="0.7"/><circle cx="330" cy="220" r="0.8"/><circle cx="170" cy="45" r="0.7"/><circle cx="250" cy="160" r="0.6"/></g><path d="M16 600 L110 545 L185 575 L270 470 L360 505" fill="none" stroke="#10b981" stroke-width="2.5" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M360 505 l-15 -1 m15 1 l-4 14" fill="none" stroke="#10b981" stroke-width="2.5" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/><g fill="#0c1421" opacity="0.85"><rect x="20" y="560" width="46" height="240"/><rect x="80" y="540" width="56" height="260"/><rect x="170" y="555" width="50" height="245"/><rect x="250" y="545" width="54" height="255"/><rect x="320" y="560" width="44" height="240"/></g><g fill="#05080e"><rect x="8" y="610" width="38" height="190"/><rect x="52" y="585" width="30" height="215"/><rect x="86" y="630" width="44" height="170"/><rect x="134" y="600" width="34" height="200"/><rect x="174" y="565" width="48" height="235"/><rect x="226" y="615" width="30" height="185"/><rect x="262" y="590" width="40" height="210"/><rect x="306" y="630" width="34" height="170"/><rect x="344" y="600" width="48" height="200"/></g><g fill="#f5b942" opacity="0.7"><rect x="186" y="585" width="4" height="5"/><rect x="196" y="585" width="4" height="5"/><rect x="186" y="600" width="4" height="5"/><rect x="206" y="600" width="4" height="5"/><rect x="60" y="600" width="3" height="4"/><rect x="68" y="610" width="3" height="4"/><rect x="274" y="610" width="3" height="4"/><rect x="284" y="622" width="3" height="4"/><rect x="354" y="615" width="3" height="4"/></g><rect width="400" height="800" fill="url(#ep-fade)"/></svg></div>
 <h1>Entrepreneur Paradise</h1><p class="subtitle">36 months. One shot. Build your empire.</p>
 <div id="main-menu" style="max-width:380px;width:100%;margin:14px auto 0;"></div>
-<div id="profile-select" style="max-width:420px;width:100%;margin:0 auto;display:none;"><div style="display:flex;align-items:center;gap:10px;margin:4px 0 14px;"><button class="btn-outline" style="width:auto;margin:0;padding:6px 14px;" onclick="Game.showMainMenu()">← Back</button><span style="font-weight:700;color:var(--gold);font-size:0.95rem;">Choose Your Founder</span></div><div id="archetype-list"></div></div>
+<div id="profile-select" style="max-width:420px;width:100%;margin:0 auto;display:none;"><div class="page-head"><button class="back-chip" onclick="Game.showMainMenu()">← Back</button><span class="page-title gold">Choose Your Founder</span></div><div id="archetype-list"></div></div>
 <div id="resume-list" style="max-width:420px;width:100%;margin:0 auto;display:none;"></div>
 <div id="whats-new" style="display:none;"></div>
 <div id="menu-footer" style="margin-top:18px;display:flex;align-items:center;gap:12px;justify-content:center;"><span id="version-line" style="color:var(--text2);font-size:0.7rem;opacity:0.6;">v0.38.1</span><span id="update-icon"></span></div>
@@ -158,10 +199,10 @@ window.EMBEDDED_CONFIG = {
   "positions": [
     {
       "id": "stuck",
-      "label": "The Stuck Business Owner",
+      "label": "Stuck Founder",
       "tagline": "Rebuild from the wreckage",
       "difficulty": "Hard",
-      "description": "Bad credit and a rough first year left you tight on cash and buried in debt. The business still runs — but you're boxed out of capital. Hard mode: fix your credit and restructure the debt the smart way to dig out.",
+      "description": "Bad credit and a brutal first year left you cash-tight and buried in debt. The business still turns a little, but lenders have shut you out completely. The hardest road there is: rebuild your credit, restructure the debt the smart way, and claw back to where capital works for you again.",
       "opening_narrative": "Six months ago, everything fell apart. The divorce settlement gutted your savings. The business credit card you'd been juggling finally caught up. Your credit score reads like a failing grade, and the bank that used to return your calls doesn't anymore.\n\nBut you've built something before. You know how to sell, how to deliver, how to grind. What you need now isn't a new idea — it's a new foundation under the one you already have.",
       "initial_state": {
         "cash": 7000,
@@ -233,10 +274,10 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "new",
-      "label": "The New Business Owner",
+      "label": "New Founder",
       "tagline": "Build from zero",
       "difficulty": "Easy",
-      "description": "You're starting fresh. No business credit, no track record, no playbook. You have an idea and the will to make it real. Everything is ahead of you.",
+      "description": "Starting from zero — no customers, no track record, just some savings and an idea. The cleanest slate there is, and the gentlest way to learn the game.",
       "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
       "initial_state": {
         "cash": 10000,
@@ -308,10 +349,10 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "established",
-      "label": "The Established Business Owner",
+      "label": "Established Founder",
       "tagline": "Optimize what you've built",
       "difficulty": "Medium",
-      "description": "Two years in: profitable, a small team, and good personal income — but built on decent-not-optimal choices. You're overworked, under-structured, and your wealth is exposed. Medium difficulty: cover the blind spots and add real financial infrastructure.",
+      "description": "Two profitable years and a small team — but built on good-enough choices. You're overworked, under-structured, and the wealth you've earned sits dangerously exposed. Plug the leaks and add the financial infrastructure you skipped.",
       "opening_narrative": "The business did $480,000 last year. On paper, you should feel great. In practice, you haven't taken a real vacation in three years, your accountant keeps warning you about your tax exposure, and last month's close call with that client dispute reminded you that everything you've built sits on a foundation of... hope, mostly.\n\nYou don't need more revenue. You need to stop bleeding what you've already earned — to taxes, to inefficiency, to risk you haven't bothered to insure against. And maybe, if you're honest, you need to remember why you started this in the first place.",
       "initial_state": {
         "cash": 60000,
@@ -2306,6 +2347,7 @@ window.EMBEDDED_CONFIG = {
     {
       "id": "crypto_friend_scam",
       "category": "opportunity",
+      "scam": true,
       "requires": { "monthly_revenue_gte": 5000 },
       "base_probability": 0.05,
       "probability_scales_with": null,
@@ -2313,7 +2355,7 @@ window.EMBEDDED_CONFIG = {
       "narrative": "A friend who's suddenly driving a new car says he's made a killing on a crypto coin — 'guaranteed 10x, it's already mooning.' He needs you to buy in TODAY through his guy, before it's too late. The site looks slick. The returns look unreal.",
       "act": 2,
       "choices": [
-        { "label": "Go all in — don't miss out", "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
+        { "label": "Go all in — don't miss out", "scam_trap": true, "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
         { "label": "Put in a small starter position", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You tried a small position to see how it played out. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
         { "label": "Tell him you'll think about it", "effects": { "energy": 3 }, "outcome_narrative": "You held off. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
       ],
@@ -2328,6 +2370,7 @@ window.EMBEDDED_CONFIG = {
     {
       "id": "coworker_investment_scam",
       "category": "opportunity",
+      "scam": true,
       "requires": { "monthly_revenue_gte": 12000 },
       "base_probability": 0.04,
       "probability_scales_with": null,
@@ -2335,7 +2378,7 @@ window.EMBEDDED_CONFIG = {
       "narrative": "A well-connected acquaintance pitches a 'private fund' paying a steady 4% a month, guaranteed. He shows you statements — early investors are getting paid like clockwork — and can 'squeeze you in' if you wire funds this week.",
       "act": 2,
       "choices": [
-        { "label": "Wire a big chunk — those returns are incredible", "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
+        { "label": "Wire a big chunk — those returns are incredible", "scam_trap": true, "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
         { "label": "Start with a modest position", "effects": { "cash": -3000 }, "outcome_narrative": "You put in a little to test it and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
         { "label": "Ask to see audited returns first", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You asked for audited statements and a real custodian. He got evasive, so you passed. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
       ],
@@ -2979,6 +3022,8 @@ const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_
 const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','wyoming_holding_llc','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','key_man_policy','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign','hire_highticket_closer']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup','restructure_team']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
 // Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
 const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
+// Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
+const TRAP_META={fast_working_capital:{i:'💸',n:'Merchant Cash Advance'},offmarket_guaranteed_fund:{i:'🎰',n:'"Guaranteed" Fund Scam'},rapid_offshore_scaleup:{i:'🌏',n:'Offshore Over-Hire'},vanity_follower_boost:{i:'🤖',n:'Bought Followers'},influencer_megadeal:{i:'📣',n:'Influencer Megadeal'},national_ad_blitz:{i:'📺',n:'National Ad Blitz'},hire_highticket_closer:{i:'🎯',n:'High-Ticket Closer'}};
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
 // Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
@@ -3007,6 +3052,15 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.40.0',d:'2026-06-30 14:33',n:[
+'Refreshed menus — a consistent look across screens, with the Back button in the same place everywhere.',
+'Founder select redone: New / Established / Stuck Founder, each showing your starting cash, revenue, credit, and debt at a glance.',
+'Leaderboard redesign — a Global / This-Device toggle (global coming soon), 🥇🥈🥉 medals, your own run highlighted, and company names.',
+'Name your company when you form your LLC — it shows on your dashboard and the leaderboard.',
+'New achievements: 🪤 Trap Survivor (find and survive every trap in one run) and 🕵️ Scam-Survived tiers (3 / 6 / 9 scams dodged across all your runs).',
+'🎟 Redeem Code: enter a code from the main menu to unlock content.',
+'Continue now asks you to confirm before resuming your saved game.'
+]},
 {v:'0.39.0',d:'2026-06-30 06:30',n:[
 'New main menu — a clean title screen: New Game → choose your founder, plus New Game+, Continue, Load Game, Leaderboard, and What’s New, with a live update indicator.',
 'Credit & loans behave much more like real life now: your interest rate scales with your credit score (good credit = cheaper money), credit-card balances carry a punishing ~18–26% APR, lenders weigh your income / ability-to-repay on approval, and hard inquiries fade over time so only recent credit-shopping keeps hurting you.'
@@ -3330,7 +3384,20 @@ new:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><circle 
 established:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="rgba(212,175,55,0.13)" stroke="var(--gold)" stroke-width="2"/><g opacity="0.5" fill="var(--gold)"><rect x="40" y="21" width="4" height="11"/><rect x="45" y="15" width="4" height="17"/><rect x="50" y="24" width="4" height="8"/></g><path d="M15 58c0-10 8-15 17-15s17 5 17 15z" fill="#1f2a44"/><path d="M27 42l5 9 5-9z" fill="#f5f5f5"/><path d="M30.7 43l1.3 3-1.6 6 1.6 2.2 1.6-2.2-1.6-6 1.3-3z" fill="var(--gold)"/><path d="M28 41h8v5h-8z" fill="#eab98f"/><circle cx="32" cy="32" r="9" fill="#f2c8a0"/><path d="M22.5 31c0-6 4.5-9 9.5-9s9.5 3 9.5 9c-2.2-2.4-4.5-3.4-9.5-3.4s-7.3 1-9.5 3.4z" fill="#2e2620"/><circle cx="29" cy="32" r="1.2" fill="#2a2018"/><circle cx="35" cy="32" r="1.2" fill="#2a2018"/><path d="M30 36.5h4" stroke="#b9745a" stroke-width="1.3" stroke-linecap="round"/></svg>',
 stuck:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="rgba(239,68,68,0.13)" stroke="var(--red)" stroke-width="2"/><path d="M40 17l4 6 4-3 5 9" stroke="var(--red)" stroke-width="2" fill="none" opacity="0.55" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 58c0-9 7-14 16-14s16 5 16 14z" fill="#7a3b3b"/><path d="M27 42h10v6H27z" fill="#eab98f"/><circle cx="32" cy="34" r="9" fill="#f2c8a0"/><path d="M22.5 33c0-6 5-10 9.5-10s9.5 4 9.5 10c-2-3-4.2-4-6.2-3-1-2-3.2-2-4.4 0-2.2-1-5.4 0-8.4 3z" fill="#3b2f2a"/><path d="M26.5 31.5l3.2 1.2M37.5 31.5l-3.2 1.2" stroke="#3b2f2a" stroke-width="1.3" stroke-linecap="round"/><circle cx="29" cy="34.5" r="1.2" fill="#2a2018"/><circle cx="35" cy="34.5" r="1.2" fill="#2a2018"/><path d="M29 39.5c1.6-1.6 4.4-1.6 6 0" stroke="#a14b4b" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M40.5 31c0 1.6-1 2.6-2 2.6s-2-1-2-2.6 2-3.6 2-3.6 2 2 2 3.6z" fill="#3b82f6"/></svg>'
 };return A[id]||'';},
-renderArchetypes(){const l=document.getElementById('archetype-list');l.innerHTML='';const DIFF={Easy:{r:0,c:'var(--accent)'},Medium:{r:1,c:'var(--gold)'},Hard:{r:2,c:'var(--red)'}};CONFIG.starting_positions.positions.filter(p=>p.enabled!==false).slice().sort((a,b)=>((DIFF[a.difficulty]||{r:1}).r)-((DIFF[b.difficulty]||{r:1}).r)).forEach(p=>{const c=document.createElement('div');c.className='archetype-card fade-in';const d=p.difficulty?(DIFF[p.difficulty]||{c:'var(--text2)'}):null;const badge=d?'<span style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+d.c+';border:1px solid '+d.c+';border-radius:999px;padding:2px 8px;white-space:nowrap;">'+p.difficulty+'</span>':'';const av=this.archAvatar(p.id);c.innerHTML='<div style="display:flex;gap:12px;align-items:flex-start;">'+(av?'<div style="flex-shrink:0;">'+av+'</div>':'')+'<div style="flex:1;min-width:0;"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><h3 style="margin:0;">'+p.label+'</h3>'+badge+'</div><div class="tagline">'+p.tagline+'</div><p style="margin-bottom:0;">'+p.description+'</p></div></div>';c.onclick=()=>this.selectArchetype(p);l.appendChild(c);});},
+renderArchetypes(){const l=document.getElementById('archetype-list');l.innerHTML='';
+const DIFF={Easy:{r:0,c:'var(--accent)'},Medium:{r:1,c:'var(--gold)'},Hard:{r:2,c:'var(--red)'}};
+// compact money for the at-a-glance stat row ($7k, $4.2k, $40k)
+const kfmt=v=>{v=+v||0;if(v>=1000){const n=v/1000;return '$'+(n>=10?Math.round(n):Math.round(n*10)/10)+'k';}return '$'+Math.round(v);};
+const credCol=s=>s<580?'var(--red)':s<670?'var(--gold)':'var(--accent)';
+CONFIG.starting_positions.positions.filter(p=>p.enabled!==false).slice().sort((a,b)=>((DIFF[a.difficulty]||{r:1}).r)-((DIFF[b.difficulty]||{r:1}).r)).forEach(p=>{
+const c=document.createElement('div');c.className='archetype-card fade-in';
+const d=p.difficulty?(DIFF[p.difficulty]||{c:'var(--text2)'}):null;
+const badge=d?'<span class="arch-diff" style="color:'+d.c+';border-color:'+d.c+';">'+p.difficulty+'</span>':'';
+const av=this.archAvatar(p.id),is=p.initial_state||{};
+const stat=(label,val,col)=>'<div class="arch-stat"><span class="as-val" style="color:'+(col||'var(--text)')+';">'+val+'</span><span class="as-label">'+label+'</span></div>';
+const stats='<div class="arch-stats">'+stat('Cash',kfmt(is.cash),is.cash>0?'var(--accent)':'var(--text2)')+stat('Rev/mo',kfmt(is.monthly_revenue),is.monthly_revenue>0?'var(--text)':'var(--text2)')+stat('Credit',is.personal_credit_score||'—',credCol(is.personal_credit_score||0))+stat('Debt',kfmt(is.total_debt),is.total_debt>0?'var(--red)':'var(--text2)')+'</div>';
+c.innerHTML='<div class="arch-top">'+(av?'<div class="arch-av">'+av+'</div>':'')+'<div class="arch-head"><div class="arch-title-row"><h3>'+p.label+'</h3>'+badge+'</div><div class="tagline">'+p.tagline+'</div></div></div><p class="arch-desc">'+p.description+'</p>'+stats;
+c.onclick=()=>this.selectArchetype(p);l.appendChild(c);});},
 
 selectArchetype(p,noStart){
 this.archetype=p;this.state=JSON.parse(JSON.stringify(p.initial_state));
@@ -3349,14 +3416,35 @@ if(!noStart)this.startGame();},
 startGame(){this.state._mentor_state='introduced';this.initMilestones();this.renderMonth();},
 // ---- New Game+ (Sandbox) — unlocked after a full year (month 12+) as the New Business Owner ----
 isNgPlusUnlocked(){try{return localStorage.getItem('ep_ngplus')==='1';}catch(e){return false;}},
+// ---- Redeem codes (unlock content via a code, e.g. "epiclife" → New Game+) ----
+// To add a code: give it a normalized key (lowercase, alphanumeric only) + an apply() that flips the unlock.
+REDEEM_CODES:{
+epiclife:{label:'New Game+',msg:'New Game+ unlocked! Customize your starting hand from the main menu.',apply(){try{localStorage.setItem('ep_ngplus','1');}catch(e){}}}
+},
+_normCode(c){return (c||'').toLowerCase().replace(/[^a-z0-9]/g,'');},
+_redeemedCodes(){try{return JSON.parse(localStorage.getItem('ep_codes')||'[]');}catch(e){return [];}},
+showRedeem(){const h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">Have an unlock code? Enter it below to unlock bonus content.</div><input id="redeem-input" class="name-input" placeholder="Enter code" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key===\'Enter\')Game.redeemCode()"><button class="btn-primary" style="margin-top:4px;" onclick="Game.redeemCode()">Redeem</button><div id="redeem-msg" style="min-height:18px;margin-top:10px;font-size:0.82rem;font-weight:600;text-align:center;line-height:1.45;"></div>';this.showPopup('🎟 Redeem a Code',h);setTimeout(()=>{const i=document.getElementById('redeem-input');if(i)i.focus();},40);},
+redeemCode(){const el=document.getElementById('redeem-input'),msg=document.getElementById('redeem-msg');if(!msg)return;const code=this._normCode(el&&el.value);if(!code){msg.style.color='var(--text2)';msg.textContent='Enter a code first.';return;}const def=this.REDEEM_CODES[code];if(!def){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}const done=this._redeemedCodes();if(done.includes(code)){msg.style.color='var(--gold)';msg.textContent='Already redeemed — '+def.label+' is unlocked.';return;}try{def.apply();}catch(e){}done.push(code);try{localStorage.setItem('ep_codes',JSON.stringify(done));}catch(e){}msg.style.color='var(--accent)';msg.innerHTML='✓ '+def.msg;if(el){el.value='';el.disabled=true;}this.renderMainMenu();},
+// ---- Company name (set when forming the LLC; shown on the dashboard + leaderboard; groundwork for player-vs-player) ----
+_esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));},
+promptCompanyName(isNew){const cur=(this.state&&this.state.company_name)||'';
+const h='<div style="font-size:0.82rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">'+(isNew?'Your LLC is officially filed — congratulations. What\'s the company called? This name represents you on the leaderboard.':'Rename your company.')+'</div><input id="company-input" class="name-input" placeholder="e.g. Summit Ventures LLC" maxlength="28" autocomplete="off" value="'+this._esc(cur)+'" onkeydown="if(event.key===\'Enter\')Game.saveCompanyName()"><button class="btn-primary" style="margin-top:4px;" onclick="Game.saveCompanyName()">'+(isNew?'Name My Company':'Save')+'</button>';
+this.showPopup('🏢 Name Your Company',h);setTimeout(()=>{const i=document.getElementById('company-input');if(i){i.focus();if(i.select)i.select();}},40);},
+saveCompanyName(){const el=document.getElementById('company-input');const name=((el&&el.value)||'').replace(/\s+/g,' ').trim().slice(0,28);if(this.state)this.state.company_name=name;this.hidePopup();this._renderCompanyName();if(name&&this.autoSave)this.autoSave();},
+// Company line above the month label: a name (tap to rename) once set, a "name your company" nudge once you have an entity, nothing before that.
+_renderCompanyName(){const el=document.getElementById('month-label');if(!el)return;const s=this.state||{},cn=s.company_name||'',role='Month '+this.month+' — '+this.getFounderRole();
+const hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure)||(s._completed_actions||[]).includes('form_llc');
+const chip=cn?'<span onclick="Game.promptCompanyName(false)" style="display:block;font-size:0.7rem;color:var(--gold);font-weight:700;cursor:pointer;letter-spacing:0.3px;" title="Tap to rename your company">🏢 '+this._esc(cn)+'</span>':(hasEntity?'<span onclick="Game.promptCompanyName(false)" style="display:block;font-size:0.66rem;color:var(--text2);font-weight:600;cursor:pointer;opacity:0.85;" title="Name your company">🏢 + Name your company</span>':'');
+el.innerHTML=chip+role;},
 // ---- Main menu (real-game style: New Game → profile select, conditional Continue/Load/NG+, update icon) ----
 renderMainMenu(){const mm=document.getElementById('main-menu');if(!mm)return;const auto=this.loadAutoSave(),saves=this.loadSaves(),ngp=this.isNgPlusUnlocked();
-const item=(icon,label,sub,onclick,gold)=>'<div onclick="'+onclick+'" style="cursor:pointer;display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid '+(gold?'var(--gold)':'var(--border)')+';border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:8px;transition:border-color .15s;"><span style="font-size:1.05rem;width:22px;text-align:center;">'+icon+'</span><span style="flex:1;min-width:0;"><span style="font-weight:700;font-size:0.92rem;'+(gold?'color:var(--gold);':'')+'">'+label+'</span>'+(sub?'<br><span style="font-size:0.66rem;color:var(--text2);">'+sub+'</span>':'')+'</span><span style="color:var(--text2);font-size:1.1rem;">›</span></div>';
+const item=(icon,label,sub,onclick,gold)=>'<div class="menu-item'+(gold?' gold':'')+'" onclick="'+onclick+'"><span class="mi-icon">'+icon+'</span><span class="mi-body"><span class="mi-label">'+label+'</span>'+(sub?'<span class="mi-sub">'+sub+'</span>':'')+'</span><span class="mi-chev">›</span></div>';
 let h=item('▶','New Game','Choose your founder profile','Game.showProfileSelect()',true);
 if(ngp)h+=item('🔁','New Game+','Sandbox — customize your start','Game.showNewGamePlus()');
-if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this._archLabel(auto.archetype),'Game.resumeAuto()');
+if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this._archLabel(auto.archetype),'Game.confirmResumeAuto()');
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
+h+=item('🎟','Redeem Code','Unlock content with a code','Game.showRedeem()');
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
 mm.innerHTML=h;},
 showMainMenu(){this.showScreen('title-screen');const mm=document.getElementById('main-menu');if(mm)mm.style.display='';['profile-select','resume-list','whats-new'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});this.renderMainMenu();this._renderUpdateIcon();window.scrollTo(0,0);},
@@ -3646,7 +3734,7 @@ return scaled;},
 
 renderMonth(){
 this.showScreen('game-screen');this.selectedActions={};this.currentCategory='marketing';this._showAllActions=false;this._isQuarterlyMonth=(this.month%3===0);this.updateStages();this._setupActionMenu();
-document.getElementById('month-label').textContent='Month '+this.month+' — '+this.getFounderRole();
+this._renderCompanyName();
 const hs=CATS.map(c=>this.getStage(c)).reduce((a,b)=>({foundation:0,leverage:1,wealth:2}[a]>={foundation:0,leverage:1,wealth:2}[b]?a:b));
 const badge=document.getElementById('stage-badge');badge.textContent=hs;badge.style.background=hs==='wealth'?'var(--gold)':hs==='leverage'?'var(--blue)':'var(--accent2)';
 const beat=CONFIG.narrative_beats.fixed_beats.find(b=>b.month===this.month&&(b.archetype===null||b.archetype===this.archetype.id));
@@ -4441,6 +4529,8 @@ const _energyCost=this.actionEnergyCost(action);if(_energyCost>0&&!_execRun)this
 // One-time actions only "complete" (and lock) on a full success — a partial leaves them available to retry. Repeatable actions register as before.
 // Only a SUCCESS counts as "done" — a partial result isn't marked complete (doesn't satisfy capability gates) and doesn't get a "done ×N" pill; you can retry it.
 if(success&&!this.state._completed_actions.includes(action.id))this.state._completed_actions.push(action.id);
+// Log a trap the moment it's taken (traps are always a setback, so success/fail doesn't matter). "Survived" is settled by reaching the run's end alive — a lost run never gets the badge.
+if(TRAPS.includes(action.id)){if(!this.state._traps_hit)this.state._traps_hit=[];if(!this.state._traps_hit.includes(action.id))this.state._traps_hit.push(action.id);}
 if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
 if(success||cat==='lifestyle')this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
 // Non-lifestyle recurring costs (insurance premiums, memberships) become an ongoing monthly operating expense — added once when first activated.
@@ -4460,6 +4550,8 @@ else{const before=s.personal_credit_score||0;s.personal_credit_score=Math.min(85
 // Active credit management sometimes prompts a card issuer to auto-raise your limit — free utilization relief that quietly lifts the score (happens from time to time, not every time).
 if(Math.random()<0.45){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),lim=persRev+(s.available_credit||0),bump=Math.round(Math.max(1500,lim*0.15));s.available_credit=(s.available_credit||0)+bump;s._dyn_narrative=(s._dyn_narrative||'')+' <strong>Bonus:</strong> a card issuer automatically raised your limit by '+this.fmtMoney(bump)+' — that drops your utilization and quietly lifts your score, no payment required.';}}
 if(success){const _reg={establish_business:['form_llc','open_business_account','basic_bookkeeping'],build_personal_credit:['build_personal_credit_repair','build_personal_credit_optimize'],elect_s_corp:['payroll_setup','s_corp_election'],asset_protection_stack:['multi_entity','asset_protection']}[action.id];if(_reg)_reg.forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
+// Forming the LLC → prompt the founder to name their company (shown on the dashboard + leaderboard; sets up future player-vs-player features). Fired after the results render.
+if(action.id==='establish_business'&&success&&!this.state.company_name)this._pendingCompanyName=true;
 if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';}
 if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
 if(action.id==='hire_general_counsel'&&success){this.state._gc_hired=true;}
@@ -4758,7 +4850,9 @@ if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout
 // Second life: your tax reserve just covered a shortfall that would have ended the run. Celebrate the discipline — and remind them the IRS bill is still coming.
 if(this._taxRescue){const amt=this._taxRescue;this._taxRescue=0;const resLeft=this.state.tax_reserve||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Tax Reserve','<div style="line-height:1.6;font-size:0.9rem;">You were about to run out of cash and credit — but you\'d set aside a <strong>tax reserve</strong>, and draining <strong>$'+this.fmt(amt)+'</strong> of it kept you in the game. That discipline just bought you a <strong>second life</strong>.<br><br>But remember: that money was the IRS\'s. Your year-end tax bill is still coming, and there\'s now <strong>$'+this.fmt(resLeft)+'</strong> left in the reserve. Rebuild it when you can.</div>'),260);}
 // Second life #2: your personal emergency fund just covered a business shortfall that would have ended the run. Reward the pay-yourself-first discipline — and nudge them to fix the burn so they don't lean on it again.
-else if(this._ownerRescue){const amt=this._ownerRescue;this._ownerRescue=0;const persLeft=this.state.personal_cash||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Personal Savings','<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>'),260);}},
+else if(this._ownerRescue){const amt=this._ownerRescue;this._ownerRescue=0;const persLeft=this.state.personal_cash||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Personal Savings','<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>'),260);}
+// LLC just formed → name the company (skip if a rescue pop-up is already up; rare on a formation month).
+if(this._pendingCompanyName){this._pendingCompanyName=false;setTimeout(()=>{if(document.getElementById('popup-container').style.display!=='block')this.promptCompanyName(true);},300);}},
 
 nextMonth(){
 // Insolvency ends the run immediately after the Cash & Credit card — no event/tax detour first. You already saw HOW it blew up (red panel + game-over walkthrough); piling an event and a tax bill on top before the end screen was just tedious. Clear any queued event/tax and go straight to game over.
@@ -4849,7 +4943,17 @@ const _baHtml=this._baRowsHtml(this._baRows(_evtBefore));
 const _covered=['cash','personal_cash','total_debt','business_credit_limit','business_credit_used','available_credit','personal_credit_score','leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'];
 const _otherEff=Object.entries(effects).filter(([k,v])=>typeof v==='number'&&v!==0&&!_covered.includes(k));
 const _effHtml=_otherEff.length?'<div class="effect-list">'+_otherEff.map(([k,v])=>{const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');return'<div class="effect-item"><span>'+this.formatStatName(k)+'</span><span style="color:'+color+';font-weight:600">'+(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+'</span></div>';}).join('')+'</div>':'';
+// Scam-survival achievement: facing a tagged scam and NOT going all-in (the scam_trap choice) = you saw through it. Counts across every run (lifetime).
+if(evt.scam){const fell=!!(evt.choices&&evt.choices[ci]&&evt.choices[ci].scam_trap);if(!fell)this._recordScamSurvived();}
 document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+c.label+'</strong><br><br>'+c.outcome_narrative+'</div>'+_baHtml+_effHtml+saleNote+protNote;this.currentEvent=null;},
+// ---- Scam-survival achievement (lifetime, across all runs) — tiers at 3 / 6 / 9 ----
+SCAM_TIERS:[[3,'🕵️','Scam-Wise'],[6,'🛡️','Scam-Proof'],[9,'🥷','Untouchable']],
+_scamsSurvivedLifetime(){try{return +localStorage.getItem('ep_scams_survived')||0;}catch(e){return 0;}},
+_recordScamSurvived(){try{localStorage.setItem('ep_scams_survived',this._scamsSurvivedLifetime()+1);}catch(e){}if(this.state)this.state._scams_survived=(this.state._scams_survived||0)+1;},
+_scamTierBadge(life){let t=null;for(const[n,i,name]of this.SCAM_TIERS)if(life>=n)t={i,n:name};return t;},
+buildScamPanel(life,run){if(life==null)life=this._scamsSurvivedLifetime();if(run==null)run=(this.state&&this.state._scams_survived)||0;const top=life>=9;
+const rows=this.SCAM_TIERS.map(([n,i,name])=>{const done=life>=n;return '<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid rgba(127,127,127,0.1);opacity:'+(done?'1':'0.5')+';"><span style="font-size:1rem;width:20px;text-align:center;">'+(done?i:'🔒')+'</span><span style="flex:1;font-size:0.8rem;'+(done?'':'color:var(--text2);')+'">'+name+' <span style="color:var(--text2);font-size:0.72rem;">— survive '+n+'</span></span><span style="font-size:0.74rem;font-weight:700;color:'+(done?'var(--accent)':'var(--text2)')+';">'+(done?'✓':'—')+'</span></div>';}).join('');
+return '<div style="background:var(--surface);border:1px solid '+(top?'var(--gold)':'var(--border)')+';border-radius:var(--radius-sm);padding:14px;margin-top:14px;text-align:left;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.9rem;font-weight:700;color:'+(top?'var(--gold)':'var(--text)')+';">🕵️ Scams Survived</span><span style="font-size:0.82rem;font-weight:700;color:'+(top?'var(--gold)':'var(--text2)')+';">'+life+' lifetime</span></div><div style="font-size:0.7rem;color:var(--text2);margin:2px 0 8px;">Spot a “guaranteed, act-now” pitch and don’t go all in. Counts across every run'+(run>0?' · +'+run+' this run':'')+'.</div>'+rows+(top?'<div style="margin-top:10px;text-align:center;background:linear-gradient(135deg,rgba(212,175,55,0.18),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:9px;font-size:0.8rem;font-weight:700;color:var(--gold);">🥷 Untouchable — 9 scams dodged. Nobody’s getting one past you.</div>':'')+'</div>';},
 
 showTaxEvent(){const s=this.state,taxOwed=Math.round((s._ytd_taxable_income||0)*(s.tax_rate||0.25)),year=Math.ceil(this.month/12),sep=this.isSeparated(),payCash=sep?(s.personal_cash||0):(s.cash||0);
 this.showScreen('event-screen');this.renderStats('event-dashboard');document.getElementById('event-month-label').textContent='Tax Season — Year '+year;
@@ -4974,7 +5078,7 @@ document.getElementById('end-title').textContent=arch.title;document.getElementB
 this.drawRadarOn(document.getElementById('radar-canvas'),scores);
 document.getElementById('score-breakdown').innerHTML='<div class="stat-card wide"><div class="stat-value" style="color:var(--gold);font-size:1.5rem;">'+composite+' <span style="font-size:0.8rem;color:var(--text2)">/ 600</span></div><div class="stat-label">Composite Score</div></div>'+this._renderScoreCards(scores);
 document.getElementById('epilogue').textContent=arch.epilogue;
-{const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildLifeShowcase()+this.buildDebrief()+this.buildChoiceLog(this._playLog)+this.buildStatsDump(this._statSnapshot())+'</div>');
+{const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildLifeShowcase()+this.buildTrapPanel(this.state._traps_hit)+this.buildScamPanel()+this.buildDebrief()+this.buildChoiceLog(this._playLog)+this.buildStatsDump(this._statSnapshot())+'</div>');
 // New Game+ is a sandbox run — not ranked on the leaderboard (custom starting hand would skew it).
 document.getElementById('end-save').innerHTML=(this.state&&this.state._ngplus)?'<div style="text-align:center;color:var(--gold);font-size:0.84rem;font-weight:600;padding:6px 0;">🔁 New Game+ — sandbox run (not ranked on the leaderboard).</div>':'<input id="player-name" class="name-input" placeholder="Enter your name for the leaderboard" maxlength="20"><button class="btn-primary" onclick="Game.saveToLeaderboard()">Save to Leaderboard</button>';
 // Ended early (before month 36)? You can pick the run back up where you left off.
@@ -5003,6 +5107,8 @@ autoSave(){if(!this.archetype||!this.state||this._lost)return;try{const snap=thi
 clearAutoSave(){try{localStorage.removeItem('ep_autosave');}catch(e){}},
 loadAutoSave(){try{return JSON.parse(localStorage.getItem('ep_autosave')||'null');}catch(e){return null;}},
 resumeAuto(){const s=this.loadAutoSave();if(!s)return;this._loadSnapshot(s);this.showScreen('game-screen');this.renderMonth();},
+// Yes/No guard before resuming the in-progress game.
+confirmResumeAuto(){const s=this.loadAutoSave();if(!s)return;this._confirm('↩ Resume your game?','Pick up <strong>'+this._archLabel(s.archetype)+'</strong> at <strong>Month '+s.month+' of 36</strong>?','Resume',()=>this.resumeAuto());},
 discardAuto(){this.clearAutoSave();this.renderSaves();},
 saveProgress(){const el=document.getElementById('cp-save-name');const name=((el&&el.value)||'').trim()||'Anonymous';
 let saves=this.loadSaves();const snap=this._snapshot();snap.name=name;snap.savedAt=new Date().toISOString().split('T')[0];snap.composite=this.calcComposite(this.calculateFinalScores());
@@ -5013,9 +5119,9 @@ resumeSave(i){const s=this.loadSaves()[i];if(!s)return;this._loadSnapshot(s);thi
 deleteSave(i){let saves=this.loadSaves();saves.splice(i,1);localStorage.setItem('ep_saves',JSON.stringify(saves));this.renderSaves();const lr=document.getElementById('lb-resume');if(lr)lr.innerHTML=this._savesHtml();},
 _savesHtml(){const saves=this.loadSaves();if(!saves.length)return '';
 return '<div style="max-width:420px;margin:0 auto 16px;text-align:left;"><div style="font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:6px;">▶ Continue a Saved Run</div>'+saves.map((s,i)=>'<div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px;"><div style="flex:1;min-width:0;cursor:pointer;" onclick="Game.resumeSave('+i+')"><div style="font-weight:700;font-size:0.86rem;">'+s.name+'</div><div style="font-size:0.7rem;color:var(--text2);">'+this._archLabel(s.archetype)+' · Month '+s.month+' · saved '+s.savedAt+(s.composite!=null?' · '+s.composite+' pts':'')+(this._verLt(s.gv,this._curVersion())?' · <span style="color:var(--gold);">⚠ older version</span>':'')+'</div></div><button class="btn-secondary" style="width:auto;margin:0;padding:6px 12px;font-size:0.76rem;" onclick="Game.resumeSave('+i+')">Resume</button><button title="Delete save" onclick="Game.deleteSave('+i+')" style="background:none;border:none;color:var(--text2);font-size:1rem;cursor:pointer;padding:0 4px;">✕</button></div>').join('')+'</div>';},
-_autoSaveHtml(){const s=this.loadAutoSave();if(!s||s.month>36)return '';return '<div style="max-width:420px;margin:0 auto 14px;text-align:left;"><div style="background:rgba(16,185,129,0.1);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.86rem;font-weight:700;color:var(--accent);margin-bottom:2px;">↩ Continue your game</div><div style="font-size:0.72rem;color:var(--text2);margin-bottom:9px;">'+this._archLabel(s.archetype)+' · Month '+s.month+' of 36 · autosaved '+(s.savedAt||'')+'</div>'+this._saveVerNote(s.gv)+(this._verLt(s.gv,this._curVersion())?'<button class="btn-primary" style="margin:0 0 8px;width:100%;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;font-weight:700;" onclick="Game.showSaveUpdate()">⬆ Update Save to v'+this._curVersion()+'</button>':'')+'<div style="display:flex;gap:8px;"><button class="btn-primary" style="margin:0;flex:1;" onclick="Game.resumeAuto()">Continue →</button><button class="btn-secondary" style="margin:0;width:auto;padding:10px 12px;" onclick="if(confirm(\'Discard your in-progress game and start fresh?\'))Game.discardAuto();">Discard</button></div></div></div>';},
+_autoSaveHtml(){const s=this.loadAutoSave();if(!s||s.month>36)return '';return '<div style="max-width:420px;margin:0 auto 14px;text-align:left;"><div style="background:rgba(16,185,129,0.1);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.86rem;font-weight:700;color:var(--accent);margin-bottom:2px;">↩ Continue your game</div><div style="font-size:0.72rem;color:var(--text2);margin-bottom:9px;">'+this._archLabel(s.archetype)+' · Month '+s.month+' of 36 · autosaved '+(s.savedAt||'')+'</div>'+this._saveVerNote(s.gv)+(this._verLt(s.gv,this._curVersion())?'<button class="btn-primary" style="margin:0 0 8px;width:100%;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;font-weight:700;" onclick="Game.showSaveUpdate()">⬆ Update Save to v'+this._curVersion()+'</button>':'')+'<div style="display:flex;gap:8px;"><button class="btn-primary" style="margin:0;flex:1;" onclick="Game.confirmResumeAuto()">Continue →</button><button class="btn-secondary" style="margin:0;width:auto;padding:10px 12px;" onclick="if(confirm(\'Discard your in-progress game and start fresh?\'))Game.discardAuto();">Discard</button></div></div></div>';},
 // Load Game view (back button + autosave card + named saves), refreshed after save/delete.
-renderSaves(){const el=document.getElementById('resume-list');if(!el)return;const empty=!this.loadAutoSave()&&!this.loadSaves().length;el.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin:4px 0 14px;"><button class="btn-outline" style="width:auto;margin:0;padding:6px 14px;" onclick="Game.showMainMenu()">← Back</button><span style="font-weight:700;color:var(--accent);font-size:0.95rem;">Continue / Load Game</span></div>'+this._autoSaveHtml()+this._savesHtml()+(empty?'<div style="text-align:center;color:var(--text2);font-size:0.82rem;padding:24px 0;">No saved games yet — start a New Game.</div>':'');},
+renderSaves(){const el=document.getElementById('resume-list');if(!el)return;const empty=!this.loadAutoSave()&&!this.loadSaves().length;el.innerHTML='<div class="page-head"><button class="back-chip" onclick="Game.showMainMenu()">← Back</button><span class="page-title accent">Continue / Load Game</span></div>'+this._autoSaveHtml()+this._savesHtml()+(empty?'<div style="text-align:center;color:var(--text2);font-size:0.82rem;padding:24px 0;">No saved games yet — start a New Game.</div>':'');},
 // ---- Full action history (how the run was actually played) ----
 buildChoiceLog(log){if(!log||!log.length)return '';const cc={marketing:'var(--accent)',operations:'var(--blue)',finance:'var(--gold)',lifestyle:'var(--purple)'};
 const byMonth={};log.forEach(e=>{(byMonth[e.m]=byMonth[e.m]||[]).push(e);});
@@ -5024,6 +5130,10 @@ return '<div style="background:var(--surface);border:1px solid var(--border);bor
 // Badges of honor — earned from Personal Mastery + the dimensions and marquee luxuries of the life you built.
 calcBadges(){const d=this.lifeDims(),m=this.calcPersonalMastery(),c=id=>(this.lifestyleHistory||[]).some(a=>a&&a.id===id),b=[];
 if(m>=80)b.push({i:'🏆',n:'Renaissance Founder'});else if(m>=60)b.push({i:'⭐',n:'Well-Rounded Life'});
+// Found and survived every trap in the game — the leaderboard flex.
+{const hit=this.state._traps_hit||[];if(TRAPS.every(t=>hit.includes(t)))b.push({i:'🪤',n:'Trap Survivor'});}
+// Lifetime scam-survival tier (3/6/9) — also a leaderboard flex.
+{const st=this._scamTierBadge(this._scamsSurvivedLifetime());if(st)b.push(st);}
 if(d.Body>=80)b.push({i:'💪',n:'Peak Health'});if(d.Mind>=80)b.push({i:'🧠',n:'Sage'});if(d.Spirit>=80)b.push({i:'🕊️',n:'Centered'});if(d.Heart>=80)b.push({i:'❤️',n:'Devoted'});if(d.Luxury>=80)b.push({i:'✨',n:'Lives Large'});
 if(c('private_jet'))b.push({i:'🛩️',n:'Flies Private'});if(c('superyacht_charter'))b.push({i:'🛥️',n:'Superyacht Life'});if(c('dream_car'))b.push({i:'🏎️',n:'Dream Car'});if(c('dream_home')||c('private_estate'))b.push({i:'🏡',n:'Dream Home'});
 return b;},
@@ -5035,6 +5145,10 @@ h+=['Body','Mind','Spirit','Heart','Luxury'].map(bar).join('');
 if(badges.length)h+='<div style="margin-top:10px;">'+badges.map(b=>'<span title="'+b.n+'" style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:3px 4px 0 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>';
 if(marquee.length)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);">Flexes: '+marquee.join(' · ')+'</div>';
 return h+'</div>';},
+// Trap achievements — the traps you found and lived through. Undiscovered ones stay hidden (🔒) so finding them is part of the game. All of them = the "Trap Survivor" flex.
+buildTrapPanel(hit){hit=hit||[];const total=TRAPS.length,got=TRAPS.filter(t=>hit.includes(t)).length,all=got===total;
+const rows=TRAPS.map(t=>{const m=TRAP_META[t]||{i:'🪤',n:'Trap'},done=hit.includes(t);return '<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid rgba(127,127,127,0.1);opacity:'+(done?'1':'0.5')+';"><span style="font-size:1rem;width:20px;text-align:center;">'+(done?m.i:'🔒')+'</span><span style="flex:1;font-size:0.8rem;'+(done?'':'color:var(--text2);')+'">'+(done?m.n:'Undiscovered trap')+'</span><span style="font-size:0.74rem;font-weight:700;color:'+(done?'var(--accent)':'var(--text2)')+';">'+(done?'✓ Survived':'—')+'</span></div>';}).join('');
+return '<div style="background:var(--surface);border:1px solid '+(all?'var(--gold)':'var(--border)')+';border-radius:var(--radius-sm);padding:14px;margin-top:14px;text-align:left;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.9rem;font-weight:700;color:'+(all?'var(--gold)':'var(--text)')+';">🪤 Traps Survived</span><span style="font-size:0.82rem;font-weight:700;color:'+(all?'var(--gold)':'var(--text2)')+';">'+got+' / '+total+'</span></div><div style="font-size:0.7rem;color:var(--text2);margin:2px 0 8px;">Tempting moves that always backfire. Take one and live to tell the tale to log it.</div>'+rows+(all?'<div style="margin-top:10px;text-align:center;background:linear-gradient(135deg,rgba(212,175,55,0.18),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:9px;font-size:0.8rem;font-weight:700;color:var(--gold);">🏆 Trap Survivor — you found and survived every trap. Flex earned for the leaderboard.</div>':'')+'</div>';},
 // Snapshot of EVERY tracked scalar in the run (plus key derived values) — stored on the leaderboard so anyone can inspect the full picture.
 _statSnapshot(){const s=this.state,out={};for(const k in s){const v=s[k];if(typeof v==='number'||typeof v==='string'||typeof v==='boolean')out[k]=v;}
 out.personal_mastery=this.calcPersonalMastery();out.freedom=this.calcFreedom();out.dnb_score=this.calcBizCreditScore();out.biz_utilization=this.calcBizUtil();out.pers_utilization=this.calcPersUtil();out.founder_role=this.getFounderRole();out.actions_completed=(s._completed_actions||[]).length;out.milestones_hit=(s._milestones_achieved||[]).length;
@@ -5047,38 +5161,56 @@ let body='';for(const[title,keys]of groups){const rows=keys.map(row).join('');if
 const other=Object.keys(snap).filter(k=>!shown[k]&&!/^(_completed_actions|_actions_seen|_action_counts|_milestones_achieved)$/.test(k)).sort();
 if(other.length)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">⚙ Other tracked values</div>'+other.map(row).join('');
 return '<details style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-top:14px;text-align:left;"><summary style="cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--gold);">📋 All Tracked Stats <span style="color:var(--text2);font-weight:400;font-size:0.72rem;">(everything, including the hidden ones)</span></summary><div style="margin-top:8px;">'+body+'</div></details>';},
-showRunDetail(i){const e=(this._lbFiltered||[])[i];if(!e)return;let h='<div style="font-size:0.78rem;color:var(--text2);margin-bottom:8px;">'+this._archLabel(e.archetype)+' · '+e.months+' months · '+e.composite+' pts · '+e.date+'</div>';if(e.badges&&e.badges.length)h+='<div style="margin-bottom:10px;">'+e.badges.map(b=>'<span style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:2px 4px 2px 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>';const log=this.buildChoiceLog(e.playLog||[]);h+=log||'<div style="color:var(--text2);font-size:0.8rem;">No action history was recorded for this run.</div>';if(e.stats)h+=this.buildStatsDump(e.stats);this.showPopup(e.name+'’s Run',h);},
+showRunDetail(i){const e=(this._lbFiltered||[])[i];if(!e)return;let h=(e.company?'<div style="font-weight:700;color:var(--gold);font-size:0.95rem;margin-bottom:3px;">🏢 '+this._esc(e.company)+'</div>':'')+'<div style="font-size:0.78rem;color:var(--text2);margin-bottom:8px;">'+this._archLabel(e.archetype)+' · '+e.months+' months · '+e.composite+' pts · '+e.date+'</div>';if(e.badges&&e.badges.length)h+='<div style="margin-bottom:10px;">'+e.badges.map(b=>'<span style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:2px 4px 2px 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>';const log=this.buildChoiceLog(e.playLog||[]);h+=log||'<div style="color:var(--text2);font-size:0.8rem;">No action history was recorded for this run.</div>';if(e.traps&&e.traps.length)h+=this.buildTrapPanel(e.traps);if(e.scams!=null)h+=this.buildScamPanel(e.scams,e.scamsRun||0);if(e.stats)h+=this.buildStatsDump(e.stats);this.showPopup(e.name+'’s Run',h);},
 
 saveToLeaderboard(){
 const name=(document.getElementById('player-name').value||'').trim()||'Anonymous';
 const scores=this.calculateFinalScores(),composite=this.calcComposite(scores);
-const entry={name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite,scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};
+const entry={name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite,scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};
 let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));
+this._myLBName=name;this._lbSubmitGlobal(entry);
 // Completed runs no longer need their in-progress save
 let _sv=this.loadSaves().filter(s=>!(s.name===name&&s.archetype===this.archetype.id));localStorage.setItem('ep_saves',JSON.stringify(_sv));
 const isRecord=lb.filter(e=>e.archetype===entry.archetype&&e.months===entry.months).sort((a,b)=>b.composite-a.composite)[0].name===entry.name;
 document.getElementById('end-save').innerHTML='<div style="text-align:center;color:var(--accent);font-weight:600;margin:12px 0;">✓ Saved!'+(isRecord?' New record for '+this.archetype.label+' — '+entry.months+' months!':'')+'</div><button class="btn-outline" onclick="Game.showLeaderboard(\'end\')">View Leaderboard</button>';},
 
+// ---- Global leaderboard hook (backend wired later — see RELEASE_NOTES "v0.4 leaderboard") ----
+// To go live: set Game.LB_BACKEND = { async fetchTop(arch,months){return [entries]}, async submit(entry){} }.
+// fetchTop returns entries in the SAME shape as local (name, composite, archetype, months, badges, playLog, stats, date),
+// already sorted desc by composite and capped to the top 10. submit() pushes one finished run. Until set, Global shows a "coming soon" state.
+LB_BACKEND:null,
+_lbSubmitGlobal(entry){if(this.LB_BACKEND&&this.LB_BACKEND.submit){try{Promise.resolve(this.LB_BACKEND.submit(entry)).catch(()=>{});}catch(e){}}},
+
 showLeaderboard(from){
 this._lbFrom=from||'title';this.showScreen('leaderboard-screen');
-const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');
 const archetypes=['stuck','new','established'],durations=[12,24,36];
 const archLabels={stuck:'Stuck',new:'New',established:'Established'};
-const selArch=this.archetype?this.archetype.id:'new',selDur=this.month||36;
-let html='<div class="month-header"><h2>Leaderboard</h2></div>';
-html+='<div id="lb-resume">'+this._savesHtml()+'</div>';
+const selArch=this.archetype?this.archetype.id:(this._lbArch||'new'),selDur=this.month||36;
+this._lbArch=selArch;this._lbDur=Math.min(36,Math.ceil(selDur/12)*12);this._lbScope=this._lbScope||'local';
+const backTo=from==='end'?'Game.showScreen(\'end-screen\')':'Game.showMainMenu()';
+let html='<div class="page-head"><button class="back-chip" onclick="'+backTo+'">← Back</button><span class="page-title gold">🏆 Leaderboard</span></div>';
+html+='<div class="lb-scope"><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div></div>';
 html+='<div class="lb-tabs" id="lb-arch-tabs">'+archetypes.map(a=>'<div class="lb-tab '+(a===selArch?'active':'')+'" onclick="Game.filterLB(\''+a+'\')">'+archLabels[a]+'</div>').join('')+'</div>';
-html+='<div class="lb-tabs" id="lb-dur-tabs">'+durations.map(d=>'<div class="lb-tab '+(d===Math.min(36,Math.ceil(selDur/12)*12)?'active':'')+'" onclick="Game.filterLBDur('+d+')">'+d+' Mo</div>').join('')+'</div>';
+html+='<div class="lb-tabs" id="lb-dur-tabs">'+durations.map(d=>'<div class="lb-tab '+(d===this._lbDur?'active':'')+'" onclick="Game.filterLBDur('+d+')">'+d+' Mo</div>').join('')+'</div>';
 html+='<div id="lb-list"></div>';
-html+='<button class="btn-secondary" onclick="'+(from==='end'?'Game.showScreen(\'end-screen\')':'Game.showMainMenu()')+'">Back</button>';
-document.getElementById('lb-content').innerHTML=html;
-this._lbArch=selArch;this._lbDur=Math.min(36,Math.ceil(selDur/12)*12);this.renderLBList();},
+document.getElementById('lb-content').innerHTML=html;this.renderLBList();},
 
-filterLB(arch){this._lbArch=arch;document.querySelectorAll('#lb-arch-tabs .lb-tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');this.renderLBList();},
-filterLBDur(dur){this._lbDur=dur;document.querySelectorAll('#lb-dur-tabs .lb-tab').forEach(t=>t.classList.remove('active'));event.target.classList.add('active');this.renderLBList();},
+setLBScope(scope){this._lbScope=scope;document.querySelectorAll('.lb-scope .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
+filterLB(arch){this._lbArch=arch;document.querySelectorAll('#lb-arch-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
+filterLBDur(dur){this._lbDur=dur;document.querySelectorAll('#lb-dur-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 
-renderLBList(){const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');const filtered=lb.filter(e=>e.archetype===this._lbArch&&e.months===this._lbDur).sort((a,b)=>b.composite-a.composite).slice(0,10);this._lbFiltered=filtered;
-document.getElementById('lb-list').innerHTML=filtered.length?filtered.map((e,i)=>'<div class="lb-entry fade-in" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')"><span class="lb-rank">#'+(i+1)+'</span><span class="lb-name">'+e.name+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>').join(''):'<div style="text-align:center;color:var(--text2);padding:30px;">No runs completed yet for this category.</div>';},
+async renderLBList(){const el=document.getElementById('lb-list');if(!el)return;
+if(this._lbScope==='global'){
+if(!this.LB_BACKEND){el.innerHTML='<div class="lb-note">🌐 <strong>Global leaderboard — coming soon.</strong><br>Compete with founders everywhere. Once the global board is connected, the runs you submit will show up here.</div>';this._lbFiltered=[];return;}
+el.innerHTML='<div class="lb-note">Loading global runs…</div>';
+let rows=[];try{rows=await this.LB_BACKEND.fetchTop(this._lbArch,this._lbDur)||[];}catch(e){el.innerHTML='<div class="lb-note">⚠ Couldn’t reach the global leaderboard.<br>Check your connection and try again.</div>';this._lbFiltered=[];return;}
+this._lbFiltered=rows;this._paintLB(rows,el);return;}
+const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');
+const filtered=lb.filter(e=>e.archetype===this._lbArch&&e.months===this._lbDur).sort((a,b)=>b.composite-a.composite).slice(0,10);
+this._lbFiltered=filtered;this._paintLB(filtered,el);},
+
+_paintLB(filtered,el){const MEDAL=['🥇','🥈','🥉'];const me=(this._myLBName||'').toLowerCase();
+el.innerHTML=filtered.length?filtered.map((e,i)=>{const rank=i<3?'<span class="lb-rank lb-medal">'+MEDAL[i]+'</span>':'<span class="lb-rank">#'+(i+1)+'</span>';const mine=me&&(e.name||'').toLowerCase()===me;return '<div class="lb-entry fade-in'+(mine?' me':'')+'" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')">'+rank+'<span class="lb-name">'+e.name+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+(e.company?'<span style="display:block;font-size:0.66rem;color:var(--text2);font-weight:400;">🏢 '+this._esc(e.company)+'</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>';}).join(''):'<div class="lb-note">No runs here yet — finish a 12, 24, or 36-month run to claim the top spot.</div>';},
 
 // v2 scoring — see DESIGN.md. Capital efficiency wins, not raw revenue.
 // The six scored pillars, in display order (radar + breakdown). Definitions live in config/scoring_weights.json (player_description) — no weights/formulas shown.

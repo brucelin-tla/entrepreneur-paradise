@@ -1,5 +1,24 @@
 # Release Notes
 
+## v0.40.0 — 2026-06-30
+**v0.4 series — UI consistency pass, leaderboard rebuild (global-ready), founder cards, achievements (traps + scams), redeem codes, company name, continue confirm**
+
+**Shared title-screen chrome:** new `.page-head` + `.back-chip` CSS — Choose-Your-Founder, Load Game, and Leaderboard now share one header pattern with the Back button in the same top-left spot. Main menu rows moved from inline styles to a lean `.menu-item` class.
+
+**Founder cards redone (`renderArchetypes` + config):** archetypes relabeled **New / Established / Stuck Founder** with graduated-length descriptions, plus a uniform 4-stat row (Cash / Rev / Credit / Debt) computed from `initial_state` and color-coded. New `.arch-*` styles; `min-height` on the description floors card height so they read as a consistent set.
+
+**Leaderboard rebuild (`showLeaderboard`/`renderLBList`/`_paintLB`):** centered 420px column with top breathing room; **Global / This-Device** scope toggle (`_lbScope`) — Global shows a "coming soon" state until a backend is wired; 🥇🥈🥉 medals on the top 3; your own run highlighted (`_myLBName`); company names in rows + run-detail. Drop-in backend seam: set `Game.LB_BACKEND = { async fetchTop(arch,months), async submit(entry) }` (decision: build UI now, wire Supabase later). `serve.ps1`/`launch.json` now honor `$env:PORT` + `autoPort`.
+
+**Achievements:**
+- **Traps (per-run):** survive all 7 `TRAPS` in one run → 🪤 Trap Survivor badge. Tracked in `state._traps_hit` (logged when taken; "survive" = finish the run alive). `buildTrapPanel` shows discovered traps (locked 🔒 until found) on the end screen + run-detail. `TRAP_META` holds display names.
+- **Scams (lifetime, across runs):** events tagged `"scam": true` with the catastrophic choice flagged `"scam_trap": true` (`crypto_friend_scam`, `coworker_investment_scam`); resolving a scam without going all-in increments `ep_scams_survived` (localStorage). Tiers 3 / 6 / 9 → 🕵️ Scam-Wise / 🛡️ Scam-Proof / 🥷 Untouchable (`SCAM_TIERS`, `buildScamPanel`). Both panels' badges flow through `calcBadges` → leaderboard. (Only 2 distinct scams exist today, so 9 is a long-haul lifetime flex.)
+
+**Redeem codes:** main-menu 🎟 Redeem Code → popup. `REDEEM_CODES` map (normalized keys); live code `epiclife` unlocks New Game+. Redeemed codes persist in `ep_codes`; handles invalid / already-redeemed.
+
+**Company name:** prompted when forming the LLC (`establish_business` → `_pendingCompanyName` → `promptCompanyName` after results). Stored `state.company_name`, shown as a tappable chip above the month label (`_renderCompanyName`, with a "+ Name your company" nudge once you have an entity), included in the leaderboard entry (`company`) + run-detail. HTML-escaped via `_esc`. Groundwork for future async-multiplayer / PvP (leaderboard snapshots become a pool of other players' companies).
+
+**Continue confirm:** the Continue action (main-menu item + Load Game card) now routes through `confirmResumeAuto` → in-game styled Yes/No before loading the autosave.
+
 ## v0.39.0 — 2026-06-30
 **Real-game main menu + credit/loan realism pass (4 fixes)**
 
