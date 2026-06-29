@@ -11,7 +11,7 @@
       "lesson": "You can't afford an A-player full-time yet — so you rent one. A fractional executive is leverage on a budget: real expertise, part-time cost. It buys back your time now and proves out the role before you commit to a full salary.",
       "cash_cost": 4000,
       "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 30000, "customer_base_gte": 45, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "prerequisites": { "needs": ["hire_marketing_manager"], "monthly_revenue_gte": 50000, "customer_base_gte": 120, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
       "effects": { "brand_equity": 6, "key_person_dependency": -8, "_cro_hired": true },
       "success_rate": 0.88,
       "failure_effects": { "brand_equity": 2, "_cro_hired": true },
