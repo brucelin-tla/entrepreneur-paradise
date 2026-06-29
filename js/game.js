@@ -43,6 +43,16 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.42.0',d:'2026-06-30 16:30',n:[
+'Leaderboard revamp: 🌐 Global / 📱 This Device (Global first), runs grouped by founder with a 12mo/24mo/36mo tag in one list, and tap any run for its score with collapsible choice history + achievements.',
+'You can now post a 12 or 24-month run to the leaderboard right from the year checkpoint — and there’s a Main Menu button there too.',
+'Funding realism: a banking relationship gets you bigger credit lines and easier approvals; forming a Wyoming holding LLC assigns the correct NAICS code so you qualify more easily (wrong/missing structure can get you declined).',
+'Your COO now invests in company culture when it slips (benefits / equity grants), with a low-culture warning.',
+'When a team member leaves, their exact cost is removed and the role re-opens with a ↻ Rehire tag.',
+'Clearer money moves: forming an LLC shows the business-credit boost, private equity says it commits ~half your cash, and policy-loan deals show the real amount you can borrow.',
+'Full C-suite “Run the Month” now still prompts you to pick your Life action.',
+'Energy rebalanced so it stays a real constraint, and the business expense breakdown no longer shows line items that add up past the total.'
+]},
 {v:'0.41.0',d:'2026-06-30 15:21',n:[
 '🌐 Global leaderboard is live — switch the leaderboard to Global to see top founders across all players. Browsing is open to everyone.',
 'Sign in with Google to post your runs to the global board (solo play still needs no login).',
@@ -686,7 +696,7 @@ LIFE_THEME:{health:'Body',relationships:'Heart',spiritual:'Spirit',philanthropy:
 LIFE_ICON:{Body:'💪',Mind:'🧠',Spirit:'🕊️',Heart:'❤️',Luxury:'✨'},
 calcPersonalMastery(){const d=this.lifeDims();return Math.round((d.Body+d.Mind+d.Spirit+d.Heart+d.Luxury)/5);},
 // Energy recovery is driven by Personal Mastery — neglect your life and you recover slowly (firm but recoverable); invest in it and you run on a full tank.
-calcEnergyRecovery(){const m=this.calcPersonalMastery();return Math.max(5,Math.round(10+m*0.16));},
+calcEnergyRecovery(){const m=this.calcPersonalMastery();return Math.max(4,Math.round(6+m*0.10));},/* recovery ~6/mo early → ~16/mo at full mastery (rebalanced down — energy stays a real constraint) */
 calcFreedom(){const s=this.state,c=id=>s._completed_actions&&s._completed_actions.includes(id);
 // Low dependency still matters, but a real team/exec layer + governance is what actually frees the founder.
 let f=(100-(s.key_person_dependency||100))*0.5
@@ -698,7 +708,10 @@ let f=(100-(s.key_person_dependency||100))*0.5
 +(s._board_active?16:0);
 return Math.min(100,Math.max(0,Math.round(f)));},
 calcBusinessLevel(){return Math.min(10,Math.max(1,(this.state.monthly_revenue||0)/5000));},
-calcCreditCapacity(){const s=this.state;const credit=Math.max(0.3,Math.min(2.5,((s.personal_credit_score||600)-560)/120));const size=1+Math.min(3,(s.monthly_revenue||0)/20000);const prof=(s.business_credit_profile==='established')?1.25:1;const cfo=s._cfo_fulltime?1.4:s._cfo_hired?1.15:1;const fund=this._perks().fundingReady?1.12:1;return Math.round(credit*size*prof*cfo*fund*100)/100;},
+calcCreditCapacity(){const s=this.state;const credit=Math.max(0.3,Math.min(2.5,((s.personal_credit_score||600)-560)/120));const size=1+Math.min(3,(s.monthly_revenue||0)/20000);const prof=(s.business_credit_profile==='established')?1.25:1;const cfo=s._cfo_fulltime?1.4:s._cfo_hired?1.15:1;const fund=this._perks().fundingReady?1.12:1;const bank=this._hasBanking()?1.18:1;/* a real banking relationship (deposits + history) gets you bigger lines */return Math.round(credit*size*prof*cfo*fund*bank*100)/100;},
+// Funding levers beyond your personal file: a banking relationship (you bank/deposit there, so you're known) and a verified NAICS classification (the holding-company setup assigns the right code). Both gate how lenders see a BUSINESS applicant.
+_hasBanking(){const s=this.state;return !!((s._completed_actions||[]).includes('banking_relationship')||['trusted','champion'].includes(s._banker_state));},
+_naicsVerified(){const s=this.state;return !!(s._naics_ok||s._holding_company||['c_corp','multi_entity'].includes(s.entity_structure)||(s._completed_actions||[]).includes('wyoming_holding_llc')||(s._completed_actions||[]).includes('setup_family_office'));},
 // Milestone perks — completing the foundational milestones grants permanent, mechanical boosts (so the C-suite/player actually values them, not just badges).
 _perks(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id);return {protected:c('combined_insurance')&&(c('asset_protection_stack')||c('asset_protection')),taxSmart:['s_corp','c_corp','multi_entity'].includes(s.entity_structure)&&c('advanced_tax_strategy'),fundingReady:c('debt_restructure')&&(s.credit_negatives||0)===0&&s.business_credit_profile==='established'};},
 getFounderRole(){const f=this.calcFreedom();if(f>80)return'Chairman';if(f>60)return'CEO';if(f>40)return'Director';if(f>20)return'Manager';return'Operator';},
@@ -708,7 +721,10 @@ checkMilestones(){const s=this.state;if(!s._milestones_achieved)s._milestones_ac
 mentorMilestoneLine(){const s=this.state,recent=(s._milestones_achieved||[]).filter(m=>m.month>0&&m.month===this.month-1);if(!recent.length)return null;const m=MILES_BY_ID[recent[recent.length-1].id];if(!m)return null;return{name:'Marcus Webb — Mentor',line:'🏆 Milestone unlocked — <strong>'+m.title+'</strong>. '+m.mentor};},
 scaleActionEffects(effects,cat){const s=this.state,scaled=JSON.parse(JSON.stringify(effects)),level=this.calcBusinessLevel(),skill=(s['skill_'+cat]||0),lvlF=Math.min(2.4,Math.max(1,1+(level-3)*0.22));for(const k in scaled){if(typeof scaled[k]!=='number')continue;if(k==='monthly_revenue'&&scaled[k]>0)scaled[k]=Math.round(scaled[k]*Math.min(2.5,level));if(k==='leads'&&scaled[k]>0)scaled[k]=Math.round(scaled[k]*(1+(s.brand_equity||0)/300+skill/300)*lvlF);if(k==='customer_base'&&scaled[k]>0)scaled[k]=Math.round(scaled[k]*(1+skill/400)*lvlF);if(k==='revenue_capacity')scaled[k]=Math.round(scaled[k]*Math.min(3,level));if(k==='operating_expenses'&&scaled[k]>0)scaled[k]=Math.round(scaled[k]*Math.min(2,level));}return scaled;},
 // Diminishing returns on Life dimensions: a gain shrinks as that dimension fills, so cheap repeats give little and you're pushed toward variety + bigger investments. Energy/business effects are untouched.
-_scaleLifestyleEffects(effects){const s=this.state,LK=['lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy','fitness_level'],out=JSON.parse(JSON.stringify(effects));for(const k of LK){if(typeof out[k]==='number'&&out[k]>0){const cur=s[k]||0,f=Math.max(0.2,1-cur/140);out[k]=Math.max(1,Math.round(out[k]*f));}}return out;},
+_scaleLifestyleEffects(effects){const s=this.state,LK=['lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy','fitness_level'],out=JSON.parse(JSON.stringify(effects));for(const k of LK){if(typeof out[k]==='number'&&out[k]>0){const cur=s[k]||0,f=Math.max(0.2,1-cur/140);out[k]=Math.max(1,Math.round(out[k]*f));}}
+// Energy from a life action gives diminishing returns when you're already well-rested — so it's not a free top-up to 100 every quarter.
+if(typeof out.energy==='number'&&out.energy>0){const e=s.energy||0;if(e>70)out.energy=Math.max(1,Math.round(out.energy*0.4));else if(e>50)out.energy=Math.max(1,Math.round(out.energy*0.7));}
+return out;},
 // Late-game cost scaling: repeatable marketing/ops actions cost more as the company grows, so they stay a real decision instead of pocket change (effects scale too, via scaleActionEffects).
 // A second attempt after a partial costs half — you've already done most of the legwork, just need to finish the job.
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
@@ -834,7 +850,9 @@ const neg=s.credit_negatives||0,negMult=neg<=0?1:neg===1?0.6:neg===2?0.4:neg===3
 // Ability to repay: lenders underwrite capacity, not just willingness. High debt-to-income (and a business that can't cover its debt service) makes them nervous.
 const dti=this.calcDTI(),dtiMult=dti<=36?1:dti<=43?0.85:dti<=55?0.6:0.35;const dscr=s.dscr||0,dscrMult=(dscr>0&&dscr<1)?0.65:1;
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
-return Math.max(0.03,Math.min(0.95,p*fico*inqMult*negMult*dtiMult*dscrMult));},
+// Banking relationship → the lender already knows you (deposits + history) → easier yes. NAICS classification → a verified holding-company code reads as a legit business; an unverified/wrong code gets flagged and declined until fixed.
+const bankMult=this._hasBanking()?1.12:1;const _hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure);const naicsMult=this._naicsVerified()?1.05:(_hasEntity?0.75:1);/* only a real business entity can carry a wrong NAICS code; no entity = personal loan, NAICS irrelevant */
+return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*dtiMult*dscrMult*bankMult*naicsMult));},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
@@ -1028,6 +1046,8 @@ else if(dti>36)bf.push({l:'High DTI ('+dti+'%)',i:'warning',d:'Most lenders want
 else if(dti>0)bf.push({l:'Healthy DTI ('+dti+'%)',i:'positive',d:'Below 36% — manageable. RE excluded.'});}
 if(!s.business_credit_profile||s.business_credit_profile==='none')bf.push({l:'No business credit',i:'warning',d:'Not established yet'});
 else if(s.business_credit_profile==='building')bf.push({l:'Building business credit',i:'neutral',d:'Being established'});
+// Company culture (only meaningful once you have a team) — flag it when it slips so retention/churn risk is visible.
+if((s.team_size||0)>0){const _cul=s.company_culture==null?45:s.company_culture;if(_cul<30)bf.push({l:'Weak culture ('+_cul+')',i:'negative',d:'High turnover & churn risk. Benefits or equity grants rebuild it.'});else if(_cul<50)bf.push({l:'Shaky culture ('+_cul+')',i:'warning',d:'Invest in a benefits package or equity to retain your team.'});else bf.push({l:'Strong culture ('+_cul+')',i:'positive',d:'Your team is engaged and sticking around.'});}
 else bf.push({l:'Established business credit',i:'positive',d:'Strong history'});
 if(['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))bf.push({l:'Entity established',i:'positive',d:s.entity_structure.replace(/_/g,' ').toUpperCase()});
 if(s._banker_state==='trusted'||s._banker_state==='champion')bf.push({l:'Strong banking relationship',i:'positive',d:'Banker trusts you'});
@@ -1241,6 +1261,8 @@ v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+
 v+=(ef.personal_credit_score||0)*250*Math.max(0,Math.min(1,(760-(s.personal_credit_score||600))/200)); // credit gains worthless once your score is already high
 v+=(ef.available_credit||0)*0.15*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000));v+=(ef.business_credit_limit||0)*0.12*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000)); // more credit matters less when flush with cash
 v-=(ef.key_person_dependency||0)*200;v-=(ef.churn_rate||0)*30000;v-=(ef.audit_risk||0)*120;v-=(ef.operating_expenses||0)*0.4;
+// Company culture: the COO invests in it — weighted heavily when it's slipping (so benefits/equity get picked) and lightly when healthy; culture-destroying moves get penalized the same way.
+{const _cul=s.company_culture==null?45:s.company_culture;v+=(ef.company_culture||0)*(120+Math.max(0,55-_cul)*22);}
 v-=(a.cash_cost||0)*0.2;v-=Math.max(0,a.energy_cost||0)*120;
 // Golden-path / handler-based moves carry their payoff in resolveMonth, not in config effects — value them explicitly so executives prioritize real wealth-building (passive income highest, per DESIGN.md).
 const HV={activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000};
@@ -1256,6 +1278,8 @@ bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActio
 const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
 if(cat==='finance'){const ladder=['establish_business','combined_insurance','asset_protection_stack','elect_s_corp','advanced_tax_strategy','monthly_tax_reserve','build_dnb_profile','debt_restructure'];for(const id of ladder){const a=acts.find(x=>x.id===id);if(a&&this.canAfford(a))return a;}}
+// COO protects the team: when culture is slipping, build it (equity grant preferred, else a benefits package) before anything else available.
+if(cat==='operations'&&(this.state.team_size||0)>0){const _cul=this.state.company_culture==null?45:this.state.company_culture;if(_cul<45){const a=acts.find(x=>x.id==='grant_stock_incentives')||acts.find(x=>x.id==='build_benefits_package');if(a&&this.canAfford(a))return a;}}
 return acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat))[0];},
 _setupActionMenu(){const s=this.state;this._autoPicked={};this._paymentMethods=this._paymentMethods||{};
 const autoCat=(cat,flag)=>{if(!flag)return;const b=this.bestAction(cat);if(b){this.selectedActions[cat]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked[cat]=b.id;}};
@@ -1319,13 +1343,14 @@ const _grpOf={};for(const grp of (ADIR[this.currentCategory]||[]))for(const id o
 const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a),isSel=sel&&sel.id===a.id;const reason=done?'Already completed':locked?this.getLockedReason(a):'';const outgrown=!done&&!locked&&this.isActionOutgrown(a);const rc=(this.state._action_counts||{})[a.id]||0;const takenBefore=!done&&!a.one_time&&rc>0&&!isSel;
 const cls=done?'completed-action':isSel?'selected':locked?'locked':takenBefore?'taken-before':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const repeatBadge=(!a.one_time&&rc>0&&!isSel)?'<span class="repeat-badge">✓ done ×'+rc+'</span>':'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ RETRY — HALF COST</span>':'';
+const rehireBadge=(!done&&!locked&&this.state._rehire&&this.state._rehire[a.id])?'<span class="new-badge" style="background:var(--orange);color:#1a1205;">↻ REHIRE</span>':'';
 const cat0=this.currentCategory;const offBadge=(this._autoPicked&&this._autoPicked[cat0]===a.id)?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">'+(cat0==='marketing'?'CRO pick':'COO pick')+'</span>':((cat0==='finance'&&this._cfoPick===a.id)?'<span class="new-badge" style="background:var(--blue);color:#fff;">CFO ★</span>':'');
 const _cc=this.actionCashCost(a);const needsCredit=!done&&!locked&&_cc&&this.state.cash<_cc&&(this.state.cash+(this.state.available_credit||0))>=_cc;
 const selBadge=isSel?'<span class="new-badge" style="background:var(--accent);color:#04130d;">✓ SELECTED</span>':'';
 const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpName+'</span>':'';
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const rescueBadge=(!done&&!locked&&a.id==='restructure_team'&&this._needsRestructure())?'<span class="new-badge" style="background:var(--red);color:#fff;">'+(this.state._toxic_closer?'⚠ FIRE THE CLOSER':'⚠ CUT PAYROLL — FIX THIS')+'</span>':'';
-const topInner=grpTag+rescueBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
+const topInner=grpTag+rescueBadge+rehireBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
 return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
 // est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
@@ -1372,7 +1397,10 @@ let epicPanel='';
 if(this.state._epic_life&&this.currentCategory==='finance')epicPanel=this._epicMilestoneCompact();
 document.getElementById('action-list').innerHTML=banner+epicPanel+listHtml;},
 // One button runs the month with the team's plan: fill any category the player didn't set with the exec/board pick, then resolve.
-runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}this.resolveMonth();},
+runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}
+// Life is the player's own pick — if it's available this month and not chosen yet, prompt for it instead of silently skipping it.
+if(ac.includes('lifestyle')&&!this.selectedActions['lifestyle']){if(this.currentCategory!=='lifestyle')this.switchCategory('lifestyle');this._focusActionList();this.showPopup('🏖️ One more — your Life action','Your team has the business handled this month. <strong>Your Life action is always your own pick</strong> — choose one life investment below, then run the month.');return;}
+this.resolveMonth();},
 
 selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;this._paymentMethod='cash';this.selectAction(cat,id);},
 
@@ -1450,6 +1478,14 @@ coverShortfall(amount){const s=this.state;let need=Math.max(0,Math.round(amount)
 _clearRecurring(id){const s=this.state,c=(s._active_recurring_costs&&s._active_recurring_costs[id])||0;if(c>0){s.operating_expenses=Math.max(0,(s.operating_expenses||0)-c);delete s._active_recurring_costs[id];}return c;},
 // Shave a total amount off the recurring-cost lines (largest first) so the itemized burn breakdown never sums to more than operating_expenses after a downsize.
 _reduceRecurring(amount){const s=this.state;let rem=Math.round(amount||0);if(rem<=0||!s._active_recurring_costs)return;for(const[id,c]of Object.entries(s._active_recurring_costs).sort((a,b)=>b[1]-a[1])){if(rem<=0)break;const d=Math.min(c,rem);s._active_recurring_costs[id]=c-d;rem-=d;if(s._active_recurring_costs[id]<=0)delete s._active_recurring_costs[id];}},
+// Invariant: the itemized recurring-cost lines can never sum to more than operating expenses (minus exec pay, shown separately). Events/actions that cut opex directly would otherwise leave stale line items totaling MORE than the displayed total. Trims the largest items back into line.
+_syncRecurring(){const s=this.state;if(!s._active_recurring_costs)return;const sum=Object.values(s._active_recurring_costs).reduce((a,b)=>a+(+b||0),0);const exec=this.calcExecComp?this.calcExecComp():0;const cap=Math.max(0,(s.operating_expenses||0)-exec);if(sum>cap)this._reduceRecurring(sum-cap);},
+// When a team member leaves, drop the single largest recurring cost line (a hire is nearly always the biggest) and reduce opex by exactly that — so the expense breakdown loses the right line, not a generic amount. Returns the salary removed.
+_removeDepartedRole(){const s=this.state;if(!s._active_recurring_costs)return 0;const e=Object.entries(s._active_recurring_costs).filter(x=>x[0]!=='key_man_policy').sort((a,b)=>b[1]-a[1]);if(!e.length)return 0;const id=e[0][0],amt=this._clearRecurring(id);
+// Re-open the role so the player can re-hire it, flagged with a Rehire tag in the menu.
+if(s._completed_actions){const ix=s._completed_actions.indexOf(id);if(ix>=0)s._completed_actions.splice(ix,1);}
+if(!s._rehire)s._rehire={};s._rehire[id]=this.month;this._lastDeparted=id;
+return amt;},
 // Second life: a player who set aside a tax reserve can drain it to escape game over — but ONLY if it fully covers the gap (a partial drain wouldn't save you, so the reserve stays intact and you lose anyway). The IRS bill still comes (year-end reserve is now smaller). Reward for discipline; surfaced via _taxRescue in showResults.
 _tapTaxReserveToSurvive(need){const s=this.state;if(need<=0)return need;if((s.tax_reserve||0)<need)return need;s.tax_reserve-=need;this._taxRescue=(this._taxRescue||0)+need;return 0;},
 // Last-resort survival: the owner injects their PERSONAL cash to cover a business shortfall (a capital contribution — the mirror of the owner-draw). Only reached after business cash, all credit, and the tax reserve are exhausted, so it never touches the cushion in a normal month — it just stops the game from declaring you broke while you still have money. Drains what it can (partial is fine).
@@ -1525,6 +1561,7 @@ const _energyCost=this.actionEnergyCost(action);if(_energyCost>0&&!_execRun)this
 // One-time actions only "complete" (and lock) on a full success — a partial leaves them available to retry. Repeatable actions register as before.
 // Only a SUCCESS counts as "done" — a partial result isn't marked complete (doesn't satisfy capability gates) and doesn't get a "done ×N" pill; you can retry it.
 if(success&&!this.state._completed_actions.includes(action.id))this.state._completed_actions.push(action.id);
+if(success&&this.state._rehire&&this.state._rehire[action.id])delete this.state._rehire[action.id];/* role re-filled — clear the rehire flag */
 // Log a trap the moment it's taken (traps are always a setback, so success/fail doesn't matter). "Survived" is settled by reaching the run's end alive — a lost run never gets the badge.
 if(TRAPS.includes(action.id)){if(!this.state._traps_hit)this.state._traps_hit=[];if(!this.state._traps_hit.includes(action.id))this.state._traps_hit.push(action.id);}
 if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
@@ -1570,6 +1607,8 @@ if(plan==='annual'){this.payCost(3000,false);s._epic_renew_month=this.month+12;s
 else{s.operating_expenses=(s.operating_expenses||0)+(action.recurring_cost||300);s._dyn_narrative='Epic Life is active — monthly plan at '+this.fmtMoney(action.recurring_cost||300)+'/mo. Your concierge runs the single highest-priority financial move for you each month — protection, credit, banking, your policy, then passive income.';}}
 if(action.id==='build_dnb_profile'&&success){const s=this.state;s._dnb_profile=true;s._dnb_tradelines=(s._dnb_tradelines||0)+3;if(!s.business_credit_profile||s.business_credit_profile==='none')s.business_credit_profile='building';s._dyn_narrative='Your business has its own credit identity now — DUNS number, phone, address, website and socials, plus three net-30 vendor accounts reporting on-time. Your D&B score climbs as the tradelines age and you add more credit history.';}
 if(action.id==='business_credit_line'&&success){const cf=this.calcCreditCapacity(),lim=Math.round(15000*cf);this.state.business_credit_limit=(this.state.business_credit_limit||0)+lim;this.state._dnb_tradelines=(this.state._dnb_tradelines||0)+1;this.state._dyn_narrative='Approved — a '+this.fmtMoney(lim)+' revolving line in the business name. Your credit and revenue did the talking, and the new tradeline deepens your D&B file.';}
+// Spell out the credit bump explicitly — it lands on BUSINESS credit (company's name), not your personal limit, which is where players miss it. (Limit already applied via config effects; this only narrates it.)
+if(action.id==='wyoming_holding_llc'){this.state._naics_ok=true;/* clean entity gets the correct NAICS code assigned → underwriters stop flagging you */const bump=Math.round((effects&&effects.business_credit_limit)||0);if(bump>0)this.state._dyn_narrative='The Wyoming holding LLC is filed — clean parent entity, registered agent, operating agreement, and the <strong>correct NAICS code</strong> assigned. Underwriters read the structure as a legit, lower-risk business, so your <strong>business</strong> credit limit rose by <strong>'+this.fmtMoney(bump)+'</strong> to '+this.fmtMoney(this.state.business_credit_limit||0)+' and future funding gets easier to qualify for. (Business credit, in the company’s name — separate from your personal limit.)';}
 if(action.id==='premium_financing'&&success){const s=this.state,nw=this.calcNetWorth();
 // Bank lends against your collateral to fund the policy premium; the loan (low interest, ~5%/yr) is secured by the policy and netted from the death benefit. No free money: cash value funded = amount borrowed minus a ~2% cost of insurance.
 const borrow=Math.round(Math.max(500000,Math.min(2500000,nw*0.3))),funded=Math.round(borrow*0.98);
@@ -1597,7 +1636,10 @@ const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_reve
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
 // Credit declined: explain the underwriting reason (high utilization / personal myFICO pull) so the lesson lands.
-if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);this.state._dyn_narrative='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. '+(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Strengthen your score and history, then reapply.');}
+if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ';
+if(!this._naicsVerified()&&['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))_why+='Your business also tripped an underwriting flag: its <strong>NAICS industry code looks off</strong>, so the file got kicked out. A <strong>Wyoming holding-company setup</strong> assigns the correct code and clears this. ';
+if(!this._hasBanking())_why+='And you have <strong>no banking relationship</strong> here — you\'re a stranger applying cold. Build the relationship (bank and deposit with them) and they lend far more readily. ';
+_why+=(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.');this.state._dyn_narrative=_why;}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund,_execRun:_execRun,_energySpent:(_execRun?0:_energyCost)};
 if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
@@ -1619,7 +1661,7 @@ if(rows.length)_ro.beforeAfter=rows;}
 results.push(_ro);if(cat==='epic'||cat==='epicbuy')this._epicLastMove={label:action.label,narrative:_ro.narrative,success:success};if(action._waivedFee){this._epicSavings=(this._epicSavings||0)+action._waivedFee;this.state._epic_savings_total=(this.state._epic_savings_total||0)+action._waivedFee;}if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
 delete this.selectedActions['epic'];delete this.selectedActions['epicbuy'];
 for(const b of _execBonuses){results.push({action:{label:b.role+' Performance Bonus'},success:true,effects:{cash:-b.bonus},narrative:'Your '+b.role+' hit their targets executing “'+b.label+'” — you paid a '+this.fmtMoney(b.bonus)+' performance bonus. Great executives earn their keep.'});}
-this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro)dr.ro.narrative=n;}}this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
+this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro)dr.ro.narrative=n;}}this._syncRecurring();this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
 this._monthCashSummary={start:_msStart,spend:_spend};
 const evt=this.checkEvents();this.showResults(results,evt);},
 
@@ -1728,7 +1770,7 @@ if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl
 if(s._cro_fulltime){s.leads=(s.leads||0)+Math.round(5*bl);s.revenue_capacity=(s.revenue_capacity||0)+Math.round(600*bl);s.brand_equity=Math.min(100,(s.brand_equity||0)+1);}
 this.state._milestones_new=this.checkMilestones();
 // Hitting a milestone is a morale win — a minor energy boost on each unlock (capped), surfaced on the milestone banner.
-this._milestoneEnergy=0;if(this.state._milestones_new.length){const boost=Math.min(12,this.state._milestones_new.length*4);this.state.energy=Math.min(100,(this.state.energy||0)+boost);this._milestoneEnergy=boost;}
+this._milestoneEnergy=0;if(this.state._milestones_new.length){const boost=Math.min(8,this.state._milestones_new.length*3);this.state.energy=Math.min(100,(this.state.energy||0)+boost);this._milestoneEnergy=boost;}
 },
 
 updateRelationships(){const s=this.state;if(s.monthly_revenue>10000&&s.dscr>1.5){if(s._banker_state==='stranger')s._banker_state='neutral';else if(s._banker_state==='neutral')s._banker_state='trusted';else if(s._banker_state==='trusted'&&this.month>20)s._banker_state='champion';}else if(s.dscr<1.0)s._banker_state='skeptical';const ls=s.lifestyle_health+s.lifestyle_relationships;if(ls>80)s._family_state='thriving';else if(ls>50)s._family_state='stable';else if(ls>25)s._family_state='coping';else s._family_state='strained';},
@@ -1871,6 +1913,8 @@ if(!this.state._first_event_seen){this.state._first_event_seen=true;setTimeout((
 {sel:'#event-choices',t:'Your call',b:'Choose how to respond. Your <strong>choice</strong> — and the <strong>safeguards you set up beforehand</strong> (LLC, insurance, cash reserves) — decide how it lands. There\'s often no perfect option; pick the smartest one.'}
 ],0),140);}
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects,evt.category==='opportunity')}));
+// Policy loan: the deal is bounded by what your policy can actually lend (up to ~90% of cash value, less any existing loan) — NOT a generic scaled figure. Show the real number so the offer matches what you'll get, and so it's clear this is borrowed (a loan you owe), not free money.
+if(evt.id==='policy_loan_opportunity'&&evt._scaledChoices[0]){const _s=this.state,_room=Math.max(0,Math.round(0.9*(_s.insurance_cash_value||0)-(_s.insurance_loan_balance||0)));evt._scaledChoices[0].effects={insurance_loan_balance:_room,investment_positions:_room,other_monthly_revenue:Math.round(_room*0.012)};}
 // Choices no longer reveal the outcome numbers — you decide from the narrative + your dashboard, then see results after. The ONE exception is a deal/offer (an opportunity): you should see the terms on the table (price, financing, equity), but not the downstream stat impacts.
 const isOffer=evt.category==='opportunity',OFFER_KEYS=['cash','total_debt','available_credit','real_estate_equity','investment_positions','insurance_cash_value','business_credit_limit'];
 document.getElementById('event-choices').innerHTML=note+evt._scaledChoices.map((c,i)=>{let inner='';if(isOffer){const parts=Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0&&OFFER_KEYS.includes(k)).map(([k,v])=>(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+' '+this.formatStatName(k));if(parts.length)inner='<div class="choice-effects" style="color:var(--text2);"><span style="font-weight:600;">The offer:</span> '+parts.join(', ')+'</div>';}return'<div class="choice-card fade-in" onclick="Game.resolveEvent('+i+')"><h4>'+c.label+'</h4>'+inner+'</div>';}).join('');this.currentEvent=evt;this.eventHistory.push(evt);},
@@ -1931,6 +1975,9 @@ if(evt.protection.payout){const pb=Math.round(evt.protection.payout);effects.cas
 protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected — '+safeguard+'.</strong> '+evt.protection.protected_note+savedNote+claimNote+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
 else{protNote='<div class="narrative-box fade-in" style="border-left-color:var(--red);margin-top:12px;"><strong>Unprotected.</strong> '+evt.protection.unprotected_note+'<br><span style="color:var(--gold);font-size:0.8rem;">How to prepare next time: '+safeguard+'.</span></div>';if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];effects[k]=(typeof effects[k]==='number'?effects[k]:0)+v;}}}
 this.applyEffects(effects);
+// A voluntary departure (team_size dropped) removes THAT person's actual cost line — not a generic flat amount — so the breakdown stays exact. Replaces the choice's generic opex cut with the real salary removed.
+if(evt.category==='people'&&(effects.team_size||0)<0){this._lastDeparted=null;let _removed=0;for(let i=0;i<(-(effects.team_size||0));i++)_removed+=this._removeDepartedRole();if(_removed>0&&typeof effects.operating_expenses==='number'&&effects.operating_expenses<0)this.state.operating_expenses-=effects.operating_expenses;if(_removed>0&&this._lastDeparted)c.outcome_narrative=(c.outcome_narrative||'')+' <span style="color:var(--accent);">That role is now open — you can <strong>re-hire</strong> it from the menu (look for the ↻ Rehire tag).</span>';}
+this._syncRecurring();/* safety: keep the itemized recurring lines from exceeding the total */
 // If this choice bankrupts you, don't cut to game over — render the outcome story first (so you see how it blew up); the run ends when you advance.
 if(!this._settleCashOrLose())this._pendingLose='You couldn\'t cover the cost of that decision — cash and credit both ran dry.';
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Event Outcome';
@@ -1985,9 +2032,12 @@ if(this.month<36){html+='<button class="btn-primary" onclick="Game.continueFromC
 html+='<button class="btn-outline" onclick="Game.endGame()" style="margin-top:8px;">🏁 End Here — Lock In My Final Score</button>';
 html+='<div style="text-align:center;font-size:0.72rem;color:var(--text2);margin-top:6px;">You can stop after Year '+year+' — your run is scored right here. Or keep building toward Year '+(year+1)+'.</div>';
 html+='<div style="margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.78rem;font-weight:700;margin-bottom:6px;">💾 Save & resume later</div><div style="font-size:0.7rem;color:var(--text2);margin-bottom:8px;">Add your name to save this Year '+year+' checkpoint. You can close the tab and pick it back up from the title screen or leaderboard.</div><input id="cp-save-name" class="name-input" placeholder="Your name" maxlength="20"><button class="btn-secondary" onclick="Game.saveProgress()">Save Progress</button></div>';
+// Post this checkpoint run to the leaderboard now (and keep playing). Uses the name field above.
+html+='<div id="cp-post-box" style="margin-top:10px;"><button class="btn-outline" onclick="Game.postCheckpoint()" style="margin:0;">🏆 Post This Year’s Run to the Leaderboard</button><div style="text-align:center;font-size:0.66rem;color:var(--text2);margin-top:5px;">Ranks your Year '+year+' score now — you can still keep playing toward a bigger run.</div></div>';
 // First full year as the New Business Owner unlocks New Game+ — tell them here (right next to Save), so they can stash this run and go experiment.
 if(year===1&&this.archetype&&this.archetype.id==='new')html+='<div style="margin-top:14px;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.82rem;font-weight:700;color:var(--gold);margin-bottom:5px;">🔁 New Game+ Unlocked!</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.5;">You finished a full year — you\'ve earned <strong>New Game+</strong>: a fresh run with a <strong>fully customizable</strong> starting position (cash, credit, business size, entity) and head-start perks — you can even begin with <strong>Epic Life</strong>. No tutorial, pure sandbox.<br><br>Want to try it? <strong>Save your progress above</strong> first so you can come back to this run, then pick <strong>🔁 New Game+</strong> on the title screen anytime.</div></div>';}
 else html+='<button class="btn-primary" onclick="Game.endGame()">See Your Final Score →</button>';
+html+='<button class="btn-secondary" onclick="Game.autoSave();Game.showMainMenu()" style="margin-top:14px;">🏠 Main Menu</button>';
 document.getElementById('checkpoint-content').innerHTML=html;this.showScreen('checkpoint-screen');
 setTimeout(()=>{const cv=document.getElementById('cp-radar');if(cv)this.drawRadarOn(cv,scores);},100);},
 
@@ -2090,7 +2140,7 @@ _curVersion(){return (PATCH_NOTES[0]||{}).v||'';},
 _verLt(a,b){if(!a)return true;/* no recorded version = pre-versioning save = older */const pa=String(a).split('.').map(Number),pb=String(b).split('.').map(Number);for(let i=0;i<3;i++){const x=pa[i]||0,y=pb[i]||0;if(x!==y)return x<y;}return false;},
 _saveVerNote(gv){const cur=this._curVersion();if(!cur||!this._verLt(gv,cur))return '';return '<div style="font-size:0.68rem;color:var(--gold);background:rgba(212,175,55,0.1);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:6px 9px;margin-bottom:9px;line-height:1.45;">⚠ This save is from an <strong>older version</strong>'+(gv?' (v'+gv+')':'')+'. Update it to <strong>v'+cur+'</strong> to apply the latest mechanics and balance — your progress is kept.</div>';},
 // Migrate a save snapshot to the current build: fill in fields newer mechanics expect (only when missing — never overwrite progress) and stamp the version. Most patches "retro-activate" on their own because the engine computes from state each tick; this makes the state shape current and clears the older-version flag.
-_saveDefaults(){return {_asset_units:0,_asset_income:0,_keyman_units:0,_keyman_premium:0,_keyman_claims_total:0,_holding_company:false,_epic_savings_total:0,company_culture:45,credit_inquiries:0};},
+_saveDefaults(){return {_asset_units:0,_asset_income:0,_keyman_units:0,_keyman_premium:0,_keyman_claims_total:0,_holding_company:false,_naics_ok:false,_rehire:{},_epic_savings_total:0,company_culture:45,credit_inquiries:0};},
 _migrateSave(snap){if(!snap)return snap;if(snap.state){const d=this._saveDefaults();for(const k in d){if(snap.state[k]===undefined)snap.state[k]=d[k];}}snap.gv=this._curVersion();return snap;},
 // Patch notes for every version newer than the save — the "what changed" the update applies.
 _patchNotesSince(gv){const items=PATCH_NOTES.filter(p=>this._verLt(gv,p.v));if(!items.length)return '<div style="color:var(--text2);font-size:0.8rem;">Your save is already current.</div>';return items.map(p=>'<div style="margin-bottom:10px;"><div style="font-weight:700;color:var(--gold);font-size:0.82rem;">v'+p.v+'</div><ul style="margin:4px 0 0;padding-left:18px;font-size:0.74rem;color:var(--text2);line-height:1.5;">'+p.n.map(n=>'<li style="margin-bottom:3px;">'+n+'</li>').join('')+'</ul></div>').join('');},
@@ -2157,12 +2207,30 @@ let body='';for(const[title,keys]of groups){const rows=keys.map(row).join('');if
 const other=Object.keys(snap).filter(k=>!shown[k]&&!/^(_completed_actions|_actions_seen|_action_counts|_milestones_achieved)$/.test(k)).sort();
 if(other.length)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">⚙ Other tracked values</div>'+other.map(row).join('');
 return '<details style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-top:14px;text-align:left;"><summary style="cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--gold);">📋 All Tracked Stats <span style="color:var(--text2);font-weight:400;font-size:0.72rem;">(everything, including the hidden ones)</span></summary><div style="margin-top:8px;">'+body+'</div></details>';},
-showRunDetail(i){const e=(this._lbFiltered||[])[i];if(!e)return;let h=(e.company?'<div style="font-weight:700;color:var(--gold);font-size:0.95rem;margin-bottom:3px;">🏢 '+this._esc(e.company)+'</div>':'')+'<div style="font-size:0.78rem;color:var(--text2);margin-bottom:8px;">'+this._archLabel(e.archetype)+' · '+e.months+' months · '+e.composite+' pts · '+e.date+'</div>';if(e.badges&&e.badges.length)h+='<div style="margin-bottom:10px;">'+e.badges.map(b=>'<span style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:2px 4px 2px 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>';const log=this.buildChoiceLog(e.playLog||[]);h+=log||'<div style="color:var(--text2);font-size:0.8rem;">No action history was recorded for this run.</div>';if(e.traps&&e.traps.length)h+=this.buildTrapPanel(e.traps);if(e.scams!=null)h+=this.buildScamPanel(e.scams,e.scamsRun||0);if(e.stats)h+=this.buildStatsDump(e.stats);this.showPopup(e.name+'’s Run',h);},
+showRunDetail(i){const e=(this._lbFiltered||[])[i];if(!e)return;
+let h=(e.company?'<div style="font-weight:700;color:var(--gold);font-size:0.98rem;margin-bottom:2px;">🏢 '+this._esc(e.company)+'</div>':'');
+h+='<div style="font-size:0.76rem;color:var(--text2);margin-bottom:10px;">'+this._archLabel(e.archetype)+' · '+e.months+'-month run · '+e.date+'</div>';
+// End-game score, front and centre
+h+='<div style="text-align:center;background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;"><div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1;">'+e.composite+' <span style="font-size:0.8rem;color:var(--text2);font-weight:600;">/ 600</span></div><div style="font-size:0.62rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-top:3px;">Composite Score</div>'+(e.mastery?'<div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Personal Mastery '+e.mastery+'/100</div>':'')+'</div>';
+const det=(title,inner)=>'<details style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;text-align:left;"><summary style="cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--gold);">'+title+'</summary><div style="margin-top:8px;">'+inner+'</div></details>';
+// Achievements — collapsed (badges + traps + scams)
+let ach=(e.badges&&e.badges.length)?'<div style="margin-bottom:4px;">'+e.badges.map(b=>'<span style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:2px 4px 2px 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>':'';
+if(e.traps&&e.traps.length)ach+=this.buildTrapPanel(e.traps);
+if(e.scams!=null)ach+=this.buildScamPanel(e.scams,e.scamsRun||0);
+if(ach)h+=det('🏅 Achievements',ach);
+// Choice history — collapsed
+const log=this.buildChoiceLog(e.playLog||[]);
+h+=log?det('📜 Choice History',log):'<div style="color:var(--text2);font-size:0.8rem;margin-bottom:8px;">No action history was recorded for this run.</div>';
+if(e.stats)h+=this.buildStatsDump(e.stats);
+this.showPopup(e.name+'’s Run',h);},
 
+// Shared run-entry builder (end screen + year checkpoint both post via this).
+_buildLBEntry(name){const scores=this.calculateFinalScores();return {name:name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite:this.calcComposite(scores),scores:scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};},
+// Post the current year-checkpoint run to the leaderboard (local always; global if signed in, else queue + offer sign-in). Lets a 12/24-month run be ranked while you keep playing.
+postCheckpoint(){const el=document.getElementById('cp-save-name');const name=((el&&el.value)||this._authName()||'').trim()||'Anonymous';const entry=this._buildLBEntry(name);this._myLBName=name;let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));const box=document.getElementById('cp-post-box');let msg;if(this._sb){if(this._isSignedIn()){this._lbSubmitGlobal(entry);msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Posted your '+entry.months+'-month run to the global leaderboard.</div>';}else{this._queuePendingGlobal(entry);msg='<div style="text-align:center;color:var(--text2);font-size:0.76rem;margin-bottom:8px;">Saved to this device — sign in to post it to the global board:</div><button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google</button>';}}else{msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Saved to this device’s leaderboard.</div>';}if(box)box.innerHTML=msg;},
 saveToLeaderboard(){
 const name=(document.getElementById('player-name').value||'').trim()||'Anonymous';
-const scores=this.calculateFinalScores(),composite=this.calcComposite(scores);
-const entry={name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite,scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};
+const entry=this._buildLBEntry(name),composite=entry.composite;
 let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));
 this._myLBName=name;let _globalNote='';
 // Global board: post now if signed in, otherwise queue the run + offer Google sign-in (which auto-posts on return).
@@ -2194,8 +2262,8 @@ async signOutGoogle(){if(!this._sb)return;try{await this._sb.auth.signOut();}cat
 // Runs after auth state settles (initial load + sign in/out): refresh visible auth UI + flush any run queued before a sign-in redirect.
 _afterAuth(){this._flushPendingGlobal();const lb=document.getElementById('leaderboard-screen');if(lb&&lb.classList.contains('active'))this.showLeaderboard(this._lbFrom);},
 // Map a DB row → the entry shape the leaderboard UI expects.
-_sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
-async _sbFetchTop(arch,months){const {data,error}=await this._sb.from('runs').select('name,company,archetype,months,composite,badges,traps,scams,play_log,stats,created_at').eq('archetype',arch).eq('months',months).order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
+_sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,scores:r.scores||null,mastery:r.mastery||0,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
+async _sbFetchTop(arch){const {data,error}=await this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch).order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
 async _sbSubmit(entry){const u=this._authUser;if(!u)return;const row={user_id:u.id,name:entry.name,company:entry.company||'',archetype:entry.archetype,months:entry.months,composite:entry.composite,scores:entry.scores||null,badges:entry.badges||[],mastery:entry.mastery||0,traps:entry.traps||[],scams:entry.scams||0,stats:entry.stats||null,play_log:entry.playLog||[]};const {error}=await this._sb.from('runs').insert(row);if(error)throw error;},
 // Posting requires sign-in, which redirects away (losing the run). So stash the entry, sign in, and auto-post it on return.
 _queuePendingGlobal(entry){try{localStorage.setItem('ep_pending_global',JSON.stringify(entry));}catch(e){}},
@@ -2207,35 +2275,34 @@ return '<div style="background:var(--surface);border:1px solid var(--border);bor
 
 showLeaderboard(from){
 this._lbFrom=from||'title';this.showScreen('leaderboard-screen');
-const archetypes=['stuck','new','established'],durations=[12,24,36];
-const archLabels={stuck:'Stuck',new:'New',established:'Established'};
-const selArch=this.archetype?this.archetype.id:(this._lbArch||'new'),selDur=this.month||36;
-this._lbArch=selArch;this._lbDur=Math.min(36,Math.ceil(selDur/12)*12);this._lbScope=this._lbScope||'local';
+const archetypes=['new','established','stuck'];
+const archLabels={new:'New',established:'Established',stuck:'Stuck'};
+const selArch=this.archetype?this.archetype.id:(this._lbArch||'new');
+this._lbArch=selArch;this._lbScope=this._lbScope||'global';
 const backTo=from==='end'?'Game.showScreen(\'end-screen\')':'Game.showMainMenu()';
 let html='<div class="page-head"><button class="back-chip" onclick="'+backTo+'">← Back</button><span class="page-title gold">🏆 Leaderboard</span></div>';
-html+='<div class="lb-scope"><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div></div>';
+html+='<div class="lb-scope"><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div></div>';
 if(this._lbScope==='global')html+=this._authBarHtml();
 html+='<div class="lb-tabs" id="lb-arch-tabs">'+archetypes.map(a=>'<div class="lb-tab '+(a===selArch?'active':'')+'" onclick="Game.filterLB(\''+a+'\')">'+archLabels[a]+'</div>').join('')+'</div>';
-html+='<div class="lb-tabs" id="lb-dur-tabs">'+durations.map(d=>'<div class="lb-tab '+(d===this._lbDur?'active':'')+'" onclick="Game.filterLBDur('+d+')">'+d+' Mo</div>').join('')+'</div>';
 html+='<div id="lb-list"></div>';
 document.getElementById('lb-content').innerHTML=html;this.renderLBList();},
 
-setLBScope(scope){this._lbScope=scope;document.querySelectorAll('.lb-scope .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
+setLBScope(scope){this._lbScope=scope;document.querySelectorAll('.lb-scope .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');if(scope==='global')this.showLeaderboard(this._lbFrom);else this.renderLBList();},
 filterLB(arch){this._lbArch=arch;document.querySelectorAll('#lb-arch-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
-filterLBDur(dur){this._lbDur=dur;document.querySelectorAll('#lb-dur-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 
 async renderLBList(){const el=document.getElementById('lb-list');if(!el)return;
 if(this._lbScope==='global'){
 if(!this.LB_BACKEND){el.innerHTML='<div class="lb-note">🌐 <strong>Global leaderboard — coming soon.</strong><br>Compete with founders everywhere. Once the global board is connected, the runs you submit will show up here.</div>';this._lbFiltered=[];return;}
 el.innerHTML='<div class="lb-note">Loading global runs…</div>';
-let rows=[];try{rows=await this.LB_BACKEND.fetchTop(this._lbArch,this._lbDur)||[];}catch(e){el.innerHTML='<div class="lb-note">⚠ Couldn’t reach the global leaderboard.<br>Check your connection and try again.</div>';this._lbFiltered=[];return;}
+let rows=[];try{rows=await this.LB_BACKEND.fetchTop(this._lbArch)||[];}catch(e){el.innerHTML='<div class="lb-note">⚠ Couldn’t reach the global leaderboard.<br>Check your connection and try again.</div>';this._lbFiltered=[];return;}
 this._lbFiltered=rows;this._paintLB(rows,el);return;}
 const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');
-const filtered=lb.filter(e=>e.archetype===this._lbArch&&e.months===this._lbDur).sort((a,b)=>b.composite-a.composite).slice(0,10);
+const filtered=lb.filter(e=>e.archetype===this._lbArch).sort((a,b)=>b.composite-a.composite).slice(0,10);
 this._lbFiltered=filtered;this._paintLB(filtered,el);},
 
 _paintLB(filtered,el){const MEDAL=['🥇','🥈','🥉'];const me=(this._myLBName||'').toLowerCase();
-el.innerHTML=filtered.length?filtered.map((e,i)=>{const rank=i<3?'<span class="lb-rank lb-medal">'+MEDAL[i]+'</span>':'<span class="lb-rank">#'+(i+1)+'</span>';const mine=me&&(e.name||'').toLowerCase()===me;return '<div class="lb-entry fade-in'+(mine?' me':'')+'" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')">'+rank+'<span class="lb-name">'+e.name+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+(e.company?'<span style="display:block;font-size:0.66rem;color:var(--text2);font-weight:400;">🏢 '+this._esc(e.company)+'</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>';}).join(''):'<div class="lb-note">No runs here yet — finish a 12, 24, or 36-month run to claim the top spot.</div>';},
+el.innerHTML=filtered.length?filtered.map((e,i)=>{const rank=i<3?'<span class="lb-rank lb-medal">'+MEDAL[i]+'</span>':'<span class="lb-rank">#'+(i+1)+'</span>';const mine=me&&(e.name||'').toLowerCase()===me;const durTag=e.months?'<span style="font-size:0.58rem;font-weight:700;color:var(--text2);background:rgba(127,127,127,0.16);border-radius:6px;padding:1px 5px;margin-left:5px;vertical-align:middle;">'+e.months+'mo</span>':'';
+return '<div class="lb-entry fade-in'+(mine?' me':'')+'" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')">'+rank+'<span class="lb-name">'+e.name+durTag+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+(e.company?'<span style="display:block;font-size:0.66rem;color:var(--text2);font-weight:400;">🏢 '+this._esc(e.company)+'</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>';}).join(''):'<div class="lb-note">No runs here yet — finish a 12, 24, or 36-month run to claim the top spot.</div>';},
 
 // v2 scoring — see DESIGN.md. Capital efficiency wins, not raw revenue.
 // The six scored pillars, in display order (radar + breakdown). Definitions live in config/scoring_weights.json (player_description) — no weights/formulas shown.

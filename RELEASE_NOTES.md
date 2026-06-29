@@ -1,5 +1,26 @@
 # Release Notes
 
+## v0.42.0 — 2026-06-30
+**Leaderboard revamp + checkpoint posting, funding realism (banking/NAICS), COO culture, rehire, energy rebalance, money legibility**
+
+**Leaderboard** (`showLeaderboard`/`renderLBList`/`_paintLB`/`showRunDetail`): scope order **Global → This Device** (Global is default); archetype order **new → established → stuck**; the 12/24/36 duration tabs are gone — each archetype shows one list sorted by composite with a **`{months}mo` tag** per entry. Run-detail now leads with the **composite score**, and **Choice History** + **Achievements** (badges/traps/scams) are collapsible `<details>`. `_sbFetchTop(arch)` no longer filters by months; `_sbRowToEntry` carries scores+mastery.
+
+**Checkpoint posting** (`postCheckpoint` + `_buildLBEntry`): the year-1/2 checkpoint can post the run to the leaderboard (local always; global if signed in, else queue + sign-in) **while you keep playing** — so 12/24-month runs get ranked. `saveToLeaderboard` refactored onto the shared `_buildLBEntry`. Added a **🏠 Main Menu** button at the checkpoint (autosaves first).
+
+**Funding realism:** `_hasBanking()` → +18% credit capacity (`calcCreditCapacity`) and ×1.12 approval; `_naicsVerified()` (holding company / c_corp / multi_entity / family office) → ×1.05 approval, while a business entity WITHOUT it gets ×0.75 (no-entity personal loans unaffected). Declines explain the NAICS/banking gaps. Banking + Wyoming action copy updated.
+
+**COO culture:** `_actionValue` now scores `company_culture` (weighted up when low); `bestAction('operations')` builds culture (equity grant → benefits package) when culture < 45; low-culture warning added to business factors.
+
+**Rehire:** `_removeDepartedRole` re-opens the departed role (removes it from `_completed_actions`, sets `_rehire[id]`); the menu shows a **↻ REHIRE** badge and the departure outcome says the role is open; the flag clears when re-hired.
+
+**Money legibility:** Wyoming result spells out the business-credit increase; `private_equity_fund` description states it commits ~half your cash; `policy_loan_opportunity` offer shows the real borrowable amount (capped to ~90% of cash value) instead of an inflated scaled figure.
+
+**Departures remove the real salary** (`_removeDepartedRole`) and a reconciliation (`_syncRecurring`) keeps the itemized recurring costs from ever summing past Operating Expenses.
+
+**Full C-suite Life prompt:** `runTeamMonth` now routes to the 🏖️ Life pick (popup + Life tab) instead of resolving without it.
+
+**Energy rebalance:** monthly recovery `10→26` ⇒ `6→16/mo` (`calcEnergyRecovery`); life-action energy gains diminish when energy > 50/70 (`_scaleLifestyleEffects`); milestone boost `12 → 8`.
+
 ## v0.41.0 — 2026-06-30
 **Global leaderboard + Google sign-in (Supabase) — multiplayer foundation**
 
