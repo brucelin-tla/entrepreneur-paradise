@@ -223,6 +223,23 @@
       "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
     },
     {
+      "id": "velocity_banking",
+      "category": "finance",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Set Up Velocity Banking",
+      "description": "Run your household through a line of credit instead of a checking account: park every dollar of income against the line, pay expenses from it, and chunk the surplus straight at your amortizing debt. Each positive-cash-flow month retires debt faster than a normal payment ever could — but it only works while you stay cash-flow positive, and the line can freeze in a downturn.",
+      "lesson": "Velocity banking is a cash-flow strategy, not a borrowing trick. Parking income on a simple-interest line shrinks the balance you pay interest on, so every surplus dollar knocks out MORE than a dollar of amortizing principal — you free capital years faster. The catch is discipline: it only accelerates while your cash flow is positive, and a credit-tight downturn can freeze the very line you're leaning on. Stay cash-flow positive and keep the line lightly used, and it's a wealth accelerator; lean on it with negative cash flow and it spirals.",
+      "cash_cost": 400,
+      "energy_cost": 6,
+      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "business_credit_limit_gte": 10000, "personal_credit_score_gte": 660 },
+      "effects": { "personal_credit_score": 3 },
+      "success_rate": 0.85,
+      "failure_effects": {},
+      "narrative_success": "Velocity banking is live. From now on your surplus cash flow gets swept against your debt each month — accelerating payoff and freeing up your line as dry powder. Watch your cash flow: it's the engine. Stay positive and you'll retire debt fast; go negative and the strategy works against you.",
+      "narrative_failure": "The structure didn't fully click into place this month — your banker wants the line seasoned a little longer. Keep deposits flowing and reapply."
+    },
+    {
       "id": "bank_personal_loan",
       "category": "finance",
       "stage": "foundation",
