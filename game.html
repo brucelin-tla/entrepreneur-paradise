@@ -192,6 +192,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 <div id="leaderboard-screen" class="screen"><div id="lb-content"></div></div>
 <div id="popup-container" style="display:none;"><div class="popup-overlay" onclick="Game.hidePopup()"></div><div class="popup-box"><div class="popup-title" id="popup-title"></div><div id="popup-body"></div><button class="btn-secondary" onclick="Game.hidePopup()">Got it</button></div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 window.EMBEDDED_CONFIG = {
   "starting_positions": {
@@ -3024,6 +3025,10 @@ const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Fo
 const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
 // Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
 const TRAP_META={fast_working_capital:{i:'💸',n:'Merchant Cash Advance'},offmarket_guaranteed_fund:{i:'🎰',n:'"Guaranteed" Fund Scam'},rapid_offshore_scaleup:{i:'🌏',n:'Offshore Over-Hire'},vanity_follower_boost:{i:'🤖',n:'Bought Followers'},influencer_megadeal:{i:'📣',n:'Influencer Megadeal'},national_ad_blitz:{i:'📺',n:'National Ad Blitz'},hire_highticket_closer:{i:'🎯',n:'High-Ticket Closer'}};
+// Supabase backend (publishable key is public-safe; data is protected by Row Level Security). Used for the global leaderboard + future async-multiplayer.
+const SUPA_URL='https://widdgynledwpqaqndtvz.supabase.co';
+const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
+const GOOGLE_G='<svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:middle;flex-shrink:0;"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.6 44 30.9 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
 // Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
@@ -3052,6 +3057,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.41.0',d:'2026-06-30 15:21',n:[
+'🌐 Global leaderboard is live — switch the leaderboard to Global to see top founders across all players. Browsing is open to everyone.',
+'Sign in with Google to post your runs to the global board (solo play still needs no login).',
+'Your company name, score, and badges now show on the global board.'
+]},
 {v:'0.40.0',d:'2026-06-30 14:33',n:[
 'Refreshed menus — a consistent look across screens, with the Back button in the same place everywhere.',
 'Founder select redone: New / Established / Stuck Founder, each showing your starting cash, revenue, credit, and debt at a glance.',
@@ -3375,7 +3385,7 @@ state:null,month:1,selectedActions:{},selectedLifestyle:null,actionHistory:[],ev
 
 GLOSSARY:{'EBITDA':'Earnings Before Interest, Taxes, Depreciation & Amortization — your business\'s operating profit.','COGS':'Cost of Goods Sold — direct costs to deliver your product/service.','DSCR':'Debt Service Coverage Ratio — operating income divided by debt payments. Above 1.25 is healthy.','SOP':'Standard Operating Procedure — written steps so anyone can do a task without you.','LOC':'Line of Credit — revolving credit you draw from as needed.','LLC':'Limited Liability Company — separates personal assets from business liability.','S-Corp':'S Corporation — tax election splitting income between salary and distributions to save taxes.','CRM':'Customer Relationship Management — software tracking prospects and deals.','EIN':'Employer Identification Number — your business tax ID.','HELOC':'Home Equity Line of Credit.','OPM':'Other People\'s Money — borrowed or investor capital.','JV':'Joint Venture — parties pooling resources for a project.','IP':'Intellectual Property — proprietary methods or technology.','Net Worth':'Assets minus liabilities.','Brand Equity':'Market recognition and perceived value of your business.','Key-Person Dependency':'How much the business relies on you personally.','Churn Rate':'Percentage of customers lost each month.','Utilization':'Percentage of available credit in use. Below 30% boosts score.','Tradeline':'A credit account on your report.','Monthly Burn':'Total monthly expenses across life and business.','Living Expenses':'Personal cost of living — rent, food, utilities, transport.','Holding Company':'A parent entity that owns your operating business(es). It manages money, holds assets, and isolates your personal finances from business operations and liabilities.','Operating Entity':'The business entity that runs day-to-day operations, holds contracts, employs staff, and takes on business debt. Sits under the holding company.','Liability Shield':'Legal separation between entities so that debts and lawsuits against one entity can\'t reach the assets of another.'},
 
-async init(){await loadConfig();this.renderMainMenu();this.renderTitleMeta();this._renderUpdateIcon();this._checkForUpdate();
+async init(){await loadConfig();this._initSupabase();this.renderMainMenu();this.renderTitleMeta();this._renderUpdateIcon();this._checkForUpdate();
 // Warn before an accidental refresh/close mid-game (progress is autosaved, but this prevents the surprise). Only fires during a live run.
 window.addEventListener('beforeunload',(e)=>{const live=['game-screen','event-screen','lifestyle-screen','result-screen'].some(id=>{const el=document.getElementById(id);return el&&el.classList.contains('active');});if(live&&this.archetype&&!this._lost){e.preventDefault();e.returnValue='';}});},
 renderTitleMeta(){const v=PATCH_NOTES[0],vl=document.getElementById('version-line');if(vl)vl.textContent='v'+v.v+' — '+v.d;const wn=document.getElementById('whats-new');if(!wn)return;const full=this._showFullLog,list=full?PATCH_NOTES:[PATCH_NOTES[0]];let h='<div style="max-width:420px;margin:18px auto 0;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.8rem;font-weight:700;color:var(--gold);margin-bottom:4px;">What\'s New</div>';for(const e of list){h+='<div style="font-size:0.7rem;color:var(--text2);margin:8px 0 3px;">v'+e.v+' · '+e.d+'</div>';h+=e.n.map(x=>'<div style="font-size:0.82rem;color:var(--text);margin:3px 0;line-height:1.45;">• '+x+'</div>').join('');}h+='<div style="text-align:center;margin-top:10px;"><span style="color:var(--blue);cursor:pointer;font-size:0.78rem;" onclick="Game._showFullLog='+(!full)+';Game.renderTitleMeta();">'+(full?'Show less ▴':'Full changelog ▾')+'</span></div></div>';wn.innerHTML=h;},
@@ -5168,11 +5178,13 @@ const name=(document.getElementById('player-name').value||'').trim()||'Anonymous
 const scores=this.calculateFinalScores(),composite=this.calcComposite(scores);
 const entry={name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite,scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};
 let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));
-this._myLBName=name;this._lbSubmitGlobal(entry);
+this._myLBName=name;let _globalNote='';
+// Global board: post now if signed in, otherwise queue the run + offer Google sign-in (which auto-posts on return).
+if(this._sb){if(this._isSignedIn()){this._lbSubmitGlobal(entry);_globalNote='<div style="text-align:center;color:var(--accent);font-size:0.78rem;margin-bottom:8px;">✓ Posted to the global leaderboard.</div>';}else{this._queuePendingGlobal(entry);_globalNote='<button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google to post globally</button>';}}
 // Completed runs no longer need their in-progress save
 let _sv=this.loadSaves().filter(s=>!(s.name===name&&s.archetype===this.archetype.id));localStorage.setItem('ep_saves',JSON.stringify(_sv));
 const isRecord=lb.filter(e=>e.archetype===entry.archetype&&e.months===entry.months).sort((a,b)=>b.composite-a.composite)[0].name===entry.name;
-document.getElementById('end-save').innerHTML='<div style="text-align:center;color:var(--accent);font-weight:600;margin:12px 0;">✓ Saved!'+(isRecord?' New record for '+this.archetype.label+' — '+entry.months+' months!':'')+'</div><button class="btn-outline" onclick="Game.showLeaderboard(\'end\')">View Leaderboard</button>';},
+document.getElementById('end-save').innerHTML='<div style="text-align:center;color:var(--accent);font-weight:600;margin:12px 0;">✓ Saved!'+(isRecord?' New record for '+this.archetype.label+' — '+entry.months+' months!':'')+'</div>'+_globalNote+'<button class="btn-outline" onclick="Game.showLeaderboard(\'end\')">View Leaderboard</button>';},
 
 // ---- Global leaderboard hook (backend wired later — see RELEASE_NOTES "v0.4 leaderboard") ----
 // To go live: set Game.LB_BACKEND = { async fetchTop(arch,months){return [entries]}, async submit(entry){} }.
@@ -5180,6 +5192,32 @@ document.getElementById('end-save').innerHTML='<div style="text-align:center;col
 // already sorted desc by composite and capped to the top 10. submit() pushes one finished run. Until set, Global shows a "coming soon" state.
 LB_BACKEND:null,
 _lbSubmitGlobal(entry){if(this.LB_BACKEND&&this.LB_BACKEND.submit){try{Promise.resolve(this.LB_BACKEND.submit(entry)).catch(()=>{});}catch(e){}}},
+
+// ---- Supabase: Google auth + global leaderboard backend ----
+_initSupabase(){try{
+if(!window.supabase||!window.supabase.createClient)return; // offline build / SDK didn't load → stays local-only
+this._sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+this.LB_BACKEND={fetchTop:(a,m)=>this._sbFetchTop(a,m),submit:(e)=>this._sbSubmit(e)};
+this._sb.auth.getSession().then(({data})=>{this._authUser=(data&&data.session)?data.session.user:null;this._afterAuth();});
+this._sb.auth.onAuthStateChange((_e,session)=>{this._authUser=session?session.user:null;this._afterAuth();});
+}catch(e){}},
+_isSignedIn(){return !!this._authUser;},
+_authName(){const u=this._authUser;if(!u)return '';const m=u.user_metadata||{};return m.full_name||m.name||((u.email||'').split('@')[0])||'Player';},
+async signInGoogle(){if(!this._sb)return;try{await this._sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0].split('?')[0]}});}catch(e){}},
+async signOutGoogle(){if(!this._sb)return;try{await this._sb.auth.signOut();}catch(e){}this._authUser=null;this._afterAuth();},
+// Runs after auth state settles (initial load + sign in/out): refresh visible auth UI + flush any run queued before a sign-in redirect.
+_afterAuth(){this._flushPendingGlobal();const lb=document.getElementById('leaderboard-screen');if(lb&&lb.classList.contains('active'))this.showLeaderboard(this._lbFrom);},
+// Map a DB row → the entry shape the leaderboard UI expects.
+_sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
+async _sbFetchTop(arch,months){const {data,error}=await this._sb.from('runs').select('name,company,archetype,months,composite,badges,traps,scams,play_log,stats,created_at').eq('archetype',arch).eq('months',months).order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
+async _sbSubmit(entry){const u=this._authUser;if(!u)return;const row={user_id:u.id,name:entry.name,company:entry.company||'',archetype:entry.archetype,months:entry.months,composite:entry.composite,scores:entry.scores||null,badges:entry.badges||[],mastery:entry.mastery||0,traps:entry.traps||[],scams:entry.scams||0,stats:entry.stats||null,play_log:entry.playLog||[]};const {error}=await this._sb.from('runs').insert(row);if(error)throw error;},
+// Posting requires sign-in, which redirects away (losing the run). So stash the entry, sign in, and auto-post it on return.
+_queuePendingGlobal(entry){try{localStorage.setItem('ep_pending_global',JSON.stringify(entry));}catch(e){}},
+_flushPendingGlobal(){if(!this._isSignedIn())return;let e=null;try{e=JSON.parse(localStorage.getItem('ep_pending_global')||'null');}catch(_){}if(!e)return;try{localStorage.removeItem('ep_pending_global');}catch(_){}this._myLBName=e.name;Promise.resolve(this._sbSubmit(e)).catch(()=>{});},
+// Sign-in button / signed-in identity, shown on the global leaderboard tab.
+_authBarHtml(){if(!this._sb)return '';
+if(this._isSignedIn())return '<div style="display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:10px;font-size:0.78rem;"><span style="color:var(--text2);min-width:0;">Signed in as <strong style="color:var(--text);">'+this._esc(this._authName())+'</strong></span><span onclick="Game.signOutGoogle()" style="color:var(--blue);cursor:pointer;font-weight:600;flex-shrink:0;">Sign out</span></div>';
+return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;"><div style="font-size:0.76rem;color:var(--text2);margin-bottom:7px;">Sign in to post your runs to the global board.</div><button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google</button></div>';},
 
 showLeaderboard(from){
 this._lbFrom=from||'title';this.showScreen('leaderboard-screen');
@@ -5190,6 +5228,7 @@ this._lbArch=selArch;this._lbDur=Math.min(36,Math.ceil(selDur/12)*12);this._lbSc
 const backTo=from==='end'?'Game.showScreen(\'end-screen\')':'Game.showMainMenu()';
 let html='<div class="page-head"><button class="back-chip" onclick="'+backTo+'">← Back</button><span class="page-title gold">🏆 Leaderboard</span></div>';
 html+='<div class="lb-scope"><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div></div>';
+if(this._lbScope==='global')html+=this._authBarHtml();
 html+='<div class="lb-tabs" id="lb-arch-tabs">'+archetypes.map(a=>'<div class="lb-tab '+(a===selArch?'active':'')+'" onclick="Game.filterLB(\''+a+'\')">'+archLabels[a]+'</div>').join('')+'</div>';
 html+='<div class="lb-tabs" id="lb-dur-tabs">'+durations.map(d=>'<div class="lb-tab '+(d===this._lbDur?'active':'')+'" onclick="Game.filterLBDur('+d+')">'+d+' Mo</div>').join('')+'</div>';
 html+='<div id="lb-list"></div>';

@@ -12,3 +12,7 @@ deploy.zip
 Thumbs.db
 .DS_Store
 .commitmsg.tmp
+
+# Local credential notes — never commit
+Google Cloud.rtf
+*.rtf

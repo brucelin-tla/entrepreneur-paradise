@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.41.0 — 2026-06-30
+**Global leaderboard + Google sign-in (Supabase) — multiplayer foundation**
+
+**Backend:** Supabase project (`runs` table, RLS: read-all / insert-update-delete-own via `auth.uid()`), Google OAuth provider (consent screen published, `email`/`profile` scopes). SDK loaded via CDN in `index.html`; `SUPA_URL`/`SUPA_KEY` (publishable key, public-safe) + `GOOGLE_G` consts in `js/game.js`.
+
+**Auth (`_initSupabase`):** creates the client, wires `LB_BACKEND = { fetchTop, submit }`, tracks session via `getSession` + `onAuthStateChange`. Helpers: `_isSignedIn`, `_authName`, `signInGoogle` (`signInWithOAuth`, redirectTo = current page), `signOutGoogle`, `_afterAuth` (refreshes auth UI + flushes pending). Graceful no-op if the SDK is absent (offline `game.html` stays local-only).
+
+**Global leaderboard:** `_sbFetchTop(arch,months)` (top-10 by composite) + `_sbRowToEntry` mapping → feeds the existing `_paintLB`. The Global tab now pulls real data; **browsing needs no login**. Auth bar (`_authBarHtml`) on the Global tab shows the signed-in identity or a **Sign in with Google** button.
+
+**Posting:** `saveToLeaderboard` posts to the global board when signed in; when signed out it **queues the run** (`_queuePendingGlobal` → `ep_pending_global`) and offers Google sign-in, then `_flushPendingGlobal` auto-submits it on return (OAuth redirects away, so the run is persisted across the round-trip). `_sbSubmit` inserts with `user_id = auth.uid()` (RLS-enforced).
+
+**Next:** partnership-deal multiplayer event (cast a real pooled company as the counterparty) + fictional seed pool.
+
 ## v0.40.0 — 2026-06-30
 **v0.4 series — UI consistency pass, leaderboard rebuild (global-ready), founder cards, achievements (traps + scams), redeem codes, company name, continue confirm**
 
