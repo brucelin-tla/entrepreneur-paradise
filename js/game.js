@@ -43,6 +43,20 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.42.2',d:'2026-06-30 18:00',n:[
+'Fixed utilization reading ~96% “but healthy” the moment you bought real estate — your mortgage was wrongly counted as credit-card utilization. Now your score climbs as it should.',
+'Fixed the menu asking you to “hire a fractional CRO” when you already have one (a failed hire roll left the role unmarked). Self-heals existing games.',
+'Luxury life actions (jets, estates, art, foundations) are no longer locked when you have the personal cash for them — they’re paid from personal cash, not business cash.',
+'Your C-suite now builds out prerequisites and stops spamming the same move every month (no more Debt Restructure every single turn).',
+'Full C-suite: one clear “▶ Run the Month” button at the bottom — no more mid-screen button.',
+'Attorney/lawsuit and other repeat events are throttled in the late game — no more back-to-back spam.',
+'Continuing from a year checkpoint now resumes the NEXT month instead of replaying the year-end month and re-taxing you.',
+'“Saved by personal savings” no longer pops up every month — it warns once, then escalates.',
+'Tap your personal Expense/mo for a full breakdown.',
+'Leaderboard: tap a run to see its win-title, radar hexagon, and full score breakdown.',
+'Checkpoint now auto-saves (company name + date) — just choose whether to post to the leaderboard.',
+'Established Founder now starts “2 years in” — LLC and the basics already done, so you play from a high level.',
+]},
 {v:'0.42.1',d:'2026-06-30 17:00',n:[
 'Fixed a death spiral where delegating/auto-played moves could overspend across categories and bankrupt you in a single month — your team now keeps a runway buffer.',
 'Epic Life concierge now runs Debt Restructure when you’re cash-strapped and maxed out — it was being blocked exactly when you needed the rescue (it’s free for members and frees up your utilization).',
@@ -414,7 +428,7 @@ c.onclick=()=>this.selectArchetype(p);l.appendChild(c);});},
 
 selectArchetype(p,noStart){
 this.archetype=p;this.state=JSON.parse(JSON.stringify(p.initial_state));
-this.state._stages=JSON.parse(JSON.stringify(p.stage_overrides));this.state._completed_actions=[];this.state._active_lifestyle_costs={};this.state._action_counts={};
+this.state._stages=JSON.parse(JSON.stringify(p.stage_overrides));if(!Array.isArray(this.state._completed_actions))this.state._completed_actions=[];/* an archetype may pre-seed completed actions (e.g. Established starts 2 years in) — keep them */this.state._active_lifestyle_costs={};this.state._action_counts={};
 this.state._mentor_state='unavailable';this.state._banker_state='stranger';this.state._rival_state='unknown';this.state._family_state=p.id==='established'?'strained':'coping';
 this.state._audit_events=0;this.state._market_cycle='normal';this.state._ytd_taxable_income=0;
 this.state.fitness_level=this.state.fitness_level||50;this.state.living_expenses=this.state.living_expenses||3000;this.state.lifestyle_expenses=this.state.lifestyle_expenses||0;
@@ -422,7 +436,7 @@ this.state.leads=this.state.leads||0;this.state.tax_reserve=this.state.tax_reser
 this.state.personal_cash=this.state.personal_cash||0;this.state.capital_account=this.state.capital_account||0;this.state._owner_draws_total=this.state._owner_draws_total||0;this.state.personal_tax_ytd=this.state.personal_tax_ytd||0;
 this.state.skill_marketing=this.state.skill_marketing||0;this.state.skill_operations=this.state.skill_operations||0;this.state.skill_finance=this.state.skill_finance||0;
 this.state.credit_negatives=this.state.credit_negatives||0;this.state.company_culture=this.state.company_culture||45;
-this.month=1;this.selectedActions={};this.actionHistory=[];this.eventHistory=[];this.lifestyleHistory=[];this.monthlySnapshots=[];this._playLog=[];this._pendingTax=false;this._lost=false;this.gameOver=false;this._prevAccessible=null;this._taxRescue=0;this._ownerRescue=0;this._lastRunwayMo=null;
+this.month=1;this.selectedActions={};this.actionHistory=[];this.eventHistory=[];this.lifestyleHistory=[];this.monthlySnapshots=[];this._playLog=[];this._pendingTax=false;this._lost=false;this.gameOver=false;this._prevAccessible=null;this._taxRescue=0;this._ownerRescue=0;this._lastRunwayMo=null;this._atCheckpoint=false;
 // Straight into month 1 — the opening narrative beat + tutorial both live on the game screen, so a separate opening screen was redundant.
 if(!noStart)this.startGame();},
 
@@ -752,6 +766,8 @@ if(scaled.cash&&scaled.cash<0&&this._perks().protected)scaled.cash=Math.round(sc
 return scaled;},
 
 renderMonth(){
+this._atCheckpoint=false;/* we're rendering a real month now — clear the checkpoint flag so saves record this month */
+this._syncExecCompletions();/* heal any exec role filled via a failed roll so the menu doesn't re-offer it (covers older saves too) */
 this.showScreen('game-screen');this.selectedActions={};this.currentCategory='marketing';this._showAllActions=false;this._isQuarterlyMonth=(this.month%3===0);this.updateStages();this._setupActionMenu();
 this._renderCompanyName();
 const hs=CATS.map(c=>this.getStage(c)).reduce((a,b)=>({foundation:0,leverage:1,wealth:2}[a]>={foundation:0,leverage:1,wealth:2}[b]?a:b));
@@ -835,7 +851,7 @@ const hasCfo=s._cfo_hired||(s._completed_actions||[]).includes('hire_fractional_
 const achBtn=this._reveal('achievements')?'<div onclick="Game.showAchievements()" style="cursor:pointer;text-align:center;background:var(--surface);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:7px;margin-bottom:8px;font-size:0.76rem;font-weight:600;color:var(--gold);">🏆 Achievements — '+((s._milestones_achieved||[]).length)+'/'+MILESTONES.length+' milestones</div>':'';
 const _dash=document.getElementById(targetId||'stats-dashboard');_dash.style.display='block';_dash.innerHTML=cfoBtn+achBtn+'<div style="display:flex;align-items:stretch;gap:16px;"><div style="flex:1;min-width:0;">'+P+'</div><div style="width:1px;background:var(--border);"></div><div id="biz-col" style="flex:1;min-width:0;">'+B+'</div></div>';},
 
-calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},
+calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},/* exclude the real-estate mortgage — it's installment debt, not revolving credit-card utilization. Counting it spiked util to ~96% the moment you leveraged into RE, contradicting the paydown logic (which already excludes it). Now matches the canonical personal-revolving formula used everywhere else. */
 calcBizUtil(){const s=this.state,bizUsed=s.business_credit_used||0,bizLim=s.business_credit_limit||0;return bizLim>0?Math.round((bizUsed/bizLim)*100):0;},
 // Payment-history factor (the 35% pillar): real derogatories hit hardest on the FIRST mark, then the marginal damage tapers and floors out (a file with 6 collections isn't 6× worse than one). Diminishing curve from 1.0 → ~0.55. Their REAL bite is on approvals (see _creditApprovalChance), not bottomless score loss.
 _payHistoryFactor(neg){neg=Math.max(0,neg||0);return 1-0.45*(1-Math.exp(-neg*0.55));},
@@ -1262,6 +1278,10 @@ const ef=a.effects||{};if(ef.leads>0)u+=2;if(ef.customer_base>0)u+=2;if(ef.brand
 if(this.isActionOutgrown&&this.isActionOutgrown(a))u-=4;
 if((s._action_counts||{})[a.id])u-=Math.min(3,(s._action_counts[a.id]));
 return u;},
+// Reverse prerequisite map: actionId → [ids of actions that list it in their `needs` gate]. Built once. Lets the auto-pilot recognize a "gateway" move that unlocks other actions.
+_neededBy(id){if(!this.__neededBy){const m={};const all=[].concat(CONFIG.actions_marketing.actions,CONFIG.actions_operations.actions,CONFIG.actions_finance.actions);for(const b of all){const n=(b.prerequisites&&b.prerequisites.needs)||[];for(const nid of n)(m[nid]=m[nid]||[]).push(b.id);}this.__neededBy=m;}return this.__neededBy[id]||[];},
+// A not-yet-taken action is a "gateway" when some other action is gated behind completing it (`needs`). Completing it once builds out the tree, so the auto-pilot should prioritize it over repeating a grind.
+_isGateway(a){return !(this.state._completed_actions||[]).includes(a.id)&&this._neededBy(a.id).length>0;},
 // Estimate an action's real value (projected, scaled impact) so an executive auto-pick lands on a genuinely high-leverage move, not a random low-value one.
 _actionValue(a,cat){const s=this.state,ef=this.scaleActionEffects(a.effects||{},cat);let v=0;
 v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+=(ef.revenue_capacity||0)*1.2;v+=(ef.systems_maturity||0)*180;v+=(ef.other_monthly_revenue||0)*6000;v+=(ef.team_size||0)*1200;v+=(ef.sales_conversion||0)*400;v+=(ef.dscr||0)*2500;v+=(ef.insurance_cash_value||0)*0.5;
@@ -1275,9 +1295,10 @@ v-=(a.cash_cost||0)*0.2;v-=Math.max(0,a.energy_cost||0)*120;
 const HV={activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000};
 if(HV[a.id]!==undefined)v+=HV[a.id];
 v+=this._actionUrgency(a)*60; // fold in situational urgency
-const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.4,1-cnt*0.15);
+const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.22,1-cnt*0.22); // steeper repeat decay so the auto-pilot stops hammering one repeatable when fresh moves are still on the table
 if(this.isActionOutgrown(a))v*=0.3;
-if(a.one_time&&!cnt)v*=1.2; // strategic one-time unlocks are worth grabbing
+if(a.one_time&&!cnt)v*=1.35; // fresh one-time unlocks are worth grabbing
+if(this._isGateway(a))v+=14000; // completing this clears a `needs` gate blocking other actions — build out the prerequisite tree before grinding
 v*=(a.success_rate||0.7);
 return v;},
 // Cash already committed by this month's other selected actions (so per-category auto-picks don't collectively overspend).
@@ -1288,7 +1309,7 @@ bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActio
 // An exec offers its own full-time promotion the moment it's available & affordable — a strategic upgrade, not a repeatable grind.
 const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo)&&this._fitsRunway(promo,cat))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
-if(cat==='finance'){const ladder=['establish_business','combined_insurance','asset_protection_stack','elect_s_corp','advanced_tax_strategy','monthly_tax_reserve','build_dnb_profile','debt_restructure'];for(const id of ladder){const a=acts.find(x=>x.id===id);if(a&&this.canAfford(a)&&(id==='debt_restructure'||this._fitsRunway(a,cat)))return a;/* debt_restructure injects more capital than its fee — don't gate the rescue on runway */}}
+if(cat==='finance'){const ladder=['establish_business','combined_insurance','asset_protection_stack','elect_s_corp','advanced_tax_strategy','monthly_tax_reserve','build_dnb_profile','debt_restructure'];for(const id of ladder){const a=acts.find(x=>x.id===id);if(!a||!this.canAfford(a))continue;if(id==='debt_restructure'){if(this.calcPersUtil()<=45)continue;/* restructure's job is to move PERSONAL revolving debt down — only do it when personal utilization is actually high, not every month (when util is low there's nothing to restructure and it just balloons the credit line). Capital-positive, so runway-exempt. */return a;}if(this._fitsRunway(a,cat))return a;}}
 // COO protects the team: when culture is slipping, build it (equity grant preferred, else a benefits package) before anything else available.
 if(cat==='operations'&&(this.state.team_size||0)>0){const _cul=this.state.company_culture==null?45:this.state.company_culture;if(_cul<45){const a=acts.find(x=>x.id==='grant_stock_incentives')||acts.find(x=>x.id==='build_benefits_package');if(a&&this.canAfford(a)&&this._fitsRunway(a,cat))return a;}}
 const sorted=acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat));
@@ -1312,7 +1333,7 @@ const allExec=s._cro_hired&&s._coo_hired&&s._cfo_hired;
 if(allExec&&this._focusMode!==false){this._activeCats=base.filter(c=>c!=='marketing'&&c!=='operations');if(!this._activeCats.includes(this.currentCategory))this.currentCategory='finance';}
 else this._activeCats=base;},
 toggleFocus(){this._focusMode=this._focusMode===false?true:false;this._setupActionMenu();this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
-_bestLifestyle(){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};const opts=(CONFIG.lifestyle_options.actions||[]).filter(a=>(s.cash||0)>=(a.cash_cost||0));if(!opts.length)return null;const score=a=>{let v=0;const ef=a.effects||{};for(const k in ef){if(typeof ef[k]==='number'&&(k.indexOf('lifestyle_')===0||k==='energy'||k==='fitness_level'))v+=ef[k];}v+=(100-(subs[a.subcategory]||0))*0.5;const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.5,1-cnt*0.2);return v;};return opts.slice().sort((a,b)=>score(b)-score(a))[0];},
+_bestLifestyle(){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};const opts=(CONFIG.lifestyle_options.actions||[]).filter(a=>((this.isSeparated()&&this.lifeActionIsPersonal(a))?(s.personal_cash||0):(s.cash||0))>=(a.cash_cost||0));if(!opts.length)return null;const score=a=>{let v=0;const ef=a.effects||{};for(const k in ef){if(typeof ef[k]==='number'&&(k.indexOf('lifestyle_')===0||k==='energy'||k==='fitness_level'))v+=ef[k];}v+=(100-(subs[a.subcategory]||0))*0.5;const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.5,1-cnt*0.2);return v;};return opts.slice().sort((a,b)=>score(b)-score(a))[0];},
 // Epic Life Membership — finance actions the concierge runs for you (so the player no longer picks them manually).
 EPIC_HANDLED:['wyoming_holding_llc','asset_protection_stack','combined_insurance','debt_restructure','build_personal_credit','pay_down_debt','banking_relationship','fund_accumulation_policy','activate_passive_income','policy_loan'],
 _epicHandled(a){return !!this.state._epic_life&&this.EPIC_HANDLED.includes(a.id)&&!this.isActionCompleted(a);},
@@ -1405,7 +1426,7 @@ const s2=this.state,allExec=s2._cro_hired&&s2._coo_hired&&s2._cfo_hired,teamMode
 if(teamMode){const roleRow=(emoji,role,c,recId)=>{const selA=this.selectedActions[c],isAuto=selA&&(this._autoPicked||{})[c]===selA.id,id=selA?selA.id:recId,lbl=id?this.actionLabel(id):'standing pat',tag=(selA&&!isAuto)?'<span style="color:var(--accent);font-size:0.64rem;">your pick</span>':(id?'<span style="color:var(--text2);font-size:0.64rem;">'+role+'’s pick</span>':'');return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">'+emoji+' '+role+'</span><span style="text-align:right;min-width:0;"><span style="color:var(--text);">'+lbl+'</span> '+tag+'</span></div>';};
 let rows='';if(s2._cro_hired)rows+=roleRow('📣','CRO','marketing',(this._autoPicked||{}).marketing);if(s2._coo_hired)rows+=roleRow('⚙️','COO','operations',(this._autoPicked||{}).operations);if(s2._cfo_hired)rows+=roleRow('💰','CFO','finance',this._cfoPick);
 if((this._activeCats||[]).includes('lifestyle'))rows+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">🏖️ Life</span><span style="color:var(--accent);font-size:0.64rem;">always your pick</span></div>';
-banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Team’s Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Override any line by picking your own move below — anything you don’t set, your team handles (and it costs you no energy). Your 🏖️ Life action is always your own pick.</div><button onclick="Game.runTeamMonth()" style="width:100%;padding:11px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;font-weight:700;font-size:0.9rem;cursor:pointer;">▶ Run the Month</button>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing &amp; Ops menus (let execs handle)':'Show all menus to override Marketing &amp; Ops')+'</span></div>':'')+'</div>';}
+banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Team’s Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Override any line by picking your own move below — anything you don’t set, your team handles (and it costs you no energy). Your 🏖️ Life action is always your own pick. When you’re ready, tap <strong>▶ Run the Month</strong> at the bottom.</div>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing &amp; Ops menus (let execs handle)':'Show all menus to override Marketing &amp; Ops')+'</span></div>':'')+'</div>';}
 // On the finance tab, members see their concierge roadmap milestone (replaces the old "handles these for you" list — the milestone says what's being built and what's next, which is the useful version).
 let epicPanel='';
 if(this.state._epic_life&&this.currentCategory==='finance')epicPanel=this._epicMilestoneCompact();
@@ -1473,10 +1494,12 @@ _flashNextBtn(){const btn=document.getElementById('confirm-actions-btn');if(!btn
 // The next active category that still needs a pick — preferring one OTHER than where you are now, so the button reads like "go forward".
 _nextUnselectedCat(){const ac=this._activeCats||CATS,start=ac.indexOf(this.currentCategory);for(let i=0;i<ac.length;i++){const c=ac[(start+i)%ac.length];if(!this.selectedActions[c])return c;}return null;},
 // Primary bottom button: until all three moves are set it walks you to your next action; once they're all set it ends the turn.
-primaryActionBtn(){const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory){this.switchCategory(nxt);return this._focusActionList();}return this._focusActionList();/* last pick is on this screen — nudge the cards rather than end the turn */},
+primaryActionBtn(){const s=this.state,team=(s._cro_hired&&s._coo_hired&&s._cfo_hired)||s._board_active;if(team)return this.runTeamMonth();/* full C-suite/board: the bottom button just runs the month (execs fill any line you didn't override) */
+const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory){this.switchCategory(nxt);return this._focusActionList();}return this._focusActionList();/* last pick is on this screen — nudge the cards rather than end the turn */},
 // Pull the player's eye to the actual choices: scroll the action cards into view and give them a brief highlight (not just flip the category icon).
 _focusActionList(){const list=document.getElementById('action-list'),ind=document.getElementById('step-indicator');const anchor=ind||list;if(anchor&&anchor.scrollIntoView)anchor.scrollIntoView({behavior:'smooth',block:'start'});if(list){list.classList.remove('attn-flash');void list.offsetWidth;list.classList.add('attn-flash');setTimeout(()=>list.classList.remove('attn-flash'),900);}},
 updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,total=ac.length,unsel=ac.filter(c=>!this.selectedActions[c]),done=total-unsel.length;btn.disabled=false;
+{const s=this.state,team=(s._cro_hired&&s._coo_hired&&s._cfo_hired)||s._board_active;if(team){btn.textContent='▶ Run the Month';if(sec)sec.style.display='none';return;}}/* team mode: one clear bottom action, no category-cycling */
 // All moves chosen → the primary button ends the turn. Otherwise it navigates to the next move, and the secondary button consistently shows how many are picked and that ending now skips the rest.
 if(!unsel.length){btn.textContent='End Turn →';if(sec)sec.style.display='none';return;}
 const nxt=this._nextUnselectedCat();
@@ -1495,6 +1518,8 @@ _reduceRecurring(amount){const s=this.state;let rem=Math.round(amount||0);if(rem
 // Invariant: the itemized recurring-cost lines can never sum to more than operating expenses (minus exec pay, shown separately). Events/actions that cut opex directly would otherwise leave stale line items totaling MORE than the displayed total. Trims the largest items back into line.
 _syncRecurring(){const s=this.state;if(!s._active_recurring_costs)return;const sum=Object.values(s._active_recurring_costs).reduce((a,b)=>a+(+b||0),0);const exec=this.calcExecComp?this.calcExecComp():0;const cap=Math.max(0,(s.operating_expenses||0)-exec);if(sum>cap)this._reduceRecurring(sum-cap);},
 // When a team member leaves, drop the single largest recurring cost line (a hire is nearly always the biggest) and reduce opex by exactly that — so the expense breakdown loses the right line, not a generic amount. Returns the salary removed.
+// A C-suite role is "filled" once its flag is set — even from a FAILED hire/promote roll (failure_effects still set the flag). Mark the action completed so the menu never re-offers a role you already have. Self-heals older saves on the next month render.
+_syncExecCompletions(){const s=this.state,F={hire_cro:'_cro_hired',hire_coo:'_coo_hired',hire_cfo:'_cfo_hired',promote_cro_fulltime:'_cro_fulltime',promote_coo_fulltime:'_coo_fulltime',promote_cfo_fulltime:'_cfo_fulltime'};if(!s._completed_actions)s._completed_actions=[];for(const id in F){if(s[F[id]]&&!s._completed_actions.includes(id))s._completed_actions.push(id);}},
 _removeDepartedRole(){const s=this.state;if(!s._active_recurring_costs)return 0;const e=Object.entries(s._active_recurring_costs).filter(x=>x[0]!=='key_man_policy').sort((a,b)=>b[1]-a[1]);if(!e.length)return 0;const id=e[0][0],amt=this._clearRecurring(id);
 // Re-open the role so the player can re-hire it, flagged with a Rehire tag in the menu.
 if(s._completed_actions){const ix=s._completed_actions.indexOf(id);if(ix>=0)s._completed_actions.splice(ix,1);}
@@ -1575,6 +1600,7 @@ const _energyCost=this.actionEnergyCost(action);if(_energyCost>0&&!_execRun)this
 // One-time actions only "complete" (and lock) on a full success — a partial leaves them available to retry. Repeatable actions register as before.
 // Only a SUCCESS counts as "done" — a partial result isn't marked complete (doesn't satisfy capability gates) and doesn't get a "done ×N" pill; you can retry it.
 if(success&&!this.state._completed_actions.includes(action.id))this.state._completed_actions.push(action.id);
+this._syncExecCompletions();/* a failed exec hire/promote still fills the role (flag set in failure_effects) — mark it completed so the menu stops offering it */
 if(success&&this.state._rehire&&this.state._rehire[action.id])delete this.state._rehire[action.id];/* role re-filled — clear the rehire flag */
 // Log a trap the moment it's taken (traps are always a setback, so success/fail doesn't matter). "Survived" is settled by reaching the run's end alive — a lost run never gets the badge.
 if(TRAPS.includes(action.id)){if(!this.state._traps_hit)this.state._traps_hit=[];if(!this.state._traps_hit.includes(action.id))this.state._traps_hit.push(action.id);}
@@ -1803,10 +1829,14 @@ if(this.month>=36)return null;
 cs._bad_debt=Math.max(0,(cs.total_debt||0)-(cs.real_estate_debt||0)-(cs.business_installment_debt||0)-(cs.insurance_loan_balance||0)-(cs._installment_debt||0));const passers=[];const cul=this.state.company_culture==null?45:this.state.company_culture,culMult=Math.max(0.2,1+(50-cul)/50*0.8);/* low culture nearly doubles people-problem odds; strong culture cuts them ~80% */
 // Health neglect → illness risk. The lower your energy and Body, the more an illness/burnout event compounds. Healthy founders are barely exposed; run-down ones get sick often. (Insurance pays the claim when it hits.)
 const _en=Math.min(100,cs.energy||0),_body=this.lifeDims().Body;const _neglect=Math.max(0,(60-_en))/60*0.6+Math.max(0,(50-_body))/50*0.6;/* 0 (healthy) .. >1.2 once you run the energy negative */const healthMult=Math.min(5,1+_neglect*2.2);/* up to ~3.6x run-down, higher (capped 5x) once energy goes negative */
-for(const evt of CONFIG.events.events.filter(e=>this.meetsReq(e.requires))){let p=evt.base_probability;if(evt.probability_scales_with&&evt.scale_factor)p+=(this.state[evt.probability_scales_with]||0)*evt.scale_factor;if(evt.category==='people')p*=culMult;if(evt.category==='burnout'||evt.category==='personal'||evt.health_risk)p*=healthMult;if(evt.category==='opportunity'&&this.state._epic_life)p*=1.6;/* Epic Life surfaces more deal flow */if(evt.mitigated_by)for(const id of evt.mitigated_by)if(this.state._completed_actions.includes(id))p*=0.5;if(Math.random()<p)passers.push(evt);}
+const catLast=cs._eventCatMonth||{},idLast=cs._eventIdMonth||{};
+for(const evt of CONFIG.events.events.filter(e=>this.meetsReq(e.requires))){let p=evt.base_probability;if(evt.probability_scales_with&&evt.scale_factor)p+=(this.state[evt.probability_scales_with]||0)*evt.scale_factor;if(evt.category==='people')p*=culMult;if(evt.category==='burnout'||evt.category==='personal'||evt.health_risk)p*=healthMult;if(evt.category==='opportunity'&&this.state._epic_life)p*=1.6;/* Epic Life surfaces more deal flow */if(evt.mitigated_by)for(const id of evt.mitigated_by)if(this.state._completed_actions.includes(id))p*=0.5;
+// Anti-spam: cap any single event's monthly odds, and cool down both the exact event (no re-fire for ~8 months) and its whole category (suppressed for ~3 months) — so the late game stops drowning you in back-to-back lawsuits/audits of the same kind. Opportunity is exempt from the category cooldown (deal flow is a good thing).
+p=Math.min(p,0.30);const im=idLast[evt.id];if(im!=null&&this.month-im<8)p*=0.12;const cm=catLast[evt.category];if(cm!=null&&evt.category!=='opportunity'&&this.month-cm<3)p*=0.25;
+if(Math.random()<p)passers.push(evt);}
 // Force a guaranteed FIRST event so the player learns the mechanic — but only once there's a real business for something to happen to (at least a customer or some revenue), so the event makes sense. Until then, no event. Prefer a gentler scenario; introduced with a one-time explainer in showEvent.
 if(!cs._first_event_seen&&!passers.length&&((cs.customer_base||0)>=1||(cs.monthly_revenue||0)>0)){const eligible=CONFIG.events.events.filter(e=>this.meetsReq(e.requires)&&e.category!=='macro');if(eligible.length){const gentle=eligible.filter(e=>['opportunity','people','operations'].includes(e.category));const poolF=gentle.length?gentle:eligible;return poolF[Math.floor(Math.random()*poolF.length)];}}
-return passers.length?passers[Math.floor(Math.random()*passers.length)]:null;},
+const chosen=passers.length?passers[Math.floor(Math.random()*passers.length)]:null;if(chosen){cs._eventCatMonth=catLast;cs._eventIdMonth=idLast;catLast[chosen.category]=this.month;idLast[chosen.id]=this.month;}return chosen;},
 
 // Result screen primary button — two-tap: first tap jumps to the Cash & Credit panel, second advances the month.
 resultPrimary(){if(!this._ccChecked&&document.getElementById('month-cash-panel')){this._ccChecked=true;const nb=document.getElementById('result-next-btn');if(nb)nb.textContent='Next Month →';this.checkCashCredit();
@@ -2049,6 +2079,7 @@ document.getElementById('results-content').innerHTML='<div class="result-narrati
 this._pendingTax=false;},
 
 showCheckpoint(){
+this._atCheckpoint=true;/* saves taken here resume on the NEXT month, not a replay of the year-end month (see _snapshot) */
 const scores=this.calculateFinalScores(),composite=this.calcComposite(scores),year=Math.ceil(this.month/12);
 let html='<div class="month-header"><h2>Year '+year+' Complete</h2></div>';
 html+='<div class="checkpoint-label">COMPOSITE SCORE</div><div class="checkpoint-score">'+composite+' <span style="font-size:0.9rem;color:var(--text2)">/ 600</span></div>';
@@ -2058,7 +2089,8 @@ html+=this.buildDebrief();
 if(this.month<36){html+='<button class="btn-primary" onclick="Game.continueFromCheckpoint()">Keep Going — Year '+(year+1)+'</button>';
 html+='<button class="btn-outline" onclick="Game.endGame()" style="margin-top:8px;">🏁 End Here — Lock In My Final Score</button>';
 html+='<div style="text-align:center;font-size:0.72rem;color:var(--text2);margin-top:6px;">You can stop after Year '+year+' — your run is scored right here. Or keep building toward Year '+(year+1)+'.</div>';
-html+='<div style="margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.78rem;font-weight:700;margin-bottom:6px;">💾 Save & resume later</div><div style="font-size:0.7rem;color:var(--text2);margin-bottom:8px;">Add your name to save this Year '+year+' checkpoint. You can close the tab and pick it back up from the title screen or leaderboard.</div><input id="cp-save-name" class="name-input" placeholder="Your name" maxlength="20"><button class="btn-secondary" onclick="Game.saveProgress()">Save Progress</button></div>';
+this.autoSave();/* checkpoint is auto-persisted — no manual name/save step needed */
+{const _co=(this.state.company_name||'').trim(),_dt=new Date().toISOString().split('T')[0];html+='<div style="margin-top:14px;background:rgba(16,185,129,0.08);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:11px 14px;font-size:0.74rem;color:var(--text2);line-height:1.5;">💾 <strong style="color:var(--accent);">Progress auto-saved</strong>'+(_co?' — '+this._esc(_co):'')+' · '+_dt+'.<br>Close the tab anytime and pick it back up from <strong>Continue</strong> on the title screen.</div>';}
 // Post this checkpoint run to the leaderboard now (and keep playing). Uses the name field above.
 html+='<div id="cp-post-box" style="margin-top:10px;"><button class="btn-outline" onclick="Game.postCheckpoint()" style="margin:0;">🏆 Post This Year’s Run to the Leaderboard</button><div style="text-align:center;font-size:0.66rem;color:var(--text2);margin-top:5px;">Ranks your Year '+year+' score now — you can still keep playing toward a bigger run.</div></div>';
 // First full year as the New Business Owner unlocks New Game+ — tell them here (right next to Save), so they can stash this run and go experiment.
@@ -2089,7 +2121,7 @@ const parts=dimParts.concat(other);
 return parts.length?'<p style="margin:-2px 0 6px;font-size:0.72rem;color:var(--text2);">Stats impacted: '+parts.join(' · ')+'</p>':'';},
 showLifestyleScreen(){this.showScreen('lifestyle-screen');this.selectedLifestyle=null;const s=this.state;const d=this.lifeDims(),mastery=this.calcPersonalMastery();
 const scores=['Body','Mind','Spirit','Heart','Luxury'].map(k=>({label:this.LIFE_ICON[k]+' '+k,value:d[k],color:d[k]>50?'positive':d[k]>25?'warning':'negative'}));
-document.getElementById('lifestyle-scores').innerHTML='<div style="display:flex;gap:8px;margin-bottom:8px;grid-column:span 3;"><div class="stat-card" style="flex:1;"><div class="stat-value stat-positive" style="font-size:0.9rem;">'+this.fmtMoney(s.cash)+'</div><div class="stat-label">Cash</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" style="font-size:0.9rem;color:'+(mastery>50?'var(--accent)':mastery>25?'var(--gold)':'var(--red)')+';">'+mastery+'</div><div class="stat-label">Personal Mastery</div></div></div>'+scores.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'">'+st.value+'</div><div class="stat-label">'+st.label+'</div></div>').join('');
+document.getElementById('lifestyle-scores').innerHTML='<div style="display:flex;gap:8px;margin-bottom:8px;grid-column:span 3;"><div class="stat-card" style="flex:1;"><div class="stat-value stat-positive" style="font-size:0.9rem;">'+this.fmtMoney(this.isSeparated()?(s.personal_cash||0):(s.cash||0))+'</div><div class="stat-label">'+(this.isSeparated()?'Personal Cash':'Cash')+'</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" style="font-size:0.9rem;color:'+(mastery>50?'var(--accent)':mastery>25?'var(--gold)':'var(--red)')+';">'+mastery+'</div><div class="stat-label">Personal Mastery</div></div></div>'+scores.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'">'+st.value+'</div><div class="stat-label">'+st.label+'</div></div>').join('');
 // Group actions by the five Personal-Development themes (weakest dimensions first)
 const themeVal={Body:d.Body,Mind:d.Mind,Spirit:d.Spirit,Heart:d.Heart,Luxury:d.Luxury};
 this._sortedLifestyle=[...CONFIG.lifestyle_options.actions].sort((a,b)=>{const ta=this.LIFE_THEME[a.subcategory]||'Luxury',tb=this.LIFE_THEME[b.subcategory]||'Luxury';if(ta!==tb)return (themeVal[ta]||0)-(themeVal[tb]||0);return (a.cash_cost||0)-(b.cash_cost||0);});
@@ -2097,7 +2129,9 @@ let listHtml='',curSub='';
 this._sortedLifestyle.forEach(a=>{
 const theme=this.LIFE_THEME[a.subcategory]||'Luxury';
 if(theme!==curSub){curSub=theme;listHtml+='<div style="padding:10px 0 6px;font-size:0.75rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);margin-top:8px;">'+this.LIFE_ICON[theme]+' '+theme+' <span style="color:var(--text2);text-transform:none;letter-spacing:0;">— '+(themeVal[theme]||0)+'/100</span></div>';}
-const afford=this.state.cash>=(a.cash_cost||0),active=a.recurring_cost&&this.state._active_lifestyle_costs&&this.state._active_lifestyle_costs[a.id];
+// Check the pocket that actually PAYS for it: personal cash for personal treats (vacations, jets, estates), business cash for business-funded ones (exec health, team retreats). A separated founder with a fat personal account shouldn't see luxuries locked just because business cash is deployed.
+const _pocket=(this.isSeparated()&&this.lifeActionIsPersonal(a))?(s.personal_cash||0):(s.cash||0);
+const afford=_pocket>=(a.cash_cost||0),active=a.recurring_cost&&this.state._active_lifestyle_costs&&this.state._active_lifestyle_costs[a.id];
 const outgrown=afford&&(a.cash_cost||0)<3000&&(themeVal[this.LIFE_THEME[a.subcategory]||'Luxury']||0)>60;
 const lrc=(this.state._action_counts||{})[a.id]||0,lRepeat=lrc>0?'<span class="repeat-badge">×'+lrc+'</span>':'';
 const tier=(a.cash_cost||0)>=8000?'Premium':(a.cash_cost||0)>=3000?'Standard':'Basic';
@@ -2161,7 +2195,8 @@ resumeFromEnd(){this._lost=false;this.month++;if(this.month>36){this.month=36;}t
 // ---- Save / resume of in-progress runs (persisted across page refreshes) ----
 _archLabel(id){const p=CONFIG.starting_positions.positions.find(x=>x.id===id);return p?p.label:id;},
 loadSaves(){try{return JSON.parse(localStorage.getItem('ep_saves')||'[]');}catch(e){return [];}},
-_snapshot(){return {v:1,gv:(PATCH_NOTES[0]||{}).v,archetype:this.archetype.id,month:this.month,state:this.state,actionHistory:this.actionHistory,eventHistory:this.eventHistory,lifestyleHistory:this.lifestyleHistory,playLog:this._playLog||[]};},
+// A save taken AT a year checkpoint is a post-tax, end-of-year state but this.month is still 12/24 — record the NEXT month so resuming starts fresh on month 13/25 instead of replaying the year-end month (and re-running the tax). Leaderboard posts use this.month directly, so they still read as a 12/24-month run.
+_snapshot(){return {v:1,gv:(PATCH_NOTES[0]||{}).v,archetype:this.archetype.id,month:this.month+(this._atCheckpoint?1:0),state:this.state,actionHistory:this.actionHistory,eventHistory:this.eventHistory,lifestyleHistory:this.lifestyleHistory,playLog:this._playLog||[]};},
 // Current game version + a semver "older-than" check, so the title screen can flag a save written by an earlier build.
 _curVersion(){return (PATCH_NOTES[0]||{}).v||'';},
 _verLt(a,b){if(!a)return true;/* no recorded version = pre-versioning save = older */const pa=String(a).split('.').map(Number),pb=String(b).split('.').map(Number);for(let i=0;i<3;i++){const x=pa[i]||0,y=pb[i]||0;if(x!==y)return x<y;}return false;},
@@ -2174,7 +2209,7 @@ _patchNotesSince(gv){const items=PATCH_NOTES.filter(p=>this._verLt(gv,p.v));if(!
 // Title-screen update flow: preview what's new since the save, then apply on confirm.
 showSaveUpdate(){const s=this.loadAutoSave();if(!s)return;const cur=this._curVersion();const body='<div style="font-size:0.82rem;line-height:1.5;margin-bottom:10px;">Bring your in-progress game (<strong>v'+(s.gv||'pre-release')+'</strong>) up to <strong>v'+cur+'</strong>. <strong>Your progress is kept</strong> — the latest mechanics and balance simply start applying. Everything added since your save:</div><div style="max-height:42vh;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;background:var(--surface);">'+this._patchNotesSince(s.gv)+'</div><button class="btn-primary" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;" onclick="Game.applySaveUpdate()">⬆ Update my save to v'+cur+'</button>';this.showPopup('⬆ Update Your Saved Game',body);},
 applySaveUpdate(){let s=this.loadAutoSave();if(!s){this.hidePopup();return;}const from=s.gv||'pre-release';s=this._migrateSave(s);try{localStorage.setItem('ep_autosave',JSON.stringify(s));}catch(e){}this.hidePopup();if(this.renderSaves)this.renderSaves();const cur=this._curVersion();setTimeout(()=>this.showPopup('✓ Save Updated','<div style="line-height:1.6;font-size:0.9rem;">Updated from <strong>v'+from+'</strong> to <strong>v'+cur+'</strong>. The latest mechanics and balance apply from here — tap <strong>Continue</strong> to keep playing.</div>'),150);},
-_loadSnapshot(s){s=this._migrateSave(s);/* resuming any save brings it current */this.archetype=CONFIG.starting_positions.positions.find(p=>p.id===s.archetype)||this.archetype;this.state=s.state;this.month=s.month;this.actionHistory=s.actionHistory||[];this.eventHistory=s.eventHistory||[];this.lifestyleHistory=s.lifestyleHistory||[];this._playLog=s.playLog||[];this.monthlySnapshots=[];this.selectedActions={};this._pendingTax=false;this._pendingEvent=null;this._lost=false;this._deferRestructure=null;},
+_loadSnapshot(s){s=this._migrateSave(s);/* resuming any save brings it current */this.archetype=CONFIG.starting_positions.positions.find(p=>p.id===s.archetype)||this.archetype;this.state=s.state;this.month=s.month;this.actionHistory=s.actionHistory||[];this.eventHistory=s.eventHistory||[];this.lifestyleHistory=s.lifestyleHistory||[];this._playLog=s.playLog||[];this.monthlySnapshots=[];this.selectedActions={};this._pendingTax=false;this._pendingEvent=null;this._lost=false;this._deferRestructure=null;this._atCheckpoint=false;},
 // Autosave: silently persist the current run after each month so an accidental refresh never loses progress. Separate from named manual saves.
 autoSave(){if(!this.archetype||!this.state||this._lost)return;try{const snap=this._snapshot();snap.savedAt=new Date().toISOString().split('T')[0];localStorage.setItem('ep_autosave',JSON.stringify(snap));}catch(e){}},
 clearAutoSave(){try{localStorage.removeItem('ep_autosave');}catch(e){}},
@@ -2235,10 +2270,12 @@ const other=Object.keys(snap).filter(k=>!shown[k]&&!/^(_completed_actions|_actio
 if(other.length)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">⚙ Other tracked values</div>'+other.map(row).join('');
 return '<details style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-top:14px;text-align:left;"><summary style="cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--gold);">📋 All Tracked Stats <span style="color:var(--text2);font-weight:400;font-size:0.72rem;">(everything, including the hidden ones)</span></summary><div style="margin-top:8px;">'+body+'</div></details>';},
 showRunDetail(i){const e=(this._lbFiltered||[])[i];if(!e)return;
+// Win-title for the run (stored on newer entries; derived for older ones).
+let _title=e.title,_sub=e.subtitle;if(!_title&&e.scores){try{const a=this.determineArchetype(e.scores);_title=a.title;_sub=a.subtitle;}catch(_){}}
 let h=(e.company?'<div style="font-weight:700;color:var(--gold);font-size:0.98rem;margin-bottom:2px;">🏢 '+this._esc(e.company)+'</div>':'');
 h+='<div style="font-size:0.76rem;color:var(--text2);margin-bottom:10px;">'+this._archLabel(e.archetype)+' · '+e.months+'-month run · '+e.date+'</div>';
-// End-game score, front and centre
-h+='<div style="text-align:center;background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;"><div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1;">'+e.composite+' <span style="font-size:0.8rem;color:var(--text2);font-weight:600;">/ 600</span></div><div style="font-size:0.62rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-top:3px;">Composite Score</div>'+(e.mastery?'<div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Personal Mastery '+e.mastery+'/100</div>':'')+'</div>';
+// End-game score + win-title, front and centre, with the radar hexagon
+h+='<div style="text-align:center;background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;">'+(_title?'<div style="font-size:0.95rem;font-weight:800;color:var(--gold);line-height:1.2;">'+this._esc(_title)+'</div>'+(_sub?'<div style="font-size:0.66rem;color:var(--text2);margin:2px 0 8px;">'+this._esc(_sub)+'</div>':'<div style="height:6px;"></div>'):'')+'<div style="font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1;">'+e.composite+' <span style="font-size:0.8rem;color:var(--text2);font-weight:600;">/ 600</span></div><div style="font-size:0.62rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-top:3px;">Composite Score</div>'+(e.mastery?'<div style="font-size:0.7rem;color:var(--text2);margin-top:4px;">Personal Mastery '+e.mastery+'/100</div>':'')+(e.scores?'<div style="margin-top:8px;"><canvas id="lb-radar" width="240" height="240" style="max-width:100%;"></canvas></div><div class="stats-grid" style="margin-top:6px;">'+this._renderScoreCards(e.scores)+'</div>':'')+'</div>';
 const det=(title,inner)=>'<details style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;text-align:left;"><summary style="cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--gold);">'+title+'</summary><div style="margin-top:8px;">'+inner+'</div></details>';
 // Achievements — collapsed (badges + traps + scams)
 let ach=(e.badges&&e.badges.length)?'<div style="margin-bottom:4px;">'+e.badges.map(b=>'<span style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:2px 4px 2px 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>':'';
@@ -2249,10 +2286,11 @@ if(ach)h+=det('🏅 Achievements',ach);
 const log=this.buildChoiceLog(e.playLog||[]);
 h+=log?det('📜 Choice History',log):'<div style="color:var(--text2);font-size:0.8rem;margin-bottom:8px;">No action history was recorded for this run.</div>';
 if(e.stats)h+=this.buildStatsDump(e.stats);
-this.showPopup(e.name+'’s Run',h);},
+this.showPopup(e.name+'’s Run',h);
+if(e.scores)setTimeout(()=>{const cv=document.getElementById('lb-radar');if(cv)this.drawRadarOn(cv,e.scores);},80);},
 
 // Shared run-entry builder (end screen + year checkpoint both post via this).
-_buildLBEntry(name){const scores=this.calculateFinalScores();return {name:name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite:this.calcComposite(scores),scores:scores,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};},
+_buildLBEntry(name){const scores=this.calculateFinalScores();const _arch=this.determineArchetype(scores);return {name:name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite:this.calcComposite(scores),scores:scores,title:_arch.title,subtitle:_arch.subtitle,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};},
 // Post the current year-checkpoint run to the leaderboard (local always; global if signed in, else queue + offer sign-in). Lets a 12/24-month run be ranked while you keep playing.
 postCheckpoint(){const el=document.getElementById('cp-save-name');const name=((el&&el.value)||this._authName()||'').trim()||'Anonymous';const entry=this._buildLBEntry(name);this._myLBName=name;let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));const box=document.getElementById('cp-post-box');let msg;if(this._sb){if(this._isSignedIn()){this._lbSubmitGlobal(entry);msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Posted your '+entry.months+'-month run to the global leaderboard.</div>';}else{this._queuePendingGlobal(entry);msg='<div style="text-align:center;color:var(--text2);font-size:0.76rem;margin-bottom:8px;">Saved to this device — sign in to post it to the global board:</div><button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google</button>';}}else{msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Saved to this device’s leaderboard.</div>';}if(box)box.innerHTML=msg;},
 saveToLeaderboard(){
@@ -2363,7 +2401,7 @@ return{passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
 determineArchetype(scores){const A=id=>CONFIG.archetypes.win_archetypes.find(a=>a.id===id)||CONFIG.archetypes.win_archetypes[0];
 const nw=scores.net_worth||0,pas=scores.passive_income||0,lev=scores.leverage_efficiency||0,prot=scores.protection||0,life=scores.lifestyle||0,free=scores.freedom||0;
-const rev=Math.min(100,(this.state.monthly_revenue||0)/600);/* fuel, not a scored pillar — inline for archetype flavor only */
+const rev=Math.min(100,((this.state&&this.state.monthly_revenue)||0)/600);/* fuel, not a scored pillar — inline for archetype flavor only (guarded: may be called for a leaderboard entry with no live state) */
 const moneyStrong=Math.max(nw,rev,pas,lev)>=45;
 const efficient=pas>=45&&lev>=40&&prot>=40; // mastered the point: OPM leverage + protected, passive-income engine
 // 1. Won the money, wrecked the life

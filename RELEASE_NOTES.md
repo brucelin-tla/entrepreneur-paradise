@@ -1,5 +1,30 @@
 # Release Notes
 
+## v0.42.2 — 2026-06-30
+**Utilization/RE bug, exec auto-play prerequisites, lifestyle pocket fix, event throttle, checkpoint resume, leaderboard detail, Established head-start**
+
+**Utilization vs. real estate (the big one)** — `buy_real_estate` adds the mortgage to `total_debt`, and `calcPersUtil` was the only personal-revolving calc that didn't subtract `real_estate_debt` (paydown plan, EA, DTI, restructure, dashboards all do). So leveraging into RE spiked displayed utilization to ~96% while the paydown logic saw nothing revolving → "already healthy," and the credit score stalled. Fixed `calcPersUtil` to exclude the mortgage (now matches the canonical formula everywhere).
+
+**Exec re-hire bug** — `hire_cro`/`promote_cro_fulltime` (and COO/CFO) set their role flag in *failure_effects* too, but completion was recorded only on success — so a failed roll left the role filled yet the action still offered. New `_syncExecCompletions()` marks an exec action completed whenever its role flag is set; runs on resolve and in `renderMonth` (self-heals existing saves).
+
+**Lifestyle wrong pocket** — `showLifestyleScreen`/`_bestLifestyle` checked affordability against business cash, but personal treats are personal-funded. Now checks the paying pocket (personal cash when separated); the screen's cash stat shows Personal Cash. Luxuries no longer lock when you can afford them personally.
+
+**Exec auto-play builds prerequisites** — added `_neededBy`/`_isGateway` (reverse `needs` map): not-yet-taken actions that gate others get a value boost; repeat decay steepened (floor 0.4→0.22); fresh one-time boost 1.2→1.35. Finance ladder no longer returns `debt_restructure` unconditionally — gated on `calcPersUtil()>45`. Execs now complete ~38–44 distinct actions/run (was ~30) instead of hammering one move.
+
+**Event throttle** — `checkEvents` now caps any single event at 0.30, cools down the exact event (~8 mo) and its category (~3 mo, opportunity exempt). Litigation share in a wealthy late game dropped 41%→~26%, worst streak unbounded→3. Reduced `liability_lawsuit` revenue scaling (0.0000005→0.00000022).
+
+**Checkpoint resume** — a save taken at a year checkpoint recorded `month:12/24`, so resume replayed the year-end month and re-taxed. `showCheckpoint` sets `_atCheckpoint`; `_snapshot` records `month+1` while set (leaderboard posts still use `this.month`). Checkpoint UI simplified: auto-saves (company + date) instead of a manual name/save box; leaderboard-post kept.
+
+**Owner-pay / rescue** (carried tuning) — owner draw from free cash flow capped to survival when stressed; "Saved by personal savings" pop-up throttled (once, then escalates every ~4 mo).
+
+**Team-mode UI** — full C-suite/board: the bottom button is now "▶ Run the Month" (was "Next: Finance →"); removed the redundant mid-screen button.
+
+**Leaderboard run detail** — tapping a run now shows its win-title, the radar hexagon, and the 6-pillar breakdown (not just the composite). Title stored on the entry at post time (`_buildLBEntry`), with a safe fallback; `determineArchetype` guarded against null state.
+
+**Established Founder head-start** — starts "2 years in": 18 foundational actions pre-completed (LLC + books, personal credit, offer, basic sales/marketing, contractor/SOPs/QC/onboarding) and all three tracks at Leverage stage; advanced wealth choices stay open. `selectArchetype` no longer wipes a pre-seeded `_completed_actions`.
+
+**Personal Expense breakdown** — the dashboard's personal Expense/mo row is now tappable (`showBurn` personal scope).
+
 ## v0.42.1 — 2026-06-30
 **Early-game survivability + cash-flow realism: runway-aware auto-play, Epic debt-restructure rescue, owner-pay rebalance, personal expense breakdown, rescue-popup throttle**
 

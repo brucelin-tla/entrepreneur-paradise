@@ -213,12 +213,19 @@
         "business_installment_debt": 15000,
         "insurance_passive_loan_total": 0,
         "real_estate_debt": 0,
-        "freedom": 15
+        "freedom": 15,
+        "_completed_actions": [
+          "establish_business", "form_llc", "open_business_account", "basic_bookkeeping",
+          "build_personal_credit", "build_personal_credit_repair", "build_personal_credit_optimize",
+          "build_offer", "do_sales_yourself", "cold_outreach", "basic_social_content", "crm_pipeline",
+          "study_business_content", "do_work_yourself", "hire_first_contractor", "write_first_sop",
+          "basic_quality_control", "client_onboarding"
+        ]
       },
       "stage_overrides": {
         "marketing": "leverage",
         "operations": "leverage",
-        "finance": "foundation"
+        "finance": "leverage"
       },
       "locked_until": {
         "finance_leverage": {},

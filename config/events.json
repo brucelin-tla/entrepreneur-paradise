@@ -20,7 +20,7 @@
       "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
       "base_probability": 0.11,
       "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000005,
+      "scale_factor": 0.00000022,
       "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
       "act": 2,
       "choices": [
