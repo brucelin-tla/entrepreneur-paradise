@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.42.1 — 2026-06-30
+**Early-game survivability + cash-flow realism: runway-aware auto-play, Epic debt-restructure rescue, owner-pay rebalance, personal expense breakdown, rescue-popup throttle**
+
+Found via automated full-playthrough harness (15 runs/archetype). Two of three archetypes (and the flagship "new" ~50% of the time) were going bankrupt in months 2–8 even following the game's *own* recommendations.
+
+**Combined-overspend guard** (`bestAction`/`_committedCash`/`_fitsRunway`): `canAfford` validated each action independently, so one best-pick per category could collectively exceed total liquidity and bankrupt the month under team/board/Epic delegation. `bestAction` now subtracts already-committed spend and keeps a ~1-month-of-burn reserve; prefers the highest-value move that leaves runway, falls back to best-affordable, then cheapest. Survival (sensible play): new ~6→9-11/15, stuck ~10→14/15, established 12→15/15.
+
+**Epic Life debt-restructure rescue** (`_epicLifePick`, [game.js:1337]): the cash-reserve guardrail used the *un-waived* $2k restructure fee, so the concierge skipped Debt Restructure exactly when the member was cash-starved at 100% utilization — the one capital-injecting rescue, free for members. Guardrail now uses the **effective (waived) cost** (0 for `EPIC_WAIVED`). Verified end-to-end: maxed both lines + $200 cash → restructure fires, utilization 100%→10%, opens a line, injects working cash. Also exempted `debt_restructure` from the runway gate in the finance ladder (it injects more than its fee).
+
+**Owner-pay rebalance** (`monthlyTick` owner-pay block): pay was drawn from gross EBITDA with a floor exceeding actual need, so a stressed business handed the owner all operating profit (+ emergency-fund padding) and limped at $0 cash. Now drawn from **free cash flow** (after debt service), capped at `max(survival, freeCF − bizBuffer)` where `survival = living + lifestyle`; comfortable wage + emergency cushion only paid from genuine free cash flow. Thin-margin: owner_pay $5,000→$3,500, capital destruction −$18k→−$7.6k; healthy: still ~$12k/mo while business compounds.
+
+**Personal Expense breakdown** (`p_expense` → `showBurn('personal')`): the personal Expense/mo dashboard row was the only money row with no info button; it now opens a Living + Lifestyle + itemized recurring-cost breakdown.
+
+**Rescue-popup throttle** (`showResults`): "🛟 Saved by Your Personal Savings" fired every month a chronically-short business tapped personal cash. Now shows once, then escalates to "⚠ Leaning on Personal Savings Again" at most every 4 months with a running count. Combined with the owner-pay fix this ends the circular build-cushion/claw-back drain — a failing business now spends down real savings to a clear end instead of sloshing forever.
+
 ## v0.42.0 — 2026-06-30
 **Leaderboard revamp + checkpoint posting, funding realism (banking/NAICS), COO culture, rehire, energy rebalance, money legibility**
 

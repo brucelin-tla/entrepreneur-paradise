@@ -3057,6 +3057,13 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.42.1',d:'2026-06-30 17:00',n:[
+'Fixed a death spiral where delegating/auto-played moves could overspend across categories and bankrupt you in a single month — your team now keeps a runway buffer.',
+'Epic Life concierge now runs Debt Restructure when you’re cash-strapped and maxed out — it was being blocked exactly when you needed the rescue (it’s free for members and frees up your utilization).',
+'Owner pay rebalanced: when the business is tight you draw only what you need to live, so it stops draining the company to $0 — when it’s healthy you still pay yourself a full wage.',
+'Tap your personal Expense/mo on the dashboard for a full breakdown (living + lifestyle + recurring costs).',
+'“Saved by your personal savings” no longer pops up every single month — it shows once, then escalates every few months if the spiral continues.',
+]},
 {v:'0.42.0',d:'2026-06-30 16:30',n:[
 'Leaderboard revamp: 🌐 Global / 📱 This Device (Global first), runs grouped by founder with a 12mo/24mo/36mo tag in one list, and tap any run for its score with collapsible choice history + achievements.',
 'You can now post a 12 or 24-month run to the leaderboard right from the year checkpoint — and there’s a Main Menu button there too.',
@@ -3808,7 +3815,7 @@ P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
-P+=row('Expense/mo',m(persExp,'var(--gold)'));
+P+=row('Expense/mo',m(persExp,'var(--gold)'),null,null,'p_expense');
 P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
@@ -3887,7 +3894,7 @@ let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_deb
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
 // Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
-STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
@@ -4287,14 +4294,20 @@ if(this.isActionOutgrown(a))v*=0.3;
 if(a.one_time&&!cnt)v*=1.2; // strategic one-time unlocks are worth grabbing
 v*=(a.success_rate||0.7);
 return v;},
+// Cash already committed by this month's other selected actions (so per-category auto-picks don't collectively overspend).
+_committedCash(exceptCat){let t=0;for(const c in (this.selectedActions||{})){if(c===exceptCat||c==='lifestyle')continue;const a=this.selectedActions[c];if(a)t+=this.actionCashCost(a)||0;}return t;},
+// Would taking `a` (on top of already-committed spend) still leave a safety runway? Keeps auto/delegated play from bankrupting the month.
+_fitsRunway(a,cat){const s=this.state;const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));const liquidity=(s.cash||0)+(s.available_credit||0)+bizAvail;const burn=this.calcMonthlyBurn?this.calcMonthlyBurn():2500;const reserve=Math.max(2500,Math.round(burn));return this._committedCash(cat)+(this.actionCashCost(a)||0)<=liquidity-reserve;},
 bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board','epic_life_membership'].includes(a.id));if(!acts.length)return null;
 // An exec offers its own full-time promotion the moment it's available & affordable — a strategic upgrade, not a repeatable grind.
-const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo))return promo;
+const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo)&&this._fitsRunway(promo,cat))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
-if(cat==='finance'){const ladder=['establish_business','combined_insurance','asset_protection_stack','elect_s_corp','advanced_tax_strategy','monthly_tax_reserve','build_dnb_profile','debt_restructure'];for(const id of ladder){const a=acts.find(x=>x.id===id);if(a&&this.canAfford(a))return a;}}
+if(cat==='finance'){const ladder=['establish_business','combined_insurance','asset_protection_stack','elect_s_corp','advanced_tax_strategy','monthly_tax_reserve','build_dnb_profile','debt_restructure'];for(const id of ladder){const a=acts.find(x=>x.id===id);if(a&&this.canAfford(a)&&(id==='debt_restructure'||this._fitsRunway(a,cat)))return a;/* debt_restructure injects more capital than its fee — don't gate the rescue on runway */}}
 // COO protects the team: when culture is slipping, build it (equity grant preferred, else a benefits package) before anything else available.
-if(cat==='operations'&&(this.state.team_size||0)>0){const _cul=this.state.company_culture==null?45:this.state.company_culture;if(_cul<45){const a=acts.find(x=>x.id==='grant_stock_incentives')||acts.find(x=>x.id==='build_benefits_package');if(a&&this.canAfford(a))return a;}}
-return acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat))[0];},
+if(cat==='operations'&&(this.state.team_size||0)>0){const _cul=this.state.company_culture==null?45:this.state.company_culture;if(_cul<45){const a=acts.find(x=>x.id==='grant_stock_incentives')||acts.find(x=>x.id==='build_benefits_package');if(a&&this.canAfford(a)&&this._fitsRunway(a,cat))return a;}}
+const sorted=acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat));
+// Prefer the highest-value move that still leaves a runway; if nothing fits, take the highest-value action that's still outright affordable; only if even that fails, the cheapest available (keeps the month moving without an overspend bankruptcy).
+return sorted.find(a=>this._fitsRunway(a,cat))||sorted.find(a=>this.canAfford(a))||acts.slice().sort((a,b)=>(this.actionCashCost(a)||0)-(this.actionCashCost(b)||0))[0];},
 _setupActionMenu(){const s=this.state;this._autoPicked={};this._paymentMethods=this._paymentMethods||{};
 const autoCat=(cat,flag)=>{if(!flag)return;const b=this.bestAction(cat);if(b){this.selectedActions[cat]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked[cat]=b.id;}};
 autoCat('marketing',s._cro_hired);autoCat('operations',s._coo_hired);
@@ -4342,7 +4355,8 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if((a.one_time||spec.once)&&(s._completed_actions||[]).includes(a.id))continue;
  if(!this.meetsReq(a.prerequisites||{}))continue;
  if(!spec.need())continue;
- const cost=this.actionCashCost(a);
+ // Effective cost to the member: concierge-waived setup actions (debt restructure, LLC, credit repair) are FREE — so the cash-reserve guardrail must not block them. debt_restructure in particular is a capital-injection rescue (new business line + working cash) and is exactly what a cash-starved member needs.
+ const cost=EPIC_WAIVED.includes(a.id)?0:this.actionCashCost(a);
  if(cost>0&&(s.cash||0)-cost<reserve)continue; // wait until you can pay from cash and still keep a month's cushion
  const perk=Object.assign({},a);perk._epic=true;perk.success_rate=2;perk.energy_cost=0;
  // Concierge covers advisory/setup fees in-house — the member pays nothing; record the would-be professional fee to surface as savings.
@@ -4767,10 +4781,17 @@ if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession'
 if(sep&&s.personal_cash<0){s.cash+=s.personal_cash;s.personal_cash=0;} // personal deficit rolls into the business shortfall handler below
 if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;let _unc=this.coverShortfall(_short);if(_unc>0)_unc=this._tapTaxReserveToSurvive(_unc);if(_unc>0)_unc=this._tapPersonalToSurvive(_unc);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
 // Owner pays themselves a draw/salary scaled to what the business can afford — covers a living wage once profitable (a draw pre-S-Corp, formal salary after); S-Corp just optimizes its tax treatment
-{const afford=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));const baseTarget=Math.max((s.living_expenses||0)+1500,Math.round((s.monthly_revenue||0)*0.25));
+{const debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
+// Pay yourself from FREE cash flow — what the business generates AFTER servicing its debt — not from gross EBITDA. Otherwise the owner draws every dollar of operating profit and the business is left with nothing to cover debt service or build a buffer (it limps at $0 cash forever, one event from insolvency).
+const freeCF=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-debtSvc);
+const survival=(s.living_expenses||0)+(s.lifestyle_expenses||0); // the owner's actual personal obligations — covering exactly this avoids a separate shortfall draw, so it's the MINIMUM business drain (never starve them, but don't pad it either)
+const baseTarget=Math.max((s.living_expenses||0)+1500,Math.round((s.monthly_revenue||0)*0.25)); // the comfortable "living wage" target, paid only when free cash flow allows
 // Pay-yourself-first: in profitable months draw a little extra to build a personal emergency fund up to ~3 months of living costs, then stop. Earned and bounded — a real cushion for a bad month, not a routine pay raise (so it never just hands out free money or hollows out the business).
 const reserveTarget=Math.round((s.living_expenses||0)*3),reserveGap=Math.max(0,reserveTarget-Math.max(0,s.personal_cash||0)),cushion=Math.min(reserveGap,Math.round((s.monthly_revenue||0)*0.1));
-const target=Math.min(afford,baseTarget+cushion);s.owner_pay=Math.max(0,Math.round(target));}
+// Cap discretionary pay (the 25%-of-revenue + emergency-fund cushion) at free cash flow minus a business buffer, so a stressed business retains a cushion; survival pay is always allowed.
+const bizBuffer=Math.round(((s.cogs||0)+(s.operating_expenses||0))*0.25);
+const cap=Math.max(survival,freeCF-bizBuffer);
+const target=Math.min(baseTarget+cushion,cap);s.owner_pay=Math.max(0,Math.round(target));}
 // Epic Life annual plan renews once a year (monthly plan is carried in operating_expenses instead).
 if(s._epic_life&&s._epic_plan==='annual'&&s._epic_renew_month&&this.month>=s._epic_renew_month){this.payCost(3000,false);s._epic_renew_month=this.month+12;}
 // Auto-actions from key hires
@@ -4902,7 +4923,13 @@ if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout
 // Second life: your tax reserve just covered a shortfall that would have ended the run. Celebrate the discipline — and remind them the IRS bill is still coming.
 if(this._taxRescue){const amt=this._taxRescue;this._taxRescue=0;const resLeft=this.state.tax_reserve||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Tax Reserve','<div style="line-height:1.6;font-size:0.9rem;">You were about to run out of cash and credit — but you\'d set aside a <strong>tax reserve</strong>, and draining <strong>$'+this.fmt(amt)+'</strong> of it kept you in the game. That discipline just bought you a <strong>second life</strong>.<br><br>But remember: that money was the IRS\'s. Your year-end tax bill is still coming, and there\'s now <strong>$'+this.fmt(resLeft)+'</strong> left in the reserve. Rebuild it when you can.</div>'),260);}
 // Second life #2: your personal emergency fund just covered a business shortfall that would have ended the run. Reward the pay-yourself-first discipline — and nudge them to fix the burn so they don't lean on it again.
-else if(this._ownerRescue){const amt=this._ownerRescue;this._ownerRescue=0;const persLeft=this.state.personal_cash||0;setTimeout(()=>this.showPopup('🛟 Saved by Your Personal Savings','<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>'),260);}
+else if(this._ownerRescue){const amt=this._ownerRescue;this._ownerRescue=0;const persLeft=this.state.personal_cash||0,s=this.state;s._ownerRescueCount=(s._ownerRescueCount||0)+1;const recur=s._ownerRescueCount>1,last=s._ownerRescueLastShown==null?-99:s._ownerRescueLastShown;
+// Throttle: the dramatic "second life" pop-up the FIRST time, then at most once every 4 months — a chronically short business taps personal savings every month, and a full-screen pop-up each time is just spam (the month's Cash & Credit panel already shows the shortfall).
+if(!recur||this.month-last>=4){s._ownerRescueLastShown=this.month;
+ const body=recur
+  ?'<div style="line-height:1.6;font-size:0.9rem;">Your business came up short <strong>again</strong> and leaned on your <strong>personal savings</strong> — <strong>$'+this.fmt(amt)+'</strong> this month ('+s._ownerRescueCount+' months total). You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> left.<br><br>This is a <strong>spiral</strong>: the business still isn\'t paying its own way, and your savings are the only thing between you and game over. Fix the burn now — cut costs, raise revenue, restructure your debt, or open credit — before the cushion runs out.</div>'
+  :'<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>';
+ setTimeout(()=>this.showPopup(recur?'⚠ Leaning on Personal Savings Again':'🛟 Saved by Your Personal Savings',body),260);}}
 // LLC just formed → name the company (skip if a rescue pop-up is already up; rare on a formation month).
 if(this._pendingCompanyName){this._pendingCompanyName=false;setTimeout(()=>{if(document.getElementById('popup-container').style.display!=='block')this.promptCompanyName(true);},300);}},
 
