@@ -434,6 +434,21 @@
       "mitigated_by": []
     },
     {
+      "id": "buy_the_dip",
+      "category": "opportunity",
+      "requires": { "_market_cycle_in": ["recession"], "net_worth_gte": 15000 },
+      "base_probability": 0.45,
+      "probability_scales_with": "insurance_cash_value",
+      "scale_factor": 0.0000004,
+      "narrative": "The crash is in full swing. Headlines scream panic. Over-leveraged owners are dumping assets to meet margin calls, and prices have fallen off a cliff. Your banker isn't picking up — credit is frozen for almost everyone. But the deals are everywhere: distressed real estate and private-credit positions at a 20-30% discount, the kind of cash-flowing assets that almost never go on sale. The only question is whether you have dry powder to move while the rest of the market is paralyzed.",
+      "act": 2,
+      "choices": [
+        { "label": "Buy the dip — deploy your dry powder", "effects": {}, "outcome_narrative": "" },
+        { "label": "Pass — stay liquid and wait it out", "effects": {}, "outcome_narrative": "" }
+      ],
+      "mitigated_by": []
+    },
+    {
       "id": "embezzlement",
       "category": "people",
       "requires": { "team_size_gte": 3, "systems_maturity_lte": 40 },
