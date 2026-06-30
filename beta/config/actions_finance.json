@@ -361,6 +361,22 @@
       "success_rate": 1,
       "narrative_success": "Your living trust is in place. Your estate will skip probate — private, smooth, and ready to hold the assets you're building.",
       "narrative_failure": ""
+    },
+    {
+      "id": "captive_insurance",
+      "category": "finance",
+      "stage": "wealth",
+      "label": "Form a Captive Insurance Co.",
+      "description": "Start your own insurance company to cover risks your commercial policies don't. Your business pays it deductible premiums — and under §831(b) those premiums accumulate inside the captive almost tax-free, as reserves you own.",
+      "lesson": "The wealthy self-insure on purpose: the operating company deducts the premiums (lowering taxable income), and the captive keeps them nearly tax-free under §831(b). In low-claim years that money compounds as YOUR reserves — converting a deductible expense into a tax-advantaged, protected, wealth-building asset. The catch: it must be real insurance (the IRS scrutinizes captives), so it carries some audit risk.",
+      "cash_cost": 25000,
+      "energy_cost": 6,
+      "one_time": true,
+      "prerequisites": { "needs": ["elect_s_corp", "combined_insurance"], "monthly_revenue_gte": 40000 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "Your captive is licensed and bound. Each month your business pays it deductible premiums that build tax-advantaged reserves you own — sheltering income, protecting assets, and quietly compounding into real wealth.",
+      "narrative_failure": ""
     }
   ]
 }
