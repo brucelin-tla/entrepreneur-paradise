@@ -436,38 +436,21 @@ window.EMBEDDED_CONFIG = {
   "version": "1.0.0",
   "actions": [
     {
-      "id": "hire_cro",
+      "id": "hire_sales_manager",
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional CRO",
-      "description": "Rent a part-time Chief Revenue Officer who picks and runs your smartest growth move each month.",
-      "lesson": "You can't afford an A-player full-time yet — so you rent one. A fractional executive is leverage on a budget: real expertise, part-time cost. It buys back your time now and proves out the role before you commit to a full salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 50000, "customer_base_gte": 120, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "brand_equity": 6, "key_person_dependency": -8, "_cro_hired": true },
+      "label": "Hire a Sales Manager",
+      "description": "Bring on a sales manager who runs your growth plays each month. You learned the skill — now delegate it and free yourself for finance.",
+      "lesson": "Great operators delegate only what they understand. You built the sales machine yourself first — now hand it off. A sales manager runs the playbook you wrote, and your energy shifts to where the real wealth is built: capital, credit, and passive income.",
+      "cash_cost": 3000,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 15000, "customer_base_gte": 20, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "brand_equity": 5, "key_person_dependency": -8, "_cro_hired": true },
       "success_rate": 0.88,
       "failure_effects": { "brand_equity": 2, "_cro_hired": true },
-      "narrative_success": "Your fractional CRO is on. Each month they pick and execute the smartest growth play. Part-time pay scales modestly with the company — when you can afford a full-timer, they'll do far more.",
-      "narrative_failure": "The fractional CRO is onboarding part-time. They'll be picking your growth moves from here."
-    },
-    {
-      "id": "promote_cro_fulltime",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CRO to Full-Time",
-      "description": "Make your CRO full-time so they actively build the growth engine — pricey, but powerful at scale.",
-      "lesson": "This is the ceiling great founders hit: top talent is expensive, and you can only afford it if your capital is working — credit funding growth, a tax-efficient structure protecting cash, and leverage compounding faster than payroll. Brute-force cash can't carry an A-team; efficient leverage can.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro"], "monthly_revenue_gte": 70000, "customer_base_gte": 90, "brand_equity_gte": 55 },
-      "effects": { "brand_equity": 12, "revenue_capacity": 8000, "key_person_dependency": -10, "_cro_fulltime": true },
-      "success_rate": 0.9,
-      "failure_effects": { "brand_equity": 4, "_cro_fulltime": true },
-      "narrative_success": "Your CRO is full-time now — and it shows. They're building the growth engine every day: capacity, pipeline, brand all climbing on their own. The salary is serious, but at your scale the leverage more than covers it.",
-      "narrative_failure": "The full-time offer is signed; they're still spinning up the bigger engine. The payroll hit is real from day one."
+      "narrative_success": "Your sales manager is running the growth plays each month. Marketing is off your plate — now focus on finance and wealth.",
+      "narrative_failure": "Your sales manager is onboarding. They'll be driving your marketing moves from here."
     },
     {
       "id": "build_offer",
@@ -488,7 +471,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "brand_pr_push",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "PR & Brand Campaign",
@@ -521,7 +503,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "franchise_licensing",
-      "enabled": false,
       "category": "marketing",
       "stage": "wealth",
       "label": "License or Franchise",
@@ -554,7 +535,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "basic_social_content",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "label": "Social Media Content",
@@ -587,7 +567,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "lead_magnet",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "one_time": true,
@@ -621,7 +600,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "referral_partnerships",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "Referral & Affiliate Partnerships",
@@ -654,7 +632,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "discount_promotion",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "label": "Offer a Discount to Drive Sales",
@@ -687,7 +664,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "build_sales_team",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "Hire a Salesperson",
@@ -738,7 +714,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "vanity_follower_boost",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "one_time": true,
@@ -756,7 +731,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "influencer_megadeal",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
@@ -774,7 +748,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "national_ad_blitz",
-      "enabled": false,
       "category": "marketing",
       "stage": "wealth",
       "one_time": true,
@@ -792,7 +765,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_highticket_closer",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
@@ -816,38 +788,21 @@ window.EMBEDDED_CONFIG = {
   "version": "1.0.0",
   "actions": [
     {
-      "id": "hire_coo",
+      "id": "hire_ops_manager",
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional COO",
-      "description": "Rent a part-time COO who picks and runs your smartest ops move each month, cutting your dependence on you.",
-      "lesson": "Key-person dependency is the silent killer of business value. You can't carry a full-time COO yet — so you rent the expertise part-time, start systemizing, and prove the role before you commit to the salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 50000, "team_size_gte": 5, "systems_maturity_gte": 45, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "systems_maturity": 8, "key_person_dependency": -12, "_coo_hired": true },
+      "label": "Hire an Operations Manager",
+      "description": "Hand off day-to-day operations to a manager who keeps delivery running while you shift your focus to finance and wealth.",
+      "lesson": "The transition from operator to owner happens the moment someone else runs the daily work. You mastered ops — now delegate it. A manager handles execution so you can handle capital allocation. That's the real job.",
+      "cash_cost": 3000,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 15000, "team_size_gte": 2, "systems_maturity_gte": 25, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "systems_maturity": 10, "key_person_dependency": -12, "_coo_hired": true },
       "success_rate": 0.88,
-      "failure_effects": { "systems_maturity": 3, "key_person_dependency": -4, "_coo_hired": true },
-      "narrative_success": "Your fractional COO is steering operations a few days a month — picking the smartest systems-and-delivery move each turn. Part-time pay for now; a full-timer would build far harder.",
-      "narrative_failure": "The fractional COO is onboarding part-time. They'll be driving your ops moves from here."
-    },
-    {
-      "id": "promote_coo_fulltime",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote COO to Full-Time",
-      "description": "Bring your COO full-time to build the machine daily, growing team and capacity while you step back. Pricey.",
-      "lesson": "A full-time A-player operator is what turns a business into a sellable asset — but they're expensive. You can only carry the payroll if your systems, margins, and leverage are doing the heavy lifting. Can't afford them? That's the ceiling telling you to fix your efficiency first.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_coo"], "monthly_revenue_gte": 70000, "team_size_gte": 6, "systems_maturity_gte": 55 },
-      "effects": { "systems_maturity": 14, "revenue_capacity": 8000, "key_person_dependency": -20, "_coo_fulltime": true },
-      "success_rate": 0.9,
-      "failure_effects": { "systems_maturity": 5, "key_person_dependency": -8, "_coo_fulltime": true },
-      "narrative_success": "Your COO is full-time — and the machine is humming. Team and capacity grow on their own each month, and the business barely needs you. The salary is heavy, but your scale carries it.",
-      "narrative_failure": "Full-time offer signed; the bigger build is still ramping. Payroll bites from day one."
+      "failure_effects": { "systems_maturity": 4, "key_person_dependency": -4, "_coo_hired": true },
+      "narrative_success": "Your operations manager is handling day-to-day delivery. Ops is running without you — now go build wealth.",
+      "narrative_failure": "Your operations manager is getting up to speed. They'll be driving your ops moves from here."
     },
     {
       "id": "study_business_content",
@@ -917,7 +872,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "fulfillment_system",
-      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Build Fulfillment System",
@@ -934,7 +888,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "build_ip",
-      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Build Proprietary IP",
@@ -951,7 +904,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "vertical_integration",
-      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Expand Operations",
@@ -986,7 +938,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "project_management",
-      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -1037,7 +988,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_fractional_cfo",
-      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Hire Fractional CFO",
@@ -1056,7 +1006,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_hr_manager",
-      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Hire an HR & Recruiting Lead",
@@ -1092,65 +1041,7 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Onboarding took longer than hoped, but the systems are in place now — the financial housekeeping runs itself from here."
     },
     {
-      "id": "hire_leadgen_specialist",
-      "enabled": false,
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Lead-Gen Specialist",
-      "description": "You've run lead generation yourself — now hand the repetition to a specialist who fills the pipeline every month so your time goes to higher-value work.",
-      "lesson": "First you learn a function by doing it. Then you delegate the REPETITION — not the thinking. A specialist runs the play you already proved, every month, for a salary. That's leverage: your hands are freed, the work still happens.",
-      "cash_cost": 2000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["cold_outreach", "lead_magnet"], "monthly_revenue_gte": 25000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 2800,
-      "effects": { "team_size": 1, "_spec_leadgen": true },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Your lead-gen specialist is in. Every month they work the channels you proved out — outreach, content, referrals — and the pipeline fills without you lifting a finger. ~$2,800/mo, and your calendar just opened up.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "hire_sales_specialist",
-      "enabled": false,
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Sales Specialist",
-      "description": "You've closed deals yourself — now a specialist works the pipeline and converts leads to customers every month, so selling no longer depends on you.",
-      "lesson": "You can't scale if every sale needs you. Once you've proven the sales motion, a specialist runs it on repeat — conversion becomes a system, not your personal bottleneck.",
-      "cash_cost": 2000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["do_sales_yourself", "crm_pipeline"], "monthly_revenue_gte": 25000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 3200,
-      "effects": { "team_size": 1, "_spec_convert": true },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Your sales specialist is closing. Each month they convert the pipeline into paying customers — the revenue motion runs without you in the room. ~$3,200/mo, well earned.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "hire_marketing_manager",
-      "enabled": false,
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Marketing Manager",
-      "description": "Enough specialists that you shouldn't be managing them one by one. A manager coordinates the marketing team so the whole engine runs — and runs better — without you.",
-      "lesson": "When you have a team, your job stops being the work and becomes managing the people who do it — until even THAT gets delegated. A manager removes the coordination drag of a growing team and lifts everyone's output. This is the layer that lets you finally step out.",
-      "cash_cost": 4000,
-      "energy_cost": 8,
-      "prerequisites": { "needs": ["hire_leadgen_specialist", "hire_sales_specialist"], "monthly_revenue_gte": 40000, "systems_maturity_gte": 40, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 5000,
-      "effects": { "team_size": 1, "key_person_dependency": -12, "_mgr_marketing": true },
-      "success_rate": 0.9,
-      "failure_effects": { "team_size": 1, "_mgr_marketing": true },
-      "narrative_success": "Your marketing manager took over the specialists. The coordination headaches you were absorbing? Gone. And the team actually performs better with someone owning the function full-time. You're one layer further from the day-to-day.",
-      "narrative_failure": "The manager is onboarding the team — the coordination gains will ramp up over the next month."
-    },
-    {
       "id": "basic_quality_control",
-      "enabled": false,
       "category": "operations",
       "stage": "foundation",
       "one_time": true,
@@ -1185,7 +1076,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_client_success",
-      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Hire Client Success Manager",
@@ -1221,7 +1111,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "grant_stock_incentives",
-      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "one_time": true,
@@ -1239,7 +1128,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "rapid_offshore_scaleup",
-      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -1258,7 +1146,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "restructure_team",
-      "enabled": false,
       "category": "operations",
       "stage": "foundation",
       "label": "Restructure & Downsize",
@@ -1302,34 +1189,17 @@ window.EMBEDDED_CONFIG = {
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional CFO",
-      "description": "Bring on a part-time CFO who flags your best finance move each month and tidies your credit so you can borrow more, cheaper.",
-      "lesson": "A fractional CFO is the cheapest way to start thinking like the wealthy: structure, credit, and tax working as a system. Part-time now — but even part-time, a good CFO lets you borrow more and safer than you could alone.",
-      "cash_cost": 4000,
+      "label": "Hire a Financial Advisor",
+      "description": "Bring on a financial advisor who keeps your credit clean, flags the smartest wealth moves, and structures your capital for leverage.",
+      "lesson": "Finance is the one function you never fully delegate — but you don't have to navigate it alone. A financial advisor brings structure: credit, tax, and leverage working as a system. You still make the calls; they make sure you're making the right ones.",
+      "cash_cost": 3000,
       "energy_cost": 5,
-      "prerequisites": { "monthly_revenue_gte": 50000, "personal_credit_score_gte": 680, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "prerequisites": { "monthly_revenue_gte": 20000, "personal_credit_score_gte": 640, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
       "effects": { "audit_risk": -8, "personal_credit_score": 4, "_cfo_hired": true },
       "success_rate": 0.9,
       "failure_effects": { "audit_risk": -3, "_cfo_hired": true },
-      "narrative_success": "Your fractional CFO is in. They highlight the smartest finance move each month and have already widened your borrowing capacity a little — the start of leveraging harder and safer.",
-      "narrative_failure": "The fractional CFO is still untangling your books. Guidance starts next month."
-    },
-    {
-      "id": "promote_cfo_fulltime",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CFO to Full-Time",
-      "description": "Promote your CFO to full-time to unlock far more credit, cheaper debt, and safe higher leverage — turning OPM into your growth engine.",
-      "lesson": "This is the real unlock: a great CFO lets you leverage harder AND safer — more credit, better rates, higher safe utilization — so other people's money funds your growth instead of your own cash. That's how the wealthy scale fast. But you can only afford the CFO once that leverage is already working: the chicken-and-egg ceiling that separates operators from owners.",
-      "cash_cost": 18000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cfo"], "monthly_revenue_gte": 80000, "personal_credit_score_gte": 700, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": -10, "personal_credit_score": 6, "_cfo_fulltime": true },
-      "success_rate": 0.92,
-      "failure_effects": { "audit_risk": -4, "_cfo_fulltime": true },
-      "narrative_success": "Your full-time CFO is in the seat. Credit lines widen, your rates drop, and you can safely carry more leverage — OPM is now doing the heavy lifting on growth. The salary is elite; the capital efficiency more than pays for it.",
-      "narrative_failure": "The full-time CFO is restructuring the capital stack; the bigger credit and rate improvements land shortly. Payroll hits now."
+      "narrative_success": "Your financial advisor is in. They highlight the smartest wealth move each month and have already widened your borrowing capacity — the start of leveraging harder and safer.",
+      "narrative_failure": "Your financial advisor is still untangling your books. Guidance starts next month."
     },
     {
       "id": "private_banking",
@@ -1350,7 +1220,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "private_equity_fund",
-      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "label": "Invest in a Private Equity Fund",
@@ -1367,7 +1236,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "setup_family_office",
-      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -1394,7 +1262,7 @@ window.EMBEDDED_CONFIG = {
       "lesson": "The ultra-wealthy don't just build wealth — they make it permanent. A dynasty trust removes assets from your taxable estate and walls them off from lawsuits, letting wealth compound across generations without being taxed at each death. Legacy, engineered.",
       "cash_cost": 20000,
       "energy_cost": 5,
-      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
+      "prerequisites": { "needs": ["setup_family_office"] },
       "effects": { "trust_structure": "dynasty", "litigation_exposure": -25, "audit_risk": -8, "tax_rate": -0.02, "lifestyle_legacy": 25, "_dynasty_trust": true },
       "success_rate": 0.92,
       "failure_effects": { "lifestyle_legacy": 8, "_dynasty_trust": true },
@@ -1403,7 +1271,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "establish_board",
-      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -1440,7 +1307,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "build_dnb_profile",
-      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "one_time": true,
@@ -1503,23 +1369,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "personal_credit_score": 4, "business_credit_limit": 3000 },
       "narrative_success": "",
       "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
-    },
-    {
-      "id": "velocity_banking",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Set Up Velocity Banking",
-      "description": "Run your household through a line of credit instead of a checking account: park every dollar of income against the line, pay expenses from it, and chunk the surplus straight at your amortizing debt. Each positive-cash-flow month retires debt faster than a normal payment ever could — but it only works while you stay cash-flow positive, and the line can freeze in a downturn.",
-      "lesson": "Velocity banking is a cash-flow strategy, not a borrowing trick. Parking income on a simple-interest line shrinks the balance you pay interest on, so every surplus dollar knocks out MORE than a dollar of amortizing principal — you free capital years faster. The catch is discipline: it only accelerates while your cash flow is positive, and a credit-tight downturn can freeze the very line you're leaning on. Stay cash-flow positive and keep the line lightly used, and it's a wealth accelerator; lean on it with negative cash flow and it spirals.",
-      "cash_cost": 400,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "business_credit_limit_gte": 10000, "personal_credit_score_gte": 660 },
-      "effects": { "personal_credit_score": 3 },
-      "success_rate": 0.85,
-      "failure_effects": {},
-      "narrative_success": "Velocity banking is live. From now on your surplus cash flow gets swept against your debt each month — accelerating payoff and freeing up your line as dry powder. Watch your cash flow: it's the engine. Stay positive and you'll retire debt fast; go negative and the strategy works against you.",
-      "narrative_failure": "The structure didn't fully click into place this month — your banker wants the line seasoned a little longer. Keep deposits flowing and reapply."
     },
     {
       "id": "bank_personal_loan",
@@ -1607,7 +1456,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "reincorporate_c_corp",
-      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "one_time": true,
@@ -1643,7 +1491,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "wyoming_holding_llc",
-      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -1677,7 +1524,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_general_counsel",
-      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -1751,54 +1597,19 @@ window.EMBEDDED_CONFIG = {
       "stage": "foundation",
       "one_time": true,
       "label": "Activate Tax-Free Passive Income",
-      "description": "Turn on a monthly tax-free income stream drawn against your policy's cash value. Starts on the SAFE wash loan — net ~0% cost, lapse-proof — so the engine can run forever.",
-      "lesson": "The crown jewel. You draw tax-free income as a loan against your policy while the cash value keeps compounding — the loan is repaid from the death benefit, not your pocket. It starts on a WASH loan: the borrowed slice is parked at a matching rate, so the loan can never outrun your cash value and the policy can't lapse. Income without work, without tax, without ever selling the asset. (Want more? You can switch to a variable loan to chase the index arbitrage — but that adds real lapse risk.)",
+      "description": "Turn on a monthly tax-free income stream drawn against your policy's cash value — which keeps compounding while the loan nets from the death benefit.",
+      "lesson": "This is the crown jewel. You draw tax-free income as a loan against your policy while the cash value keeps growing — the 7% growth outruns the 5% loan cost, so the gap funds your lifestyle forever. The loan is repaid from the death benefit, not your pocket. Income without work, without tax, without ever selling the asset.",
       "cash_cost": 0,
       "energy_cost": 4,
       "prerequisites": { "insurance_cash_value_gte": 5000 },
       "effects": {},
       "success_rate": 1.0,
       "failure_effects": {},
-      "narrative_success": "The income switch is on. Each month the insurer wires you a tax-free check drawn against your cash value — on a safe wash loan, so it keeps compounding and can't lapse. You're being paid to own the asset.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "open_db_plan_pretax",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Fund Pre-Tax via a Defined-Benefit Plan",
-      "description": "Sponsor a qualified defined-benefit / cash-balance plan through your corporation and fund your policy with DEDUCTIBLE pre-tax business dollars instead of personal after-tax cash. A big tax break now and far larger contributions — but it's Traditional, not Roth.",
-      "lesson": "Pre-tax funding isn't a retail product — it needs a business that can sponsor a qualified plan: an S-corp or C-corp paying you W-2 wages, profitable enough to fund the defined benefit. The corporation DEDUCTS the contribution (real tax savings now, and you can shelter far more income). The trade: no basis, so the income you draw is taxable and a lapse taxes the WHOLE balance — Traditional (deduct now, taxed later) vs. the Roth-style after-tax policy (pay now, tax-free forever). Your call, and it depends on your goal: cash and shelter now, or tax-free freedom later.",
-      "cash_cost": 6000,
-      "energy_cost": 5,
-      "prerequisites": { "needs": ["fund_accumulation_policy", "elect_s_corp"], "entity_structure_in": ["s_corp", "c_corp", "multi_entity"], "monthly_revenue_gte": 40000 },
-      "effects": {},
-      "success_rate": 1.0,
-      "failure_effects": {},
-      "narrative_success": "Your defined-benefit plan is set up. The corporation now funds your policy with deductible pre-tax dollars — a serious deduction every year, and far bigger contributions than after-tax would allow. Just remember: this is Traditional money. The income is taxable when you draw it, and if the policy ever lapses the whole balance is taxed.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "iul_variable_loan",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Switch to a Variable Policy Loan",
-      "description": "Move your policy loan from the safe wash (net ~0%) to a VARIABLE loan: your full cash value keeps earning the index (0–15%) while you pay a market rate (~5%). Bigger income and positive arbitrage in good years — real lapse risk in bad ones.",
-      "lesson": "This is the high-stakes version of the crown jewel. On a variable loan your ENTIRE cash value keeps earning the index, so in good years the ~8% growth out-earns the ~5% loan — free money on borrowed money (positive arbitrage). But the loan rate is variable and the index floors at 0% in a downturn: borrow too aggressively and a bad market lets the loan compound PAST your cash value, the policy lapses, and the gains hit you as taxable ordinary income on money you already spent. Only do this with a cushion and never max the loan. Knowing WHEN not to reach is the skill.",
-      "cash_cost": 0,
-      "energy_cost": 4,
-      "prerequisites": { "needs": ["activate_passive_income"], "insurance_cash_value_gte": 30000 },
-      "effects": {},
-      "success_rate": 1.0,
-      "failure_effects": {},
-      "narrative_success": "You've switched to a variable policy loan. Your full cash value now rides the index — in a good market you're earning more than the loan costs, on borrowed money. But the floor is 0% and the rate floats: keep a cushion, because if a downturn lets the loan pass your cash value, the policy lapses and the taxman is waiting.",
+      "narrative_success": "The income switch is on. Each month the insurer wires you a tax-free check drawn against your cash value — and your policy keeps compounding as if you never touched it. You're being paid to own the asset.",
       "narrative_failure": ""
     },
     {
       "id": "policy_loan",
-      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "label": "Take a Policy Loan",
@@ -1847,7 +1658,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "private_lending",
-      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Become a Private Lender",
@@ -1864,7 +1674,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "acquire_competitor",
-      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Acquire a Competitor",
@@ -1881,7 +1690,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "fast_working_capital",
-      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "one_time": true,
@@ -1901,7 +1709,6 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "offmarket_guaranteed_fund",
-      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "one_time": true,
@@ -2403,21 +2210,6 @@ window.EMBEDDED_CONFIG = {
           "effects": {},
           "outcome_narrative": "You passed. It was the right call for your cash position, even if it stings. Another deal will come."
         }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "buy_the_dip",
-      "category": "opportunity",
-      "requires": { "_market_cycle_in": ["recession"], "net_worth_gte": 15000 },
-      "base_probability": 0.45,
-      "probability_scales_with": "insurance_cash_value",
-      "scale_factor": 0.0000004,
-      "narrative": "The crash is in full swing. Headlines scream panic. Over-leveraged owners are dumping assets to meet margin calls, and prices have fallen off a cliff. Your banker isn't picking up — credit is frozen for almost everyone. But the deals are everywhere: distressed real estate and private-credit positions at a 20-30% discount, the kind of cash-flowing assets that almost never go on sale. The only question is whether you have dry powder to move while the rest of the market is paralyzed.",
-      "act": 2,
-      "choices": [
-        { "label": "Buy the dip — deploy your dry powder", "effects": {}, "outcome_narrative": "" },
-        { "label": "Pass — stay liquid and wait it out", "effects": {}, "outcome_narrative": "" }
       ],
       "mitigated_by": []
     },
@@ -3184,7 +2976,7 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Executive Team',['hire_cfo','promote_cfo_fulltime']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','wyoming_holding_llc','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','key_man_policy','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Executive Team',['hire_cro','promote_cro_fulltime']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign','hire_highticket_closer']]],operations:[['Executive Team',['hire_coo','promote_coo_fulltime']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup','restructure_team']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+const ADIR={finance:[['Financial Advisor',['hire_cfo']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','wyoming_holding_llc','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','key_man_policy','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Your Team',['hire_sales_manager']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign','hire_highticket_closer']]],operations:[['Your Team',['hire_ops_manager']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup','restructure_team']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
 // Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
 const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
 // Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
@@ -3195,7 +2987,6 @@ const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
 const GOOGLE_G='<svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:middle;flex-shrink:0;"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.6 44 30.9 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
-const LOAN_APPROVAL=['bank_personal_loan'];/* term loans underwritten on DTI; the rest of CREDIT_APPROVAL is revolving credit underwritten on utilization */
 // Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
 const EPIC_WAIVED=['wyoming_holding_llc','build_personal_credit','debt_restructure'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
@@ -3222,15 +3013,20 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.43.0',d:'2026-06-30 19:00',n:[
-'BIG update — Finance & Economy overhaul (testing build). Your small business now caps lean (~$80–200k/mo, set by your SYSTEMS, not headcount) — real wealth comes from FINANCE leveraging the cash & credit it throws off.',
-'A live economy: an Expansion → Boom → Downturn → Recovery cycle plays out across your 36 months. The prepared get rich in the bust; the over-leveraged get squeezed.',
-'New play — Velocity Banking: run your household through a line of credit and sweep surplus cash flow at your debt. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.',
-'New keystone — Buy the Dip: in the downturn, deploy tax-free policy cash and reserves into distressed assets at a deep discount.',
-'Real-estate leverage now has teeth: over-leverage (high LTV, thin reserves) can trigger a margin call / forced sale in the crash, while conservative leverage rides through.',
-'Loans vs. credit now underwrite separately — term loans on your debt-to-income, revolving credit on your utilization (no more one dragging the other down).',
-'Leaner, more focused action menus so each decision matters more (extra options temporarily set aside for this test build).',
-'Scoring rewards finance MASTERY — net worth, passive income and leverage efficiency now climb on a curve that separates dabblers from pros.',
+{v:'0.43.0',d:'2026-06-29 18:30',n:[
+'C-suite replaced with a simpler Manager model: hire a Sales Manager (Marketing) and an Ops Manager (Operations). Finance is always yours to own.',
+'Team mode now activates when both managers are hired — they handle their categories, you focus on Finance.',
+'Financial Advisor replaces CFO hire — same benefit, clearer framing (your advisor, not an employee).',
+'Dashboard rows reordered: Income/Revenue first (green), then Expense (red), then Cash flow — reads like a mini P&L at a glance.',
+]},
+{v:'0.42.5',d:'2026-06-29 17:41',n:[
+'Dashboard redesign: Income and Revenue rows now have a green highlight, Expense rows have a red highlight — makes it instantly clear what\'s coming in vs going out. Cash flow/mo sits below as the bold net result.',
+]},
+{v:'0.42.4',d:'2026-06-29 17:28',n:[
+'Dashboard: Cash flow/mo now stands out with a colored highlight — green when positive, red when negative. Easy to spot at a glance.',
+]},
+{v:'0.42.3',d:'2026-06-30 20:00',n:[
+'New: 🧪 Beta Tester access on the main menu. Got a beta code? Enter it to try the in-progress Finance & Economy overhaul build. The live game is unchanged.',
 ]},
 {v:'0.42.2',d:'2026-06-30 18:00',n:[
 'Fixed utilization reading ~96% “but healthy” the moment you bought real estate — your mortgage was wrongly counted as credit-card utilization. Now your score climbs as it should.',
@@ -3661,8 +3457,13 @@ if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
 h+=item('🎟','Redeem Code','Unlock content with a code','Game.showRedeem()');
+h+=item('🧪','Beta Tester','Try the new overhaul (code required)','Game.showBeta()');
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
 mm.innerHTML=h;},
+// ---- Beta access: gate the in-progress Finance & Economy overhaul build behind a code. Correct code → redirect to the /beta/ subfolder where the testing build is hosted. ----
+BETA_CODE:'beta',BETA_URL:'beta/index.html',
+showBeta(){const h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">The <strong>Finance &amp; Economy overhaul</strong> is in testing. Enter the beta code to jump to the testing build. It\'s a work in progress — your progress there is separate from the live game.</div><input id="beta-input" class="name-input" placeholder="Enter beta code" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key===\'Enter\')Game.enterBeta()"><button class="btn-primary" style="margin-top:4px;" onclick="Game.enterBeta()">Enter Beta</button><div id="beta-msg" style="min-height:18px;margin-top:10px;font-size:0.82rem;font-weight:600;text-align:center;line-height:1.45;"></div>';this.showPopup('🧪 Beta Tester Access',h);setTimeout(()=>{const i=document.getElementById('beta-input');if(i)i.focus();},40);},
+enterBeta(){const el=document.getElementById('beta-input'),msg=document.getElementById('beta-msg');if(!msg)return;const code=this._normCode(el&&el.value);if(!code){msg.style.color='var(--text2)';msg.textContent='Enter the code first.';return;}if(code!==this.BETA_CODE){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);},
 showMainMenu(){this.showScreen('title-screen');const mm=document.getElementById('main-menu');if(mm)mm.style.display='';['profile-select','resume-list','whats-new'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});this.renderMainMenu();this._renderUpdateIcon();window.scrollTo(0,0);},
 showProfileSelect(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const ps=document.getElementById('profile-select');if(ps)ps.style.display='';this.renderArchetypes();window.scrollTo(0,0);},
 showLoadGame(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const rl=document.getElementById('resume-list');if(rl)rl.style.display='';this.renderSaves();window.scrollTo(0,0);},
@@ -3845,12 +3646,12 @@ const reps=[];cats.forEach(c=>{const cheapest=byCat[c].slice().sort((a,b)=>(a.ca
 const repIds=new Set(reps.map(a=>a.id));
 const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0));
 return[...reps,...rest].slice(0,CAP);}
-const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
+const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
 isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
 
 // Risk-priced, by debt type: unsecured personal revolving (credit cards) is brutal (~18–26% APR by score), term/business debt is risk-based (good credit = cheaper money), real estate is cheap secured debt, policy/private-bank loans are near-free.
-calcDebtInterest(){const s=this.state,score=s.personal_credit_score||600,cfo=s._cfo_fulltime?0.8:s._cfo_hired?0.9:1;
+calcDebtInterest(){const s=this.state,score=s.personal_credit_score||600,cfo=s._cfo_hired?0.9:1;
 const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
 const termBiz=(s._installment_debt||0)+(s.business_installment_debt||0)+(s.business_credit_used||0);
 const re=s.real_estate_debt||0,pb=s.private_bank_loan||0;
@@ -3889,7 +3690,7 @@ for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_show
 // C-suite compensation scales with the company. Fractional (part-time) is affordable; full-time A-players cost ~3-4x — only sustainable with strong margins + leverage. That gap is the "can't afford good people" ceiling.
 calcExecFrac(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(3500,Math.min(11000,3500+r*0.025)));},
 calcExecFull(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(12000,Math.min(48000,12000+r*0.07)));},
-calcExecComp(){const s=this.state,fr=this.calcExecFrac(),fu=this.calcExecFull();let c=0;if(s._cro_hired)c+=s._cro_fulltime?fu:fr;if(s._coo_hired)c+=s._coo_fulltime?fu:fr;if(s._cfo_hired)c+=s._cfo_fulltime?fu:fr;return c;},
+calcExecComp(){const s=this.state;const mgr=Math.round(Math.max(2500,Math.min(4500,2500+(s.monthly_revenue||0)*0.015)));let c=0;if(s._cro_hired)c+=mgr;if(s._coo_hired)c+=mgr;if(s._cfo_hired)c+=Math.round(mgr*0.6);return c;},
 isSeparated(){return !['none','sole_prop',undefined,null,''].includes(this.state.entity_structure);},
 _recordDraw(amt){this.state._owner_draws_total=(this.state._owner_draws_total||0)+amt;this.state.capital_account=(this.state.capital_account||0)-amt;},
 // D&B (business credit) score — built from a real business identity (DUNS, phone, address, website/social), reporting vendor tradelines, and credit/loan history. Maxes ~100 only when ALL are in place and utilization is healthy.
@@ -3913,12 +3714,11 @@ let f=(100-(s.key_person_dependency||100))*0.5
 +Math.min(14,(s.team_size||0)*2)
 +Math.min(14,(s.systems_maturity||0)/6)
 +(c('middle_management')?6:0)+(c('hire_hr_manager')?6:0)+(c('full_systemization')?8:0)+(c('hire_fractional_cfo')?6:0)
-+(s._cro_hired?6:0)+(s._coo_hired?8:0)+(s._cfo_hired?4:0)
-+(s._cro_fulltime?4:0)+(s._coo_fulltime?8:0)+(s._cfo_fulltime?4:0)
++(s._cro_hired?8:0)+(s._coo_hired?12:0)+(s._cfo_hired?4:0)
 +(s._board_active?16:0);
 return Math.min(100,Math.max(0,Math.round(f)));},
 calcBusinessLevel(){return Math.min(10,Math.max(1,(this.state.monthly_revenue||0)/5000));},
-calcCreditCapacity(){const s=this.state;const credit=Math.max(0.3,Math.min(2.5,((s.personal_credit_score||600)-560)/120));const size=1+Math.min(3,(s.monthly_revenue||0)/20000);const prof=(s.business_credit_profile==='established')?1.25:1;const cfo=s._cfo_fulltime?1.4:s._cfo_hired?1.15:1;const fund=this._perks().fundingReady?1.12:1;const bank=this._hasBanking()?1.18:1;/* a real banking relationship (deposits + history) gets you bigger lines */return Math.round(credit*size*prof*cfo*fund*bank*100)/100;},
+calcCreditCapacity(){const s=this.state;const credit=Math.max(0.3,Math.min(2.5,((s.personal_credit_score||600)-560)/120));const size=1+Math.min(3,(s.monthly_revenue||0)/20000);const prof=(s.business_credit_profile==='established')?1.25:1;const cfo=s._cfo_hired?1.15:1;const fund=this._perks().fundingReady?1.12:1;const bank=this._hasBanking()?1.18:1;/* a real banking relationship (deposits + history) gets you bigger lines */return Math.round(credit*size*prof*cfo*fund*bank*100)/100;},
 // Funding levers beyond your personal file: a banking relationship (you bank/deposit there, so you're known) and a verified NAICS classification (the holding-company setup assigns the right code). Both gate how lenders see a BUSINESS applicant.
 _hasBanking(){const s=this.state;return !!((s._completed_actions||[]).includes('banking_relationship')||['trusted','champion'].includes(s._banker_state));},
 _naicsVerified(){const s=this.state;return !!(s._naics_ok||s._holding_company||['c_corp','multi_entity'].includes(s.entity_structure)||(s._completed_actions||[]).includes('wyoming_holding_llc')||(s._completed_actions||[]).includes('setup_family_office'));},
@@ -3995,20 +3795,21 @@ const bizCash=s.cash||0,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.busi
 const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0),bizScore=this.calcBizCreditScore();
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
-const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
+const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
 const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
 const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
+const cfRow=(label,net,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;font-weight:700;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.92rem;font-weight:800;color:'+c+';white-space:nowrap;">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span></div>';};
+const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
+P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(16,185,129,0.10)',null,'p_income');
+P+=hlRow('Expense/mo',m(persExp,'var(--red)'),'rgba(239,68,68,0.10)',null,'p_expense');
+P+=cfRow('Cash flow/mo',persInc-persExp,'dash-cashflow','p_flow');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
-P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
-if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)')+' <span style="font-size:0.54rem;color:var(--accent);font-weight:600;">tax-free</span>',null,null,'p_passive');
-P+=row('Expense/mo',m(persExp,'var(--gold)'),null,null,'p_expense');
-P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
@@ -4024,12 +3825,12 @@ if(this._reveal('mastery'))P+='<div onclick="Game.statInfo(\'p_mastery\')" style
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
+B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(16,185,129,0.10)',null,'b_revenue');
+B+=hlRow('Expense/mo',m(bizExp,'var(--red)'),'rgba(239,68,68,0.10)',null,'b_expense');
+B+=cfRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,null,'b_flow');
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
-B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),null,null,'b_revenue');
-B+=row('Expense/mo',m(bizExp,'var(--gold)'),null,null,'b_expense');
-B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
 {const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
@@ -4055,17 +3856,17 @@ const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
 const inq=s.credit_inquiries||0;const fNew=Math.max(0.3,(s._credit_repair?0.7:0.85)-Math.min(0.45,inq*0.06));/* new credit (10%): hard inquiries (and an open repair) cap the top — each inquiry shaves a little */
 return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Real-life credit underwriting for approval actions (lines, cards, term loans): personal utilization is the dominant gate — above 30% approval odds fall off a cliff — and the lender pulls your personal myFICO 3B even for BUSINESS credit (the owner personally guarantees it). Returns the chance of approval.
-_creditApprovalChance(isLoan){const s=this.state,score=Math.round(s.personal_credit_score||600);
-// The dominant gate differs by product: a term LOAN is underwritten on debt-to-income (can your cash flow service the payment?); a revolving CREDIT line/card is underwritten on UTILIZATION (how much of your existing limits are you already using?). They don't cross-contaminate — high utilization never sinks a loan, and high DTI never sinks a card.
-let p;if(isLoan){const dti=this.calcDTI();p=dti<=36?0.92:dti<=43?0.6:dti<=55?0.35:dti<=70?0.18:0.08;}
-else{const u=this.calcPersUtil();p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — the cliff is only ABOVE 30% */}
+_creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.round(s.personal_credit_score||600);
+let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
 const inq=s.credit_inquiries||0,inqMult=inq>=5?0.5:inq>=2?0.85:1;/* a stack of recent hard inquiries reads as credit-hungry — 5+ roughly halves approval odds */
 // Derogatories are an approval KILLER in real life — lenders decline on active collections/charge-offs almost regardless of the score. One mark stings; a few nearly shut you out. (Clearing them — credit repair / Epic — is the path back in.)
 const neg=s.credit_negatives||0,negMult=neg<=0?1:neg===1?0.6:neg===2?0.4:neg===3?0.25:neg===4?0.15:0.08;
+// Ability to repay: lenders underwrite capacity, not just willingness. High debt-to-income (and a business that can't cover its debt service) makes them nervous.
+const dti=this.calcDTI(),dtiMult=dti<=36?1:dti<=43?0.85:dti<=55?0.6:0.35;const dscr=s.dscr||0,dscrMult=(dscr>0&&dscr<1)?0.65:1;
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
 // Banking relationship → the lender already knows you (deposits + history) → easier yes. NAICS classification → a verified holding-company code reads as a legit business; an unverified/wrong code gets flagged and declined until fixed.
 const bankMult=this._hasBanking()?1.12:1;const _hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure);const naicsMult=this._naicsVerified()?1.05:(_hasEntity?0.75:1);/* only a real business entity can carry a wrong NAICS code; no entity = personal loan, NAICS irrelevant */
-return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*bankMult*naicsMult));},
+return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*dtiMult*dscrMult*bankMult*naicsMult));},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
@@ -4086,7 +3887,7 @@ let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_deb
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
 // Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
-STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
@@ -4472,78 +4273,20 @@ return u;},
 _neededBy(id){if(!this.__neededBy){const m={};const all=[].concat(CONFIG.actions_marketing.actions,CONFIG.actions_operations.actions,CONFIG.actions_finance.actions);for(const b of all){const n=(b.prerequisites&&b.prerequisites.needs)||[];for(const nid of n)(m[nid]=m[nid]||[]).push(b.id);}this.__neededBy=m;}return this.__neededBy[id]||[];},
 // A not-yet-taken action is a "gateway" when some other action is gated behind completing it (`needs`). Completing it once builds out the tree, so the auto-pilot should prioritize it over repeating a grind.
 _isGateway(a){return !(this.state._completed_actions||[]).includes(a.id)&&this._neededBy(a.id).length>0;},
-// ORG CAPACITY — how big a team your infrastructure can actually carry. The founder alone leads only a handful: finite bandwidth, narrow span of control, and (honestly) a builder's lack of large-team LEADERSHIP skill — the skills that won early customers aren't the skills to lead 50. Systems extend the founder's reach but cap out (~8 solo: you're still the single bottleneck). Real scale comes from MANAGEMENT — hiring people who bring the leadership the founder doesn't have. Strong culture lets people self-manage. Team beyond this = "management debt".
-_orgCapacity(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id),sys=s.systems_maturity||0;
- const founderBase=3;/* a founder personally leads only a few people well */
- const founderCeiling=Math.min(5,sys/20);/* systems extend your reach — but only so far (~8 solo max); you're not a trained large-team leader */
- const sysMult=1+sys/100;/* systems make each real manager more effective */
- let mgmt=0;if(c('middle_management'))mgmt+=5;if(c('full_systemization'))mgmt+=6;if(c('hire_hr_manager'))mgmt+=5;if(s._mgr_marketing)mgmt+=5;if(s._coo_hired)mgmt+=6;if(s._coo_fulltime)mgmt+=5;
- const cultureBonus=Math.max(0,((s.company_culture==null?45:s.company_culture)-45)/12);/* high culture = people self-manage, less oversight needed */
- return Math.round((founderBase+founderCeiling+mgmt*sysMult+cultureBonus)*10)/10;},
-_orgOverextension(){return Math.max(0,(this.state.team_size||0)-this._orgCapacity());},
-// "Go big" plays that backfire if your SYSTEMS can't absorb the demand/scale. Value = the systems_maturity you need before they pay off instead of setting you back.
-_SCALE_TRAPS:{national_ad_blitz:55,influencer_megadeal:50,franchise_licensing:60,rapid_offshore_scaleup:45},
-// MACRO CYCLE — the economy moves in a readable loop: Expansion → Boom → Downturn → Recovery → … Each phase sets the drivers the finance game keys off: the IUL index credit (0% floor in a bust, capped in a boom), market interest rates (variable-loan & credit cost), asset prices (cheap in a downturn = the buying opportunity), and credit availability (frozen in a bust). Booms precede busts — that's the lesson: prepare while it's good, act when it turns. Returns/durations carry mild randomness so timing isn't a metronome, but the ORDER is learnable.
-_CYCLE_PHASES:{expansion:{idx:0.09,rate:0.045,asset:1.0,tight:false,rev:1.0,dur:[5,8],tell:'📈 Expansion — steady growth. Build your war chest and keep leverage conservative; the cycle always turns.'},boom:{idx:0.12,rate:0.065,asset:1.14,tight:false,rev:1.06,dur:[3,5],tell:'🔥 Boom — markets are hot and assets are pricey (don’t overpay), rates are climbing, and recruiters are circling your people. Booms precede busts — get liquid and ready.'},downturn:{idx:0.0,rate:0.055,asset:0.74,tight:true,rev:0.85,dur:[3,6],tell:'📉 Downturn — assets are ON SALE and forced sellers are everywhere, but credit is freezing up. If you prepared (funded policy, reserves, low leverage) this is when fortunes are made; if you over-borrowed, this is the squeeze.'},recovery:{idx:0.11,rate:0.035,asset:0.9,tight:false,rev:0.96,dur:[4,6],tell:'🌱 Recovery — the rebound. The ones who bought the dip are watching it pay off; rates are low and credit is loosening again.'}},
-_advanceMarketCycle(){const s=this.state;
- // ONE compressed cycle across the 3-year game, shaped like real life: a calm expansion, a frothy boom, then THE downturn (~year 2) and a recovery. The downturn is INEVITABLE but jittered — its month and depth are rolled once per run — so the lesson always lands but can't be timed. You know a bust is coming; you just don't know exactly when. Stay ready.
- if(s._downturn_start==null){s._downturn_start=14+Math.floor(Math.random()*8);/* hits month 14-21 */s._downturn_len=4+Math.floor(Math.random()*4);/* lasts 4-7 months */s._downturn_depth=0.8+Math.random()*0.5;/* severity 0.8-1.3 */}
- const m=this.month||1,ds=s._downturn_start,de=ds+s._downturn_len,boomStart=ds-4,depth=s._downturn_depth||1;
- let phase;if(m<boomStart)phase='expansion';else if(m<ds)phase='boom';else if(m<de)phase='downturn';else phase='recovery';
- const P=this._CYCLE_PHASES[phase];
- s._index_return=(phase==='downturn')?0:Math.max(0,Math.min(0.12,P.idx+(Math.random()-0.5)*0.03))/12;/* monthly IUL credit: TRUE 0% in a bust (the floor — no growth while your loan keeps compounding), else up to ~12% cap */
- s._market_rate=Math.round((P.rate+(P.tight?0.015:0)+(Math.random()-0.5)*0.008)*1000)/1000;/* variable loan / credit rate — ticks up when credit tightens */
- s._asset_discount=(phase==='downturn')?Math.max(0.6,1-0.26*depth):P.asset;/* deeper bust = cheaper assets */
- s._credit_tight=P.tight;s._cycle={phase:phase};
- s._market_cycle=(phase==='boom')?'boom':(phase==='downturn')?'recession':'normal';/* back-compat with existing event scaling */
- // Telegraph: once per phase turn, PLUS an escalating warning in the last boom month before the bust — the signs are there if you read them.
- if(s._cycle_phase_shown!==phase){s._cycle_phase_shown=phase;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:P.tell}]);}
- else if(phase==='boom'&&m>=ds-1&&!s._cycle_warned){s._cycle_warned=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:'⚠️ The market is overheating — rates climbing, valuations stretched, everyone euphoric. A turn is coming; you can feel it. Get liquid, trim leverage, keep your powder dry.'}]);}
- return phase;},
-// DRY POWDER — the capital you can actually deploy in a frozen credit market (the buy-the-dip fuel). In a downturn banks won't lend, so what counts is your POLICY cash value (borrowable tax-free, no credit check, untouched by the crash thanks to the 0% floor) and the CASH RESERVES you kept liquid instead of over-extending. Credit lines are deliberately excluded — that's the lesson: the prepared act, the over-leveraged are frozen out.
-_dryPowder(){const s=this.state;
- const policy=Math.max(0,Math.round(0.9*(s.insurance_cash_value||0)-(s.insurance_loan_balance||0)));/* up to ~90% of cash value, less any existing loan */
- const burn=Math.max(0,this.calcMonthlyBurn());const cash=Math.max(0,Math.round((s.cash||0)+(s.personal_cash||0)-burn));/* keep ~1 month of operating cash back */
- return {policy:policy,cash:cash,total:policy+cash};},
-// Best stage-available action within one ADIR function group (excluding hires) — used by delegation specialists to run "their function" each month.
-_bestInGroup(cat,grpName){const grp=(ADIR[cat]||[]).find(g=>g[0]===grpName);if(!grp)return null;const ids=grp[1];const acts=this.getAvailableActions(cat).filter(a=>ids.includes(a.id)&&!/^(hire_|promote_)/.test(a.id)&&!this.isActionLocked(a));if(!acts.length)return null;return acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat))[0];},
-// Golden-path / handler-based payoffs that live in resolveMonth, not config effects — valued explicitly so executives chase real wealth-building (passive income highest, per DESIGN.md).
-_HV:{activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000},
-// Rough value of a (possibly locked) action without recursing back into _actionValue — used to decide which locked targets are worth working toward.
-_lockedTargetValue(L,cat){let v=this._HV[L.id]||0;const ef=this.scaleActionEffects(L.effects||{},cat);v+=(ef.other_monthly_revenue||0)*6000+(ef.customer_base||0)*800+(ef.revenue_capacity||0)*1.2+(ef.brand_equity||0)*250+(ef.systems_maturity||0)*180+(ef.team_size||0)*1200+(ef.insurance_cash_value||0)*0.5+(ef.dscr||0)*2500;return v;},
-// If `a` advances the prerequisites of a LOCKED, high-value action in this track, reward it — so the execs build TOWARD the unlock (raise brand for the national ad blitz, elect S-Corp for the wealth tier, hit the systems threshold for vertical integration) instead of only ever taking what's already open.
-_unlockBonus(a,cat){const s=this.state,pool=this.getAvailableActions(cat)||[],ef=this.scaleActionEffects(a.effects||{},cat),aef=a.effects||{};let bonus=0;
- for(const L of pool){if(L.id===a.id||this.isActionCompleted(L)||!this.isActionLocked(L))continue;const Lval=this._lockedTargetValue(L,cat);if(Lval<10000)continue;/* only chase genuinely worthwhile targets */
-  const pr=L.prerequisites||{};let weight=0;
-  if(pr.needs&&pr.needs.includes(a.id))weight=1;/* a clears a needs-gate — decisive */
-  for(const k in pr){
-   if(k.endsWith('_gte')){const stat=k.replace('_gte','');const gap=pr[k]-(s[stat]||0);if(gap>0&&(ef[stat]||0)>0)weight=Math.max(weight,Math.min(1,(ef[stat]||0)/gap));}/* weight by the FRACTION of the remaining gap this move closes — the action that crosses the threshold beats one that only nudges it */
-   else if(k==='entity_structure'||k==='entity_structure_in'){const want=k==='entity_structure'?[pr[k]]:pr[k];if(aef.entity_structure&&want.includes(aef.entity_structure))weight=1;}
-   else if(k==='business_credit_profile'){if(aef.business_credit_profile===pr[k])weight=1;}
-  }
-  if(weight>0)bonus+=Math.min(Lval,80000)*0.22*weight;
- }
- return Math.min(bonus,32000);},
 // Estimate an action's real value (projected, scaled impact) so an executive auto-pick lands on a genuinely high-leverage move, not a random low-value one.
 _actionValue(a,cat){const s=this.state,ef=this.scaleActionEffects(a.effects||{},cat);let v=0;
-v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+=(ef.revenue_capacity||0)*1.2;v+=(ef.systems_maturity||0)*320;v+=(ef.other_monthly_revenue||0)*6000;v+=(ef.team_size||0)*((s.team_size||0)>=8?-700:300);v+=(ef.sales_conversion||0)*400;v+=(ef.dscr||0)*2500;v+=(ef.insurance_cash_value||0)*0.5;
-// Systems matter more than people now — they set the revenue ceiling and tame management debt. Headcount past a lean ~8 is a LIABILITY (coordination/churn/people problems), so adding bodies there scores negative.
+v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+=(ef.revenue_capacity||0)*1.2;v+=(ef.systems_maturity||0)*180;v+=(ef.other_monthly_revenue||0)*6000;v+=(ef.team_size||0)*1200;v+=(ef.sales_conversion||0)*400;v+=(ef.dscr||0)*2500;v+=(ef.insurance_cash_value||0)*0.5;
 v+=(ef.personal_credit_score||0)*250*Math.max(0,Math.min(1,(760-(s.personal_credit_score||600))/200)); // credit gains worthless once your score is already high
 v+=(ef.available_credit||0)*0.15*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000));v+=(ef.business_credit_limit||0)*0.12*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000)); // more credit matters less when flush with cash
 v-=(ef.key_person_dependency||0)*200;v-=(ef.churn_rate||0)*30000;v-=(ef.audit_risk||0)*120;v-=(ef.operating_expenses||0)*0.4;
 // Company culture: the COO invests in it — weighted heavily when it's slipping (so benefits/equity get picked) and lightly when healthy; culture-destroying moves get penalized the same way.
 {const _cul=s.company_culture==null?45:s.company_culture;v+=(ef.company_culture||0)*(120+Math.max(0,55-_cul)*22);}
 v-=(a.cash_cost||0)*0.2;v-=Math.max(0,a.energy_cost||0)*120;
-// Recurring monthly cost is the real burden (e.g. Rapid Offshore Scale-Up adds $12k/mo in payroll) — weigh several months of it, scaled down a touch when the business easily covers it, so the auto-pilot doesn't load up on ongoing burn it doesn't need.
-if(a.recurring_cost){const profit=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));const ease=Math.max(0.35,Math.min(1,1-profit/120000));v-=a.recurring_cost*4*ease;}
 // Golden-path / handler-based moves carry their payoff in resolveMonth, not in config effects — value them explicitly so executives prioritize real wealth-building (passive income highest, per DESIGN.md).
-const HV=this._HV;
+const HV={activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000};
 if(HV[a.id]!==undefined)v+=HV[a.id];
-v+=this._unlockBonus(a,cat);// reward progress toward a locked high-value action in this track (build the prerequisite, hit the stat gate) so the execs work their way up, not just sideways
-{const st=this._SCALE_TRAPS[a.id];if(st!==undefined){const sysGap=st-(s.systems_maturity||0);if(sysGap>0)v-=900*sysGap;}}// a "go big" play before your systems can deliver is a trap — heavily avoid it until you've systematized (then it's a real scaling move)
 v+=this._actionUrgency(a)*60; // fold in situational urgency
 const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.22,1-cnt*0.22); // steeper repeat decay so the auto-pilot stops hammering one repeatable when fresh moves are still on the table
-if((s._exec_last||{})[cat]===a.id)v*=0.2; // hard demote the exact move the execs ran LAST month for this track → they rotate (content engine ↔ sales team ↔ ...) instead of spamming the same one every turn
 if(this.isActionOutgrown(a))v*=0.3;
 if(a.one_time&&!cnt)v*=1.35; // fresh one-time unlocks are worth grabbing
 if(this._isGateway(a))v+=14000; // completing this clears a `needs` gate blocking other actions — build out the prerequisite tree before grinding
@@ -4553,7 +4296,7 @@ return v;},
 _committedCash(exceptCat){let t=0;for(const c in (this.selectedActions||{})){if(c===exceptCat||c==='lifestyle')continue;const a=this.selectedActions[c];if(a)t+=this.actionCashCost(a)||0;}return t;},
 // Would taking `a` (on top of already-committed spend) still leave a safety runway? Keeps auto/delegated play from bankrupting the month.
 _fitsRunway(a,cat){const s=this.state;const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));const liquidity=(s.cash||0)+(s.available_credit||0)+bizAvail;const burn=this.calcMonthlyBurn?this.calcMonthlyBurn():2500;const reserve=Math.max(2500,Math.round(burn));return this._committedCash(cat)+(this.actionCashCost(a)||0)<=liquidity-reserve;},
-bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board','epic_life_membership','iul_variable_loan','open_db_plan_pretax'].includes(a.id));if(!acts.length)return null;/* the variable loan & pre-tax DB plan are deliberate high-stakes player choices — never auto-picked (the safe wash/post-tax default is what the team runs) */
+bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_sales_manager','hire_ops_manager','hire_cfo','establish_board','epic_life_membership'].includes(a.id));if(!acts.length)return null;
 // An exec offers its own full-time promotion the moment it's available & affordable — a strategic upgrade, not a repeatable grind.
 const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo)&&this._fitsRunway(promo,cat))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
@@ -4574,10 +4317,10 @@ if(this._autoPicked.operations){const gn=grpOf('operations',this._autoPicked.ope
 if(this._cfoPick){const gn=grpOf('finance',this._cfoPick);if(gn)this._openDir.finance=gn;}
 // Life-action cadence scales with how hands-off you've made the business: a full board frees you EVERY month, a full C-suite every OTHER month, otherwise the default quarterly check-in.
 // Safety valve: if you're running low on energy, the Life check-in opens off-cadence so you can always choose to recover (financeable if cash is tight).
-const _allExec=s._cro_hired&&s._coo_hired&&s._cfo_hired;
+const _allExec=s._cro_hired&&s._coo_hired;
 const _lifeOpen=s._board_active?true:((_allExec?(this.month%2===0):this._isQuarterlyMonth)||(s.energy||0)<=30);
 const base=_lifeOpen?['marketing','operations','finance','lifestyle']:['marketing','operations','finance'];
-const allExec=s._cro_hired&&s._coo_hired&&s._cfo_hired;
+const allExec=s._cro_hired&&s._coo_hired;
 if(allExec&&this._focusMode!==false){this._activeCats=base.filter(c=>c!=='marketing'&&c!=='operations');if(!this._activeCats.includes(this.currentCategory))this.currentCategory='finance';}
 else this._activeCats=base;},
 toggleFocus(){this._focusMode=this._focusMode===false?true:false;this._setupActionMenu();this.renderStepIndicator();this.renderCategoryTabs();this.renderActions();this.updateConfirmButton();},
@@ -4618,9 +4361,7 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if(EPIC_WAIVED.includes(a.id)){perk.cash_cost=0;perk._waivedFee=this._epicServiceFee(a.id);}
  return perk;}
 return null;},
-boardRunMonth(){const s=this.state;if(!s._board_active)return;const delegFin=this._canDelegateFinance();if(delegFin&&!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}
-if(!delegFin&&!this.selectedActions['finance']){if(this.currentCategory!=='finance')this.switchCategory('finance');this._focusActionList();this.showPopup('💰 Your call — the Finance move','The money decisions stay yours until you reach the <strong>Wealth stage</strong> in Finance (or switch on passive income). Pick this month\'s finance move below.');return;}
-if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
+boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
 renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
 const urgency=a=>this._actionUrgency(a);
 // Each action's direction-group name, shown as a tag on the card (replaces the old collapsible groups).
@@ -4629,16 +4370,13 @@ const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a
 const cls=done?'completed-action':isSel?'selected':locked?'locked':takenBefore?'taken-before':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const repeatBadge=(!a.one_time&&rc>0&&!isSel)?'<span class="repeat-badge">✓ done ×'+rc+'</span>':'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ RETRY — HALF COST</span>':'';
 const rehireBadge=(!done&&!locked&&this.state._rehire&&this.state._rehire[a.id])?'<span class="new-badge" style="background:var(--orange);color:#1a1205;">↻ REHIRE</span>':'';
-// Prerequisite marker: this action is a gate for other actions still to come. Mark it so the player knows it opens up the tree (tooltip lists what it unlocks).
-const _unlocks=(!done&&this._isGateway(a))?this._neededBy(a.id).filter(id=>!(this.state._completed_actions||[]).includes(id)):[];
-const unlockBadge=_unlocks.length?'<span class="new-badge" style="background:var(--blue);color:#fff;" title="Completing this unlocks: '+_unlocks.map(id=>this._esc(this.actionLabel(id)||id)).join(', ')+'">🔑 UNLOCKS'+(_unlocks.length>1?' '+_unlocks.length:'')+'</span>':'';
 const cat0=this.currentCategory;const offBadge=(this._autoPicked&&this._autoPicked[cat0]===a.id)?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">'+(cat0==='marketing'?'CRO pick':'COO pick')+'</span>':((cat0==='finance'&&this._cfoPick===a.id)?'<span class="new-badge" style="background:var(--blue);color:#fff;">CFO ★</span>':'');
 const _cc=this.actionCashCost(a);const needsCredit=!done&&!locked&&_cc&&this.state.cash<_cc&&(this.state.cash+(this.state.available_credit||0))>=_cc;
 const selBadge=isSel?'<span class="new-badge" style="background:var(--accent);color:#04130d;">✓ SELECTED</span>':'';
 const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpName+'</span>':'';
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const rescueBadge=(!done&&!locked&&a.id==='restructure_team'&&this._needsRestructure())?'<span class="new-badge" style="background:var(--red);color:#fff;">'+(this.state._toxic_closer?'⚠ FIRE THE CLOSER':'⚠ CUT PAYROLL — FIX THIS')+'</span>':'';
-const topInner=grpTag+rescueBadge+rehireBadge+unlockBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
+const topInner=grpTag+rescueBadge+rehireBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
 return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
 // est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
@@ -4653,9 +4391,9 @@ a.id==='fast_working_capital'?'<span class="cost-tag cost-recurring" title="repa
 ((this.actionEnergyCost(a))>0?'<span class="cost-tag cost-energy">⚡'+this.actionEnergyCost(a)+'</span>':'')+
 (a.energy_cost<0?'<span class="cost-tag cost-energy-gain">⚡+'+Math.abs(a.energy_cost)+'</span>':'')+
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
-(()=>{const FR=['hire_cro','hire_coo','hire_cfo'],FU=['promote_cro_fulltime','promote_coo_fulltime','promote_cfo_fulltime'];const amt=FR.includes(a.id)?this.calcExecFrac():FU.includes(a.id)?this.calcExecFull():0;return amt?'<span class="cost-tag cost-recurring" title="ongoing executive pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
+(()=>{const MGR=['hire_sales_manager','hire_ops_manager','hire_cfo'];const s=this.state,mgr=Math.round(Math.max(2500,Math.min(4500,2500+(s.monthly_revenue||0)*0.015)));const amt=a.id==='hire_cfo'?Math.round(mgr*0.6):MGR.includes(a.id)?mgr:0;return amt?'<span class="cost-tag cost-recurring" title="ongoing manager pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
-(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const isLoan=LOAN_APPROVAL.includes(a.id),ch=Math.round(this._creditApprovalChance(isLoan)*100),metric=isLoan?this.calcDTI():this.calcPersUtil(),label=isLoan?'DTI':'util',col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="'+(isLoan?'term loans are underwritten on your debt-to-income (DTI)':'revolving credit is underwritten on your personal utilization')+' + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(metric>30?' · '+label+' '+metric+'%':'')+'</span>';})():'')+
+(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const ch=Math.round(this._creditApprovalChance()*100),u=this.calcPersUtil(),col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="lenders underwrite on your personal utilization + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(u>30?' · util '+u+'%':'')+'</span>';})():'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
@@ -4670,27 +4408,22 @@ const _takenBefore=a=>!a.one_time&&((this.state._action_counts||{})[a.id]||0)>0;
 const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;const ta=_takenBefore(a)?1:0,tb=_takenBefore(b)?1:0;if(ta!==tb)return ta-tb;/* actions you've already run before sink below ones you haven't */return urgency(b)-urgency(a);});
 const locked=actions.filter(a=>!this.isActionCompleted(a)&&this.isActionLocked(a));
 const completed=actions.filter(a=>this.isActionCompleted(a));
-const lockRow=a=>{const _gw=this._neededBy(a.id).some(id=>!(this.state._completed_actions||[]).includes(id));return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_gw?' <span title="prerequisite — unlocks more actions once taken" style="color:var(--blue);">🔑</span>':'')+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';};
+const lockRow=a=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';
 listHtml+=avail.length?avail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No moves available here right now.</div>';
 if(locked.length)listHtml+='<div style="padding:10px 12px 2px;font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;">Unlocks next</div>'+locked.map(lockRow).join('');
 if(completed.length){if(this._showAllActions)listHtml+=hdr('Completed')+completed.map(card).join('')+'<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=false;Game.renderActions();">Show less ▴</span></div>';else listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=true;Game.renderActions();">Show '+completed.length+' completed ▾</span></div>';}
 // Unified "Your Team's Plan" panel — one place that shows every exec's pick (and the board/lifestyle), with a single button to run the month. Replaces the old separate focus-toggle + board-button.
-const s2=this.state,allExec=s2._cro_hired&&s2._coo_hired&&s2._cfo_hired,teamMode=allExec||s2._board_active;let banner='';
-if(teamMode){const roleRow=(emoji,role,c,recId)=>{const selA=this.selectedActions[c],isAuto=selA&&(this._autoPicked||{})[c]===selA.id,id=selA?selA.id:recId,lbl=id?this.actionLabel(id):'standing pat',tag=(selA&&!isAuto)?'<span style="color:var(--accent);font-size:0.64rem;">your pick</span>':(id?'<span style="color:var(--text2);font-size:0.64rem;">'+role+'’s pick</span>':'');return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">'+emoji+' '+role+'</span><span style="text-align:right;min-width:0;"><span style="color:var(--text);">'+lbl+'</span> '+tag+'</span></div>';};
-let rows='';if(s2._cro_hired)rows+=roleRow('📣','CRO','marketing',(this._autoPicked||{}).marketing);if(s2._coo_hired)rows+=roleRow('⚙️','COO','operations',(this._autoPicked||{}).operations);if(s2._cfo_hired)rows+=roleRow('💰','CFO','finance',this._cfoPick);
+const s2=this.state,allExec=s2._cro_hired&&s2._coo_hired,teamMode=allExec||s2._board_active;let banner='';
+if(teamMode){const roleRow=(emoji,role,c,recId)=>{const selA=this.selectedActions[c],isAuto=selA&&(this._autoPicked||{})[c]===selA.id,id=selA?selA.id:recId,lbl=id?this.actionLabel(id):'standing pat',tag=(selA&&!isAuto)?'<span style="color:var(--accent);font-size:0.64rem;">your pick</span>':(id?'<span style="color:var(--text2);font-size:0.64rem;">'+role+'\'s pick</span>':'');return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">'+emoji+' '+role+'</span><span style="text-align:right;min-width:0;"><span style="color:var(--text);">'+lbl+'</span> '+tag+'</span></div>';};
+let rows='';if(s2._cro_hired)rows+=roleRow('📣','Sales Manager','marketing',(this._autoPicked||{}).marketing);if(s2._coo_hired)rows+=roleRow('⚙️','Ops Manager','operations',(this._autoPicked||{}).operations);rows+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">💰 Finance</span><span style="color:var(--gold);font-size:0.64rem;">always your pick</span></div>';
 if((this._activeCats||[]).includes('lifestyle'))rows+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">🏖️ Life</span><span style="color:var(--accent);font-size:0.64rem;">always your pick</span></div>';
-banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Team’s Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Override any line by picking your own move below — anything you don’t set, your team handles (and it costs you no energy). Your 🏖️ Life action is always your own pick. When you’re ready, tap <strong>▶ Run the Month</strong> at the bottom.</div>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing &amp; Ops menus (let execs handle)':'Show all menus to override Marketing &amp; Ops')+'</span></div>':'')+'</div>';}
+banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Managers — Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Your managers handle Marketing & Ops — you own Finance. Override any manager line by picking your own move below. When you\'re ready, tap <strong>▶ Run the Month</strong>.</div>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing & Ops (let managers handle)':'Show all menus to override managers')+'</span></div>':'')+'</div>';}
 // On the finance tab, members see their concierge roadmap milestone (replaces the old "handles these for you" list — the milestone says what's being built and what's next, which is the useful version).
 let epicPanel='';
 if(this.state._epic_life&&this.currentCategory==='finance')epicPanel=this._epicMilestoneCompact();
 document.getElementById('action-list').innerHTML=banner+epicPanel+listHtml;},
 // One button runs the month with the team's plan: fill any category the player didn't set with the exec/board pick, then resolve.
-// You can only hand FINANCE to the CFO once you've actually learned it — reached the Wealth stage in Finance, or personally switched on tax-free passive income. The money decisions are the game's core lesson, so they stay yours until then (the CFO still advises). Marketing & ops can be delegated from the day you hire the exec.
-_canDelegateFinance(){return this.getStage('finance')==='wealth'||(this.state._completed_actions||[]).includes('activate_passive_income');},
-runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};const delegFin=this._canDelegateFinance();
-for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(c==='finance'&&!delegFin)continue;/* finance is yours until you graduate to Wealth */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}
-// Finance stays the player's own call until Wealth stage — prompt if it's unset.
-if(ac.includes('finance')&&!delegFin&&!this.selectedActions['finance']){if(this.currentCategory!=='finance')this.switchCategory('finance');this._focusActionList();this.showPopup('💰 Your call — the Finance move','Your execs run marketing & operations, but the <strong>money decisions stay yours</strong> until you reach the <strong>Wealth stage</strong> in Finance (or switch on passive income). This is the part that actually builds wealth — pick this month\'s finance move below. Once you graduate, your CFO can take it over too.');return;}
+runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}
 // Life is the player's own pick — if it's available this month and not chosen yet, prompt for it instead of silently skipping it.
 if(ac.includes('lifestyle')&&!this.selectedActions['lifestyle']){if(this.currentCategory!=='lifestyle')this.switchCategory('lifestyle');this._focusActionList();this.showPopup('🏖️ One more — your Life action','Your team has the business handled this month. <strong>Your Life action is always your own pick</strong> — choose one life investment below, then run the month.');return;}
 this.resolveMonth();},
@@ -4752,12 +4485,12 @@ _flashNextBtn(){const btn=document.getElementById('confirm-actions-btn');if(!btn
 // The next active category that still needs a pick — preferring one OTHER than where you are now, so the button reads like "go forward".
 _nextUnselectedCat(){const ac=this._activeCats||CATS,start=ac.indexOf(this.currentCategory);for(let i=0;i<ac.length;i++){const c=ac[(start+i)%ac.length];if(!this.selectedActions[c])return c;}return null;},
 // Primary bottom button: until all three moves are set it walks you to your next action; once they're all set it ends the turn.
-primaryActionBtn(){const s=this.state,team=(s._cro_hired&&s._coo_hired&&s._cfo_hired)||s._board_active;if(team)return this.runTeamMonth();/* full C-suite/board: the bottom button just runs the month (execs fill any line you didn't override) */
+primaryActionBtn(){const s=this.state,team=(s._cro_hired&&s._coo_hired)||s._board_active;if(team)return this.runTeamMonth();/* managers hired: the bottom button just runs the month (managers fill any line you didn't override) */
 const ac=this._activeCats||CATS,unsel=ac.filter(c=>!this.selectedActions[c]);if(!unsel.length)return this.confirmActions();const nxt=this._nextUnselectedCat();if(nxt&&nxt!==this.currentCategory){this.switchCategory(nxt);return this._focusActionList();}return this._focusActionList();/* last pick is on this screen — nudge the cards rather than end the turn */},
 // Pull the player's eye to the actual choices: scroll the action cards into view and give them a brief highlight (not just flip the category icon).
 _focusActionList(){const list=document.getElementById('action-list'),ind=document.getElementById('step-indicator');const anchor=ind||list;if(anchor&&anchor.scrollIntoView)anchor.scrollIntoView({behavior:'smooth',block:'start'});if(list){list.classList.remove('attn-flash');void list.offsetWidth;list.classList.add('attn-flash');setTimeout(()=>list.classList.remove('attn-flash'),900);}},
 updateConfirmButton(){const btn=document.getElementById('confirm-actions-btn'),sec=document.getElementById('endturn-now-btn'),ac=this._activeCats||CATS,total=ac.length,unsel=ac.filter(c=>!this.selectedActions[c]),done=total-unsel.length;btn.disabled=false;
-{const s=this.state,team=(s._cro_hired&&s._coo_hired&&s._cfo_hired)||s._board_active;if(team){btn.textContent='▶ Run the Month';if(sec)sec.style.display='none';return;}}/* team mode: one clear bottom action, no category-cycling */
+{const s=this.state,team=(s._cro_hired&&s._coo_hired)||s._board_active;if(team){btn.textContent='▶ Run the Month';if(sec)sec.style.display='none';return;}}/* manager mode: one clear bottom action, no category-cycling */
 // All moves chosen → the primary button ends the turn. Otherwise it navigates to the next move, and the secondary button consistently shows how many are picked and that ending now skips the rest.
 if(!unsel.length){btn.textContent='End Turn →';if(sec)sec.style.display='none';return;}
 const nxt=this._nextUnselectedCat();
@@ -4777,7 +4510,7 @@ _reduceRecurring(amount){const s=this.state;let rem=Math.round(amount||0);if(rem
 _syncRecurring(){const s=this.state;if(!s._active_recurring_costs)return;const sum=Object.values(s._active_recurring_costs).reduce((a,b)=>a+(+b||0),0);const exec=this.calcExecComp?this.calcExecComp():0;const cap=Math.max(0,(s.operating_expenses||0)-exec);if(sum>cap)this._reduceRecurring(sum-cap);},
 // When a team member leaves, drop the single largest recurring cost line (a hire is nearly always the biggest) and reduce opex by exactly that — so the expense breakdown loses the right line, not a generic amount. Returns the salary removed.
 // A C-suite role is "filled" once its flag is set — even from a FAILED hire/promote roll (failure_effects still set the flag). Mark the action completed so the menu never re-offers a role you already have. Self-heals older saves on the next month render.
-_syncExecCompletions(){const s=this.state,F={hire_cro:'_cro_hired',hire_coo:'_coo_hired',hire_cfo:'_cfo_hired',promote_cro_fulltime:'_cro_fulltime',promote_coo_fulltime:'_coo_fulltime',promote_cfo_fulltime:'_cfo_fulltime'};if(!s._completed_actions)s._completed_actions=[];for(const id in F){if(s[F[id]]&&!s._completed_actions.includes(id))s._completed_actions.push(id);}},
+_syncExecCompletions(){const s=this.state,F={hire_sales_manager:'_cro_hired',hire_ops_manager:'_coo_hired',hire_cfo:'_cfo_hired'};if(!s._completed_actions)s._completed_actions=[];for(const id in F){if(s[F[id]]&&!s._completed_actions.includes(id))s._completed_actions.push(id);}},
 _removeDepartedRole(){const s=this.state;if(!s._active_recurring_costs)return 0;const e=Object.entries(s._active_recurring_costs).filter(x=>x[0]!=='key_man_policy').sort((a,b)=>b[1]-a[1]);if(!e.length)return 0;const id=e[0][0],amt=this._clearRecurring(id);
 // Re-open the role so the player can re-hire it, flagged with a Rehire tag in the menu.
 if(s._completed_actions){const ix=s._completed_actions.indexOf(id);if(ix>=0)s._completed_actions.splice(ix,1);}
@@ -4790,7 +4523,7 @@ _tapPersonalToSurvive(need){const s=this.state;if(need<=0||!this.isSeparated())r
 payCost(amount,fromPersonal){const s=this.state;let need=Math.max(0,Math.round(amount));if(fromPersonal&&this.isSeparated()){if((s.personal_cash||0)>0&&need>0){const d=Math.min(s.personal_cash,need);s.personal_cash-=d;need-=d;}if((s.available_credit||0)>0&&need>0){const d=Math.min(need,Math.floor((s.available_credit||0)/1.03)),fee=Math.round(d*0.03);if(d>0){s.available_credit-=(d+fee);s.total_debt=(s.total_debt||0)+d+fee;need-=d;}}if(need>0)need=this.coverShortfall(need);return need;}
 // Business expense: spend the business's own cash FIRST (don't rack up debt while cash is sitting there), then a little business-credit float (kept under the utilization cap), then the credit backstop. Personal cash is never touched by a business cost.
 if((s.cash||0)>0&&need>0){const d=Math.min(s.cash,need);s.cash-=d;need-=d;}
-const _utilCap=s._cfo_fulltime?0.55:s._cfo_hired?0.42:0.30;const healthy=Math.max(0,Math.floor((s.business_credit_limit||0)*_utilCap)-(s.business_credit_used||0));if(healthy>0&&need>0){const d=Math.min(healthy,need);s.business_credit_used=(s.business_credit_used||0)+d;s.total_debt=(s.total_debt||0)+d;need-=d;}if(need>0)need=this.coverShortfall(need);return need;},
+const _utilCap=s._cfo_hired?0.42:0.30;const healthy=Math.max(0,Math.floor((s.business_credit_limit||0)*_utilCap)-(s.business_credit_used||0));if(healthy>0&&need>0){const d=Math.min(healthy,need);s.business_credit_used=(s.business_credit_used||0)+d;s.total_debt=(s.total_debt||0)+d;need-=d;}if(need>0)need=this.coverShortfall(need);return need;},
 applyDebtRestructure(dr){const s=this.state;dr=dr||{};const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0));const persLim=persRev+(s.available_credit||0);const beforeUtil=persLim>0?Math.round(persRev/persLim*100):0;const movable=Math.max(0,persRev-(s.real_estate_debt||0));let swap=Math.max(0,Math.min(movable,Math.round(persRev-0.22*persLim)));if(swap>0){s._installment_debt=(s._installment_debt||0)+swap;s.available_credit=(s.available_credit||0)+swap;}const afterUtil=this.calcPersUtil();if(swap>0)s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+Math.max(4,Math.round((beforeUtil-afterUtil)/2)));const parts=[];if(dr.lim)parts.push('opened a '+this.fmtMoney(dr.lim)+' business line at 0%');if(swap>0)parts.push('moved '+this.fmtMoney(swap)+' of revolving card debt into a fixed-rate installment loan (utilization '+beforeUtil+'% → '+afterUtil+'%)');if(dr.moveAmt>0)parts.push('shifted '+this.fmtMoney(dr.moveAmt)+' of personal balances onto your business credit, off your personal report');if(dr.cashLoan)parts.push('pulled '+this.fmtMoney(dr.cashLoan)+' in working cash');return parts.length?('Your lending expert '+parts.join('; ')+'. Same debt — restructured into a higher score and usable cash.'):('Your utilization is already healthy at '+beforeUtil+'%. Little revolving debt left to restructure.');},
 resolveMonth(){
 this._tutNotify('endturn');
@@ -4809,7 +4542,6 @@ if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selecte
 // Resolve the Epic Life move FIRST so its before→after reflects start-of-month numbers — matching its position at the top of the results.
 const _entries=Object.entries(this.selectedActions),_isEpic=e=>e[0]==='epic'||e[0]==='epicbuy',_ordered=_entries.filter(_isEpic).concat(_entries.filter(e=>!_isEpic(e)));
 for(const[cat,action]of _ordered){
-if(cat==='marketing'||cat==='operations'||cat==='finance'){this.state._exec_last=this.state._exec_last||{};this.state._exec_last[cat]=action.id;}/* remember this month's move per track so the auto-pilot rotates next month instead of repeating it */
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0};
 const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
 const _lifeDB=cat==='lifestyle'?this.lifeDims():null,_lifeMB=cat==='lifestyle'?this.calcPersonalMastery():null,_lifeEnB=cat==='lifestyle'?Math.round(this.state.energy):null;
@@ -4824,7 +4556,7 @@ const retryBoost=(this.state._partial_actions&&this.state._partial_actions[actio
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
 const _isCreditApp=CREDIT_APPROVAL.includes(action.id);
 // Credit applications are underwritten (utilization + personal myFICO), not skill/energy-modified — a lender doesn't care how rested you are, only how your file reads.
-const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance(LOAN_APPROVAL.includes(action.id))):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
+const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance()):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 if(_isCreditApp)this.state.credit_inquiries=(this.state.credit_inquiries||0)+1;/* every application is a hard pull — they pile up and drag approval/score (Epic clears them every 6 months) */
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
@@ -4835,11 +4567,6 @@ const DELAY_IDS=['customer_acquisition_sprint','build_content_presence','build_d
 if(DELAY_IDS.includes(action.id)){const immediate={},delayed={};for(const k in effects){if(typeof effects[k]==='number'){if(k==='energy'||k==='cash'||k==='operating_expenses'||k==='team_size'||k==='key_person_dependency'){immediate[k]=effects[k];}else{delayed[k]=effects[k];}}else{immediate[k]=effects[k];}}
 effects=immediate;if(Object.keys(delayed).length){if(!this.state._delayed_effects)this.state._delayed_effects=[];this.state._delayed_effects.push({month:this.month+2,effects:delayed});}}
 this.applyEffects(effects);
-// SCALE TRAP — the seductive "go big" plays flood you with demand or headcount you can't deliver on without SYSTEMS. Pull the trigger before the infrastructure is there and it backfires realistically: refunds, 1-star reviews, churn, burnout — you go BACKWARD. Systematize first and the same play scales you. (A small team's bread-and-butter is the modest lead-gen / nurture / sales moves — these big bets are traps until you're ready.)
-{const need=this._SCALE_TRAPS[action.id];
- if(need!==undefined&&success){const have=this.state.systems_maturity||0;if(have<need){const s=this.state,shortfall=Math.min(1,(need-have)/need),lost=Math.round((s.customer_base||0)*0.15*shortfall);
-  s.customer_base=Math.max(0,(s.customer_base||0)-lost);s.brand_equity=Math.max(0,(s.brand_equity||0)-Math.round(18*shortfall));s.churn_rate=Math.min(0.5,(s.churn_rate||0)+0.06*shortfall);s.leads=Math.max(s.customer_base||0,Math.round((s.leads||0)*(1-0.25*shortfall)));s.energy=Math.max(-40,(s.energy||0)-Math.round(10*shortfall));
-  s._pendingRipples=(s._pendingRipples||[]).concat([{source:(action.label||'Scale play')+' — backfired',narrative:'You scaled faster than your systems could deliver. The flood became refunds, bad reviews and burnout — '+(lost>0?lost+' customers lost, ':'')+'brand and churn hit. Build systems FIRST, then go big.'}]);}}}
 if(action.id==='pay_down_debt'){const s=this.state,eff=success?1:0.6,beforeUtil=this.calcPersUtil(),beforeDti=this.calcDTI(),plan=this._debtPaydownPlan();
 let payRev=Math.round(plan.payRev*eff),payLoan=Math.round(plan.payLoan*eff),total=payRev+payLoan;
 // deduct cash (business first, then personal)
@@ -4878,10 +4605,7 @@ if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','o
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='policy_loan'&&success){const sep=this.isSeparated(),cv=this.state.insurance_cash_value||0,headroom=Math.max(0,Math.round(cv*0.9)-(this.state.insurance_loan_balance||0)),loanAmt=headroom,before=sep?(this.state.personal_cash||0):(this.state.cash||0);if(loanAmt<=0){this.state._dyn_narrative='You\'ve already borrowed up to 90% of your '+this.fmtMoney(cv)+' cash value — there\'s no loan room left right now. Keep funding the policy (or let it compound) to open more borrowing capacity.';}else{if(sep)this.state.personal_cash=before+loanAmt;else this.state.cash=before+loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;effects.cash=(effects.cash||0)+loanAmt;this.state._dyn_narrative='Policy loan approved instantly — no credit check, no taxes. '+this.fmtMoney(loanAmt)+' (your remaining room up to 90% of the '+this.fmtMoney(cv)+' cash value) went straight into your personal cash: '+this.fmtMoney(before)+' → '+this.fmtMoney(before+loanAmt)+'. The cash value keeps compounding at ~7%/yr as if you never touched it; the loan accrues ~5%/yr and is netted from your death benefit — never repaid from your pocket.';}}
-if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;if(!this.state._iul_loan_type)this.state._iul_loan_type='wash';/* safe default: net ~0%, lapse-proof */}
-if(action.id==='velocity_banking'&&success){this.state._velocity_active=true;this.state._velocity_spiral_streak=0;}
-if(action.id==='iul_variable_loan'&&success){this.state._iul_loan_type='variable';/* opt into the index-arbitrage loan — higher income, real lapse risk */}
-if(action.id==='open_db_plan_pretax'&&success){this.state._iul_funding_type='pre_tax';/* fund the policy through a qualified DB plan with deductible business dollars — requires the corporate structure */}
+if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;}
 if(action.id==='hire_fractional_cfo'&&success)this.state._dyn_narrative='Your fractional CFO is on board — and the first thing she did was build you a real financial picture. Tap the new 📊 CFO Briefing on your dashboard any time: company value, net worth, runway, a 6-month projection, and exactly where she’d focus your marketing, operations, and finance.';
 // Credit repair: disputes take 30-90 days. On success, schedule the marks to fall off over ~3 months (2/mo); the score climbs each month until the file is clean (~650), after which utilization carries it higher. A clean file has little to repair → minor boost.
 if(action.id==='build_personal_credit'&&success){const s=this.state,neg=s.credit_negatives||0;
@@ -4943,10 +4667,10 @@ const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_reve
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
 // Credit declined: explain the underwriting reason (high utilization / personal myFICO pull) so the lesson lands.
-if(_isCreditApp&&!success){const s=this.state,isLoan=LOAN_APPROVAL.includes(action.id),u=this.calcPersUtil(),dti=this.calcDTI(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(isLoan?(dti>36?'Your <strong>debt-to-income is '+dti+'%</strong> — above the ~36% a lender wants to see your cash flow service, so the payment looks too tight. ':''):(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':''))+(isLoan?'The bank also pulled your personal <strong>myFICO 3B ('+sc+')</strong>. ':'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ');
+if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ';
 if(!this._naicsVerified()&&['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))_why+='Your business also tripped an underwriting flag: its <strong>NAICS industry code looks off</strong>, so the file got kicked out. A <strong>Wyoming holding-company setup</strong> assigns the correct code and clears this. ';
 if(!this._hasBanking())_why+='And you have <strong>no banking relationship</strong> here — you\'re a stranger applying cold. Build the relationship (bank and deposit with them) and they lend far more readily. ';
-_why+=(isLoan?(dti>36?'Lower your debt-to-income (pay down debt or grow revenue) under ~36% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'):(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'));this.state._dyn_narrative=_why;}
+_why+=(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.');this.state._dyn_narrative=_why;}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund,_execRun:_execRun,_energySpent:(_execRun?0:_energyCost)};
 if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
@@ -4977,26 +4701,12 @@ applyEffects(effects){for(const[k,v]of Object.entries(effects)){if(k==='entity_s
 monthlyTick(){const s=this.state;
 // C-suite salaries scale with revenue each month — adjust the portion of opex we own by the delta (keeps it in burn/EBITDA/tax/profit)
 {const ec=this.calcExecComp(),delta=ec-(s._exec_comp_applied||0);if(delta){s.operating_expenses=Math.max(0,(s.operating_expenses||0)+delta);s._exec_comp_applied=ec;}}
-// Macro cycle advances FIRST so this month's drivers (IUL index credit, market rate, asset prices, credit availability) are set before the financial sections use them.
-this._advanceMarketCycle();
 // Process delayed effects
 if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.month);s._delayed_effects=s._delayed_effects.filter(d=>d.month>this.month);for(const d of ready)this.applyEffects(d.effects);}
 // Toxic high-ticket closer: while he's on the team his fake promises and guarantees keep doing damage — rising churn, brand erosion, and climbing lawsuit risk. The pressure builds until you fire him (via Restructure & Downsize).
 if(s._toxic_closer){s.churn_rate=Math.min(0.5,(s.churn_rate||0)+0.03);s.brand_equity=Math.max(0,(s.brand_equity||0)-3);s.litigation_exposure=(s.litigation_exposure||0)+6;}
 // Term-limited recurring costs falling off (e.g. a merchant cash advance, once it's paid off): stop the monthly drain, drop it from the burn breakdown, and post a "paid off" note.
 if(s._recurring_expiry){for(const id of Object.keys(s._recurring_expiry)){if(this.month>=s._recurring_expiry[id]){const c=(s._active_recurring_costs||{})[id]||0;if(c){s.operating_expenses=Math.max(0,(s.operating_expenses||0)-c);delete s._active_recurring_costs[id];}delete s._recurring_expiry[id];s._pendingRipples=(s._pendingRipples||[]).concat([{source:this.actionLabel(id)||'Financed cost',narrative:'Fully paid off — the recurring payments stop. An expensive way to borrow; lesson learned.'}]);}}}
-// Delegation ladder — marketing specialists auto-run their function each month. You LEARNED the play by doing it; a specialist now repeats it for a salary (no energy, no action slot). A Marketing Manager lifts them from "solid" (0.85) to better-than-you (1.15) and the Director (CRO) takes the whole function. Only the persistent growth effects carry — the salary (recurring_cost) is already in opex.
-{const sysMat=s.systems_maturity||0;
- // A hire is only as good as the SYSTEMS behind them. Drop people onto no SOPs/processes and the output craters AND swings wildly month to month (real life: an unsupported new hire flails). Systemize first and the same salary compounds reliably. This is the lesson — systems scale you, not headcount.
- const sysFactor=0.15+0.85*Math.min(1,sysMat/90);/* 0.15 at zero systems → 1.0 only once truly dialed in (~90) — efficiency is earned slowly */
- let consistency=Math.min(1,sysMat/75);if(s._mgr_marketing)consistency=Math.min(1,consistency+0.3);/* low systems = erratic; a manager steadies the team */
- const mgrBoost=s._mgr_marketing?1.2:1.0;
- const runSpec=(flag,grp,who)=>{if(!s[flag]||s._cro_hired)return;/* the CRO/Director covers marketing once hired */const a=this._bestInGroup('marketing',grp);if(!a)return;
-  const variance=consistency+(1-consistency)*Math.random();/* wide swing when unsystematized, tight when dialed-in */
-  const q=sysFactor*mgrBoost*variance*0.32;/* 0.32 base — deliberately slow: a specialist SUPPLEMENTS your work at real-world pace, it doesn't rocket your growth or replace strategy */
-  const ef=this.scaleActionEffects(a.effects||{},'marketing'),apply={};['leads','customer_base','brand_equity','sales_conversion','revenue_capacity'].forEach(k=>{if(ef[k])apply[k]=Math.round(ef[k]*q);});
-  if(Object.keys(apply).length){this.applyEffects(apply);const tag=sysMat<35?' — but with no systems behind them, the results are thin and uneven':(s._mgr_marketing?' — manager-coordinated, steady output':'');s._pendingRipples=(s._pendingRipples||[]).concat([{source:who,narrative:'ran '+a.label+' this month'+tag+'.'}]);}};
- runSpec('_spec_leadgen','Lead Generation','Lead-Gen Specialist');runSpec('_spec_convert','Sales & Conversion','Sales Specialist');}
 // Churn — leaky bucket: a large base with low systems/no retention churns faster
 {const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
 // Lead decay — un-nurtured prospects go cold. The not-yet-converted lead pool shrinks each month, so you can't coast on a one-time pile of leads: without fresh marketing (and retention to slow churn) the customer base erodes. Strong brand keeps prospects warm longer. (DESIGN: only passive TAX-FREE income should arrive without work — business revenue must be worked.)
@@ -5010,17 +4720,9 @@ s.leads=Math.max(s.leads||0,s.customer_base||0); // invariant: always at least a
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+(s._completed_actions&&s._completed_actions.includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
 s.monthly_revenue=s.customer_base*revPerCust;
 // Revenue capacity cap — you can only capture demand up to what the business can deliver; beyond it revenue is heavily dampened (market saturation / strained delivery). Capacity grows via offer, sales infra, systems, team.
-// A small, efficient business has a NATURAL size ceiling. Past a healthy level, extra capacity buys sharply less revenue — you can't grind operations to infinity. Real wealth comes mid-to-late from FINANCE leveraging the cash & credit this business throws off, not from making the business itself enormous. (DESIGN.md: brute-force revenue must hit a ceiling; passive tax-free income is the crown jewel.)
-{const team=s.team_size||0,sys=s.systems_maturity||0;
- // Your ceiling is set by SYSTEMS, not hustle or headcount (Gerber's E-Myth; Greiner's coordination crisis). A lean op tops out ~$80-120k/mo. Only deep systems infrastructure lifts it, and even maxed it walls out at the edge of "No Man's Land" (~$2M/yr) — the real stall zone (Tatum) where, without enterprise infrastructure, management debt + churn + people problems compound faster than you can grow. Headcount past a lean team buys almost nothing here. The way forward isn't a bigger business; it's FINANCE leveraging the cash & credit you built.
- const base=45000,systemsHeadroom=Math.min(sys,100)*900,teamHeadroom=Math.min(team,8)*3000,capacityTail=Math.min(s.revenue_capacity||0,50000)*0.4;
- const cap=base+systemsHeadroom+teamHeadroom+capacityTail;
- // HARD wall (not a soft damp): the business physically cannot push past ~110% of its systems-set ceiling. Lean+low systems ≈ $80-110k/mo; fully systematized ≈ $180-200k (the edge of No Man's Land, ~$2M/yr). To go further you'd need enterprise infrastructure this game doesn't hand you — because the point is to plateau lean and let FINANCE build the wealth.
- const wall=Math.round(cap*1.1);if(s.monthly_revenue>wall)s.monthly_revenue=wall;}
+{const cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);if(s.monthly_revenue>cap)s.monthly_revenue=Math.round(cap+(s.monthly_revenue-cap)*0.25);}
 // Seasonal dip — Q4 each year (months 10-12, 22-24, 34-36)
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)s.monthly_revenue=Math.round(s.monthly_revenue*0.85);
-// Macro-cycle revenue tilt — booms lift demand, downturns bite (the same cycle that drives the finance game).
-{const _ph=(s._cycle&&s._cycle.phase)||'expansion',_rt=(this._CYCLE_PHASES[_ph]||{}).rev||1;if(_rt!==1)s.monthly_revenue=Math.round((s.monthly_revenue||0)*_rt);}
 // Merchant cash advance holdback: the lender skims a fixed % of revenue every month until the (much larger) balance is cleared — then it falls off. No credit involvement; it just bleeds the top line.
 if((s._mca_balance||0)>0){const hold=Math.round((s.monthly_revenue||0)*(s._mca_holdback||0.2)),pay=Math.min(hold,s._mca_balance);if(pay>0){s.cash=(s.cash||0)-pay;s._mca_balance-=pay;}s._mca_paid=pay;if(s._mca_balance<=0){s._mca_balance=0;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Cash Advance',narrative:'Finally cleared — the revenue holdback stops. An expensive way to borrow; lesson learned.'}]);}}
 else s._mca_paid=0;
@@ -5043,103 +4745,18 @@ s.personal_cash-=personalExp; // personal pays its own living/lifestyle (+ sets 
 if(s.personal_cash<0){const d=Math.min(-s.personal_cash,Math.max(0,s.cash));if(d>0){s.cash-=d;s.personal_cash+=d;this._recordDraw(d);}}
 if(s.personal_cash<0){const bizCredit=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),liq=Math.min(-s.personal_cash,bizCredit);if(liq>0){s.business_credit_used=(s.business_credit_used||0)+liq;s.total_debt=(s.total_debt||0)+liq;s.personal_cash+=liq;this._recordDraw(liq);}} // liquidate business credit → business cash → draw
 if(s.personal_cash<0){const pc=Math.min(-s.personal_cash,Math.floor((s.available_credit||0)/1.03));if(pc>0){const fee=Math.round(pc*0.03);s.available_credit-=(pc+fee);s.total_debt=(s.total_debt||0)+pc+fee;s.personal_cash+=pc;}} // personal credit as last resort (fee fits within the limit — never overdraws available credit)
-if(insFunding>0){const _pre=s._iul_funding_type==='pre_tax',_cr=Math.round(insFunding*0.98);s.insurance_cash_value=(s.insurance_cash_value||0)+_cr;if(_pre)s._ytd_taxable_income=Math.max(0,(s._ytd_taxable_income||0)-insFunding);else s.insurance_basis=(s.insurance_basis||0)+_cr;} // funding lands in the policy. POST-tax: already-taxed premiums become BASIS → only gains taxed later. PRE-tax (DB-plan): the contribution is DEDUCTIBLE — it lowers your taxable income now (the real benefit) — but there's no basis, so the whole balance is taxable on a draw or lapse.
+if(insFunding>0)s.insurance_cash_value=(s.insurance_cash_value||0)+Math.round(insFunding*0.98); // the drawn funding lands in the policy (2% cost of insurance)
 const netInc=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s.owner_pay||0));s.capital_account=(s.capital_account||0)+netInc;} // retained profit grows the owner's equity
-else{s.cash-=(s.living_expenses||0)+(s.lifestyle_expenses||0);if(insFunding>0&&s.cash>=insFunding){s.cash-=insFunding;const _cr=Math.round(insFunding*0.98);s.insurance_cash_value=(s.insurance_cash_value||0)+_cr;if(s._iul_funding_type==='pre_tax')s._ytd_taxable_income=Math.max(0,(s._ytd_taxable_income||0)-insFunding);else s.insurance_basis=(s.insurance_basis||0)+_cr;}}
+else{s.cash-=(s.living_expenses||0)+(s.lifestyle_expenses||0);if(insFunding>0&&s.cash>=insFunding){s.cash-=insFunding;s.insurance_cash_value=(s.insurance_cash_value||0)+Math.round(insFunding*0.98);}}
 // An equity partner really takes their cut of monthly profit — this is what "they own 30% of every dollar" means in practice.
 if(s._partner_equity>0){const prof=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)),skim=Math.round(prof*s._partner_equity);if(skim>0){s.cash=(s.cash||0)-skim;s.capital_account=(s.capital_account||0)-skim;s._partner_skim=skim;}}
-// MANAGEMENT DEBT — when the team outgrows the infrastructure (systems + management + culture) that can support it, the gap compounds into real drag. Every reason a founder hits the wall, modeled off ONE honest ratio: team_size vs Org Capacity.
-{const cap=this._orgCapacity(),team=s.team_size||0,over=Math.max(0,team-cap);s._orgCap=Math.round(cap);s._orgOver=Math.round(over*10)/10;
- if(over>0){
-  // A. Coordination drag — communication channels explode quadratically (Brooks's Law: n(n-1)/2). A small overrun stings; a big one hemorrhages.
-  s.cash-=Math.round(over*over*300+over*1000);
-  // B. Productivity dilution — an overstretched team delivers LESS, not more (diminishing returns + green hires + shirking you can't monitor). Over-hiring actively cuts your output.
-  s.monthly_revenue=Math.round((s.monthly_revenue||0)*Math.max(0.55,1-over*0.025));
-  // C. Culture & quality spiral — context dilutes, standards slip, customers feel it.
-  s.company_culture=Math.max(0,(s.company_culture==null?45:s.company_culture)-Math.min(7,over*0.7));
-  s.churn_rate=Math.min(0.5,(s.churn_rate||0)+Math.min(0.05,over*0.005));
-  s.brand_equity=Math.max(0,(s.brand_equity||0)-Math.min(3,over*0.3));
-  // D. Fragility — knowledge concentrates in individuals (key-person risk) when you're stretched thin.
-  s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+Math.min(5,over*0.4));
-  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Management debt',narrative:'Your team of '+team+' has outgrown what your systems & leadership can carry (~'+Math.round(cap)+'). Coordination, culture and quality are all slipping. Build systems and hire real managers — or trim back to a lean team.'}]);
- }}
- // EMPLOYEE RETENTION — keeping a team is a constant fight against a market that will out-pay and out-benefit you. People leave for more money, better benefits, equity, room to grow, or because they're burned out — and the bigger/better your team, the harder recruiters pull at them. You can only sustain the headcount your PAY, BENEFITS, EQUITY, CULTURE, GROWTH PATH and SYSTEMS can hold. Hire past that and people churn out faster than you replace them — which is exactly why small businesses stay small.
- {const team=s.team_size||0;
-  if(team>0){const c=id=>(s._completed_actions||[]).includes(id),cul=s.company_culture==null?45:s.company_culture,over=s._orgOver||0;
-   let pull=0.03+Math.min(0.18,team*0.005)+Math.min(0.06,(s.monthly_revenue||0)/3000000);/* recruiters target your trained people; the bigger the team the more of it is in play — pull keeps climbing, so even a well-run shop can't hold an ever-larger team */
-   if(s._market_cycle==='boom')pull+=0.04;/* hot market = everyone's poaching */
-   let hold=0;if(c('build_benefits_package'))hold+=0.05;if(c('grant_stock_incentives'))hold+=0.06;if(c('hire_hr_manager'))hold+=0.03;if(c('middle_management')||s._coo_hired||s._mgr_marketing)hold+=0.03;/* career path */hold+=Math.max(-0.05,(cul-50)/600);/* culture retains or repels */
-   const burnout=Math.min(0.12,over*0.012)+((s.energy||0)<25?0.03:0);
-   const attrition=Math.max(0.01,Math.min(0.4,pull+burnout-hold));
-   const exp=team*attrition,leavers=Math.floor(exp)+((Math.random()<(exp-Math.floor(exp)))?1:0);
-   if(leavers>0){s.team_size=Math.max(0,team-leavers);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+leavers*3);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-leavers*2000);s.cash-=leavers*2500;/* backfill/recruiting cost */s.systems_maturity=Math.max(0,(s.systems_maturity||0)-Math.min(4,leavers));/* knowledge walks out, systems take a hit */
-    // THE TREADMILL — backfilling drains YOUR time (hiring, onboarding, firefighting) and the green replacements deliver less for a while. The more people, the more leave, the more you retrain — you run flat out just to stand still.
-    s.energy=Math.max(-40,(s.energy||0)-Math.min(8,leavers*3));
-    s._churn_drag=Math.min(0.35,(s._churn_drag||0)+leavers*0.04);
-    s._turnover_streak=(s._turnover_streak||0)+1;
-    s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Turnover',narrative:leavers+' '+(leavers===1?'person':'people')+' left for better pay/benefits elsewhere. Now it\'s hire, onboard, retrain — your time, not theirs — and output dips while the replacements ramp. Hold a team only by out-retaining the market: pay, benefits, equity, culture, growth.'}]);}
-   else s._turnover_streak=0;
-   // Retraining drag decays as replacements ramp up — but a constantly-churning team never gets ahead.
-   if(s._churn_drag>0){s.monthly_revenue=Math.round((s.monthly_revenue||0)*(1-s._churn_drag));s._churn_drag=Math.max(0,s._churn_drag*0.8);}
-   // THE LESSON — when you're clearly stuck on the treadmill, name it and point the way out: stop trying to out-grow a natural ceiling; let FINANCE build the wealth.
-   if((s._turnover_streak||0)>=3&&!s._scaleLessonShown){s._scaleLessonShown=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The founder’s trap',narrative:'You keep hiring and they keep leaving — every month is retraining, not progress. A small business has a natural size; you can\'t out-muscle it with more bodies. From here, real wealth doesn\'t come from a bigger payroll — it comes from FINANCE: leverage the cash & credit you\'ve built into tax-free passive income.'}]);}
-  }}
+// People scaling drag — headcount past 3 without management/systems creates coordination cost
+{const team=s.team_size||0;if(team>3){const hasMgmt=s._completed_actions.includes('middle_management')||s._completed_actions.includes('full_systemization')||s._completed_actions.includes('hire_hr_manager');const sysFactor=Math.max(0.1,1-(s.systems_maturity||0)/100);const coordCost=Math.round((team-3)*1500*sysFactor*(hasMgmt?0.3:1));if(coordCost>0)s.cash-=coordCost;}}
 // Tax inefficiency drag — high profit without tax structure overpays the IRS every month
 {const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0));if(profit>5000){let ineff=0.16;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.10;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;if((s.trust_structure&&s.trust_structure!=='none'&&s.trust_structure!=='basic_llc'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/30000);if(this._perks().taxSmart)ineff*=0.7;/* Tax-Smart milestone perk: a dialed-in structure trims the residual drag */s.cash-=Math.round(profit*ineff);}}
 const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses);s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
 if(!sep&&s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(taxableIncome*(s.tax_rate||0.25));s.tax_reserve+=res;s.cash-=res;}
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
-// VELOCITY BANKING — running the household through a line of credit instead of a checking account. The edge is real but conditional: park income on a simple-interest line and every surplus dollar retires MORE than a dollar of amortizing principal (the interest you'd have paid is saved), freeing capital years faster and lowering utilization → score. But it's a CASH-FLOW strategy: it only accelerates while you're cash-flow positive. Go negative and the deficit rides on the line and compounds (the spiral). And in a credit-tight downturn the lender can FREEZE/cut the line — which only hurts if you were leaning on it. Discipline (positive CF + lightly-used line) is rewarded; over-leverage is punished.
-if(s._velocity_active&&(s.total_debt||0)>0){
- const fcf=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-interest-principal-(s.living_expenses||0)-(s.lifestyle_expenses||0));
- const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
- const lineLim=(s.business_credit_limit||0)+(persRev+(s.available_credit||0)),lineUsed=(s.business_credit_used||0)+persRev,lineUtil=lineLim>0?lineUsed/lineLim:0;
- // HELOC/line FREEZE — once per downturn, the lender cuts the line. Devastating if you were leaning on it (high utilization); a non-event if you kept it lightly used.
- if(s._credit_tight&&!s._velocity_frozen_cycle){s._velocity_frozen_cycle=true;
-  if(lineUtil>0.5){const cut=Math.round((s.available_credit||0)*0.4)+Math.round(Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0))*0.4);s.available_credit=Math.max(0,(s.available_credit||0)-Math.round((s.available_credit||0)*0.4));s.business_credit_limit=Math.max(s.business_credit_used||0,Math.round((s.business_credit_limit||0)*0.7));s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-8);
-   s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — line frozen',narrative:'The downturn hit and your lender slashed your credit line — and you were leaning on it. With the line you run your household through suddenly cut, you\'re scrambling for cash and your utilization just spiked. THIS is the risk of velocity banking on a heavily-used line: in a credit crunch the bank pulls the rug exactly when you need it most. The disciplined keep the line lightly used so a freeze is a non-event.'}]);}
-  else s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking',narrative:'Credit tightened in the downturn and the bank trimmed your line — but you\'d kept it lightly used, so it barely registers. This is the discipline velocity banking demands: a line you don\'t depend on can\'t be used against you.'}]);}
- if(!s._credit_tight)s._velocity_frozen_cycle=false;/* reset once credit loosens, so the next downturn can freeze again */
- if(fcf>0){
-  // CHUNK — sweep the surplus at the debt. The velocity edge: interest saved on the parked balance retires extra principal "for free" (~12% acceleration), so you pay down faster than a vanilla payment AND free whatever line the paydown sat on (lower utilization → score). Apply in realistic priority — personal revolving first (frees available_credit), then the business line (frees business headroom), then installment — so only genuine revolving paydown restores a limit.
-  const chunk=Math.min(fcf,s.total_debt||0);s.cash=(s.cash||0)-chunk;s.total_debt=Math.max(0,(s.total_debt||0)-chunk);
-  let pay=chunk;const rv=Math.min(pay,persRev);if(rv>0){s.available_credit=(s.available_credit||0)+rv;pay-=rv;}
-  const bz=Math.min(pay,s.business_credit_used||0);if(bz>0){s.business_credit_used=Math.max(0,(s.business_credit_used||0)-bz);pay-=bz;}/* remainder hits installment — no revolving limit to free */
-  const accel=Math.min(s.total_debt||0,Math.round(chunk*0.12));s.total_debt=Math.max(0,(s.total_debt||0)-accel);/* the interest you'd have paid, knocked off principal */
-  s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+(this.calcPersUtil()<30?2:1));
-  s._velocity_spiral_streak=0;s._velocity_chunk=chunk+accel;
- } else if(fcf<-200){
-  // SPIRAL — negative cash flow means the deficit rides on the line and compounds. Velocity banking AMPLIFIES bad cash flow just as it amplifies good.
-  const bleed=Math.round(Math.min(-fcf,lineUsed||(-fcf))*0.04);if(bleed>0){s.cash=(s.cash||0)-bleed;s.total_debt=(s.total_debt||0)+bleed;}
-  s._velocity_spiral_streak=(s._velocity_spiral_streak||0)+1;s._velocity_chunk=0;
-  if(s._velocity_spiral_streak>=2)s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — the spiral',narrative:'Your cash flow has gone negative, and velocity banking cuts both ways: with nothing to chunk, the shortfall is riding on your line and compounding. The strategy only builds wealth while you\'re cash-flow positive — right now it\'s working against you. Fix the cash flow (cut burn, lift revenue) or the line balance keeps climbing.'}]);
- } else s._velocity_chunk=0;
-}
-// REAL-ESTATE LEVERAGE — the downturn margin-call test. Leverage cuts both ways: in good times the bank's money amplifies your returns, but when asset prices fall the debt stays fixed while equity evaporates — and a credit-tight market means you can't refinance your way out. The OVER-leveraged (high LTV going in, property that barely services its own debt, no reserves) get a MARGIN CALL → forced to sell into the crash at the worst possible price, realizing the loss. The CONSERVATIVELY leveraged (more equity down, healthy property cash flow, reserves on hand) take only a paper dip that recovers. This is the discipline real estate demands — and the mirror image of buy-the-dip: the forced sellers in a downturn are exactly who the prepared buy from.
-if(s._credit_tight&&(s.real_estate_debt||0)>0&&(s._asset_units||0)>0&&!s._re_squeeze_cycle){s._re_squeeze_cycle=true;
- const debt=s.real_estate_debt||0,eq=s.real_estate_equity||0,value=debt+eq,units=s._asset_units||1,depth=s._downturn_depth||1;
- const haircut=Math.min(0.32,0.13*depth+0.05);/* property values fall 13-32% in the bust, deeper when the downturn is severe */
- const markedValue=Math.round(value*(1-haircut)),markedEq=markedValue-debt;/* debt is fixed; equity absorbs the whole drop and can go underwater */
- const ltv=markedValue>0?debt/markedValue:2;/* post-crash loan-to-value */
- const reSvc=Math.round(debt*0.006),reDSCR=reSvc>0?(s._asset_income||0)/reSvc:99;/* can the rents cover the mortgage? */
- const dp=this._dryPowder?this._dryPowder():{total:Math.max(0,(s.cash||0)+(s.personal_cash||0))},reserves=dp.total;
- if(ltv>0.90&&reDSCR<1.1&&reserves<reSvc*6){
-  // MARGIN CALL — underwater, the property can't carry itself, and there's no cushion or refinance. The lender forces a sale of one property into the depressed market. Underwater means the sale doesn't even clear the loan — you eat the deficiency in cash, plus selling costs, and lose the income.
-  const perDebt=Math.round(debt/units),perEq=Math.round(eq/units),perInc=Math.round((s._asset_income||0)/units);
-  const proceeds=Math.round((perDebt+perEq)*(1-haircut)),deficiency=Math.max(0,perDebt-proceeds),sellCost=Math.round((perDebt+perEq)*0.06);
-  s.real_estate_debt=Math.max(0,debt-perDebt);s.total_debt=Math.max(0,(s.total_debt||0)-perDebt);
-  s.real_estate_equity=Math.max(0,eq-perEq);s._asset_units=Math.max(0,units-1);
-  s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)-perInc);s._asset_income=Math.max(0,(s._asset_income||0)-perInc);
-  s.cash=(s.cash||0)-(deficiency+sellCost);if(s.cash<0){const unc=this.coverShortfall(-s.cash);s.cash=0;if(unc>0)s.cash=-unc;}
-  s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-25);/* a forced sale / loan workout craters your credit */
-  s._re_margin_called=(s._re_margin_called||0)+1;
-  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — MARGIN CALL',narrative:'The crash caught you over-leveraged. Property values fell ~'+Math.round(haircut*100)+'%, your loan-to-value blew past 90% (underwater), the rents no longer cover the mortgage, and with credit frozen you can\'t refinance. The lender forced a sale — and selling into the bottom, the '+this.fmtMoney(proceeds)+' didn\'t even clear the '+this.fmtMoney(perDebt)+' loan. You ate '+this.fmtMoney(deficiency+sellCost)+' in deficiency and costs, lost '+this.fmtMoney(perInc)+'/mo of income, and your credit took a 25-point hit. THIS is over-leverage: in the good times it amplified your returns, in the bust it nearly buried you. More equity down, property that covers its own debt, and reserves are what carry you through.'}]);
- } else {
-  // RODE IT THROUGH — leverage was conservative (or reserves/cash flow covered it). Equity dips on paper but you're never forced to sell, so it recovers with the market.
-  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate',narrative:'Property values dipped ~'+Math.round(haircut*100)+'% in the downturn, so your equity is down on paper. But your leverage was conservative — '+(ltv<=0.90?'healthy LTV':'')+(reDSCR>=1.1?(ltv<=0.90?', ':'')+'rents cover the mortgage':'')+(reserves>=reSvc*6?', reserves on hand':'')+' — so no lender can force your hand. You hold, the income keeps flowing, and the equity recovers as the market does. This is why you don\'t over-leverage: staying power turns a crash into a non-event.'}]);
- }
-}
-if(!s._credit_tight)s._re_squeeze_cycle=false;/* reset once the downturn passes, so the next cycle can test again */
 // Executive Assistant: runs the financial housekeeping BEFORE the credit drift evaluates — utilization paydown, credit + D&B upkeep, tax reserve — so the score rewards the now-healthy file.
 if(s._ea_hired){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),avail=s.available_credit||0,lim=persRev+avail;
 if(lim>0&&persRev/lim>0.3){const target=Math.round(persRev-0.28*lim),pay=Math.max(0,Math.min(target,Math.round((s.cash||0)*0.5)));if(pay>0){s.cash-=pay;s.total_debt=Math.max(0,s.total_debt-pay);s.available_credit=(s.available_credit||0)+pay;}}
@@ -5157,22 +4774,13 @@ if(s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0){s._inquiriesCleare
 // Without Epic, hard inquiries still age off naturally — one drops every 6 months, so only RECENT credit-shopping keeps hurting your odds.
 else if(!s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0)s.credit_inquiries=Math.max(0,(s.credit_inquiries||0)-1);
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
-// IUL cash value is INDEXED to the cycle now — 0% floor in a downturn, capped (~12%/yr) in a boom, ~7-8% average. Your collateral holds in a crash (the floor) exactly when assets are cheap — that's the IUL's edge.
-// IUL ENGINE — the loan TYPE is the decision. WASH (~3.5%): the borrowed slice is parked at a matching rate → net 0%, the loan can NEVER outrun the collateral, lapse-proof (but the borrowed portion stops earning the index). VARIABLE (market ~5%): the FULL cash value keeps earning the index (0-15%) → positive arbitrage when the index beats the rate, but in a downturn the index floors at 0% while the loan keeps compounding — borrow too hard and the loan passes the cash value, the policy LAPSES, and the gains become taxable ordinary income (phantom income).
-{const idx=(s._index_return!=null)?s._index_return:0.0058,variable=s._iul_loan_type==='variable',washRate=0.035/12,varRate=(s._market_rate!=null?s._market_rate:0.05)/12;
- if((s.insurance_cash_value||0)>0){const CV=s.insurance_cash_value,loan=s.insurance_loan_balance||0;
-  if(!variable&&loan>0){const bf=Math.min(1,loan/Math.max(1,CV));s.insurance_cash_value=Math.round(CV*(1+idx*(1-bf)+washRate*bf));}/* wash: borrowed slice earns the wash rate, not the index */
-  else s.insurance_cash_value=Math.round(CV*(1+idx));
-  s._iul_last_credit=Math.round(idx*12*1000)/10;}
- if((s.insurance_loan_balance||0)>0)s.insurance_loan_balance=Math.round((s.insurance_loan_balance||0)*(1+(variable?varRate:washRate)));}
+if(s.insurance_cash_value>0)s.insurance_cash_value=Math.round(s.insurance_cash_value*1.0057);
 if(s._family_office&&(s.investment_positions||0)>0)s.investment_positions=Math.round(s.investment_positions*1.004); // family office optimizes allocation — portfolio appreciates ~5%/yr
 if((s.private_bank_balance||0)>0){const _pt2=sep?'personal_cash':'cash';s[_pt2]=(s[_pt2]||0)+Math.round(s.private_bank_balance*0.004);} // private bank deposit earns ~5%/yr while you borrow against it at 1%
 {const _pt=sep?'personal_cash':'cash';s[_pt]=(s[_pt]||0)+(s.other_monthly_revenue||0); // asset income (real estate, lending) → personal once separated
-s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const _var=s._iul_loan_type==='variable',cap=(_var?0.97:0.85)*s.insurance_cash_value/* variable borrows closer to the edge — and pays for it in a downturn */,headroom=Math.max(0,Math.round(cap)-(s.insurance_loan_balance||0)),moPassive=Math.min(Math.round(s.insurance_cash_value*(_var?0.08:0.06)/12),headroom),_pb=s[_pt]||0;if(moPassive>0){const _preI=s._iul_funding_type==='pre_tax',_net=_preI?Math.round(moPassive*(1-Math.min(0.4,s.tax_rate||0.25))):moPassive;/* POST-tax: income is TAX-FREE (Roth). PRE-tax: it's deferred income coming due — taxable (Traditional). */s[_pt]=_pb+_net;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:_net,gross:moPassive,taxed:_preI,before:Math.round(_pb),after:Math.round(_pb+_net),month:this.month};}}}
-// LAPSE — if the loan ever reaches the cash value, the policy collapses: gains taxed as ordinary income (you owe tax on money you already spent), and the tax-free engine is gone. Only the variable loan can get here; the wash loan is structurally safe.
-if(s._iul_loan_type==='variable'&&(s.insurance_cash_value||0)>0&&(s.insurance_loan_balance||0)>=(s.insurance_cash_value||0)*0.95){const gain=Math.max(0,(s.insurance_cash_value||0)-(s.insurance_basis||0)),tax=Math.round(gain*(s.tax_rate||0.25));s.cash=(s.cash||0)-tax;s.insurance_cash_value=0;s.insurance_loan_balance=0;s._passive_income_active=false;s._auto_fund_insurance=false;s._iul_lapsed=true;
- s._pendingRipples=(s._pendingRipples||[]).concat([{source:'⚠ Policy LAPSED',narrative:'Your IUL collapsed — the variable loan compounded past the cash value (a downturn flatlined your growth while the loan kept accruing). The '+this.fmtMoney(gain)+' of gains are now taxable ordinary income: a '+this.fmtMoney(tax)+' bill on money you already spent. Your tax-free engine is gone. The lesson: never borrow so hard that a bad market can pass your collateral — that\'s what the wash loan protects against.'}]);}
-/* market cycle is advanced at the top of the tick; its revenue tilt is applied where revenue is computed */
+s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const headroom=Math.max(0,Math.round(s.insurance_cash_value*0.9)-(s.insurance_loan_balance||0)),moPassive=Math.min(Math.round(s.insurance_cash_value*0.06/12),headroom),_pb=s[_pt]||0;if(moPassive>0){s[_pt]=_pb+moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:moPassive,before:Math.round(_pb),after:Math.round(_pb+moPassive),month:this.month};}}}
+if(s.insurance_loan_balance>0)s.insurance_loan_balance=Math.round(s.insurance_loan_balance*1.0041);
+if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession';s.monthly_revenue=Math.round(s.monthly_revenue*0.85);}else if(r<0.5){s._market_cycle='boom';s.monthly_revenue=Math.round(s.monthly_revenue*1.1);}else s._market_cycle='normal';}
 if(sep&&s.personal_cash<0){s.cash+=s.personal_cash;s.personal_cash=0;} // personal deficit rolls into the business shortfall handler below
 if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;let _unc=this.coverShortfall(_short);if(_unc>0)_unc=this._tapTaxReserveToSurvive(_unc);if(_unc>0)_unc=this._tapPersonalToSurvive(_unc);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
 // Owner pays themselves a draw/salary scaled to what the business can afford — covers a living wage once profitable (a draw pre-S-Corp, formal salary after); S-Corp just optimizes its tax treatment
@@ -5192,12 +4800,12 @@ if(s._epic_life&&s._epic_plan==='annual'&&s._epic_renew_month&&this.month>=s._ep
 // Auto-actions from key hires
 const bl=this.calcBusinessLevel();
 if(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')){if(s.business_credit_profile==='building')s.business_credit_profile='established';s.personal_credit_score=Math.min(850,s.personal_credit_score+1);s.business_credit_limit=(s.business_credit_limit||0)+Math.round(500*bl);const pr=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(pr>1000){const as=Math.round(pr*0.05);s._installment_debt=(s._installment_debt||0)+as;s.available_credit=(s.available_credit||0)+Math.round(as*0.8);}}
-if(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')&&this.month%3===0&&(s.team_size||0)<8&&s.monthly_revenue>(s.team_size||0)*5000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-3);}
+if(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')&&this.month%3===0&&s.monthly_revenue>(s.team_size||0)*5000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-3);}
 if(s._completed_actions&&s._completed_actions.includes('build_sales_team')){s.cash-=Math.round((s.monthly_revenue||0)*0.04);s.leads=(s.leads||0)+Math.round(6*bl);/* a dedicated sales team prospects AND closes — it converts pipeline into paying customers, not just leads */const _closed=Math.min(Math.round(3*bl),Math.max(0,(s.leads||0)-(s.customer_base||0)));if(_closed>0)s.customer_base=(s.customer_base||0)+_closed;}
 if(s._completed_actions&&s._completed_actions.includes('hire_client_success')){s.churn_rate=Math.max(0.01,(s.churn_rate||0)-0.005);}
 // FULL-TIME executives build the business on their own each month — team, capacity, pipeline, brand. Fractional execs only pick moves; the active engine is what you pay full-time pay for.
-if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl);s.systems_maturity=Math.min(100,(s.systems_maturity||0)+1);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-1);if((s.team_size||0)<8&&s.monthly_revenue>(s.team_size||0)*6000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-2);}}
-if(s._cro_fulltime){s.leads=(s.leads||0)+Math.round(5*bl);s.revenue_capacity=(s.revenue_capacity||0)+Math.round(600*bl);s.brand_equity=Math.min(100,(s.brand_equity||0)+1);}
+if(s._coo_hired){s.systems_maturity=Math.min(100,(s.systems_maturity||0)+0.5);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-0.5);}
+if(s._cro_hired){s.leads=(s.leads||0)+Math.round(2*bl);s.brand_equity=Math.min(100,(s.brand_equity||0)+0.5);}
 this.state._milestones_new=this.checkMilestones();
 // Hitting a milestone is a morale win — a minor energy boost on each unlock (capped), surfaced on the milestone banner.
 this._milestoneEnergy=0;if(this.state._milestones_new.length){const boost=Math.min(8,this.state._milestones_new.length*3);this.state.energy=Math.min(100,(this.state.energy||0)+boost);this._milestoneEnergy=boost;}
@@ -5355,8 +4963,6 @@ if(!this.state._first_event_seen){this.state._first_event_seen=true;setTimeout((
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects,evt.category==='opportunity')}));
 // Policy loan: the deal is bounded by what your policy can actually lend (up to ~90% of cash value, less any existing loan) — NOT a generic scaled figure. Show the real number so the offer matches what you'll get, and so it's clear this is borrowed (a loan you owe), not free money.
 if(evt.id==='policy_loan_opportunity'&&evt._scaledChoices[0]){const _s=this.state,_room=Math.max(0,Math.round(0.9*(_s.insurance_cash_value||0)-(_s.insurance_loan_balance||0)));evt._scaledChoices[0].effects={insurance_loan_balance:_room,investment_positions:_room,other_monthly_revenue:Math.round(_room*0.012)};}
-// Buy-the-dip: show the live terms — the discount on the table and the dry powder you can actually deploy right now (policy + reserves), so the prepared see what they can seize and the unprepared see exactly what they're missing.
-if(evt.id==='buy_the_dip'){const _s=this.state,dp=this._dryPowder(),disc=Math.round((1-Math.max(0.6,Math.min(0.95,_s._asset_discount||0.78)))*100),enough=dp.total>=8000;note+='<div class="narrative-box fade-in" style="border-left-color:'+(enough?'var(--gold)':'var(--red)')+';margin-bottom:12px;"><strong>On the table:</strong> assets ~'+disc+'% below market. <strong>Deployable dry powder right now: '+this.fmtMoney(dp.total)+'</strong>'+(dp.policy>0?' — incl. '+this.fmtMoney(dp.policy)+' borrowable tax-free against your policy':'')+'.'+(enough?'':' <span style="color:var(--red);">Too thin to move on a deal this size — credit\'s frozen and you\'ve no reserve to deploy.</span>')+'</div>';}
 // Choices no longer reveal the outcome numbers — you decide from the narrative + your dashboard, then see results after. The ONE exception is a deal/offer (an opportunity): you should see the terms on the table (price, financing, equity), but not the downstream stat impacts.
 const isOffer=evt.category==='opportunity',OFFER_KEYS=['cash','total_debt','available_credit','real_estate_equity','investment_positions','insurance_cash_value','business_credit_limit'];
 document.getElementById('event-choices').innerHTML=note+evt._scaledChoices.map((c,i)=>{let inner='';if(isOffer){const parts=Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0&&OFFER_KEYS.includes(k)).map(([k,v])=>(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+' '+this.formatStatName(k));if(parts.length)inner='<div class="choice-effects" style="color:var(--text2);"><span style="font-weight:600;">The offer:</span> '+parts.join(', ')+'</div>';}return'<div class="choice-card fade-in" onclick="Game.resolveEvent('+i+')"><h4>'+c.label+'</h4>'+inner+'</div>';}).join('');this.currentEvent=evt;this.eventHistory.push(evt);},
@@ -5396,18 +5002,6 @@ let effects=Object.assign({},c.effects),protNote='',saleNote='';
 if(evt.id==='acquisition_offer'&&ci===0){const s=this.state,proceeds=effects.cash||0;delete effects.cash;const tax=Math.round(proceeds*0.238),net=proceeds-tax;s.personal_cash=(s.personal_cash||0)+net;s.personal_tax_ytd=(s.personal_tax_ytd||0)+tax;s.capital_account=0;saleNote='<div class="narrative-box fade-in" style="border-left-color:var(--gold);margin-top:12px;">You sold the company — converting illiquid equity into cash. The <strong>'+this.fmtMoney(proceeds)+'</strong> sale price is <strong>personal</strong> income, less <strong>'+this.fmtMoney(tax)+'</strong> in long-term capital-gains tax (~23.8%: 20% federal + 3.8% NIIT). Net to you: <strong>'+this.fmtMoney(net)+'</strong>. Your equity and its future cash flow now belong to the buyer — your wealth is only what survived the tax.</div>';}
 // Borrowing against your policy to fund a deal: you can only deploy what the policy actually supports (up to ~90% of cash value, less any existing loan). The position funded equals the amount borrowed — and the cash value itself is untouched (it keeps compounding via the monthly tick).
 if(evt.id==='policy_loan_opportunity'&&ci===0){const s=this.state,room=Math.max(0,Math.round(0.9*(s.insurance_cash_value||0)-(s.insurance_loan_balance||0))),want=effects.investment_positions||15000,deploy=Math.min(want,room);delete effects.investment_positions;delete effects.insurance_loan_balance;delete effects.other_monthly_revenue;if(deploy>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+deploy;s.investment_positions=(s.investment_positions||0)+deploy;s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(deploy*0.012);c.outcome_narrative='You borrowed '+this.fmtMoney(deploy)+' tax-free against your policy — up to ~90% of its '+this.fmtMoney(s.insurance_cash_value||0)+' cash value — and deployed it into a passive position throwing off ~'+this.fmtMoney(Math.round(deploy*0.012))+'/mo. The cash value keeps compounding as if you never touched it; the loan is simply netted from your death benefit, never repaid from your pocket.';}else{c.outcome_narrative='Your policy doesn\'t have borrowing room right now — you can borrow up to ~90% of the cash value, less any existing loan. Keep funding the policy and this kind of on-demand, tax-free deal opens back up.';}}
-// BUY THE DIP — the keystone payoff. In the downturn, the prepared deploy dry powder into distressed assets at a deep discount while the over-leveraged are frozen out (or forced sellers). Funded POLICY-FIRST (tax-free, no credit check, frozen-proof) then cash reserves; assets are marked at their post-recovery value, so the discount you captured is instant equity, plus high yield on the cheap basis. Everything is computed here — the config choice effects are empty.
-if(evt.id==='buy_the_dip'){const s=this.state;
- if(ci===0){const dp=this._dryPowder(),discount=Math.max(0.6,Math.min(0.95,s._asset_discount||0.78));
-  const cap=Math.min(300000,Math.max(60000,Math.round(this.calcNetWorth()*0.4)));let deploy=Math.min(dp.total,cap);
-  if(deploy<8000){c.outcome_narrative='The deal of the decade is sitting right in front of you — distressed assets '+Math.round((1-discount)*100)+'% below market, motivated sellers everywhere — and you can\'t move on it. Credit is frozen, your policy has little or no cash value to borrow against, and your reserves are thin. <strong>This is the hard lesson of the downturn:</strong> the dip only pays the prepared. A funded policy you could borrow against tax-free, dry powder you kept liquid instead of over-extending — that\'s what turns a crash into the buying opportunity of a lifetime. Next cycle, be ready before the music stops.';}
-  else{let need=deploy,fromPolicy=Math.min(need,dp.policy);if(fromPolicy>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+fromPolicy;need-=fromPolicy;}
-   let fromCash=Math.min(need,dp.cash);if(fromCash>0){let r=fromCash;const fc=Math.min(r,s.cash||0);s.cash=(s.cash||0)-fc;r-=fc;if(r>0)s.personal_cash=(s.personal_cash||0)-r;need-=fromCash;}
-   deploy=fromPolicy+fromCash;const marked=Math.round(deploy/discount);/* bought at a discount, marked at post-recovery value */const dipAlpha=marked-deploy;const monthlyCF=Math.round(marked*0.011);/* cheap basis throws off high yield (~13%/yr) */
-   s.investment_positions=(s.investment_positions||0)+marked;s.other_monthly_revenue=(s.other_monthly_revenue||0)+monthlyCF;s._bought_dip=(s._bought_dip||0)+1;
-   const srcParts=[];if(fromPolicy>0)srcParts.push(this.fmtMoney(fromPolicy)+' borrowed tax-free against your policy');if(fromCash>0)srcParts.push(this.fmtMoney(fromCash)+' from your reserves');
-   c.outcome_narrative='You moved while the rest of the market was paralyzed. You deployed <strong>'+this.fmtMoney(deploy)+'</strong> ('+srcParts.join(' + ')+') into distressed assets at a <strong>'+Math.round((1-discount)*100)+'% discount</strong> — the kind of basis you only get in a crash. Marked at their normalized value of ~<strong>'+this.fmtMoney(marked)+'</strong>, you\'re already up <strong>'+this.fmtMoney(dipAlpha)+'</strong> in equity, and the cheap basis throws off <strong>'+this.fmtMoney(monthlyCF)+'/mo</strong> in passive cash flow. '+(fromPolicy>0?'This is exactly why you funded the policy: when banks slammed the window shut, your cash value didn\'t care — tax-free capital, no application, no approval, and the 0% floor meant the crash never even dented it.':'You kept your powder dry instead of over-extending, so when the discount came you could actually act.')+' This is how fortunes transfer in a downturn — to whoever prepared for it.';}}
-  else{c.outcome_narrative='You stayed liquid and let it pass. Discipline has its own value — preserving reserves is never wrong. But assets this cheap, with sellers this motivated, are exactly what the prepared spend the good years getting ready for. The cycle always turns; the question is whether you\'ll have dry powder when it does.';}}
 // Partnership deal: the cash injection scales with your business level, so put the ACTUAL amount in the narrative instead of a flat "$20K".
 if(evt.id==='partner_offer'){const cashAmt=effects.cash||0;if(ci===0){this.state._partner_equity=0.30;c.outcome_narrative='The deal is signed — <strong>'+this.fmtMoney(cashAmt)+'</strong> in the bank plus a Rolodex of connections, in exchange for 30% equity. From now on your partner takes <strong>30% of every month\'s profit</strong> — it comes straight out of your cash and equity. That\'s the real price of selling a stake.';}else if(ci===1)c.outcome_narrative='She took the revenue-share — <strong>'+this.fmtMoney(cashAmt)+'</strong> upfront and you kept all your equity. Less capital now, but every future dollar stays yours.';}
 // Key-Man Leverage — hybrid claim: losing an operator always stops that asset's income; if the operator was insured, the policy retires that property's SPECIFIC mortgage (covered = contained), otherwise the loan remains while the income that served it is gone (uninsured = the lesson). The claim never exceeds that loan — never a windfall.
@@ -5521,16 +5115,7 @@ const scores=['Body','Mind','Spirit','Heart','Luxury'].map(k=>({label:this.LIFE_
 document.getElementById('lifestyle-scores').innerHTML='<div style="display:flex;gap:8px;margin-bottom:8px;grid-column:span 3;"><div class="stat-card" style="flex:1;"><div class="stat-value stat-positive" style="font-size:0.9rem;">'+this.fmtMoney(this.isSeparated()?(s.personal_cash||0):(s.cash||0))+'</div><div class="stat-label">'+(this.isSeparated()?'Personal Cash':'Cash')+'</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" style="font-size:0.9rem;color:'+(mastery>50?'var(--accent)':mastery>25?'var(--gold)':'var(--red)')+';">'+mastery+'</div><div class="stat-label">Personal Mastery</div></div></div>'+scores.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'">'+st.value+'</div><div class="stat-label">'+st.label+'</div></div>').join('');
 // Group actions by the five Personal-Development themes (weakest dimensions first)
 const themeVal={Body:d.Body,Mind:d.Mind,Spirit:d.Spirit,Heart:d.Heart,Luxury:d.Luxury};
-// Rotating batch: rather than dumping all 45 options every quarter, show a curated handful per theme that CHANGES each visit. Weakest dimensions lead; freshest (not recently shown) options are preferred, so each life check-in looks different. Whatever you saw last time rotates to the back; older options cycle back in.
-const PER_THEME=3,recent=this.state._life_recent||[],pocketOf=a=>(this.isSeparated()&&this.lifeActionIsPersonal(a))?(s.personal_cash||0):(s.cash||0);
-const _themes=['Body','Mind','Spirit','Heart','Luxury'].sort((x,y)=>(themeVal[x]||0)-(themeVal[y]||0));
-let _batch=[];
-for(const th of _themes){const inTheme=CONFIG.lifestyle_options.actions.filter(a=>(this.LIFE_THEME[a.subcategory]||'Luxury')===th);
- inTheme.sort((a,b)=>{const fa=recent.includes(a.id)?1:0,fb=recent.includes(b.id)?1:0;if(fa!==fb)return fa-fb;/* fresh first */const af=pocketOf(a)>=(a.cash_cost||0)?0:1,bf=pocketOf(b)>=(b.cash_cost||0)?0:1;if(af!==bf)return af-bf;/* affordable first */return (a.cash_cost||0)-(b.cash_cost||0);/* cheaper first */});
- _batch=_batch.concat(inTheme.slice(0,PER_THEME));}
-this._sortedLifestyle=_batch;
-// Remember what we just showed (front = most recent) so next quarter rotates to different options; cap so older ones become eligible again.
-this.state._life_recent=_batch.map(a=>a.id).concat(recent.filter(id=>!_batch.some(a=>a.id===id))).slice(0,2*PER_THEME*_themes.length);
+this._sortedLifestyle=[...CONFIG.lifestyle_options.actions].sort((a,b)=>{const ta=this.LIFE_THEME[a.subcategory]||'Luxury',tb=this.LIFE_THEME[b.subcategory]||'Luxury';if(ta!==tb)return (themeVal[ta]||0)-(themeVal[tb]||0);return (a.cash_cost||0)-(b.cash_cost||0);});
 let listHtml='',curSub='';
 this._sortedLifestyle.forEach(a=>{
 const theme=this.LIFE_THEME[a.subcategory]||'Luxury';
@@ -5670,7 +5255,7 @@ return out;},
 buildStatsDump(snap){if(!snap)return '';const MONEYK={cash:1,personal_cash:1,monthly_revenue:1,other_monthly_revenue:1,operating_expenses:1,cogs:1,owner_pay:1,living_expenses:1,lifestyle_expenses:1,total_debt:1,_installment_debt:1,business_installment_debt:1,real_estate_debt:1,available_credit:1,business_credit_limit:1,business_credit_used:1,insurance_cash_value:1,insurance_loan_balance:1,insurance_passive_loan_total:1,investment_positions:1,real_estate_equity:1,private_bank_balance:1,private_bank_loan:1,tax_reserve:1,capital_account:1,personal_guarantee_exposure:1,_owner_draws_total:1,personal_tax_ytd:1,_ytd_taxable_income:1};
 const fmtV=(k,v)=>{if(typeof v==='boolean')return v?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--text2)">—</span>';if(typeof v==='string')return this.formatStatName(v);if(MONEYK[k])return this.fmtMoney(Math.round(v));if(k==='churn_rate'||k==='tax_rate')return (Math.round(v*1000)/10)+'%';if(/utilization/.test(k))return Math.round(v)+'%';return (Math.round(v*100)/100);};
 const shown={},row=k=>{if(!(k in snap))return '';shown[k]=1;return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.71rem;padding:2px 0;border-bottom:1px solid rgba(127,127,127,0.08);"><span style="color:var(--text2);">'+this.formatStatName(k.replace(/^_/,''))+'</span><span style="text-align:right;white-space:nowrap;">'+fmtV(k,snap[k])+'</span></div>';};
-const groups=[['📊 Scores',['personal_mastery','freedom','dnb_score','biz_utilization','pers_utilization','actions_completed','milestones_hit','founder_role']],['💵 Money & Assets',['cash','personal_cash','available_credit','business_credit_limit','business_credit_used','total_debt','insurance_cash_value','investment_positions','real_estate_equity','real_estate_owned','real_estate_debt','private_bank_balance','private_bank_loan','tax_reserve','capital_account']],['📈 Income & Expenses',['monthly_revenue','other_monthly_revenue','owner_pay','operating_expenses','cogs','living_expenses','lifestyle_expenses','dscr']],['🏢 Business',['customer_base','leads','team_size','brand_equity','systems_maturity','key_person_dependency','sales_conversion','churn_rate','revenue_capacity','company_culture','audit_risk','litigation_exposure','partner_conflict_risk']],['🏦 Credit & Structure',['personal_credit_score','credit_negatives','business_credit_profile','_dnb_tradelines','entity_structure','trust_structure','tax_rate']],['🌴 Life & Energy',['energy','fitness_level','lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy']],['👔 Team & Roles',['_cfo_hired','_cfo_fulltime','_cro_hired','_cro_fulltime','_coo_hired','_coo_fulltime','_ea_hired','_gc_hired','_board_active','_passive_income_active','_dnb_profile','_auto_fund_insurance','_family_office']]];
+const groups=[['📊 Scores',['personal_mastery','freedom','dnb_score','biz_utilization','pers_utilization','actions_completed','milestones_hit','founder_role']],['💵 Money & Assets',['cash','personal_cash','available_credit','business_credit_limit','business_credit_used','total_debt','insurance_cash_value','investment_positions','real_estate_equity','real_estate_owned','real_estate_debt','private_bank_balance','private_bank_loan','tax_reserve','capital_account']],['📈 Income & Expenses',['monthly_revenue','other_monthly_revenue','owner_pay','operating_expenses','cogs','living_expenses','lifestyle_expenses','dscr']],['🏢 Business',['customer_base','leads','team_size','brand_equity','systems_maturity','key_person_dependency','sales_conversion','churn_rate','revenue_capacity','company_culture','audit_risk','litigation_exposure','partner_conflict_risk']],['🏦 Credit & Structure',['personal_credit_score','credit_negatives','business_credit_profile','_dnb_tradelines','entity_structure','trust_structure','tax_rate']],['🌴 Life & Energy',['energy','fitness_level','lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy']],['👔 Team & Roles',['_cfo_hired','_cro_hired','_coo_hired','_ea_hired','_gc_hired','_board_active','_passive_income_active','_dnb_profile','_auto_fund_insurance','_family_office']]];
 let body='';for(const[title,keys]of groups){const rows=keys.map(row).join('');if(rows)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">'+title+'</div>'+rows;}
 const other=Object.keys(snap).filter(k=>!shown[k]&&!/^(_completed_actions|_actions_seen|_action_counts|_milestones_achieved)$/.test(k)).sort();
 if(other.length)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">⚙ Other tracked values</div>'+other.map(row).join('');
@@ -5786,20 +5371,11 @@ calculateFinalScores(){const s=this.state;
 const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.real_estate_equity||0,reDebt=s.real_estate_debt||0,invest=s.investment_positions||0,polLoan=s.insurance_loan_balance||0,pbBal=s.private_bank_balance||0,pbLoan=s.private_bank_loan||0,bd=s.debt_breakdown||{};
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
 const otherDebt=Math.max(0,(s.total_debt||0)-reDebt-(bd.credit_card||0)-(bd.collections||0)-polLoan);
-// Logarithmic ladder helper (defined up here so leverage_efficiency can use it too).
-const _lg=(v,lo,hi)=>Math.max(0,Math.min(100,100*Math.log10(Math.max(1,v)/lo)/Math.log10(hi/lo)));
 // Passive, mostly tax-free, monthly income: policy-loan income (10%/yr once CV>=250k) + RE cashflow (~$700/property) + lending interest (12%/yr)
 const passiveMonthly=(s._passive_income_active?cv*0.06/12:0)+reOwned*700+invest*0.01+pbBal*0.004;
-// LEVERAGE EFFICIENCY — "max wealth with the least of your OWN money," but SAFELY. Not raw debt (over-leveraging is what the downturn margin-call punishes); efficiency is the asset base you CONTROL per dollar of your own equity, via other people's money — then gated by how safe that leverage is. A master controls ~4-5× their own capital through serviceable OPM; a blow-up (margin call, dangerous LTV, consumer debt) is the opposite of efficient and drags the score down.
-const controlled=reEquity+reDebt+invest+cv+pbBal;/* full productive asset base you command */
-const opm=reDebt+polLoan+pbLoan;/* other people's money financing that base (mortgages, policy loans, private-bank spread) */
-const netEquity=Math.max(2000,controlled-opm);/* YOUR actual skin in the game */
-const mult=controlled/netEquity;/* OPM multiple — assets controlled per dollar of your own equity */
-const scaleRamp=Math.min(1,controlled/200000);/* needs real asset scale (~$200k+) before the multiple counts — a tiny leveraged sliver doesn't max it */
-let levRaw=_lg(mult,1,5)*scaleRamp;/* 1×→0, 2×→43, 3×→68, 4×→86, 5×+→100 */
-// SAFETY gate — efficient leverage is SERVICEABLE leverage. A margin-call blow-up, a dangerously high real-estate LTV, or consumer "bad" debt all mark the leverage as reckless, not efficient — and pull the score well below a conservative borrower's.
-let safety=1;if(s._re_margin_called)safety*=0.5;const _reVal=reEquity+reDebt,_reLTV=_reVal>0?reDebt/_reVal:0;if(_reLTV>0.85)safety*=0.6;else if(_reLTV>0.75)safety*=0.85;if(badDebt>0)safety*=0.85;
-const lev=controlled<1000?0:Math.round(Math.max(0,Math.min(100,levRaw*safety)));
+// Leverage efficiency: % of productive asset base financed with good (OPM) debt, ramped by asset scale
+const controlled=reEquity+reDebt+invest+cv+pbBal,goodDebt=reDebt+(s.business_installment_debt||0)+polLoan+pbLoan;
+const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));
 // Net worth, leverage-aware: mortgage already netted inside reEquity; bad debt counts fully, other debt half, good debt not subtracted
 const nw=(s.cash||0)+(s.personal_cash||0)+reEquity+invest+cv+pbBal-polLoan-pbLoan-badDebt-otherDebt*0.5+(s.available_credit||0)*0.1;
 // Protection — how well the wealth is shielded: legal entity (liability separation) + asset-protection trust + insurance coverage + cash reserves. Credit/tax structure fold in here as the "don't lose it" pillar.
@@ -5811,8 +5387,7 @@ const burnP=Math.max(1,this.calcMonthlyBurn()),reserves=(s.tax_reserve||0)+Math.
 const resvPts=Math.min(25,(reserves/burnP/6)*25);/* ~6 months of burn held in reserve/cash = full */
 const protection=Math.round(Math.min(100,entPts+trustPts+insPts+resvPts));
 // Six end-game pillars (DESIGN.md). Passive tax-free income is the crown jewel; freedom (owner-independence) + leverage encode "max wealth & lifestyle with the least of your own money and time."
-// Logarithmic ladders so finance MASTERY differentiates instead of capping early. Tuned for the lean-business economy: passive $1k→0, $10k→50, $30k→74, $100k→100; net worth $50k→0, $1M→50, $5M→77, $20M→100. A finance dabbler lands ~50; a master climbs toward 100.
-return{passive_income:Math.round(_lg(passiveMonthly,1000,100000)),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.round(_lg(nw,50000,20000000))};},
+return{passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.min(100,Math.max(0,(nw/250000)*100))};},
 // Strong lifestyle gate: a wrecked life caps the final score (no "paradise" if you burned out). lifestyle 65+ = full, ~32 = half, floored at 0.3.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
 determineArchetype(scores){const A=id=>CONFIG.archetypes.win_archetypes.find(a=>a.id===id)||CONFIG.archetypes.win_archetypes[0];

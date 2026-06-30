@@ -2,38 +2,21 @@
   "version": "1.0.0",
   "actions": [
     {
-      "id": "hire_cro",
+      "id": "hire_sales_manager",
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional CRO",
-      "description": "Rent a part-time Chief Revenue Officer who picks and runs your smartest growth move each month.",
-      "lesson": "You can't afford an A-player full-time yet — so you rent one. A fractional executive is leverage on a budget: real expertise, part-time cost. It buys back your time now and proves out the role before you commit to a full salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 50000, "customer_base_gte": 120, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "brand_equity": 6, "key_person_dependency": -8, "_cro_hired": true },
+      "label": "Hire a Sales Manager",
+      "description": "Bring on a sales manager who runs your growth plays each month. You learned the skill — now delegate it and free yourself for finance.",
+      "lesson": "Great operators delegate only what they understand. You built the sales machine yourself first — now hand it off. A sales manager runs the playbook you wrote, and your energy shifts to where the real wealth is built: capital, credit, and passive income.",
+      "cash_cost": 3000,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 15000, "customer_base_gte": 20, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "brand_equity": 5, "key_person_dependency": -8, "_cro_hired": true },
       "success_rate": 0.88,
       "failure_effects": { "brand_equity": 2, "_cro_hired": true },
-      "narrative_success": "Your fractional CRO is on. Each month they pick and execute the smartest growth play. Part-time pay scales modestly with the company — when you can afford a full-timer, they'll do far more.",
-      "narrative_failure": "The fractional CRO is onboarding part-time. They'll be picking your growth moves from here."
-    },
-    {
-      "id": "promote_cro_fulltime",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CRO to Full-Time",
-      "description": "Make your CRO full-time so they actively build the growth engine — pricey, but powerful at scale.",
-      "lesson": "This is the ceiling great founders hit: top talent is expensive, and you can only afford it if your capital is working — credit funding growth, a tax-efficient structure protecting cash, and leverage compounding faster than payroll. Brute-force cash can't carry an A-team; efficient leverage can.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro"], "monthly_revenue_gte": 70000, "customer_base_gte": 90, "brand_equity_gte": 55 },
-      "effects": { "brand_equity": 12, "revenue_capacity": 8000, "key_person_dependency": -10, "_cro_fulltime": true },
-      "success_rate": 0.9,
-      "failure_effects": { "brand_equity": 4, "_cro_fulltime": true },
-      "narrative_success": "Your CRO is full-time now — and it shows. They're building the growth engine every day: capacity, pipeline, brand all climbing on their own. The salary is serious, but at your scale the leverage more than covers it.",
-      "narrative_failure": "The full-time offer is signed; they're still spinning up the bigger engine. The payroll hit is real from day one."
+      "narrative_success": "Your sales manager is running the growth plays each month. Marketing is off your plate — now focus on finance and wealth.",
+      "narrative_failure": "Your sales manager is onboarding. They'll be driving your marketing moves from here."
     },
     {
       "id": "build_offer",
@@ -54,7 +37,6 @@
     },
     {
       "id": "brand_pr_push",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "PR & Brand Campaign",
@@ -87,7 +69,6 @@
     },
     {
       "id": "franchise_licensing",
-      "enabled": false,
       "category": "marketing",
       "stage": "wealth",
       "label": "License or Franchise",
@@ -120,7 +101,6 @@
     },
     {
       "id": "basic_social_content",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "label": "Social Media Content",
@@ -153,7 +133,6 @@
     },
     {
       "id": "lead_magnet",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "one_time": true,
@@ -187,7 +166,6 @@
     },
     {
       "id": "referral_partnerships",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "Referral & Affiliate Partnerships",
@@ -220,7 +198,6 @@
     },
     {
       "id": "discount_promotion",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "label": "Offer a Discount to Drive Sales",
@@ -253,7 +230,6 @@
     },
     {
       "id": "build_sales_team",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "label": "Hire a Salesperson",
@@ -304,7 +280,6 @@
     },
     {
       "id": "vanity_follower_boost",
-      "enabled": false,
       "category": "marketing",
       "stage": "foundation",
       "one_time": true,
@@ -322,7 +297,6 @@
     },
     {
       "id": "influencer_megadeal",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
@@ -340,7 +314,6 @@
     },
     {
       "id": "national_ad_blitz",
-      "enabled": false,
       "category": "marketing",
       "stage": "wealth",
       "one_time": true,
@@ -358,7 +331,6 @@
     },
     {
       "id": "hire_highticket_closer",
-      "enabled": false,
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
