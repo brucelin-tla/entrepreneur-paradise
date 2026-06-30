@@ -1,5 +1,13 @@
 # Release Notes
 
+## v0.42.5 — 2026-06-29
+**Dashboard P&L row highlights**
+
+- Income/mo (Personal) and Revenue/mo (Business) now have a subtle green background highlight.
+- Expense/mo rows have a subtle red background highlight.
+- Cash flow/mo sits below both as the bold net result, with a larger value for emphasis.
+- Row order reflow: Income → Expense → Cash flow first, then Credit Score / Cash / Credit / Debt as the balance sheet block.
+
 ## v0.42.4 — 2026-06-29
 **Dashboard cashflow highlight**
 
