@@ -2,7 +2,7 @@
 :root{--bg:#0a0e17;--bg2:#111827;--bg3:#1a2236;--surface:#1f2937;--surface2:#273349;--border:#2d3a50;--text:#e8ecf2;--text2:#9ca3b4;--accent:#10b981;--accent2:#059669;--gold:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--pink:#ec4899;--radius:12px;--radius-sm:8px}
 *{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
 body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-.screen{display:none;min-height:100vh;padding:16px;padding-bottom:100px}.screen.active{display:block}
+.screen{display:none;min-height:100vh;padding:16px;padding-bottom:calc(165px + env(safe-area-inset-bottom,0px))}.screen.active{display:block}
 #title-screen{position:relative}
 #title-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,#0d1520 50%,var(--bg) 100%)}
 #title-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -84,7 +84,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .epilogue-box{background:var(--bg2);border-radius:var(--radius);padding:20px;font-size:0.92rem;line-height:1.8;margin-top:16px;white-space:pre-line}
 .lifestyle-header{text-align:center;margin-bottom:16px}.lifestyle-header h3{color:var(--purple);margin-bottom:4px}.lifestyle-header p{color:var(--text2);font-size:0.85rem}
 .fade-in{animation:fadeIn 0.3s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 30%);padding-top:30px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 30%);padding-top:30px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 .breakdown-row{display:flex;justify-content:space-between;padding:4px 0;font-family:monospace;font-size:0.85rem}
 .breakdown-total{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700}
 .breakdown-detail{font-size:0.75rem;color:var(--text2);padding-left:12px}

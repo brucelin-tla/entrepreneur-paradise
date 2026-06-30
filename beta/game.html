@@ -9,7 +9,7 @@
 :root{--bg:#0a0e17;--bg2:#111827;--bg3:#1a2236;--surface:#1f2937;--surface2:#273349;--border:#2d3a50;--text:#e8ecf2;--text2:#9ca3b4;--accent:#10b981;--accent2:#059669;--gold:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--pink:#ec4899;--radius:12px;--radius-sm:8px}
 *{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
 body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-.screen{display:none;min-height:100vh;padding:16px;padding-bottom:100px}.screen.active{display:block}
+.screen{display:none;min-height:100vh;padding:16px;padding-bottom:calc(165px + env(safe-area-inset-bottom,0px))}.screen.active{display:block}
 #title-screen{position:relative}
 #title-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,#0d1520 50%,var(--bg) 100%)}
 #title-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -91,7 +91,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 .epilogue-box{background:var(--bg2);border-radius:var(--radius);padding:20px;font-size:0.92rem;line-height:1.8;margin-top:16px;white-space:pre-line}
 .lifestyle-header{text-align:center;margin-bottom:16px}.lifestyle-header h3{color:var(--purple);margin-bottom:4px}.lifestyle-header p{color:var(--text2);font-size:0.85rem}
 .fade-in{animation:fadeIn 0.3s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 30%);padding-top:30px}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 30%);padding-top:30px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 .breakdown-row{display:flex;justify-content:space-between;padding:4px 0;font-family:monospace;font-size:0.85rem}
 .breakdown-total{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700}
 .breakdown-detail{font-size:0.75rem;color:var(--text2);padding-left:12px}
@@ -1068,8 +1068,8 @@ window.EMBEDDED_CONFIG = {
       "id": "velocity_banking",
       "category": "finance",
       "stage": "leverage",
-      "label": "Velocity Banking",
-      "description": "Run your household through a line of credit and sweep every surplus dollar at your debt — paying down a mortgage or revolving balance years faster. You set the aggressiveness; chunk extra anytime from the ⚡ panel, no turn needed.",
+      "label": "Velocity Banking 👑",
+      "description": "Epic Life perk. Run your household through a line of credit and sweep every surplus dollar at your debt — paying down a mortgage or revolving balance years faster. You set the aggressiveness; chunk extra anytime from the ⚡ panel, no turn needed.",
       "lesson": "Velocity banking turns idle cash into accelerated principal: parking income on a simple-interest line saves the interest you'd otherwise pay, and that saving knocks EXTRA principal off your amortizing debt — so it pays down years faster and your equity builds quicker. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.",
       "cash_cost": 0,
       "energy_cost": 3,
@@ -2385,10 +2385,11 @@ const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
 {v:'0.44.0',d:'2026-06-29 23:55',n:[
-'New playable strategy — Velocity Banking (Finance → Debt & Credit). Run your household through a line of credit and sweep your surplus straight at your debt, paying it down years faster. You choose the vehicle: a HELOC against your property (attacks the mortgage and builds equity quicker) or a credit line (attacks revolving debt).',
+'New Epic Life perk — Velocity Banking (Finance → Debt & Credit, members only). Run your household through a line of credit and sweep your surplus straight at your debt, paying it down years faster. You choose the vehicle: a HELOC against your property (attacks the mortgage and builds equity quicker) or a credit line (attacks revolving debt).',
 'You\'re in the driver\'s seat: pick how aggressively to sweep (Conservative 50% / Balanced 75% / Aggressive 100% of each month\'s surplus), then use the ⚡ Velocity chip on your dashboard to chunk extra cash, retune, switch vehicle, or pause — any month, no turn needed. A live readout shows interest saved, equity built, and your payoff date with vs. without velocity.',
 'Real estate now behaves like the real thing: your mortgage actually amortizes each month and that paid-down principal becomes equity (tenants paying down your loan), and the property appreciates ~3%/yr — so buying, holding, and accelerating the loan all build real wealth over time.',
 'The discipline still bites: velocity banking only accelerates while you\'re cash-flow positive — go negative and the deficit rides the line, and in a credit crunch an over-used line can get frozen. Keep it lightly used and it\'s pure upside.',
+'Mobile fix: the bottom "Next / End Turn" bar no longer covers the last items in your action list — you can now scroll all the way down to your Life actions and the "Show completed" toggle. Added safe-area spacing so the buttons clear the phone\'s home indicator too.',
 ]},
 {v:'0.43.6',d:'2026-06-29 23:40',n:[
 'Real estate reworked to be realistic: its real benefit is now the depreciation tax shield (it actually lowers your taxable income), the rent just about covers the mortgage, and the economy sets your entry price — buy in a downturn and you start with more equity. No more fantasy 30%/yr rent yields.',
@@ -3060,7 +3061,7 @@ const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash
 return[...reps,...rest].slice(0,CAP);}
 const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
-isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
+isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this._epicOnlyLocked(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
 
 // Risk-priced, by debt type: unsecured personal revolving (credit cards) is brutal (~18–26% APR by score), term/business debt is risk-based (good credit = cheaper money), real estate is cheap secured debt, policy/private-bank loans are near-free.
 calcDebtInterest(){const s=this.state,score=s.personal_credit_score||600,cfo=s._cfo_hired?0.9:1;
@@ -3101,7 +3102,9 @@ _velocityReadout(){const s=this.state;const heloc=s._velocity_vehicle==='heloc'&
  const fmtMo=m=>m<=0?'—':m>=24?(Math.round(m/12*10)/10)+' yrs':m+' mo';
  return{heloc,target,targetBal,modeKey,modeLabel,targetLabel,vehicleLabel,interestSaved:s._velocity_interest_saved||0,equityBuilt:s._velocity_equity_built||0,totalChunked:s._velocity_total_chunked||0,etaBaseText:fmtMo(etaBase),etaVelText:fmtMo(etaVel)};},
 // The Velocity Banking control panel — reached from the Finance action card (turn-on consumes the finance move) OR the ⚡ dashboard chip (ongoing tuning & manual chunks are free, no turn).
-openVelocityControl(){const s=this.state;const active=!!s._velocity_active;
+openVelocityControl(){const s=this.state;
+ if(!s._epic_life){this.showPopup('👑 Velocity Banking — Epic Life perk','<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Velocity banking is an <strong>Epic Life membership</strong> play. Your concierge sets up the line, and you get the ⚡ control to sweep surplus cash at your debt — paying a mortgage or revolving balance down years faster and building equity quicker.</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-top:10px;">Join Epic Life from the Finance menu to unlock it (along with the rest of the concierge wealth engine).</div>');return;}
+ const active=!!s._velocity_active;
  const reDebt=(s.real_estate_debt||0),reEq=(s.real_estate_equity||0),hasRE=reDebt>0&&reEq>0;
  const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-reDebt),hasLine=lineCap>0||revDebt>0;
  if(!s._velocity_vehicle)s._velocity_vehicle=hasRE?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';if(s._velocity_vehicle==='heloc'&&!hasRE)s._velocity_vehicle='line';
@@ -3864,7 +3867,9 @@ toggleFocus(){this._focusMode=this._focusMode===false?true:false;this._setupActi
 _bestLifestyle(){const s=this.state,subs={health:s.lifestyle_health||0,relationships:s.lifestyle_relationships||0,experiences:s.lifestyle_experiences||0,spiritual:s.lifestyle_spiritual||0,philanthropy:s.lifestyle_philanthropy||0,legacy:s.lifestyle_legacy||0};const opts=(CONFIG.lifestyle_options.actions||[]).filter(a=>((this.isSeparated()&&this.lifeActionIsPersonal(a))?(s.personal_cash||0):(s.cash||0))>=(a.cash_cost||0));if(!opts.length)return null;const score=a=>{let v=0;const ef=a.effects||{};for(const k in ef){if(typeof ef[k]==='number'&&(k.indexOf('lifestyle_')===0||k==='energy'||k==='fitness_level'))v+=ef[k];}v+=(100-(subs[a.subcategory]||0))*0.5;const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.5,1-cnt*0.2);return v;};return opts.slice().sort((a,b)=>score(b)-score(a))[0];},
 // Epic Life Membership — finance actions the concierge runs for you (so the player no longer picks them manually).
 EPIC_HANDLED:['wyoming_holding_llc','asset_protection_stack','combined_insurance','debt_restructure','build_personal_credit','pay_down_debt','banking_relationship','fund_accumulation_policy','activate_passive_income','policy_loan'],
+EPIC_ONLY:['velocity_banking'],/* exclusive members-only plays — visible in the menu as an Epic perk, but the control & mechanism stay locked until you join */
 _epicHandled(a){return !!this.state._epic_life&&this.EPIC_HANDLED.includes(a.id)&&!this.isActionCompleted(a);},
+_epicOnlyLocked(a){return this.EPIC_ONLY.includes(a.id)&&!this.state._epic_life;},
 // Each month pick the single highest-priority financial move that's genuinely needed, available (prereqs met) and comfortably affordable. Returns a cloned action flagged _epic, or null. Executed as an extra action in resolveMonth and attributed to the membership.
 _epicLifePick(){const s=this.state,fin=id=>CONFIG.actions_finance.actions.find(a=>a.id===id),util=this.calcPersUtil();
 const persRev=()=>Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
@@ -3979,7 +3984,7 @@ this.resolveMonth();},
 
 selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(id==='velocity_banking'){this.openVelocityControl();return;}/* velocity banking opens its control panel instead of a plain queue: turn-on consumes the finance turn, ongoing tuning/chunks are free */this._paymentMethod='cash';this.selectAction(cat,id);},
 
-getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}{const ec=this.actionEnergyCost(a);if(ec>0&&(s.energy||0)-ec<-40)return'Too exhausted';}for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k==='liquid_cash_gte')return'Need '+this.fmtMoney(v)+' in cash';if(k==='cash_gte')return'Need '+this.fmtMoney(v)+' in cash or credit';if(k==='net_worth_gte')return'Need '+this.fmtMoney(v)+' net worth';if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
+getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(this._epicOnlyLocked(a))return'👑 Epic Life members only';if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}{const ec=this.actionEnergyCost(a);if(ec>0&&(s.energy||0)-ec<-40)return'Too exhausted';}for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k==='liquid_cash_gte')return'Need '+this.fmtMoney(v)+' in cash';if(k==='cash_gte')return'Need '+this.fmtMoney(v)+' in cash or credit';if(k==='net_worth_gte')return'Need '+this.fmtMoney(v)+' net worth';if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
 actionLabel(id){for(const c of ['actions_marketing','actions_operations','actions_finance']){const a=((CONFIG[c]||{}).actions||[]).find(x=>x.id===id);if(a)return a.label;}return id.replace(/_/g,' ');},
 // Action-card preview: name every stat an action impacts. Money & credit-score stats also show the CURRENT value (those need a reference point); operational stats (leads, brand, systems…) just name the stat. The projected RESULT is gated behind hiring a fractional CFO.
 actionPreview(a){const s=this.state,cfo=(s._completed_actions||[]).includes('hire_fractional_cfo');
