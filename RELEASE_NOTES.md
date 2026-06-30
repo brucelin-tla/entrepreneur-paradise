@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.42.3 — 2026-06-30
+**Beta Tester access (gated)**
+
+- Added a **🧪 Beta Tester** item to the main menu. Entering the beta code redirects to the `/beta/` subfolder, which hosts the in-progress Finance & Economy overhaul build (v0.43.x). Code-gated (`Game.BETA_CODE`/`BETA_URL`, `showBeta`/`enterBeta`). The live production game is otherwise unchanged.
+- The beta build is a copy of the `wip/finance-economy-overhaul` build placed under `/beta/`, with a "BETA" tag on its title/loading screen. It is a testing build — progress there is separate from the live game.
+
 ## v0.42.2 — 2026-06-30
 **Utilization/RE bug, exec auto-play prerequisites, lifestyle pocket fix, event throttle, checkpoint resume, leaderboard detail, Established head-start**
 

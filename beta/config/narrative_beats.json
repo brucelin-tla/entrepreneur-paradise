@@ -1,0 +1,84 @@
+﻿{
+  "version": "1.0.0",
+  "fixed_beats": [
+    {
+      "month": 1,
+      "archetype": "stuck",
+      "title": "The Reckoning",
+      "narrative": "You pulled your credit report this morning. The number stared back at you like a verdict. Collections accounts you'd been ignoring. A credit card balance that grew while you weren't looking. The wreckage of a life event you didn't choose, turned into a financial score you have to fix.\n\nBut here's the thing — you've built something before. The instincts are still there. The hustle is still there. What's missing is the foundation. Time to build one.",
+      "mentor_line": "Marcus Webb slides a napkin across the table. 'Three numbers: your credit score, your total debt, your monthly revenue. No judgment — just math. Now here's what I'd sit with: which one, if you moved it first, changes everything else?'"
+    },
+    {
+      "month": 1,
+      "archetype": "new",
+      "title": "Day One",
+      "narrative": "Your business officially exists as of today. No clients, no revenue, no reputation — just a laptop, an idea, and the savings account that's going to fund this dream until it funds itself.\n\nEveryone you told said some version of 'that's brave.' What they meant was 'that's terrifying.' They're not wrong.",
+      "mentor_line": "Marcus Webb leans back in his chair. 'Forget the logo, the website, the five-year plan — none of it matters yet. Here's the only question I'd be asking myself this month: who is the one person who'd pay you for what you do, and what's stopping you from asking them today?'"
+    },
+    {
+      "month": 1,
+      "archetype": "established",
+      "title": "The Wake-Up Call",
+      "narrative": "The tax bill arrived yesterday. It was... larger than expected. Your accountant said, 'We should talk about your entity structure,' which is accountant for 'you're leaving money on the table and I've been telling you for two years.'\n\nYour business made good money last year. Your tax strategy was to make good money and hope for the best. That's not a strategy. And looking at the rest of your setup — no asset protection, no succession plan, key-man dependency through the roof — you realize the business is successful despite your structure, not because of it.\n\nTime to build the scaffolding around what you've already created.",
+      "mentor_line": "Marcus Webb looks at your P&L and nods slowly. 'The revenue's real, the profit's real — but it's all exposed. One lawsuit, one health scare, one bad quarter from gone. So here's the question I'd ask before anything else: what would you lose tomorrow if everything went wrong today?'"
+    },
+    {
+      "month": 6,
+      "archetype": null,
+      "title": "Six-Month Check-In",
+      "narrative": "Half a year in. The spreadsheet tells one story — the numbers, the trajectory, the cold math of progress. But sitting here at the end of month six, the real story is about what you've learned about yourself as much as what you've built.\n\nAre you the kind of person who fixes the foundation or skips to the roof? Who invests in protection or rolls the dice? Who builds systems or stays the hero? Six months of answers are on the board.",
+      "mentor_line": null
+    },
+    {
+      "month": 12,
+      "archetype": null,
+      "title": "Year One Complete",
+      "narrative": "Twelve months. A full year of decisions, risks taken and avoided, money earned and spent and borrowed and repaid. You are not the same person who started this.\n\nThe question now isn't whether you can survive — you've proven that. The question is whether you can build something that outlasts your daily effort. Year two is where the answer takes shape.",
+      "mentor_line": "Marcus Webb reviews your year-end numbers. 'Year one proves the model works. Year two proves it works without you in every seat. Here's what I'd be asking myself now: which seat are you most afraid to give up?'"
+    },
+    {
+      "month": 18,
+      "archetype": null,
+      "title": "The Midpoint Crisis",
+      "narrative": "Month eighteen. You're halfway through, and the landscape looks different from up here. More is at stake now — more revenue, more people depending on you, more assets to protect, more ways things can go sideways.\n\nThis is the inflection point. The choices you make in the next six months will determine whether the back half of this journey is about scaling something strong or patching something fragile.",
+      "mentor_line": "Marcus Webb is unusually serious today. 'The next six months are where most founders either level up or stall out — the tactics that got you here won't get you there. Here's the question I'd answer first: what's the one thing you've been avoiding?'"
+    },
+    {
+      "month": 24,
+      "archetype": null,
+      "title": "Year Two Complete",
+      "narrative": "Two years. Twenty-four months of building. The business has a shape now — a real shape, with systems and people and customers who would notice if it disappeared.\n\nThe final year isn't about building more. It's about building right. Protection, passive income, tax efficiency, and the life you're supposed to be living while all this happens.\n\nTwelve months to finish what you started.",
+      "mentor_line": null
+    },
+    {
+      "month": 30,
+      "archetype": null,
+      "title": "The Test",
+      "narrative": "Everything you've built gets tested this month. Not by you — by circumstances. The market shifts. A key relationship is strained. A number you've been watching finally crosses a line.\n\nThis is the moment the foundation either holds or cracks. Every decision you made — every system you built, every protection you put in place, every relationship you maintained or neglected — shows its weight right now.",
+      "mentor_line": "Marcus Webb calls instead of meeting in person. His voice is calm. 'This is the month that separates the builders from the survivors. Everything until now was preparation. Here's what I'd be asking myself: did you build it to hold?'"
+    },
+    {
+      "month": 36,
+      "archetype": null,
+      "title": "The Verdict",
+      "narrative": "Thirty-six months. The journey ends — or rather, this chapter of it does. The numbers will tell one version of the story. The radar chart will show six dimensions of what you built.\n\nBut the real verdict is simpler: Did you build something that lasts? Did you build something that works without you? Did you build a life worth living while you built the business?\n\nThe answers are in the choices you made — all of them, from month one to right now.",
+      "mentor_line": "Marcus Webb shakes your hand. 'I've seen a lot of people sit where you're sitting — most are still stuck where they started. You're not. Here's the question that matters more than the numbers: did you build a life worth living while you built this?'"
+    }
+  ],
+  "monthly_cliffhangers": [
+    { "text": "You're doing real business now — but the business is still legally just you. No LLC means every client and every contract is a direct line to your personal savings. One bad dispute could take it all.", "requires": { "monthly_revenue_gte": 5000, "entity_structure": "none" } },
+    { "text": "A client offhandedly mentioned 'getting their lawyer involved.' Probably nothing. But you have no LLC — no legal shield. If they're serious, there's nothing between them and everything you own.", "requires": { "monthly_revenue_gte": 9000, "entity_structure": "none" } },
+    { "text": "You felt run-down all week. It hit you: you ARE the business. If your body quit tomorrow, the income would stop cold — and you have nothing in place to replace it.", "requires": { "monthly_revenue_gte": 6000, "insurance_coverage_lte": 0 } },
+    { "text": "You've built something real now — accounts, maybe property, serious income. And it's all sitting in the open. No trust, no asset protection. One determined lawsuit could reach all of it.", "requires": { "monthly_revenue_gte": 25000, "trust_structure": "none" } },
+    { "text": "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.", "requires": { "team_size_gte": 1 } },
+    { "text": "You overheard two team members talking about job postings. They went quiet when you walked by.", "requires": { "team_size_gte": 2 } },
+    { "text": "The banker asked you to come in next week. She didn't say why. She sounded... careful.", "requires": { "total_debt_gte": 5000 } },
+    { "text": "Your biggest client's contract renews next month. They haven't said anything. The silence is louder than a complaint.", "requires": { "customer_base_gte": 5 } },
+    { "text": "A competitor just launched something that looks a lot like your offer. Coincidence? Doesn't matter — the market noticed.", "requires": { "monthly_revenue_gte": 3000 } },
+    { "text": "The quarterly tax estimate arrived. The number has an extra digit this time.", "requires": { "monthly_revenue_gte": 5000 } },
+    { "text": "The phone rang as you were locking up. You didn't answer. The voicemail light blinks — it can wait until morning. Or can it?", "requires": {} },
+    { "text": "An email arrived at 11:47 PM. Subject line: 'We need to talk.' You'll open it tomorrow.", "requires": {} },
+    { "text": "The market report came out today. The trends are shifting. Your industry is in the crosshairs — for better or worse.", "requires": {} },
+    { "text": "You realized today that you can't remember the last time you did something just for fun. Not networking, not 'productive rest.' Just fun.", "requires": { "energy_lte": 50 } }
+  ]
+}

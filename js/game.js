@@ -43,6 +43,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.42.3',d:'2026-06-30 20:00',n:[
+'New: 🧪 Beta Tester access on the main menu. Got a beta code? Enter it to try the in-progress Finance & Economy overhaul build. The live game is unchanged.',
+]},
 {v:'0.42.2',d:'2026-06-30 18:00',n:[
 'Fixed utilization reading ~96% “but healthy” the moment you bought real estate — your mortgage was wrongly counted as credit-card utilization. Now your score climbs as it should.',
 'Fixed the menu asking you to “hire a fractional CRO” when you already have one (a failed hire roll left the role unmarked). Self-heals existing games.',
@@ -472,8 +475,13 @@ if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
 h+=item('🎟','Redeem Code','Unlock content with a code','Game.showRedeem()');
+h+=item('🧪','Beta Tester','Try the new overhaul (code required)','Game.showBeta()');
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
 mm.innerHTML=h;},
+// ---- Beta access: gate the in-progress Finance & Economy overhaul build behind a code. Correct code → redirect to the /beta/ subfolder where the testing build is hosted. ----
+BETA_CODE:'beta',BETA_URL:'beta/index.html',
+showBeta(){const h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">The <strong>Finance &amp; Economy overhaul</strong> is in testing. Enter the beta code to jump to the testing build. It\'s a work in progress — your progress there is separate from the live game.</div><input id="beta-input" class="name-input" placeholder="Enter beta code" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key===\'Enter\')Game.enterBeta()"><button class="btn-primary" style="margin-top:4px;" onclick="Game.enterBeta()">Enter Beta</button><div id="beta-msg" style="min-height:18px;margin-top:10px;font-size:0.82rem;font-weight:600;text-align:center;line-height:1.45;"></div>';this.showPopup('🧪 Beta Tester Access',h);setTimeout(()=>{const i=document.getElementById('beta-input');if(i)i.focus();},40);},
+enterBeta(){const el=document.getElementById('beta-input'),msg=document.getElementById('beta-msg');if(!msg)return;const code=this._normCode(el&&el.value);if(!code){msg.style.color='var(--text2)';msg.textContent='Enter the code first.';return;}if(code!==this.BETA_CODE){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);},
 showMainMenu(){this.showScreen('title-screen');const mm=document.getElementById('main-menu');if(mm)mm.style.display='';['profile-select','resume-list','whats-new'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});this.renderMainMenu();this._renderUpdateIcon();window.scrollTo(0,0);},
 showProfileSelect(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const ps=document.getElementById('profile-select');if(ps)ps.style.display='';this.renderArchetypes();window.scrollTo(0,0);},
 showLoadGame(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const rl=document.getElementById('resume-list');if(rl)rl.style.display='';this.renderSaves();window.scrollTo(0,0);},

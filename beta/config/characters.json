@@ -1,0 +1,117 @@
+{
+  "version": "1.0.0",
+  "characters": {
+    "mentor": {
+      "name": "Marcus Webb",
+      "role": "mentor",
+      "description": "Serial entrepreneur turned coach. Built and sold two companies before 40. Now he helps others avoid his mistakes — for a fee.",
+      "relationship_states": {
+        "unavailable": { "description": "Haven't met yet" },
+        "introduced": { "description": "First meeting", "tone": "Warm but evaluating" },
+        "advising": { "description": "Active mentorship", "tone": "Direct, occasionally blunt" },
+        "trusted": { "description": "Deep relationship", "tone": "Honest, invested in your success" }
+      },
+      "lines": {
+        "introduced": [
+          "I've seen a hundred founders in your exact position. The ones who made it got honest about what's broken and fixed the foundation before chasing growth. So here's what I'd be asking myself first: what's actually broken right now?",
+          "The fancy stuff everyone wants to skip to? It doesn't work without the boring stuff first. Here's the question I'd sit with: what boring thing are you avoiding?"
+        ],
+        "advising": [
+          "Last month you {last_action}. That was {assessment}. Here's what I'd be asking myself next: does your next move build on it, or scatter your focus?",
+          "Your numbers say one thing, your energy says another. Here's what I'd do next — sit with the harder question: which one are you pretending isn't true?"
+        ],
+        "trusted": [
+          "Remember when you first walked in here? Look at your numbers now — that's discipline, not luck. So here's what I'd ask now: what got you here that won't get you to the next level?",
+          "I'm going to push back. You're ready, but your systems aren't. Here's the question I'd answer before you scale: what breaks first if you double tomorrow?"
+        ]
+      }
+    },
+    "banker": {
+      "name": "Diana Chen",
+      "role": "banker",
+      "description": "VP of commercial lending at a regional bank. Professional, data-driven, and surprisingly human once you earn her trust.",
+      "relationship_states": {
+        "stranger": { "description": "No relationship", "tone": "Formal, by-the-book" },
+        "skeptical": { "description": "Knows you, not impressed", "tone": "Polite but guarded" },
+        "neutral": { "description": "Established account", "tone": "Professional, straightforward" },
+        "trusted": { "description": "Strong relationship", "tone": "Proactive, brings you deals" },
+        "champion": { "description": "Advocate for your business", "tone": "Goes to bat for you internally" }
+      },
+      "lines": {
+        "stranger": [
+          "We'll need at least six months of bank statements and your last two tax returns to start the conversation."
+        ],
+        "skeptical": [
+          "Your revenue is there, but your DSCR makes me nervous. Come back when the ratio improves."
+        ],
+        "neutral": [
+          "Your account has been consistent. Let's talk about what comes next — what do you need capital for?"
+        ],
+        "trusted": [
+          "I saw a deal come across my desk that might interest you. Off-market, below appraisal. Want me to send it over?"
+        ],
+        "champion": [
+          "I went to the credit committee for you. They approved it. You've earned a lot of trust here."
+        ]
+      }
+    },
+    "rival": {
+      "name": "Jordan Blake",
+      "role": "rival",
+      "description": "Started around the same time you did. Flashier, louder, always posting wins on social media. Sometimes ahead of you, sometimes flaming out.",
+      "relationship_states": {
+        "unknown": { "description": "Haven't crossed paths" },
+        "acquaintance": { "description": "Know of each other" },
+        "competitor": { "description": "Directly competing" },
+        "fallen": { "description": "They failed" },
+        "respect": { "description": "Mutual respect earned" }
+      },
+      "lines": {
+        "acquaintance": [
+          "You see Jordan's latest post? New office, new car, talking about '10x growth.' The comments are eating it up."
+        ],
+        "competitor": [
+          "Jordan just poached one of your leads. Same pitch, lower price. It's personal now — or it feels like it.",
+          "Word is Jordan took on a big investor. More cash, more risk. Interesting choice."
+        ],
+        "fallen": [
+          "Jordan's company went dark last month. Website down, phone disconnected. The social media posts stopped around the same time. You feel... complicated things about this.",
+          "Someone who used to work for Jordan called you looking for a job. They said it was chaos behind the scenes for months."
+        ],
+        "respect": [
+          "Jordan reached out — not to compete, but to collaborate. Turns out you both learned the same lessons the hard way.",
+          "You ran into Jordan at a conference. The bravado is gone. What's left is someone who actually gets it."
+        ]
+      }
+    },
+    "family": {
+      "name": "Your Family",
+      "role": "family",
+      "description": "The people waiting at home. Their patience is real but not infinite.",
+      "relationship_states": {
+        "strained": { "description": "They're worried about you", "tone": "Tense, careful" },
+        "coping": { "description": "Making it work", "tone": "Supportive but tired" },
+        "stable": { "description": "Good place", "tone": "Present, connected" },
+        "thriving": { "description": "Flourishing together", "tone": "Joyful, grounded" }
+      },
+      "lines": {
+        "strained": [
+          "The kids asked when you'd be home for dinner again. Your partner answered for you: 'Soon.' Neither of them believed it.",
+          "You missed another recital. The video your partner sent was captioned with just a period."
+        ],
+        "coping": [
+          "Dinner together tonight. The conversation felt a little stiff at first, then your kid told a joke and everyone laughed. Progress.",
+          "Your partner said 'I can see you're trying.' That landed harder than any business win this month."
+        ],
+        "stable": [
+          "Saturday morning pancakes have become a thing. No phones at the table. Your kid started calling it 'family meeting.'",
+          "Your partner planned a weekend trip without asking about your calendar. They knew you'd be available. That's trust."
+        ],
+        "thriving": [
+          "Your kid brought their school project to your office. 'I want to build a business like yours,' they said. You teared up at your desk.",
+          "Date night isn't a calendar event anymore — it's just what you do. The business runs. The family runs. You did it."
+        ]
+      }
+    }
+  }
+}

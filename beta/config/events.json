@@ -1,0 +1,881 @@
+{
+  "version": "1.0.0",
+  "events": [
+    {
+      "id": "key_operator_loss",
+      "category": "people",
+      "requires": { "_asset_units_gte": 1 },
+      "base_probability": 0.04,
+      "probability_scales_with": "_asset_units",
+      "scale_factor": 0.03,
+      "narrative": "The operator running one of your income properties is suddenly out — a serious illness, then weeks in the hospital. They can't run the asset, tenants are calling, and the mortgage on that building doesn't pause for anyone.",
+      "act": 3,
+      "choices": [
+        { "label": "Handle the fallout", "effects": {}, "outcome_narrative": "You step in to stabilize the property and sort out what the policies cover." }
+      ]
+    },
+    {
+      "id": "liability_lawsuit",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
+      "base_probability": 0.11,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.00000022,
+      "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Settle out of court",
+          "effects": { "cash": -6000, "brand_equity": -4 },
+          "outcome_narrative": "You settled to make it go away. Expensive, but the alternative was a year of legal fees and a court date hanging over everything."
+        },
+        {
+          "label": "Fight it with your attorney",
+          "effects": { "cash": -8000, "energy": -15, "litigation_exposure": 5 },
+          "outcome_narrative": "Your attorney mounts a defense. It drags on and drains you, but you refuse to be shaken down."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+        "protected_note": "Because the business is an LLC, the lawsuit stopped at the company. Your home, your savings, and your personal credit are untouched — this is exactly what the LLC is for.",
+        "unprotected_note": "You never formed an LLC, so there was no legal wall between you and the business. The claim came straight for your personal assets and credit. A $300 LLC filing would have contained all of this.",
+        "unprotected_extra": { "cash": -8000, "personal_credit_score": -40, "personal_guarantee_exposure": 15000 }
+      },
+      "mitigated_by": ["client_onboarding", "basic_quality_control", "hire_general_counsel"]
+    },
+    {
+      "id": "founder_health_crisis",
+      "category": "personal",
+      "requires": { "monthly_revenue_gte": 6000 },
+      "base_probability": 0.035,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Push through, work from bed",
+          "effects": { "energy": -20, "fitness_level": -15, "lifestyle_health": -12 },
+          "outcome_narrative": "You kept the lights on by sheer will. It cost you — your body and the people who love you both noticed."
+        },
+        {
+          "label": "Rest and let the business coast",
+          "effects": { "customer_base": -3 },
+          "outcome_narrative": "You took the time to heal. A few clients drifted while you were out, but you came back whole."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "insurance_coverage_gte": 1 },
+        "protected_note": "Your income protection policy kicked in, replacing much of your income while you recovered. This is the exact scenario it exists for — you healed without the money stopping.",
+        "unprotected_note": "With no income protection, there was no safety net. Every day you couldn't work was a day with nothing coming in — and the bills never paused.",
+        "unprotected_extra": { "cash": -9000, "total_debt": 4000 },
+        "claim_pct": 0.8,
+        "critical_illness": true,
+        "recovery_months": 3
+      },
+      "mitigated_by": ["write_first_sop", "full_systemization"]
+    },
+    {
+      "id": "key_person_loss",
+      "category": "people",
+      "requires": { "team_size_gte": 2, "key_person_dependency_gte": 35 },
+      "base_probability": 0.08,
+      "probability_scales_with": "key_person_dependency",
+      "scale_factor": 0.001,
+      "narrative": "Your right hand — the one team member who holds half the operation in their head — is suddenly out: a serious health emergency has put them on indefinite leave, and it's unclear if they'll be back. Overnight, critical knowledge and your biggest client relationships went dark.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Scramble to cover the gap",
+          "effects": { "energy": -15, "systems_maturity": -5, "customer_base": -2 },
+          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing while your colleague recovers. Mostly, it worked."
+        },
+        {
+          "label": "Hire a replacement fast",
+          "effects": { "cash": -6000, "energy": -8 },
+          "outcome_narrative": "You paid up to backfill the role quickly. The new hire needs ramp time, but the bleeding stopped."
+        }
+      ],
+      "protection": {
+        "shielded_by": "keyman_insurance",
+        "payout": 25000,
+        "protected_note": "This is exactly what key-person insurance is for: when a critical person is lost to illness, injury, or death, the policy pays the business a lump sum. It funded a fast, well-paid replacement and bridged the gap — the business barely skipped a beat.",
+        "unprotected_note": "With no key-person coverage, there was no benefit to cushion the blow. You ate the cost and the chaos directly, and a few clients slipped away during the scramble.",
+        "unprotected_extra": { "cash": -8000, "customer_base": -3 }
+      },
+      "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
+    },
+    {
+      "id": "capital_crunch",
+      "category": "debt",
+      "requires": { "monthly_revenue_gte": 8000 },
+      "base_probability": 0.08,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "Your main equipment dies / a critical bill comes due — it can't wait. You need $15,000 immediately, so you go looking for financing.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Cover it from cash reserves",
+          "effects": { "cash": -15000 },
+          "outcome_narrative": "You had the reserves to handle it outright — no new debt, no lender, no drama. This is exactly why you keep a buffer."
+        },
+        {
+          "label": "Finance it and keep moving",
+          "effects": { "total_debt": 15000, "operating_expenses": 150 },
+          "outcome_narrative": "You got the money and got back to work. Now to pay it back."
+        }
+      ],
+      "mitigated_by": ["banking_relationship", "fund_accumulation_policy"],
+      "protection": {
+        "shielded_when": { "personal_credit_score_gte": 680 },
+        "protected_note": "Your strong credit landed a low-interest loan, approved fast. Good credit is cheapest precisely when you need money in a hurry — the years of building it just paid off.",
+        "unprotected_note": "Your weak credit meant predatory terms — high interest and fees stacked on top. Borrowing is most expensive exactly when you can least afford it. This is why you build credit BEFORE you need it.",
+        "unprotected_extra": { "total_debt": 8000, "personal_credit_score": -10, "operating_expenses": 250 }
+      }
+    },
+    {
+      "id": "major_lawsuit_wealth",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 25000 },
+      "base_probability": 0.09,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A serious claim lands: a major client alleges your work cost them six figures, and they've hired an aggressive firm coming after everything you've built.",
+      "act": 3,
+      "choices": [
+        {
+          "label": "Settle to limit exposure",
+          "effects": { "cash": -12000, "brand_equity": -5 },
+          "outcome_narrative": "You negotiated it down and settled. A heavy hit, but you contained it and moved on."
+        },
+        {
+          "label": "Fight it to the end",
+          "effects": { "cash": -15000, "energy": -20, "litigation_exposure": 10 },
+          "outcome_narrative": "A long, draining fight — but you prevailed. It cost time and focus you'll never get back."
+        }
+      ],
+      "protection": {
+        "shielded_when": { "trust_structure_not": "none" },
+        "protected_note": "Your trust and asset-protection structure did its job — the wealth they came for was legally walled off and out of reach. The fortress held, exactly as designed.",
+        "unprotected_note": "With no trust or asset-protection structure, everything you'd accumulated was exposed. They went after the accounts and forced personal guarantees — the wealth was sitting in the open.",
+        "unprotected_extra": { "cash": -20000, "personal_guarantee_exposure": 30000 }
+      },
+      "mitigated_by": ["keyman_insurance", "hire_general_counsel"]
+    },
+    {
+      "id": "scaling_chaos",
+      "category": "operations",
+      "requires": { "monthly_revenue_gte": 20000, "systems_maturity_lte": 40 },
+      "base_probability": 0.13,
+      "probability_scales_with": "monthly_revenue",
+      "scale_factor": 0.0000006,
+      "narrative": "Growth outran your systems. Orders are slipping, two clients got the wrong deliverable, and your team is firefighting instead of working. You scaled the revenue but not the machine — and it's breaking.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Pull all-nighters and fix it yourself",
+          "effects": { "energy": -20, "key_person_dependency": 8, "customer_base": -3 },
+          "outcome_narrative": "You personally caught up the backlog — at the cost of your sleep and by making the business depend on you even more. A patch, not a fix."
+        },
+        {
+          "label": "Refund affected clients and apologize",
+          "effects": { "cash": -6000, "brand_equity": -6, "customer_base": -4 },
+          "outcome_narrative": "You ate the cost and the reputation hit. The clients appreciated the honesty, but a few walked. Growth without systems has a price."
+        }
+      ],
+      "mitigated_by": ["fulfillment_system", "full_systemization", "basic_quality_control", "project_management"]
+    },
+    {
+      "id": "client_dispute",
+      "category": "litigation",
+      "requires": { "customer_base_gte": 10 },
+      "base_probability": 0.08,
+      "probability_scales_with": "customer_base",
+      "scale_factor": 0.001,
+      "narrative": "An email from an attorney lands in your inbox. A former client claims you didn't deliver what was promised — and they want their money back, plus damages.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Settle quickly",
+          "effects": { "cash": -3000, "brand_equity": -3 },
+          "outcome_narrative": "You wrote the check. It stung. But the alternative was six months of legal fees and the distraction of a court date hanging over you."
+        },
+        {
+          "label": "Fight it with your attorney",
+          "effects": { "cash": -5000, "energy": -10, "brand_equity": 2 },
+          "outcome_narrative": "Your attorney sent a response letter. The claim has no teeth — your contract was solid. But it'll cost you to prove it."
+        },
+        {
+          "label": "Offer a partial refund and resolution",
+          "effects": { "cash": -1500, "brand_equity": 2, "customer_base": -1 },
+          "outcome_narrative": "She accepted the partial refund. You lost the client but kept your reputation. Fair trade."
+        }
+      ],
+      "mitigated_by": ["client_onboarding", "basic_quality_control", "hire_general_counsel"]
+    },
+    {
+      "id": "key_employee_quits",
+      "category": "people",
+      "requires": { "team_size_gte": 2 },
+      "base_probability": 0.07,
+      "probability_scales_with": "team_size",
+      "scale_factor": 0.015,
+      "narrative": "Your best performer just gave two weeks' notice. She got an offer she can't refuse — or rather, one you can't match.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Counter-offer with a raise",
+          "effects": { "cash": -3000, "operating_expenses": 1000 },
+          "outcome_narrative": "She stayed. But you both know it bought time, not loyalty. Start cross-training — now."
+        },
+        {
+          "label": "Let her go, redistribute work",
+          "effects": { "energy": -15, "systems_maturity": -5, "team_size": -1, "operating_expenses": -2000 },
+          "outcome_narrative": "The team absorbed the gap. You can feel the strain by week three. But you didn't panic-spend."
+        },
+        {
+          "label": "Wish her well, immediately start hiring",
+          "effects": { "cash": -1500, "team_size": -1, "energy": -8, "operating_expenses": -1000 },
+          "outcome_narrative": "Clean break. Job posted that afternoon. You'll find someone — hopefully before the workload crushes the remaining team."
+        }
+      ],
+      "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
+    },
+    {
+      "id": "rate_hike",
+      "category": "debt",
+      "requires": { "_bad_debt_gte": 8000 },
+      "base_probability": 0.1,
+      "probability_scales_with": "_bad_debt",
+      "scale_factor": 0.000002,
+      "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive. The lender's letter arrives with the new payment schedule.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Refinance to fixed rate",
+          "effects": { "cash": -2000, "operating_expenses": 300 },
+          "outcome_narrative": "Locked in. More expensive monthly, but at least it's predictable now. No more surprises."
+        },
+        {
+          "label": "Absorb the increase",
+          "effects": { "operating_expenses": 500, "dscr": -0.2 },
+          "outcome_narrative": "You'll handle it. The margin is thinner, but the cash stays in the business where it's needed."
+        },
+        {
+          "label": "Accelerate paydown",
+          "effects": { "cash": -5000, "total_debt": -5000, "dscr": 0.1 },
+          "outcome_narrative": "You threw cash at the balance. Painful, but every dollar you kill now saves you three in interest over the life of the loan."
+        }
+      ],
+      "mitigated_by": ["banking_relationship", "advanced_tax_strategy"]
+    },
+    {
+      "id": "market_recession",
+      "category": "macro",
+      "requires": { "monthly_revenue_gte": 10000, "customer_base_gte": 8 },
+      "base_probability": 0.04,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "It's all over the news. Consumer confidence is cratering, clients are cutting budgets, and your pipeline just went from 'healthy' to 'terrifying' in two weeks.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Play offense — borrow cheap, grab market share",
+          "effects": { "total_debt": 6000, "customer_base": 9, "brand_equity": 10, "leads": 8, "energy": -10 },
+          "outcome_narrative": "While competitors went dark, you got loud — funded with the bank's money, not your own. You scooped up their abandoned customers at the cheapest acquisition cost you'll ever see. Recessions transfer market share to whoever has the nerve and the capital to act."
+        },
+        {
+          "label": "Reposition to recession-proof demand",
+          "effects": { "cash": -2500, "brand_equity": 6, "customer_base": 2, "churn_rate": -0.03, "energy": -8 },
+          "outcome_narrative": "You reframed the offer around what clients can't cut even in a downturn — the must-haves, not the nice-to-haves. Slower, but the customers you keep are far stickier now."
+        },
+        {
+          "label": "Batten down — cut to the core and wait",
+          "effects": { "operating_expenses": -3000, "team_size": -1, "energy": -10, "systems_maturity": -5, "brand_equity": -3 },
+          "outcome_narrative": "You cut deep: a contractor let go, subscriptions killed, the lease renegotiated. You'll survive the winter — but you're playing defense while bolder operators take your customers."
+        }
+      ],
+      "mitigated_by": ["business_credit_line", "build_offer"]
+    },
+    {
+      "id": "burnout_crisis",
+      "category": "burnout",
+      "requires": { "energy_lte": 20 },
+      "base_probability": 0.15,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "You woke up this morning and couldn't get out of bed. Not physically — mentally. The thought of opening your laptop made your chest tight. Your body is telling you something your ambition won't admit.",
+      "act": 1,
+      "choices": [
+        {
+          "label": "Take a week off completely",
+          "effects": { "energy": 25, "cash": -2000, "lifestyle_health": 5 },
+          "outcome_narrative": "You disappeared for seven days. The business survived. You came back with something you'd lost — perspective."
+        },
+        {
+          "label": "Push through it",
+          "effects": { "energy": -10, "lifestyle_health": -8, "lifestyle_relationships": -5 },
+          "outcome_narrative": "You pushed. You always push. But the headaches are daily now, and your partner stopped asking how your day was."
+        },
+        {
+          "label": "Hire help to offload immediately",
+          "effects": { "cash": -2000, "energy": 15, "team_size": 1, "operating_expenses": 1500 },
+          "outcome_narrative": "Emergency contractor hired. Expensive, but you can breathe again. This is a band-aid — you need a real fix."
+        }
+      ],
+      "mitigated_by": ["gym_routine", "meditation_practice", "middle_management"]
+    },
+    {
+      "id": "irs_inquiry",
+      "category": "audit",
+      "requires": { "audit_risk_gte": 20 },
+      "base_probability": 0.06,
+      "probability_scales_with": "audit_risk",
+      "scale_factor": 0.002,
+      "narrative": "A letter from the IRS. Not the scary kind — the 'we'd like to verify some deductions' kind. But your stomach dropped anyway.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Hire a tax attorney immediately",
+          "effects": { "cash": -4000, "energy": -5 },
+          "outcome_narrative": "The attorney handled everything. Clean resolution, no penalties — worth every penny of the fee."
+        },
+        {
+          "label": "Handle it with your CPA",
+          "effects": { "cash": -1500, "energy": -10, "audit_risk": -5 },
+          "outcome_narrative": "Your CPA walked you through it. Minor adjustment, small payment. Crisis averted, lesson learned."
+        },
+        {
+          "label": "Respond yourself to save money",
+          "effects": { "cash": -500, "energy": -15, "audit_risk": 5 },
+          "outcome_narrative": "You sent the documentation yourself. They came back with more questions. This might drag on."
+        }
+      ],
+      "mitigated_by": ["basic_bookkeeping", "s_corp_election", "tax_optimization"]
+    },
+    {
+      "id": "big_client_opportunity",
+      "category": "opportunity",
+      "requires": { "brand_equity_gte": 25, "monthly_revenue_gte": 5000 },
+      "base_probability": 0.05,
+      "probability_scales_with": "brand_equity",
+      "scale_factor": 0.002,
+      "narrative": "A major company just reached out. They saw your work and want to discuss a contract that could double your monthly revenue. But they have conditions.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Take the contract, scale up to deliver",
+          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
+          "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
+        },
+        {
+          "label": "Negotiate better terms first",
+          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
+          "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
+        },
+        {
+          "label": "Decline — not ready to scale yet",
+          "effects": { "brand_equity": 3 },
+          "outcome_narrative": "You said no. It hurt. But you know your systems can't handle it yet, and a blown delivery would damage more than a declined offer."
+        }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "partner_offer",
+      "category": "opportunity",
+      "requires": { "monthly_revenue_gte": 8000, "brand_equity_gte": 20 },
+      "base_probability": 0.03,
+      "probability_scales_with": "brand_equity",
+      "scale_factor": 0.001,
+      "narrative": "Someone wants in. A successful entrepreneur in a related space is proposing a partnership — their capital and connections, your operation and hustle.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Accept the partnership (give 30% equity)",
+          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "customer_base": 4 },
+          "outcome_narrative": "The deal is signed. A capital injection in the bank and a Rolodex of connections. But 30% of every future dollar belongs to someone else now."
+        },
+        {
+          "label": "Counter with a revenue-share, no equity",
+          "effects": { "cash": 5000, "customer_base": 3, "partner_conflict_risk": 10 },
+          "outcome_narrative": "She accepted the rev-share. Less capital upfront, but you kept your equity. Smart — if you can grow without the full injection."
+        },
+        {
+          "label": "Decline politely",
+          "effects": { "brand_equity": 2 },
+          "outcome_narrative": "You passed. She respected it. The door stays open for later — and you still own 100% of what you're building."
+        }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "real_estate_deal",
+      "category": "opportunity",
+      "requires": { "cash_gte": 15000, "personal_credit_score_gte": 680 },
+      "base_probability": 0.05,
+      "probability_scales_with": "personal_credit_score",
+      "scale_factor": 0.0001,
+      "narrative": "Your banker called with an off-market deal. A duplex in a solid neighborhood, below market value. The seller needs to close fast. It's the kind of deal that doesn't come around often.",
+      "act": 3,
+      "choices": [
+        {
+          "label": "Make the offer, use available credit",
+          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
+          "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
+        },
+        {
+          "label": "Pass — too much capital tied up right now",
+          "effects": {},
+          "outcome_narrative": "You passed. It was the right call for your cash position, even if it stings. Another deal will come."
+        }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "buy_the_dip",
+      "category": "opportunity",
+      "requires": { "_market_cycle_in": ["recession"], "net_worth_gte": 15000 },
+      "base_probability": 0.45,
+      "probability_scales_with": "insurance_cash_value",
+      "scale_factor": 0.0000004,
+      "narrative": "The crash is in full swing. Headlines scream panic. Over-leveraged owners are dumping assets to meet margin calls, and prices have fallen off a cliff. Your banker isn't picking up — credit is frozen for almost everyone. But the deals are everywhere: distressed real estate and private-credit positions at a 20-30% discount, the kind of cash-flowing assets that almost never go on sale. The only question is whether you have dry powder to move while the rest of the market is paralyzed.",
+      "act": 2,
+      "choices": [
+        { "label": "Buy the dip — deploy your dry powder", "effects": {}, "outcome_narrative": "" },
+        { "label": "Pass — stay liquid and wait it out", "effects": {}, "outcome_narrative": "" }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "embezzlement",
+      "category": "people",
+      "requires": { "team_size_gte": 3, "systems_maturity_lte": 40 },
+      "base_probability": 0.04,
+      "probability_scales_with": "team_size",
+      "scale_factor": 0.01,
+      "narrative": "The numbers don't add up. After three hours of digging, you find it — someone on your team has been skimming. Small amounts, but consistently, for months.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Fire them, don't press charges",
+          "effects": { "cash": -3000, "team_size": -1, "energy": -10, "systems_maturity": 5 },
+          "outcome_narrative": "Gone by end of day. You'll never recover the money, but you plugged the hole. Time to install real financial controls."
+        },
+        {
+          "label": "Fire and prosecute",
+          "effects": { "cash": -5000, "team_size": -1, "energy": -15, "systems_maturity": 5, "brand_equity": -3 },
+          "outcome_narrative": "The police report is filed. The attorney is engaged. It'll cost more to prosecute than you lost — but some things aren't about the money."
+        },
+        {
+          "label": "Confront privately, demand repayment",
+          "effects": { "cash": 1000, "team_size": -1, "energy": -8, "systems_maturity": 3 },
+          "outcome_narrative": "He admitted it, crying. Agreed to pay back what he could. You fired him anyway, but quietly. Trust is gone."
+        }
+      ],
+      "mitigated_by": ["basic_bookkeeping", "project_management", "fulfillment_system"]
+    },
+    {
+      "id": "health_scare",
+      "category": "burnout",
+      "requires": { "energy_lte": 40 },
+      "base_probability": 0.06,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "You're in the ER. Chest pains that turned out to be stress-induced, not cardiac — this time. The doctor looked at you the way doctors look at people who aren't listening.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Cancel everything for two weeks",
+          "effects": { "energy": 30, "cash": -3000, "lifestyle_health": 10 },
+          "outcome_narrative": "Two weeks of nothing. The business wobbled but didn't fall. You came back lighter. The ER bill is on the fridge as a reminder."
+        },
+        {
+          "label": "Scale back to half-days",
+          "effects": { "energy": 15, "cash": -1000, "lifestyle_health": 5 },
+          "outcome_narrative": "Half-days for a month. The urgent things got done. The rest waited. Most of it didn't matter as much as you thought."
+        },
+        {
+          "label": "Go right back to work",
+          "effects": { "energy": -15, "lifestyle_health": -10, "lifestyle_relationships": -10 },
+          "outcome_narrative": "You were back at your desk the next morning. Your partner didn't say anything. The silence was louder than a fight."
+        }
+      ],
+      "mitigated_by": ["gym_routine", "annual_physical"],
+      "protection": {
+        "shielded_when": { "insurance_coverage_gte": 1 },
+        "protected_note": "Your health & income protection covered the lost weeks and the ER bill — you could actually afford to rest. The policy did exactly what it's for.",
+        "unprotected_note": "With no coverage, the ER bill and the missed work both came straight out of pocket. Recovering cost you twice.",
+        "unprotected_extra": { "cash": -4000 },
+        "claim_pct": 0.85,
+        "critical_illness": true,
+        "recovery_months": 2
+      }
+    },
+    {
+      "id": "windfall_referral",
+      "category": "opportunity",
+      "requires": { "brand_equity_gte": 35 },
+      "base_probability": 0.03,
+      "probability_scales_with": "brand_equity",
+      "scale_factor": 0.002,
+      "narrative": "A past client referred you to their entire network in a single email blast. Your inbox exploded overnight.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Take on everyone",
+          "effects": { "customer_base": 8, "energy": -15, "key_person_dependency": 10 },
+          "outcome_narrative": "Eight new clients in a month. Your calendar is a war zone. Revenue is up — so is your blood pressure."
+        },
+        {
+          "label": "Cherry-pick the best fits",
+          "effects": { "customer_base": 4, "brand_equity": 5 },
+          "outcome_narrative": "You picked four. Said no to the rest — gracefully. The four you took are ideal clients. Quality over quantity."
+        }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "crypto_friend_scam",
+      "category": "opportunity",
+      "scam": true,
+      "requires": { "monthly_revenue_gte": 5000 },
+      "base_probability": 0.05,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A friend who's suddenly driving a new car says he's made a killing on a crypto coin — 'guaranteed 10x, it's already mooning.' He needs you to buy in TODAY through his guy, before it's too late. The site looks slick. The returns look unreal.",
+      "act": 2,
+      "choices": [
+        { "label": "Go all in — don't miss out", "scam_trap": true, "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
+        { "label": "Put in a small starter position", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You tried a small position to see how it played out. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
+        { "label": "Tell him you'll think about it", "effects": { "energy": 3 }, "outcome_narrative": "You held off. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
+      ],
+      "protection": {
+        "shielded_by": "hire_fractional_cfo",
+        "shielded_multiplier": 0.15,
+        "protected_note": "Your CFO took the 'fund' apart in ten minutes — no audited returns, anonymous team, gated withdrawals. She flagged it as a rug pull and kept your exposure to almost nothing.",
+        "unprotected_note": "With no one to sanity-check it, the FOMO won. A trusted advisor — even a fractional CFO — is exactly who catches a too-good-to-be-true pitch before your money does."
+      },
+      "mitigated_by": []
+    },
+    {
+      "id": "coworker_investment_scam",
+      "category": "opportunity",
+      "scam": true,
+      "requires": { "monthly_revenue_gte": 12000 },
+      "base_probability": 0.04,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A well-connected acquaintance pitches a 'private fund' paying a steady 4% a month, guaranteed. He shows you statements — early investors are getting paid like clockwork — and can 'squeeze you in' if you wire funds this week.",
+      "act": 2,
+      "choices": [
+        { "label": "Wire a big chunk — those returns are incredible", "scam_trap": true, "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
+        { "label": "Start with a modest position", "effects": { "cash": -3000 }, "outcome_narrative": "You put in a little to test it and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
+        { "label": "Ask to see audited returns first", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You asked for audited statements and a real custodian. He got evasive, so you passed. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
+      ],
+      "protection": {
+        "shielded_by": "setup_family_office",
+        "shielded_multiplier": 0.1,
+        "protected_note": "Your family office ran due diligence and flagged it as a textbook Ponzi — no real custodian, returns too smooth to be real. They kept you almost entirely out.",
+        "unprotected_note": "Nobody vetted the deal for you. Real wealth runs every 'opportunity' through advisors and custodians — guaranteed, too-smooth returns are the oldest red flag there is."
+      },
+      "mitigated_by": []
+    },
+    {
+      "id": "lender_calls_note",
+      "category": "debt",
+      "requires": { "dscr_lte": 1.1, "_bad_debt_gte": 10000 },
+      "base_probability": 0.12,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "The lender wants updated financials. Your DSCR is borderline. The tone of the email is polite, but the subtext is clear: we're watching.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Provide financials and negotiate",
+          "effects": { "energy": -8, "personal_credit_score": -5 },
+          "outcome_narrative": "They reviewed, frowned, and renewed — with a higher rate. You're on a short leash now."
+        },
+        {
+          "label": "Pay down balance to improve DSCR",
+          "effects": { "cash": -5000, "total_debt": -5000, "dscr": 0.3 },
+          "outcome_narrative": "The extra payment brought your DSCR back to comfortable. The lender relaxed. But your cash position is tighter."
+        }
+      ],
+      "mitigated_by": ["banking_relationship", "basic_bookkeeping"]
+    },
+    {
+      "id": "partner_dispute",
+      "category": "partner",
+      "requires": { "partner_conflict_risk_gte": 15 },
+      "base_probability": 0.1,
+      "probability_scales_with": "partner_conflict_risk",
+      "scale_factor": 0.003,
+      "narrative": "Your partner wants to take the company in a different direction. What started as a 'strategic discussion' is now a power struggle. The operating agreement is sitting on the table between you.",
+      "act": 2,
+      "choices": [
+        {
+          "label": "Buy them out",
+          "effects": { "cash": -15000, "partner_conflict_risk": -30, "energy": -10 },
+          "outcome_narrative": "Check written. Equity reclaimed. You're alone again — and it's the most expensive relief you've ever felt."
+        },
+        {
+          "label": "Compromise on direction",
+          "effects": { "energy": -8, "partner_conflict_risk": -10, "brand_equity": -5 },
+          "outcome_narrative": "You met in the middle. Neither of you got what you wanted. The partnership survives, barely."
+        },
+        {
+          "label": "Lawyer up",
+          "effects": { "cash": -8000, "energy": -20, "partner_conflict_risk": 10 },
+          "outcome_narrative": "The attorneys are involved now. Every conversation goes through legal. The business is running on fumes of goodwill."
+        }
+      ],
+      "mitigated_by": ["form_llc", "asset_protection", "hire_general_counsel"]
+    },
+    {
+      "id": "staff_raise_demand",
+      "category": "people",
+      "requires": { "team_size_gte": 2 },
+      "base_probability": 0.12,
+      "probability_scales_with": "team_size",
+      "scale_factor": 0.02,
+      "narrative": "Your team wants raises. Three of your best people have been approached by competitors offering 20% more. They haven't accepted yet — but they're waiting to see what you do.",
+      "act": 2,
+      "choices": [
+        { "label": "Give everyone a 15% raise", "effects": { "operating_expenses": 2000, "energy": 5 }, "outcome_narrative": "The raises went through. Morale is high, and your competitor's recruiter stopped calling. But your margins just got thinner." },
+        { "label": "Raise your top 2, hold the rest", "effects": { "operating_expenses": 1000, "team_size": -1, "brand_equity": -3 }, "outcome_narrative": "Your top performers stayed. One of the others didn't — she left quietly, and two clients noticed." },
+        { "label": "No raises — the budget is tight", "effects": { "team_size": -2, "key_person_dependency": 15, "energy": -10 }, "outcome_narrative": "Two people quit within the month. The workload landed back on your desk. You saved money and lost momentum." }
+      ],
+      "mitigated_by": ["hire_hr_manager", "middle_management"]
+    },
+    {
+      "id": "major_lawsuit",
+      "category": "litigation",
+      "requires": { "monthly_revenue_gte": 15000, "customer_base_gte": 30 },
+      "base_probability": 0.06,
+      "probability_scales_with": "litigation_exposure",
+      "scale_factor": 0.002,
+      "narrative": "A former client is suing for breach of contract and negligence. Their attorney is aggressive, and the amount they're claiming would materially hurt your business. This isn't a nuisance suit.",
+      "act": 2,
+      "choices": [
+        { "label": "Settle out of court", "effects": { "cash": -15000, "brand_equity": -5 }, "outcome_narrative": "You wrote the check. It hurt. But six months of litigation would have cost more — in money and in focus." },
+        { "label": "Fight it — hire a litigation attorney", "effects": { "cash": -15000, "energy": -20, "operating_expenses": 2000 }, "outcome_narrative": "The attorney says you have a strong case. But strong cases still take months and serious legal fees. The stress is real." },
+        { "label": "Counter-sue for damages", "effects": { "cash": -20000, "energy": -25, "brand_equity": 5 }, "outcome_narrative": "Your counter-suit caught them off guard. It'll take longer, but your attorney thinks you'll come out ahead. Maybe." }
+      ],
+      "mitigated_by": ["client_onboarding", "asset_protection", "form_llc", "hire_general_counsel"],
+      "protection": {
+        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+        "protected_note": "Your LLC kept the claim at the company — they couldn't reach through to your home and savings, so the hit came out of the business, not your personal life.",
+        "unprotected_note": "With no LLC, there was no wall between you and the business. The suit came straight for your personal assets and credit alongside the company.",
+        "shielded_multiplier": 0.6,
+        "unprotected_extra": { "personal_credit_score": -25, "personal_guarantee_exposure": 15000 }
+      }
+    },
+    {
+      "id": "key_client_loss",
+      "category": "people",
+      "requires": { "customer_base_gte": 15, "monthly_revenue_gte": 8000 },
+      "base_probability": 0.08,
+      "probability_scales_with": "churn_rate",
+      "scale_factor": 2,
+      "narrative": "Your biggest client just called. They're moving to a competitor. They were 20% of your revenue. The conversation was polite, but the damage is immediate.",
+      "act": 2,
+      "choices": [
+        { "label": "Offer a steep discount to keep them", "effects": { "brand_equity": -8 }, "outcome_narrative": "They stayed — at 30% less. You kept the account but set a precedent that quietly drags your pricing power. Other clients will hear about this." },
+        { "label": "Let them go, double down on pipeline", "effects": { "customer_base": -4, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone — about a fifth of your book walked out the door with them. It stings, and you can feel it in the numbers. But you redirected that energy into new prospects. Diversification is a lesson you won't forget." },
+        { "label": "Ask for an exit interview to learn why", "effects": { "customer_base": -4, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "They still left — that chunk of revenue is gone — but the feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
+      ],
+      "mitigated_by": ["hire_client_success", "crm_pipeline"]
+    },
+    {
+      "id": "cash_flow_crisis",
+      "category": "debt",
+      "requires": { "monthly_revenue_gte": 10000 },
+      "base_probability": 0.07,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "Three clients paid late this month. Your payroll is due Friday. Your credit line is nearly maxed. For the first time, you're not sure the math works.",
+      "act": 2,
+      "choices": [
+        { "label": "Draw from credit line, pay the penalty", "effects": { "cash": -2000, "total_debt": 5000, "personal_credit_score": -5 }, "outcome_narrative": "Payroll met. But the interest on that emergency draw is going to compound. You need a cash buffer." },
+        { "label": "Negotiate delayed payroll with team", "effects": { "energy": -15, "team_size": -1, "operating_expenses": -2000 }, "outcome_narrative": "Most of the team understood. One didn't — she walked. The rest got paid a week late. Trust took a hit." },
+        { "label": "Call clients and demand immediate payment", "effects": { "cash": 3000, "brand_equity": -5, "customer_base": -2 }, "outcome_narrative": "Two clients paid immediately. One fired you on the spot. The third ghosted. Cash flow solved, relationships damaged." }
+      ],
+      "mitigated_by": ["basic_bookkeeping", "business_credit_line", "fund_accumulation_policy"]
+    },
+    {
+      "id": "competitor_poaches_staff",
+      "category": "people",
+      "requires": { "team_size_gte": 3, "monthly_revenue_gte": 15000 },
+      "base_probability": 0.06,
+      "probability_scales_with": "team_size",
+      "scale_factor": 0.01,
+      "narrative": "A competitor just hired your operations manager — and she's trying to bring two of your team members with her. They know your SOPs, your clients, and your pricing.",
+      "act": 2,
+      "choices": [
+        { "label": "Match offers and add equity incentive", "effects": { "operating_expenses": 3000, "partner_conflict_risk": 5 }, "outcome_narrative": "They stayed. But the equity conversation opened a door you weren't ready to open. Retention costs just went up permanently." },
+        { "label": "Let them go, enforce non-compete", "effects": { "team_size": -2, "key_person_dependency": 15, "cash": -5000, "systems_maturity": -5 }, "outcome_narrative": "The attorney sent cease-and-desist letters. Two team members left anyway. Your systems are being tested without the people who built them." },
+        { "label": "Rebuild fast — hire replacements immediately", "effects": { "cash": -3000, "energy": -15, "team_size": -1, "leads": -5 }, "outcome_narrative": "You lost two, hired one. The new person is green. You're back in the weeds while they ramp up." }
+      ],
+      "mitigated_by": ["hire_hr_manager", "write_first_sop"]
+    },
+    {
+      "id": "tax_audit",
+      "category": "audit",
+      "requires": { "audit_risk_gte": 15, "monthly_revenue_gte": 10000 },
+      "base_probability": 0.05,
+      "probability_scales_with": "audit_risk",
+      "scale_factor": 0.003,
+      "narrative": "Full audit. Not a letter — an agent. They want three years of records, entity documentation, and explanations for every deduction you've taken. Your accountant looks worried.",
+      "act": 2,
+      "choices": [
+        { "label": "Hire a tax attorney and cooperate fully", "effects": { "cash": -7000, "energy": -15, "audit_risk": -15 }, "outcome_narrative": "The attorney guided every response. Six weeks of stress, but the outcome was clean — minor adjustments, no penalties. Your books are bulletproof now." },
+        { "label": "Let your CPA handle it", "effects": { "cash": -3000, "energy": -20, "audit_risk": -5, "total_debt": 5000 }, "outcome_narrative": "Your CPA did her best. The IRS found disallowed deductions plus penalties. It could have been worse." },
+        { "label": "Stall and provide minimal documentation", "effects": { "cash": -1000, "audit_risk": 20, "personal_credit_score": -10, "total_debt": 10000 }, "outcome_narrative": "Bad move. The IRS assessed penalties for non-cooperation — a stack of back taxes, and your file is flagged for future scrutiny." }
+      ],
+      "mitigated_by": ["basic_bookkeeping", "tax_planning_session", "hire_fractional_cfo"]
+    },
+    {
+      "id": "supply_chain_disruption",
+      "category": "macro",
+      "requires": { "monthly_revenue_gte": 10000 },
+      "base_probability": 0.05,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "Your primary vendor just doubled their prices. No warning, no negotiation — take it or leave it. Every project in your pipeline just got more expensive.",
+      "act": 2,
+      "choices": [
+        { "label": "Absorb the cost, protect client relationships", "effects": { "cogs": 2000, "brand_equity": 3 }, "outcome_narrative": "You ate the margin hit. Clients don't know anything changed. But your profitability just took a serious dent." },
+        { "label": "Pass the cost to clients", "effects": { "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced — you protected your margins instead of eating the vendor hike. Three clients left over it and some goodwill eroded, but the rest grumbled and stayed." },
+        { "label": "Find a new vendor immediately", "effects": { "energy": -15, "cogs": 500, "systems_maturity": -3 }, "outcome_narrative": "New vendor found in two weeks. Cheaper, but the transition was messy. Two deliveries were late during the switch." }
+      ],
+      "mitigated_by": ["vertical_integration", "fulfillment_system"]
+    },
+    {
+      "id": "viral_negative_review",
+      "category": "litigation",
+      "requires": { "brand_equity_gte": 20, "customer_base_gte": 15 },
+      "base_probability": 0.06,
+      "probability_scales_with": "brand_equity",
+      "scale_factor": 0.001,
+      "narrative": "A former client posted a scathing review that went viral in your industry. Screenshots are being shared. Your phone is ringing — and not with good news.",
+      "act": 2,
+      "choices": [
+        { "label": "Respond publicly with transparency", "effects": { "brand_equity": -5, "leads": -5, "energy": -10 }, "outcome_narrative": "Your public response was honest and human. Half the comments praised your transparency. The other half still believe the review. Time will tell." },
+        { "label": "Hire a PR firm for damage control", "effects": { "cash": -5000, "brand_equity": -2, "leads": -3 }, "outcome_narrative": "The PR firm buried it with positive content and testimonials. The fire is out, but the smoke lingers." },
+        { "label": "Ignore it and focus on delivery", "effects": { "brand_equity": -10, "leads": -8, "customer_base": -2 }, "outcome_narrative": "Silence was interpreted as guilt. Two prospects cited the review when they declined. Your reputation will recover — but slowly." }
+      ],
+      "mitigated_by": ["basic_quality_control", "hire_client_success", "content_engine"]
+    },
+    {
+      "id": "acquisition_offer",
+      "category": "opportunity",
+      "requires": { "monthly_revenue_gte": 25000, "systems_maturity_gte": 40 },
+      "base_probability": 0.04,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "A private equity firm reached out. They want to buy your company. The offer is serious — 3x annual revenue. But the terms include a 2-year earn-out where you stay on as an employee.",
+      "act": 3,
+      "choices": [
+        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "customer_base": -10, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
+        { "label": "Counter at 5x revenue", "effects": { "brand_equity": 10 }, "outcome_narrative": "They came back at 4x. The negotiation continues. Either way — someone thinks your company is worth buying. That's the real win." },
+        { "label": "Decline — this isn't for sale", "effects": { "brand_equity": 5, "energy": 10 }, "outcome_narrative": "You said no. The PE firm respected it. And something crystallized — you're not building to sell. You're building to own." }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "employee_harassment_claim",
+      "category": "people",
+      "requires": { "team_size_gte": 4 },
+      "base_probability": 0.04,
+      "probability_scales_with": "team_size",
+      "scale_factor": 0.008,
+      "narrative": "An employee filed a formal harassment complaint against a manager. This is serious — legally, ethically, and for your company culture. How you handle this defines who you are as a leader.",
+      "act": 2,
+      "choices": [
+        { "label": "Investigate thoroughly, suspend the manager", "effects": { "cash": -5000, "energy": -15, "team_size": -1, "systems_maturity": 5, "brand_equity": 5 }, "outcome_narrative": "Investigation confirmed the complaint. Manager terminated. The team saw you take it seriously. Trust in leadership actually went up." },
+        { "label": "Mediate between both parties", "effects": { "energy": -10, "brand_equity": -3, "litigation_exposure": 10 }, "outcome_narrative": "The mediation was tense. Both parties are still here, but the tension is palpable. You might have delayed the problem, not solved it." },
+        { "label": "Bring in an outside HR consultant", "effects": { "cash": -8000, "energy": -8, "systems_maturity": 8, "litigation_exposure": -10 }, "outcome_narrative": "The consultant handled it professionally. New policies in place, training scheduled, and the company is protected. Expensive but worth it." }
+      ],
+      "mitigated_by": ["hire_hr_manager"]
+    },
+    {
+      "id": "policy_loan_opportunity",
+      "category": "opportunity",
+      "requires": { "insurance_cash_value_gte": 20000 },
+      "base_probability": 0.05,
+      "probability_scales_with": "insurance_cash_value",
+      "scale_factor": 0.0000008,
+      "narrative": "An opportunity lands that needs cash fast — and for once, you don't need a bank. Your policy's cash value is sitting right there, ready to borrow against tax-free, no credit check, while it keeps compounding.",
+      "act": 3,
+      "choices": [
+        { "label": "Borrow against the policy and fund the deal", "effects": { "insurance_loan_balance": 15000, "investment_positions": 15000, "other_monthly_revenue": 180 }, "outcome_narrative": "You pulled tax-free cash from your policy in days — no application, no approval — and deployed it into a passive position. The cash value kept growing as if you never touched it. This is what being your own bank feels like." },
+        { "label": "Pass — keep the policy untouched", "effects": { "insurance_cash_value": 1000 }, "outcome_narrative": "You let it ride. The opportunity passed, but your cash value kept compounding. There will be other deals." }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "passive_income_milestone",
+      "category": "opportunity",
+      "requires": { "insurance_passive_loan_total_gte": 1 },
+      "base_probability": 0.06,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "You notice it on a quiet morning: money hit your account this month that you didn't work for. The tax-free policy income is real, recurring, and growing — the engine is running without you.",
+      "act": 3,
+      "choices": [
+        { "label": "Reinvest it into the policy", "effects": { "insurance_cash_value": 3000, "lifestyle_health": 3 }, "outcome_narrative": "You fed the income right back into the engine. Compounding on compounding — and a little more peace of mind." },
+        { "label": "Take the day off and enjoy it", "effects": { "energy": 15, "lifestyle_relationships": 5, "lifestyle_health": 3 }, "outcome_narrative": "You closed the laptop and spent the day with people you love, funded by money that arrived on its own. This is the whole point." }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "pre_ipo_allocation",
+      "category": "opportunity",
+      "requires": { "needs": ["private_banking"], "cash_gte": 30000 },
+      "base_probability": 0.07,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "Your private banker calls with something that never touches the open market: an allocation in a late-stage, pre-IPO company before it lists — plus a private-credit deal on the side. These rooms are invitation-only, and you're in the room now.",
+      "act": 3,
+      "choices": [
+        { "label": "Take the pre-IPO allocation", "effects": { "cash": -40000, "investment_positions": 58000, "other_monthly_revenue": 300 }, "outcome_narrative": "Your name is on the cap table before the IPO. It's illiquid and not guaranteed — but it's already marked up, throws off a small distribution, and these are the deals that build real wealth quietly." },
+        { "label": "Take the safer private-credit deal", "effects": { "cash": -25000, "investment_positions": 27000, "other_monthly_revenue": 320 }, "outcome_narrative": "You funded a private-credit deal at ~15% annual instead — less upside, but steady interest checks and far less risk than the pre-IPO bet. You're the bank in a room most people never enter." },
+        { "label": "Pass — keep your powder dry", "effects": {}, "outcome_narrative": "You passed. Off-market deals are a privilege, not an obligation — and your banker will call again. Liquidity is its own kind of opportunity." }
+      ],
+      "mitigated_by": []
+    },
+    {
+      "id": "team_mutiny",
+      "category": "people",
+      "requires": { "company_culture_lte": 35, "team_size_gte": 4 },
+      "base_probability": 0.10,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "It started as grumbling and became a revolt. Three of your best people are threatening to walk together this week — and they've been talking to the rest of the team. The culture you let rot is about to cost you the company's ability to deliver.",
+      "act": 2,
+      "choices": [
+        { "label": "Emergency retention — raises, equity talk, a real mea culpa", "effects": { "cash": -25000, "operating_expenses": 4000, "company_culture": 22, "energy": -20 }, "outcome_narrative": "You got in a room, owned the failures, and put real money and ownership on the table. Most of them stayed — and the ones who did now trust you more. Expensive lesson: culture isn't a perk, it's the foundation." },
+        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "customer_base": -6, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
+      ],
+      "mitigated_by": ["build_benefits_package", "grant_stock_incentives", "hire_hr_manager"]
+    },
+    {
+      "id": "star_defection",
+      "category": "people",
+      "requires": { "company_culture_lte": 35, "monthly_revenue_gte": 25000, "team_size_gte": 3 },
+      "base_probability": 0.09,
+      "probability_scales_with": null,
+      "scale_factor": 0,
+      "narrative": "Your single best performer — the one who owns your biggest relationships — just resigned. And they're not just leaving: they're opening a competing shop, and your top clients got the call this morning.",
+      "act": 3,
+      "choices": [
+        { "label": "Enforce the non-compete in court", "effects": { "cash": -20000, "energy": -20, "customer_base": -3, "company_culture": -5 }, "outcome_narrative": "Your lawyers moved fast and slowed them down — but litigation is ugly, expensive, and the team watched the whole thing. You kept most clients; you spent a fortune and a lot of goodwill doing it." },
+        { "label": "Counter-offer hard to keep the clients", "effects": { "operating_expenses": 2000, "brand_equity": -6, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
+        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
+      ],
+      "mitigated_by": ["grant_stock_incentives", "hire_general_counsel", "hire_client_success"]
+    }
+  ]
+}

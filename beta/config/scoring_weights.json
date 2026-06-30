@@ -1,0 +1,44 @@
+{
+  "version": "3.0.0",
+  "_comment": "v3: six end-game pillars per DESIGN.md. Passive (tax-free) income is the crown jewel. Leverage and Freedom encode the win condition ('max wealth & lifestyle with the MINIMUM of your own money and time'). Protection and Net Worth round out the 'don't lose it' and 'did you actually get rich' pillars. Credit and tax are NOT standalone scores — credit is folded into Leverage/Protection as an enabler, and tax-free quality lives inside Passive Income & Protection. business_revenue carries ZERO weight (fuel, not the goal) and is computed inline for archetype flavor only. player_description is shown to players on tap; it deliberately avoids weights/formulas so the scoring system isn't given away.",
+  "dimensions": {
+    "passive_income": {
+      "weight": 0.26,
+      "label": "Passive Income",
+      "player_description": "Money that arrives without you working for it — and lands in your pocket largely <strong>tax-free</strong>. Policy-loan income, real-estate cash flow, lending interest. This is the dream: income that doesn't need your hours."
+    },
+    "leverage_efficiency": {
+      "weight": 0.18,
+      "label": "Leverage",
+      "player_description": "Controlling large, productive assets with <strong>other people's money</strong> (good debt) instead of your own cash. The more you build while tying up the least of your own money, the stronger this gets."
+    },
+    "protection": {
+      "weight": 0.14,
+      "label": "Protection",
+      "player_description": "How well your wealth is <strong>shielded</strong> — the right legal entity, asset-protection structures, insurance coverage, and cash reserves. It's what keeps one lawsuit, accident, or bad month from wiping you out."
+    },
+    "freedom": {
+      "weight": 0.14,
+      "label": "Freedom",
+      "player_description": "How little the business depends on <strong>you</strong>. Systems, a team, and leaders who run it without you in the chair — so your time is your own. The other half of true wealth."
+    },
+    "lifestyle": {
+      "weight": 0.16,
+      "label": "Lifestyle",
+      "player_description": "The life the money is <strong>for</strong> — your health, relationships, experiences, and the mark you leave. Wealth built by wrecking your life isn't paradise, so this also caps your overall score."
+    },
+    "net_worth": {
+      "weight": 0.12,
+      "label": "Net Worth",
+      "player_description": "What you'd keep if you cashed out today — assets and equity minus what you owe. The scoreboard of wealth built. Good, asset-backed debt is treated kindly; bad debt hurts."
+    }
+  },
+  "lifestyle_sub_weights": {
+    "health": 0.20,
+    "relationships": 0.20,
+    "experiences": 0.15,
+    "spiritual": 0.15,
+    "philanthropy": 0.15,
+    "legacy": 0.15
+  }
+}

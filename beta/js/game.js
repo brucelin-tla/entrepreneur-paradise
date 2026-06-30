@@ -1,3024 +1,3 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Entrepreneur Paradise</title>
-<style>
-/* Entrepreneur Paradise — styles */
-:root{--bg:#0a0e17;--bg2:#111827;--bg3:#1a2236;--surface:#1f2937;--surface2:#273349;--border:#2d3a50;--text:#e8ecf2;--text2:#9ca3b4;--accent:#10b981;--accent2:#059669;--gold:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--pink:#ec4899;--radius:12px;--radius-sm:8px}
-*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
-body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-.screen{display:none;min-height:100vh;padding:16px;padding-bottom:100px}.screen.active{display:block}
-#title-screen{position:relative}
-#title-screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,#0d1520 50%,var(--bg) 100%)}
-#title-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-#title-bg svg{width:100%;height:100%;display:block}
-#title-screen.active>*:not(#title-bg){position:relative;z-index:1}
-#title-screen h1{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-#title-screen .subtitle{color:var(--text2);font-size:0.95rem;margin-bottom:40px}
-.archetype-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;text-align:left;width:100%;max-width:420px;cursor:pointer;transition:all 0.2s}
-.archetype-card:active{transform:scale(0.98);border-color:var(--accent)}.archetype-card h3{font-size:1.1rem;margin-bottom:2px}
-.archetype-card .tagline{color:var(--accent);font-size:0.85rem;margin-bottom:8px}.archetype-card p{color:var(--text2);font-size:0.85rem;line-height:1.5}
-.month-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:16px}.month-header h2{font-size:1.15rem}
-.month-header .stage-badge{font-size:0.7rem;padding:3px 10px;border-radius:20px;background:var(--accent2);color:white;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-.narrative-box{background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px;margin-bottom:16px;font-size:0.92rem;line-height:1.75;color:var(--text)}
-.narrative-box .char-name{color:var(--gold);font-weight:600;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.stat-card{background:var(--surface);border-radius:var(--radius-sm);padding:10px;text-align:center;position:relative}
-.stat-card.wide{grid-column:span 3}.stat-card.half{grid-column:span 1}
-.stat-card .stat-value{font-size:1.05rem;font-weight:700}.stat-card .stat-label{font-size:0.65rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.3px}
-.stat-positive{color:var(--accent)}.stat-negative{color:var(--red)}.stat-warning{color:var(--gold)}.stat-neutral{color:var(--text)}
-.info-btn{display:inline-block;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text2);font-size:0.6rem;text-align:center;line-height:16px;cursor:pointer;margin-left:4px;vertical-align:middle;font-weight:700}
-.info-btn.info-new{background:var(--gold);color:#1a1205;animation:infoPulse 1.6s ease-in-out infinite}
-@keyframes infoPulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,0.55)}50%{box-shadow:0 0 0 4px rgba(212,175,55,0)}}
-.scope-chip{display:inline-block;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:2px 9px;border-radius:999px;margin-bottom:9px}
-.scope-chip.personal{background:rgba(16,185,129,0.15);color:var(--accent)}
-.scope-chip.business{background:rgba(59,130,246,0.15);color:var(--blue)}
-.stat-footer{margin-top:12px;border-top:1px solid var(--border);padding-top:9px;text-align:center}
-.stat-footer button{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer}
-.term-link{color:var(--blue);text-decoration:underline dotted;cursor:pointer;text-decoration-thickness:1px;text-underline-offset:2px}
-.popup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:999}
-.popup-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;z-index:1000;max-width:340px;width:calc(100% - 32px);font-size:0.85rem;line-height:1.6;box-shadow:0 10px 40px rgba(0,0,0,0.5);max-height:80vh;overflow-y:auto}
-.popup-title{font-weight:700;margin-bottom:8px;color:var(--accent);font-size:1rem}
-.bars-section{margin-bottom:16px;background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px}
-.bar-row{margin-bottom:6px}.bar-row:last-child{margin-bottom:0}
-.bar-label{font-size:0.7rem;color:var(--text2);margin-bottom:3px;display:flex;justify-content:space-between}
-.bar-track{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;transition:width 0.5s,background 0.5s}
-.step-indicator{text-align:center;margin-bottom:12px;font-size:0.8rem;color:var(--text2)}.step-indicator .step-current{color:var(--accent);font-weight:700}
-.category-tabs{display:flex;gap:6px;margin-bottom:12px;align-items:center}
-.cat-tabs-scroll{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.cat-tab{flex-shrink:0;padding:7px 11px;border-radius:20px;font-size:0.79rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all 0.2s;white-space:nowrap}
-.cat-icon{flex-shrink:0;padding:7px 13px;font-size:1.2rem;line-height:1.1;display:flex;align-items:center;gap:2px}
-.cat-tab.active{background:var(--accent);color:white;border-color:var(--accent)}.cat-tab.done{background:var(--accent2);color:white;border-color:var(--accent2);opacity:0.7}
-.action-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
-.action-card:active{transform:scale(0.98)}.action-card.selected{border-color:var(--accent);border-width:2px;background:rgba(16,185,129,0.2);box-shadow:0 0 0 2px rgba(16,185,129,0.5),0 6px 20px rgba(16,185,129,0.3);border-left:5px solid var(--accent)}
-.action-card.locked{opacity:0.4;cursor:not-allowed}.action-card.completed-action{opacity:0.3;cursor:not-allowed}
-.action-card h4{font-size:0.95rem;margin-bottom:4px}.action-card p{font-size:0.82rem;color:var(--text2);line-height:1.5;margin-bottom:8px}
-.action-costs{display:flex;gap:8px;font-size:0.75rem;flex-wrap:wrap}
-.cost-tag{padding:2px 8px;border-radius:10px;font-weight:600}
-.cost-cash{background:rgba(239,68,68,0.15);color:var(--red)}.cost-energy{background:rgba(239,68,68,0.1);color:var(--orange)}
-.cost-energy-gain{background:rgba(16,185,129,0.15);color:var(--accent)}
-.cost-locked{background:rgba(156,163,180,0.15);color:var(--text2)}.cost-done{background:rgba(16,185,129,0.15);color:var(--accent)}
-.cost-recurring{background:rgba(139,92,246,0.15);color:var(--purple)}
-.repeat-badge{font-size:0.66rem;color:var(--accent);background:rgba(16,185,129,0.15);border-radius:10px;padding:1px 7px;margin-left:6px;font-weight:600;vertical-align:middle}
-.action-card.taken-before{border-left:4px solid var(--accent);background:rgba(16,185,129,0.05)}
-.new-badge{display:inline-block;background:var(--accent);color:#04210f;font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;letter-spacing:0.6px}
-.action-card.is-new{border-color:var(--border)}
-.card-toprow{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px}
-.card-toprow .new-badge,.card-toprow .repeat-badge{margin-left:0}
-.group-tag{display:inline-block;font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gold);background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);border-radius:6px;padding:1px 7px}
-@keyframes attnFlash{0%{box-shadow:0 0 0 0 rgba(16,185,129,0);}30%{box-shadow:0 0 0 3px rgba(16,185,129,0.5);}100%{box-shadow:0 0 0 0 rgba(16,185,129,0);}}
-.attn-flash{animation:attnFlash 0.9s ease-out;border-radius:var(--radius)}
-@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.55);transform:scale(1);}50%{box-shadow:0 0 0 8px rgba(16,185,129,0);transform:scale(1.015);}}
-.btn-flash{animation:btnPulse 0.75s ease-out 4}
-.btn-primary{width:100%;padding:14px;border:none;border-radius:var(--radius);background:var(--accent);color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
-.btn-primary:disabled{opacity:0.4;cursor:not-allowed}.btn-primary:active:not(:disabled){transform:scale(0.98);background:var(--accent2)}
-.btn-secondary{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:8px}
-.btn-outline{width:100%;padding:12px;border:1px solid var(--gold);border-radius:var(--radius);background:transparent;color:var(--gold);font-size:0.9rem;font-weight:600;cursor:pointer;margin-top:8px}
-.event-box{background:var(--bg2);border:1px solid var(--gold);border-radius:var(--radius);padding:20px;margin-bottom:16px}
-.event-box .event-category{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:700;margin-bottom:8px}
-.event-box .event-narrative{font-size:0.92rem;line-height:1.75}
-.choice-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
-.choice-card:active{transform:scale(0.98);border-color:var(--gold)}.choice-card h4{font-size:0.95rem;margin-bottom:6px}.choice-effects{font-size:0.78rem;color:var(--text2)}
-.result-narrative{background:var(--bg2);border-radius:var(--radius);padding:16px;margin-bottom:12px;font-size:0.9rem;line-height:1.75}
-.effect-list{padding:12px}.effect-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem}.effect-item:last-child{border-bottom:none}
-.radar-wrap{display:flex;justify-content:center;margin:20px 0}.radar-wrap canvas{max-width:300px;width:100%}
-.final-title{text-align:center;margin:20px 0}
-.final-title h2{font-size:1.8rem;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.final-title .final-subtitle{color:var(--text2);font-size:0.95rem}
-.epilogue-box{background:var(--bg2);border-radius:var(--radius);padding:20px;font-size:0.92rem;line-height:1.8;margin-top:16px;white-space:pre-line}
-.lifestyle-header{text-align:center;margin-bottom:16px}.lifestyle-header h3{color:var(--purple);margin-bottom:4px}.lifestyle-header p{color:var(--text2);font-size:0.85rem}
-.fade-in{animation:fadeIn 0.3s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 30%);padding-top:30px}
-.breakdown-row{display:flex;justify-content:space-between;padding:4px 0;font-family:monospace;font-size:0.85rem}
-.breakdown-total{border-top:1px solid var(--border);margin-top:6px;padding-top:6px;font-weight:700}
-.breakdown-detail{font-size:0.75rem;color:var(--text2);padding-left:12px}
-.lb-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.lb-tab{padding:6px 14px;border-radius:16px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2)}
-.lb-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
-.lb-entry{display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surface);border-radius:var(--radius-sm);margin-bottom:6px}
-.lb-rank{font-weight:700;color:var(--gold);width:30px}.lb-name{flex:1;margin-left:8px}.lb-score{font-weight:700;color:var(--accent)}
-.lb-date{font-size:0.7rem;color:var(--text2);margin-left:8px}
-.name-input{width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-size:1rem;margin:8px 0}
-.checkpoint-score{text-align:center;font-size:2rem;font-weight:800;color:var(--gold);margin:10px 0}
-.checkpoint-label{text-align:center;font-size:0.8rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
-.skill-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:0.7rem;color:var(--text2)}
-.skill-row .skill-name{width:70px;text-align:right}.skill-bar{flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden}
-.skill-fill{height:100%;border-radius:2px;background:var(--purple)}
-
-/* ---- Shared title sub-page chrome (consistent header + back button everywhere) ---- */
-.page-head{display:flex;align-items:center;gap:10px;margin:2px 0 16px}
-.page-head .page-title{font-weight:700;font-size:1rem;color:var(--text)}
-.page-head .page-title.accent{color:var(--accent)}.page-head .page-title.gold{color:var(--gold)}
-.back-chip{flex:0 0 auto;width:auto;margin:0;padding:7px 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text2);font-size:0.82rem;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s,transform .1s}
-.back-chip:hover{border-color:var(--accent);color:var(--text)}.back-chip:active{transform:scale(0.96)}
-/* ---- Menu rows (main-menu navigation) ---- */
-.menu-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,transform .1s;text-align:left}
-.menu-item:hover{border-color:var(--accent)}.menu-item:active{transform:scale(0.99)}
-.menu-item.gold{border-color:var(--gold)}
-.menu-item .mi-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0}
-.menu-item .mi-body{flex:1;min-width:0}
-.menu-item .mi-label{font-weight:700;font-size:0.92rem;display:block}
-.menu-item.gold .mi-label{color:var(--gold)}
-.menu-item .mi-sub{font-size:0.66rem;color:var(--text2);display:block}
-.menu-item .mi-chev{color:var(--text2);font-size:1.1rem;flex-shrink:0}
-/* ---- Founder (archetype) cards — uniform layout + at-a-glance stats ---- */
-.archetype-card:hover{border-color:var(--accent)}
-.archetype-card .arch-top{display:flex;gap:12px;align-items:center;margin-bottom:10px}
-.archetype-card .arch-av{flex-shrink:0;line-height:0}
-.archetype-card .arch-head{flex:1;min-width:0}
-.archetype-card .arch-title-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.archetype-card .arch-title-row h3{margin:0;font-size:1.1rem}
-.arch-diff{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border:1px solid;border-radius:999px;padding:2px 8px;white-space:nowrap;flex-shrink:0}
-.archetype-card .arch-desc{color:var(--text2);font-size:0.85rem;line-height:1.5;margin:0 0 12px;min-height:3.8em}
-.arch-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;border-top:1px solid var(--border);padding-top:11px}
-.arch-stat{text-align:center}
-.arch-stat .as-val{display:block;font-size:0.95rem;font-weight:700;line-height:1.2}
-.arch-stat .as-label{display:block;font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px}
-/* ---- Leaderboard scope toggle + medals + states ---- */
-.lb-scope{display:flex;gap:4px;margin-bottom:10px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:3px}
-.lb-scope .lb-seg{flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:0.8rem;font-weight:700;cursor:pointer;color:var(--text2);transition:background .15s,color .15s}
-.lb-scope .lb-seg.active{background:var(--accent);color:#fff}
-.lb-entry.me{border:1px solid var(--accent);background:rgba(16,185,129,0.1)}
-.lb-rank.lb-medal{font-size:1.05rem}
-.lb-note{text-align:center;color:var(--text2);font-size:0.82rem;padding:26px 16px;line-height:1.6}
-.lb-note strong{color:var(--text)}
-/* Leaderboard sits as a centered column with breathing room up top, like the other title sub-pages */
-#leaderboard-screen{padding-top:6vh}
-#lb-content{max-width:420px;margin:0 auto}
-
-/* Interactive spotlight tutorial */
-#tut-overlay{position:fixed;inset:0;z-index:2000;pointer-events:auto}
-#tut-hole{position:absolute;border-radius:var(--radius-sm);box-shadow:0 0 0 9999px rgba(4,9,6,0.82);border:2px solid var(--accent);pointer-events:none;transition:all 0.32s cubic-bezier(.4,0,.2,1)}
-#tut-hole.pulse{animation:tutPulse 1.6s ease-in-out infinite}
-#tut-hit{position:absolute;z-index:2001;pointer-events:auto;background:transparent;cursor:pointer;border-radius:var(--radius-sm)}
-@keyframes tutPulse{0%,100%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 0 rgba(16,185,129,0.5)}50%{box-shadow:0 0 0 9999px rgba(4,9,6,0.82),0 0 0 7px rgba(16,185,129,0)}}
-#tut-tip{position:absolute;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;width:calc(100% - 32px);max-width:300px;z-index:2001;box-shadow:0 10px 32px rgba(0,0,0,0.6);font-size:0.78rem;line-height:1.45;pointer-events:auto;transition:top 0.18s ease}
-#tut-tip .tut-wait{flex:1;text-align:right;color:var(--accent);font-size:0.76rem;font-weight:700;animation:tutHint 1.4s ease-in-out infinite}
-@keyframes tutHint{0%,100%{opacity:0.55}50%{opacity:1}}
-#tut-tip .tut-count{font-size:0.6rem;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;margin-bottom:3px}
-#tut-tip .tut-title{font-weight:700;color:var(--accent);font-size:0.9rem;margin-bottom:4px}
-#tut-tip .tut-body{color:var(--text);font-size:0.76rem;line-height:1.45}
-#tut-tip .tut-nav{display:flex;gap:6px;align-items:center;margin-top:10px}
-#tut-tip .tut-skip{flex:0 0 auto;background:none;border:none;color:var(--text2);font-size:0.72rem;cursor:pointer;padding:6px 3px}
-#tut-tip .tut-spacer{flex:1}
-#tut-tip .tut-back{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:0.76rem;font-weight:600;padding:6px 11px;border-radius:var(--radius-sm);cursor:pointer}
-#tut-tip .tut-next{background:var(--accent);border:none;color:#04130d;font-size:0.76rem;font-weight:700;padding:6px 13px;border-radius:var(--radius-sm);cursor:pointer}
-#tut-tip .tut-dots{display:flex;gap:4px;justify-content:center;margin-top:9px}
-#tut-tip .tut-dot{width:6px;height:6px;border-radius:50%;background:var(--border)}
-#tut-tip .tut-dot.on{background:var(--accent)}
-
-</style>
-</head>
-<body>
-<div id="title-screen" class="screen active">
-<div id="title-bg" aria-hidden="true"><svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ep-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#080b12"/><stop offset="0.5" stop-color="#0f1726"/><stop offset="0.7" stop-color="#1b2335"/><stop offset="0.83" stop-color="#3a2f33"/></linearGradient><radialGradient id="ep-sun" cx="0.5" cy="0.8" r="0.5"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.5"/><stop offset="0.45" stop-color="#f97316" stop-opacity="0.16"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient><radialGradient id="ep-halo" cx="0.5" cy="0.24" r="0.55"><stop offset="0" stop-color="#2563a6" stop-opacity="0.34"/><stop offset="0.55" stop-color="#10b981" stop-opacity="0.08"/><stop offset="1" stop-color="#2563a6" stop-opacity="0"/></radialGradient><linearGradient id="ep-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0e17" stop-opacity="0"/><stop offset="0.8" stop-color="#0a0e17" stop-opacity="0.9"/><stop offset="1" stop-color="#0a0e17"/></linearGradient></defs><rect width="400" height="800" fill="url(#ep-sky)"/><rect width="400" height="800" fill="url(#ep-halo)"/><rect width="400" height="800" fill="url(#ep-sun)"/><g fill="#e8ecf2" opacity="0.45"><circle cx="40" cy="70" r="1"/><circle cx="110" cy="120" r="0.8"/><circle cx="300" cy="55" r="1.1"/><circle cx="350" cy="140" r="0.7"/><circle cx="210" cy="95" r="0.9"/><circle cx="75" cy="180" r="0.7"/><circle cx="330" cy="220" r="0.8"/><circle cx="170" cy="45" r="0.7"/><circle cx="250" cy="160" r="0.6"/></g><path d="M16 600 L110 545 L185 575 L270 470 L360 505" fill="none" stroke="#10b981" stroke-width="2.5" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M360 505 l-15 -1 m15 1 l-4 14" fill="none" stroke="#10b981" stroke-width="2.5" opacity="0.5" stroke-linecap="round" stroke-linejoin="round"/><g fill="#0c1421" opacity="0.85"><rect x="20" y="560" width="46" height="240"/><rect x="80" y="540" width="56" height="260"/><rect x="170" y="555" width="50" height="245"/><rect x="250" y="545" width="54" height="255"/><rect x="320" y="560" width="44" height="240"/></g><g fill="#05080e"><rect x="8" y="610" width="38" height="190"/><rect x="52" y="585" width="30" height="215"/><rect x="86" y="630" width="44" height="170"/><rect x="134" y="600" width="34" height="200"/><rect x="174" y="565" width="48" height="235"/><rect x="226" y="615" width="30" height="185"/><rect x="262" y="590" width="40" height="210"/><rect x="306" y="630" width="34" height="170"/><rect x="344" y="600" width="48" height="200"/></g><g fill="#f5b942" opacity="0.7"><rect x="186" y="585" width="4" height="5"/><rect x="196" y="585" width="4" height="5"/><rect x="186" y="600" width="4" height="5"/><rect x="206" y="600" width="4" height="5"/><rect x="60" y="600" width="3" height="4"/><rect x="68" y="610" width="3" height="4"/><rect x="274" y="610" width="3" height="4"/><rect x="284" y="622" width="3" height="4"/><rect x="354" y="615" width="3" height="4"/></g><rect width="400" height="800" fill="url(#ep-fade)"/></svg></div>
-<h1>Entrepreneur Paradise</h1><p class="subtitle">36 months. One shot. Build your empire.</p>
-<div id="main-menu" style="max-width:380px;width:100%;margin:14px auto 0;"></div>
-<div id="profile-select" style="max-width:420px;width:100%;margin:0 auto;display:none;"><div class="page-head"><button class="back-chip" onclick="Game.showMainMenu()">← Back</button><span class="page-title gold">Choose Your Founder</span></div><div id="archetype-list"></div></div>
-<div id="resume-list" style="max-width:420px;width:100%;margin:0 auto;display:none;"></div>
-<div id="whats-new" style="display:none;"></div>
-<div id="menu-footer" style="margin-top:18px;display:flex;align-items:center;gap:12px;justify-content:center;"><span id="version-line" style="color:var(--text2);font-size:0.7rem;opacity:0.6;">v0.38.1</span><span id="update-icon"></span></div>
-</div>
-<div id="opening-screen" class="screen"><div class="month-header"><h2>Month 1</h2></div><div id="opening-narrative" class="narrative-box"></div><div id="opening-mentor" class="narrative-box" style="border-left-color:var(--gold);"></div><button class="btn-primary" onclick="Game.startGame()">Begin Your Journey</button></div>
-<div id="game-screen" class="screen"><div class="month-header"><h2 id="month-label">Month 1</h2><span class="stage-badge" id="stage-badge">Foundation</span></div><div id="month-narrative" class="narrative-box"></div><div id="character-line" class="narrative-box" style="border-left-color:var(--gold);display:none;"></div><div id="stats-dashboard" class="stats-grid"></div><div id="bars-section" class="bars-section"></div><div id="step-indicator" class="step-indicator"></div><div class="category-tabs" id="cat-tabs"></div><div id="action-list"></div><div class="bottom-bar"><button class="btn-primary" id="confirm-actions-btn" onclick="Game.primaryActionBtn()">Next →</button><button class="btn-secondary" id="endturn-now-btn" style="display:none;margin-top:6px;" onclick="Game.confirmActions()">End Turn</button></div></div>
-<div id="lifestyle-screen" class="screen"><div class="lifestyle-header"><h3>Quarterly Life Check-In</h3><p>Business isn't everything. What are you doing for the rest of your life?</p></div><div id="lifestyle-scores" class="stats-grid"></div><div id="lifestyle-list"></div><div class="bottom-bar"><button class="btn-primary" id="lifestyle-btn" disabled onclick="Game.confirmLifestyle()">Take Life Action</button><button class="btn-secondary" onclick="Game.skipLifestyle()" style="margin-top:6px;">Skip</button></div></div>
-<div id="event-screen" class="screen"><div class="month-header"><h2 id="event-month-label">Event</h2></div><div id="event-dashboard" class="stats-grid"></div><div id="event-box" class="event-box"></div><div id="event-choices"></div></div>
-<div id="result-screen" class="screen"><div class="month-header"><h2 id="result-month-label">Results</h2></div><div id="results-content"></div><div class="bottom-bar"><button id="result-next-btn" class="btn-primary" onclick="Game.resultPrimary()">Next Month →</button></div></div>
-<div id="checkpoint-screen" class="screen"><div id="checkpoint-content"></div></div>
-<div id="end-screen" class="screen"><div class="final-title"><h2 id="end-title"></h2><p class="final-subtitle" id="end-subtitle"></p></div><div class="radar-wrap"><canvas id="radar-canvas" width="300" height="300"></canvas></div><div id="score-breakdown" class="stats-grid"></div><div id="epilogue" class="epilogue-box"></div><div id="end-save" style="margin-top:16px;"></div></div>
-<div id="leaderboard-screen" class="screen"><div id="lb-content"></div></div>
-<div id="popup-container" style="display:none;"><div class="popup-overlay" onclick="Game.hidePopup()"></div><div class="popup-box"><div class="popup-title" id="popup-title"></div><div id="popup-body"></div><button class="btn-secondary" onclick="Game.hidePopup()">Got it</button></div></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-window.EMBEDDED_CONFIG = {
-  "starting_positions": {
-  "version": "1.0.0",
-  "positions": [
-    {
-      "id": "stuck",
-      "label": "Stuck Founder",
-      "tagline": "Rebuild from the wreckage",
-      "difficulty": "Hard",
-      "description": "Bad credit and a brutal first year left you cash-tight and buried in debt. The business still turns a little, but lenders have shut you out completely. The hardest road there is: rebuild your credit, restructure the debt the smart way, and claw back to where capital works for you again.",
-      "opening_narrative": "Six months ago, everything fell apart. The divorce settlement gutted your savings. The business credit card you'd been juggling finally caught up. Your credit score reads like a failing grade, and the bank that used to return your calls doesn't anymore.\n\nBut you've built something before. You know how to sell, how to deliver, how to grind. What you need now isn't a new idea — it's a new foundation under the one you already have.",
-      "initial_state": {
-        "cash": 7000,
-        "personal_credit_score": 540,
-        "credit_negatives": 6,
-        "business_credit_profile": "none",
-        "available_credit": 6000,
-        "total_debt": 27000,
-        "debt_breakdown": { "credit_card": 17000, "collections": 7000, "personal_loan": 3000 },
-        "_installment_debt": 3000,
-        "dscr": 0.6,
-        "personal_guarantee_exposure": 17000,
-        "monthly_revenue": 4200,
-        "cogs": 800,
-        "operating_expenses": 1200,
-        "customer_base": 22,
-        "churn_rate": 0.10,
-        "brand_equity": 22,
-        "systems_maturity": 10,
-        "team_size": 0,
-        "team_roles": [],
-        "entity_structure": "sole_prop",
-        "real_estate_owned": 0,
-        "real_estate_equity": 0,
-        "investment_positions": 0,
-        "life_insurance_cv": 0,
-        "trust_structure": "none",
-        "litigation_exposure": 10,
-        "audit_risk": 5,
-        "key_person_dependency": 90,
-        "partner_conflict_risk": 0,
-        "owner_pay": 800,
-        "energy": 45,
-        "fitness_level": 35,
-        "lifestyle_health": 20,
-        "lifestyle_relationships": 15,
-        "lifestyle_experiences": 10,
-        "lifestyle_spiritual": 10,
-        "lifestyle_philanthropy": 5,
-        "lifestyle_legacy": 5,
-        "revenue_capacity": 7000,
-        "living_expenses": 2200,
-        "lifestyle_expenses": 0,
-        "tax_reserve": 0,
-        "tax_rate": 0.25,
-        "annual_tax_owed": 0,
-        "skill_marketing": 0,
-        "skill_operations": 0,
-        "skill_finance": 0,
-        "leads": 6,
-        "insurance_cash_value": 0,
-        "insurance_loan_balance": 0,
-        "business_credit_limit": 0,
-        "business_credit_used": 0,
-        "business_installment_debt": 0,
-        "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0,
-        "freedom": 5
-      },
-      "stage_overrides": {
-        "marketing": "foundation",
-        "operations": "foundation",
-        "finance": "foundation"
-      },
-      "locked_until": {
-        "finance_leverage": { "personal_credit_score_gte": 620, "total_debt_lte": 15000 },
-        "finance_wealth": { "personal_credit_score_gte": 700, "business_credit_profile": "established", "dscr_gte": 1.5 }
-      }
-    },
-    {
-      "id": "new",
-      "label": "New Founder",
-      "tagline": "Build from zero",
-      "difficulty": "Easy",
-      "description": "Starting from zero — no customers, no track record, just some savings and an idea. The cleanest slate there is, and the gentlest way to learn the game.",
-      "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
-      "initial_state": {
-        "cash": 10000,
-        "personal_credit_score": 670,
-        "business_credit_profile": "none",
-        "available_credit": 6000,
-        "total_debt": 4000,
-        "debt_breakdown": { "credit_card": 4000 },
-        "_installment_debt": 0,
-        "dscr": 0,
-        "personal_guarantee_exposure": 4000,
-        "monthly_revenue": 0,
-        "cogs": 0,
-        "operating_expenses": 400,
-        "customer_base": 0,
-        "churn_rate": 0,
-        "brand_equity": 0,
-        "systems_maturity": 0,
-        "team_size": 0,
-        "team_roles": [],
-        "entity_structure": "none",
-        "real_estate_owned": 0,
-        "real_estate_equity": 0,
-        "investment_positions": 0,
-        "life_insurance_cv": 0,
-        "trust_structure": "none",
-        "litigation_exposure": 0,
-        "audit_risk": 0,
-        "key_person_dependency": 100,
-        "partner_conflict_risk": 0,
-        "owner_pay": 0,
-        "energy": 80,
-        "fitness_level": 60,
-        "lifestyle_health": 50,
-        "lifestyle_relationships": 50,
-        "lifestyle_experiences": 40,
-        "lifestyle_spiritual": 30,
-        "lifestyle_philanthropy": 10,
-        "lifestyle_legacy": 5,
-        "revenue_capacity": 0,
-        "living_expenses": 3200,
-        "lifestyle_expenses": 0,
-        "tax_reserve": 0,
-        "tax_rate": 0.25,
-        "annual_tax_owed": 0,
-        "skill_marketing": 0,
-        "skill_operations": 0,
-        "skill_finance": 0,
-        "leads": 0,
-        "insurance_cash_value": 0,
-        "insurance_loan_balance": 0,
-        "_installment_debt": 0,
-        "business_credit_limit": 0,
-        "business_credit_used": 0,
-        "business_installment_debt": 0,
-        "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0,
-        "freedom": 10
-      },
-      "stage_overrides": {
-        "marketing": "foundation",
-        "operations": "foundation",
-        "finance": "foundation"
-      },
-      "locked_until": {
-        "finance_leverage": { "monthly_revenue_gte": 3000, "personal_credit_score_gte": 650 },
-        "finance_wealth": { "monthly_revenue_gte": 15000, "business_credit_profile": "established" }
-      }
-    },
-    {
-      "id": "established",
-      "label": "Established Founder",
-      "tagline": "Optimize what you've built",
-      "difficulty": "Medium",
-      "description": "Two profitable years and a small team — but built on good-enough choices. You're overworked, under-structured, and the wealth you've earned sits dangerously exposed. Plug the leaks and add the financial infrastructure you skipped.",
-      "opening_narrative": "The business did $480,000 last year. On paper, you should feel great. In practice, you haven't taken a real vacation in three years, your accountant keeps warning you about your tax exposure, and last month's close call with that client dispute reminded you that everything you've built sits on a foundation of... hope, mostly.\n\nYou don't need more revenue. You need to stop bleeding what you've already earned — to taxes, to inefficiency, to risk you haven't bothered to insure against. And maybe, if you're honest, you need to remember why you started this in the first place.",
-      "initial_state": {
-        "cash": 60000,
-        "personal_credit_score": 720,
-        "business_credit_profile": "building",
-        "available_credit": 25000,
-        "total_debt": 35000,
-        "debt_breakdown": { "business_loc": 20000, "equipment_loan": 15000 },
-        "dscr": 1.8,
-        "personal_guarantee_exposure": 35000,
-        "monthly_revenue": 40000,
-        "cogs": 12000,
-        "operating_expenses": 14000,
-        "customer_base": 105,
-        "churn_rate": 0.08,
-        "brand_equity": 55,
-        "systems_maturity": 30,
-        "team_size": 3,
-        "team_roles": ["contractor", "contractor", "part_time_admin"],
-        "entity_structure": "llc",
-        "real_estate_owned": 0,
-        "real_estate_equity": 0,
-        "investment_positions": 0,
-        "life_insurance_cv": 0,
-        "trust_structure": "none",
-        "litigation_exposure": 45,
-        "audit_risk": 30,
-        "key_person_dependency": 75,
-        "partner_conflict_risk": 0,
-        "owner_pay": 6000,
-        "energy": 25,
-        "fitness_level": 20,
-        "lifestyle_health": 20,
-        "lifestyle_relationships": 25,
-        "lifestyle_experiences": 15,
-        "lifestyle_spiritual": 10,
-        "lifestyle_philanthropy": 10,
-        "lifestyle_legacy": 10,
-        "revenue_capacity": 60000,
-        "living_expenses": 5500,
-        "lifestyle_expenses": 0,
-        "tax_reserve": 0,
-        "tax_rate": 0.25,
-        "annual_tax_owed": 0,
-        "skill_marketing": 0,
-        "skill_operations": 0,
-        "skill_finance": 0,
-        "leads": 20,
-        "insurance_cash_value": 0,
-        "insurance_loan_balance": 0,
-        "_installment_debt": 0,
-        "business_credit_limit": 35000,
-        "business_credit_used": 20000,
-        "business_installment_debt": 15000,
-        "insurance_passive_loan_total": 0,
-        "real_estate_debt": 0,
-        "freedom": 15,
-        "_completed_actions": [
-          "establish_business", "form_llc", "open_business_account", "basic_bookkeeping",
-          "build_personal_credit", "build_personal_credit_repair", "build_personal_credit_optimize",
-          "build_offer", "do_sales_yourself", "cold_outreach", "basic_social_content", "crm_pipeline",
-          "study_business_content", "do_work_yourself", "hire_first_contractor", "write_first_sop",
-          "basic_quality_control", "client_onboarding"
-        ]
-      },
-      "stage_overrides": {
-        "marketing": "leverage",
-        "operations": "leverage",
-        "finance": "leverage"
-      },
-      "locked_until": {
-        "finance_leverage": {},
-        "finance_wealth": { "entity_structure_in": ["s_corp", "c_corp", "multi_entity"], "dscr_gte": 2.0 }
-      }
-    }
-  ]
-}
-,
-  "actions_marketing": {
-  "version": "1.0.0",
-  "actions": [
-    {
-      "id": "hire_cro",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Fractional CRO",
-      "description": "Rent a part-time Chief Revenue Officer who picks and runs your smartest growth move each month.",
-      "lesson": "You can't afford an A-player full-time yet — so you rent one. A fractional executive is leverage on a budget: real expertise, part-time cost. It buys back your time now and proves out the role before you commit to a full salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 30000, "customer_base_gte": 45, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "brand_equity": 6, "key_person_dependency": -8, "_cro_hired": true },
-      "success_rate": 0.88,
-      "failure_effects": { "brand_equity": 2, "_cro_hired": true },
-      "narrative_success": "Your fractional CRO is on. Each month they pick and execute the smartest growth play. Part-time pay scales modestly with the company — when you can afford a full-timer, they'll do far more.",
-      "narrative_failure": "The fractional CRO is onboarding part-time. They'll be picking your growth moves from here."
-    },
-    {
-      "id": "promote_cro_fulltime",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CRO to Full-Time",
-      "description": "Make your CRO full-time so they actively build the growth engine — pricey, but powerful at scale.",
-      "lesson": "This is the ceiling great founders hit: top talent is expensive, and you can only afford it if your capital is working — credit funding growth, a tax-efficient structure protecting cash, and leverage compounding faster than payroll. Brute-force cash can't carry an A-team; efficient leverage can.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro"], "monthly_revenue_gte": 70000, "customer_base_gte": 90, "brand_equity_gte": 55 },
-      "effects": { "brand_equity": 12, "revenue_capacity": 8000, "key_person_dependency": -10, "_cro_fulltime": true },
-      "success_rate": 0.9,
-      "failure_effects": { "brand_equity": 4, "_cro_fulltime": true },
-      "narrative_success": "Your CRO is full-time now — and it shows. They're building the growth engine every day: capacity, pipeline, brand all climbing on their own. The salary is serious, but at your scale the leverage more than covers it.",
-      "narrative_failure": "The full-time offer is signed; they're still spinning up the bigger engine. The payroll hit is real from day one."
-    },
-    {
-      "id": "build_offer",
-      "category": "marketing",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Refine Your Offer",
-      "description": "Package your expertise into a clear, premium offer so every customer is worth more.",
-      "lesson": "Sell outcomes, not hours — to people who can pay. A sharper, premium offer raises the value of every single customer you have, which is far more powerful than just adding more of them.",
-      "cash_cost": 0,
-      "energy_cost": 12,
-      "prerequisites": { "customer_base_gte": 5 },
-      "effects": { "brand_equity": 8, "revenue_capacity": 3000, "leads": 8 },
-      "success_rate": 0.7,
-      "failure_effects": { "brand_equity": 2, "leads": 3 },
-      "narrative_success": "The new pricing feels scary — and every new prospect is saying yes faster than before. You were undercharging.",
-      "narrative_failure": "Two clients pushed back on the new pricing. You compromised on one. The packaging needs another pass."
-    },
-    {
-      "id": "brand_pr_push",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "PR & Brand Campaign",
-      "description": "Run a brand push — podcasts, press, a refresh — to build authority and charge more.",
-      "lesson": "Authority is pricing power. When prospects already know your name from a podcast or feature, you're not discounting to win them — they expect to pay a premium, and every customer is worth more.",
-      "cash_cost": 3500,
-      "energy_cost": 5,
-      "prerequisites": { "brand_equity_gte": 20 },
-      "effects": { "brand_equity": 20, "customer_base": 5, "revenue_capacity": 5000, "leads": 12 },
-      "success_rate": 0.6,
-      "failure_effects": { "brand_equity": 8 },
-      "narrative_success": "A local business podcast featured you. Three inbound calls the next week, all mentioning the episode — and none of them flinched at your rates.",
-      "narrative_failure": "The rebrand looks great. The press pitch didn't land. Brand equity went up; the phone didn't ring more. Yet."
-    },
-    {
-      "id": "content_engine",
-      "category": "marketing",
-      "stage": "wealth",
-      "label": "Build a Content Engine",
-      "description": "Hire a content team so your brand grows on autopilot, lifting what every customer is worth.",
-      "lesson": "A content team makes your brand compound on autopilot. A bigger brand means higher perceived value — you raise prices and capacity without trading more of your hours for attention.",
-      "cash_cost": 5000,
-      "energy_cost": 6,
-      "prerequisites": { "team_size_gte": 3, "brand_equity_gte": 40 },
-      "effects": { "brand_equity": 25, "customer_base": 12, "key_person_dependency": -10, "revenue_capacity": 20000, "leads": 30 },
-      "success_rate": 0.65,
-      "failure_effects": { "brand_equity": 10 },
-      "narrative_success": "The content calendar runs itself. You approved this month's posts in twenty minutes. Your brand — and your pricing power — keeps climbing.",
-      "narrative_failure": "The team is producing content. It's... fine. Not your voice yet. Takes time to train a brand voice into other people."
-    },
-    {
-      "id": "franchise_licensing",
-      "category": "marketing",
-      "stage": "wealth",
-      "label": "License or Franchise",
-      "description": "Let others run your model under your brand, multiplying the value your name can capture.",
-      "lesson": "Sell the system, not your time. Licensing your playbook lets others run your model under your brand — multiplying the value your business can capture far beyond what your own delivery could ever reach.",
-      "cash_cost": 15000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 70, "brand_equity_gte": 60 },
-      "effects": { "brand_equity": 15, "revenue_capacity": 50000, "key_person_dependency": -20 },
-      "success_rate": 0.4,
-      "failure_effects": { "brand_equity": -5 },
-      "narrative_success": "Two licensees signed. They're paying you monthly for the right to use your name and your playbook. This is leverage.",
-      "narrative_failure": "One licensee signed, then struggled. Supporting them took more time than expected. The model needs refinement."
-    },
-    {
-      "id": "cold_outreach",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Outbound Prospecting",
-      "description": "Fill your funnel by hand with cold calls, DMs, and in-person networking to put names in the pipeline.",
-      "lesson": "Early on, volume wins. Talk to enough of the right people — online and in person — and the math produces leads. In-person especially: people remember someone they've met, and those become your warmest leads. Don't polish the funnel before you've filled it.",
-      "cash_cost": 150,
-      "energy_cost": 15,
-      "prerequisites": {},
-      "effects": { "leads": 14, "brand_equity": 6 },
-      "success_rate": 0.72,
-      "failure_effects": { "leads": 4, "brand_equity": 2 },
-      "narrative_success": "Dozens of calls and a few handshakes later, your pipeline has more names in it than it's ever had — and a couple of people approached you for once.",
-      "narrative_failure": "A lot of calls and business cards, one solid maybe. But that's a lead and a few new faces who now know your name."
-    },
-    {
-      "id": "basic_social_content",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Social Media Content",
-      "description": "Post consistently about your work to build an audience that feeds leads over time.",
-      "lesson": "Organic content compounds slowly but never stops. It won't pay this month — it builds an audience that feeds leads into your funnel for years.",
-      "cash_cost": 50,
-      "energy_cost": 10,
-      "prerequisites": {},
-      "effects": { "leads": 12, "brand_equity": 10 },
-      "success_rate": 0.6,
-      "failure_effects": { "leads": 4, "brand_equity": 3 },
-      "narrative_success": "One post went semi-viral in your niche. Your DMs have actual prospects in them for the first time.",
-      "narrative_failure": "Consistent posting, crickets responding. But the archive is building — it'll compound eventually."
-    },
-    {
-      "id": "paid_ads_test",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Test Paid Ads",
-      "description": "Run a paid ads test to learn what message lands and turn ad spend into leads fast.",
-      "lesson": "Master one channel at a time. Paid ads give the fastest feedback and the fastest leads — pour in there first, build organic in parallel for the long game.",
-      "cash_cost": 500,
-      "energy_cost": 5,
-      "prerequisites": { "needs": ["build_offer"] },
-      "effects": { "leads": 20, "brand_equity": 3 },
-      "success_rate": 0.5,
-      "failure_effects": { "leads": 6 },
-      "narrative_success": "The ads are profitable. Not wildly — but the cost per lead is low enough to pour more in. You've found a lever.",
-      "narrative_failure": "The ad budget mostly evaporated. But you learned what doesn't work, which is worth something."
-    },
-    {
-      "id": "lead_magnet",
-      "category": "marketing",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Create a Lead Magnet",
-      "description": "Offer a free guide or checklist that captures emails — give value first, sell later.",
-      "lesson": "Give value before you ask for the sale. A free, genuinely useful resource earns trust and an email address — the start of a lead you own.",
-      "cash_cost": 100,
-      "energy_cost": 12,
-      "prerequisites": { "customer_base_gte": 3 },
-      "effects": { "leads": 15, "brand_equity": 8 },
-      "success_rate": 0.75,
-      "failure_effects": { "leads": 5, "brand_equity": 3 },
-      "narrative_success": "The lead magnet is live. Fifteen new emails in the first week. These aren't customers yet — but they raised their hand.",
-      "narrative_failure": "Downloads are trickling in. The topic might need adjusting, but you've got five new leads and a distribution channel."
-    },
-    {
-      "id": "referral_asks",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Ask for Referrals",
-      "description": "Ask every client for warm introductions — the cheapest, highest-trust leads you can get.",
-      "lesson": "Referrals are the cheapest, highest-trust leads you'll ever get. Happy clients are a sales force you don't pay — but only if you actually ask.",
-      "cash_cost": 0,
-      "energy_cost": 8,
-      "prerequisites": { "customer_base_gte": 3 },
-      "effects": { "leads": 8, "customer_base": 1, "brand_equity": 5 },
-      "success_rate": 0.65,
-      "failure_effects": { "leads": 2 },
-      "narrative_success": "Your best client introduced you to three people at her networking group. Warm leads, already half-sold.",
-      "narrative_failure": "Everyone said they'd think about it. One person actually came through — better than nothing."
-    },
-    {
-      "id": "referral_partnerships",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Referral & Affiliate Partnerships",
-      "description": "Set up referral and commission-based affiliate partners whose audiences become your lead channel.",
-      "lesson": "Borrow other people's trust and audiences. Partners who serve your same client (but don't compete) plus affiliates working on commission turn other people's reach into a steady, near-free lead source — you mostly pay for results.",
-      "cash_cost": 800,
-      "energy_cost": 10,
-      "prerequisites": { "brand_equity_gte": 30, "customer_base_gte": 25 },
-      "effects": { "leads": 16, "customer_base": 8, "brand_equity": 9, "revenue_capacity": 8000 },
-      "success_rate": 0.62,
-      "failure_effects": { "leads": 5, "customer_base": 2, "brand_equity": 3 },
-      "narrative_success": "Partners and affiliates are live — each sending warm leads a month, on near-zero or commission-only cost. Leads from channels you didn't have to build yourself.",
-      "narrative_failure": "A couple of partners are producing; the rest signed on but haven't sent anyone yet. Follow up and nurture the network next month."
-    },
-    {
-      "id": "do_sales_yourself",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Do the Sales Yourself",
-      "description": "Close deals personally — your cheapest, highest-converting sales channel early on is you.",
-      "lesson": "Before you can afford a sales team or a funnel, you are the sales team. Founder-led selling is the cheapest, highest-converting channel you have early on — and every call teaches you what actually makes people buy.",
-      "cash_cost": 0,
-      "energy_cost": 14,
-      "prerequisites": { "leads_gte": 1 },
-      "effects": { "customer_base": 5, "sales_conversion": 2, "brand_equity": 2 },
-      "success_rate": 0.85,
-      "failure_effects": { "customer_base": 1 },
-      "narrative_success": "You closed a handful of deals by sheer hustle — calls, follow-ups, and asking for the sale. It's exhausting, but the pipeline turned into paying customers.",
-      "narrative_failure": "A lot of calls, a few maybes, one yes. Selling is a numbers game and this month the numbers were thin — but you learned what objections to expect."
-    },
-    {
-      "id": "discount_promotion",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Offer a Discount to Drive Sales",
-      "description": "Slash prices for a flood of customers — but they're demanding bargain-hunters who erode your margins.",
-      "lesson": "Discounting is the easiest way to get customers and the hardest way to build a business. Cheap clients are the most demanding and the least loyal — you trade margin, pricing power, and energy for volume that doesn't compound. Use it sparingly, if at all.",
-      "cash_cost": 0,
-      "energy_cost": 12,
-      "prerequisites": {},
-      "effects": { "customer_base": 12, "brand_equity": -8, "sales_conversion": 3 },
-      "success_rate": 0.9,
-      "failure_effects": { "customer_base": 4, "brand_equity": -5 },
-      "narrative_success": "The promo worked — a flood of new customers signed up. But they haggle over every invoice, demand round-the-clock attention, and your margins (and your evenings) took the hit.",
-      "narrative_failure": "The discount pulled in a handful of price-shoppers and cheapened how people see you. A lot of effort for thin, fickle business."
-    },
-    {
-      "id": "webinar_funnel",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Launch a Webinar Funnel",
-      "description": "Build an automated webinar that pitches and converts leads 24/7 while you sleep.",
-      "lesson": "Build it once, it sells forever. An automated funnel turns your best pitch into an asset that converts leads 24/7 — lifting your close rate without costing you time.",
-      "cash_cost": 2000,
-      "energy_cost": 12,
-      "prerequisites": { "brand_equity_gte": 25, "needs": ["build_offer"] },
-      "effects": { "customer_base": 6, "leads": 15, "brand_equity": 12, "revenue_capacity": 10000, "sales_conversion": 5 },
-      "success_rate": 0.5,
-      "failure_effects": { "brand_equity": 5 },
-      "narrative_success": "The webinar converted at 8%. People are signing up, watching, and buying — at 2 AM while you're asleep.",
-      "narrative_failure": "Registration was decent. Conversion was terrible. The offer needs reworking, but the funnel infrastructure is built."
-    },
-    {
-      "id": "build_sales_team",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Hire a Salesperson",
-      "description": "Hire a dedicated closer to lift conversion so you stop being the sales bottleneck.",
-      "lesson": "A dedicated closer lifts conversion on the leads you already have — more customers from the same pipeline. But sales talent is paid on results: their cost rises as revenue rises, so the real leverage comes from a better product and a warm pipeline, not just adding salespeople.",
-      "cash_cost": 3000,
-      "energy_cost": 6,
-      "recurring_cost": 3000,
-      "prerequisites": { "needs": ["build_offer"], "customer_base_gte": 8 },
-      "effects": { "team_size": 1, "revenue_capacity": 8000, "key_person_dependency": -10, "leads": 8, "sales_conversion": 7 },
-      "success_rate": 0.6,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Your new closer is converting leads you'd have let go cold. Conversion is up — and you spent the month on the business instead of in it.",
-      "narrative_failure": "The new hire is ramping slowly. Conversion hasn't moved much yet, but you got ten hours a week back."
-    },
-    {
-      "id": "crm_pipeline",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Install CRM & Pipeline",
-      "description": "Build a real sales pipeline with stages and follow-ups so fewer leads slip away.",
-      "lesson": "What gets tracked gets closed. A real pipeline surfaces the leads you'd otherwise forget and lifts your conversion — most lost sales die from neglect, not rejection.",
-      "cash_cost": 800,
-      "energy_cost": 12,
-      "prerequisites": { "customer_base_gte": 15 },
-      "effects": { "customer_base": 3, "systems_maturity": 10, "churn_rate": -0.03, "revenue_capacity": 5000, "sales_conversion": 6 },
-      "success_rate": 0.8,
-      "failure_effects": { "systems_maturity": 3, "customer_base": 1 },
-      "narrative_success": "For the first time, you can see every prospect, where they are, and what happens next. Three forgotten leads turned into deals.",
-      "narrative_failure": "The CRM is set up but half your data is still in sticky notes. Partial improvement — you'll migrate the rest next month."
-    },
-    {
-      "id": "email_campaign",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Launch Email Nurture Campaign",
-      "description": "Build an email list and send weekly value emails that warm leads until they convert.",
-      "lesson": "An email list is an asset YOU own — not rented from an algorithm. Nurture it and cold leads warm into buyers, lifting conversion on the pipeline you already paid to fill.",
-      "cash_cost": 200,
-      "energy_cost": 10,
-      "prerequisites": { "leads_gte": 10 },
-      "effects": { "customer_base": 5, "brand_equity": 5, "sales_conversion": 4 },
-      "success_rate": 0.7,
-      "failure_effects": { "customer_base": 1, "brand_equity": 2 },
-      "narrative_success": "The email sequence is converting. Three leads became clients this month — they said your emails made them feel like they already knew you.",
-      "narrative_failure": "Open rates are decent, clicks are low. The content needs work, but the infrastructure is built."
-    },
-    {
-      "id": "vanity_follower_boost",
-      "category": "marketing",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Viral Follower Boost",
-      "description": "Buy 50,000 followers and a flood of likes overnight — instant social proof so prospects take you seriously from day one.",
-      "lesson": "Bought followers are bots, not buyers. Engagement craters, real prospects (and the platform) spot the fake numbers, and your credibility takes the hit. Social proof you buy isn't trust — a small, real, engaged audience beats a huge fake one.",
-      "cash_cost": 3500,
-      "energy_cost": 2,
-      "prerequisites": {},
-      "effects": { "brand_equity": -15, "sales_conversion": -4 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Your follower count exploded overnight — the screenshots looked impressive. But the likes are from bots in another time zone, your engagement rate fell off a cliff, and a couple of real prospects quietly noticed the numbers didn't add up.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "influencer_megadeal",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Celebrity Influencer Megadeal",
-      "description": "Lock in a one-off shoutout from a million-follower creator — instant reach, your brand in front of a massive audience overnight.",
-      "lesson": "A borrowed audience rarely converts. You paid a fortune for raw reach from people who aren't your buyer — a spike that vanished in days while support drowned in tire-kickers. Reach isn't pipeline; fit and follow-up are.",
-      "cash_cost": 18000,
-      "energy_cost": 3,
-      "prerequisites": {},
-      "effects": { "leads": 120, "sales_conversion": -3, "churn_rate": 0.02 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "The post hit millions — a flood of curiosity clicks, a screenshot-worthy spike, a rush of new leads. Then: crickets. The audience wasn't your buyer, the bump evaporated within a week, and the few who did sign up churned fast.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "national_ad_blitz",
-      "category": "marketing",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "National Ad Blitz Rebrand",
-      "description": "A top agency pitches a full rebrand plus a national ad campaign — go big, dominate the category, become a household name.",
-      "lesson": "Big agencies sell spend, not results. The rebrand confused the customers you had, and 'awareness' without a tracked funnel is money on fire. At scale, ROI-measured channels and retention win — spend you can't measure is spend you lose.",
-      "cash_cost": 45000,
-      "energy_cost": 4,
-      "prerequisites": { "cash_gte": 45000 },
-      "effects": { "brand_equity": -10 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "The billboards looked incredible and the agency's deck was dazzling. Then the numbers landed: awareness up, sales flat, and your existing customers confused by the new logo and messaging. Forty-five grand, mostly gone, nothing to show on the bottom line.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "hire_highticket_closer",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a High-Ticket Closer",
-      "description": "A legendary closer who guarantees he'll 10x your premium sales — books big-ticket deals on day one. Commission-heavy, but he pays for himself, right?",
-      "lesson": "A closer who hard-sells on fake guarantees books revenue today and poisons the business tomorrow — refunds, churn, a wrecked reputation, lawsuits over claims you can't keep. He's expensive, toxic, and won't go quietly: firing him (via Restructure & Downsize) means eating a legal threat. Never let someone buy short-term revenue with your integrity.",
-      "cash_cost": 0,
-      "recurring_cost": 9000,
-      "energy_cost": 4,
-      "prerequisites": {},
-      "effects": { "sales_conversion": 8, "customer_base": 8, "team_size": 1, "company_culture": -18, "_toxic_closer": true },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Three premium deals his first week — the revenue looks incredible. But he's promising clients the moon: guaranteed results, money-back-no-matter-what, things you can't deliver. He's abrasive with the team, his pay eats $9,000/month, and you dread the day those guarantees come due.",
-      "narrative_failure": ""
-    }
-  ]
-}
-,
-  "actions_operations": {
-  "version": "1.0.0",
-  "actions": [
-    {
-      "id": "hire_coo",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Fractional COO",
-      "description": "Rent a part-time COO who picks and runs your smartest ops move each month, cutting your dependence on you.",
-      "lesson": "Key-person dependency is the silent killer of business value. You can't carry a full-time COO yet — so you rent the expertise part-time, start systemizing, and prove the role before you commit to the salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 30000, "team_size_gte": 3, "systems_maturity_gte": 30, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "systems_maturity": 8, "key_person_dependency": -12, "_coo_hired": true },
-      "success_rate": 0.88,
-      "failure_effects": { "systems_maturity": 3, "key_person_dependency": -4, "_coo_hired": true },
-      "narrative_success": "Your fractional COO is steering operations a few days a month — picking the smartest systems-and-delivery move each turn. Part-time pay for now; a full-timer would build far harder.",
-      "narrative_failure": "The fractional COO is onboarding part-time. They'll be driving your ops moves from here."
-    },
-    {
-      "id": "promote_coo_fulltime",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote COO to Full-Time",
-      "description": "Bring your COO full-time to build the machine daily, growing team and capacity while you step back. Pricey.",
-      "lesson": "A full-time A-player operator is what turns a business into a sellable asset — but they're expensive. You can only carry the payroll if your systems, margins, and leverage are doing the heavy lifting. Can't afford them? That's the ceiling telling you to fix your efficiency first.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_coo"], "monthly_revenue_gte": 70000, "team_size_gte": 6, "systems_maturity_gte": 55 },
-      "effects": { "systems_maturity": 14, "revenue_capacity": 8000, "key_person_dependency": -20, "_coo_fulltime": true },
-      "success_rate": 0.9,
-      "failure_effects": { "systems_maturity": 5, "key_person_dependency": -8, "_coo_fulltime": true },
-      "narrative_success": "Your COO is full-time — and the machine is humming. Team and capacity grow on their own each month, and the business barely needs you. The salary is heavy, but your scale carries it.",
-      "narrative_failure": "Full-time offer signed; the bigger build is still ramping. Payroll bites from day one."
-    },
-    {
-      "id": "study_business_content",
-      "category": "operations",
-      "stage": "foundation",
-      "label": "Study Business Content (Books & YouTube)",
-      "description": "Learn the craft from books, YouTube, and podcasts. Free education that sharpens how you run and deliver.",
-      "lesson": "The cheapest leverage there is: a $20 book or a free video can save you months of expensive mistakes. Founders who keep learning out-execute those who wing it — invest your time before you can invest your money.",
-      "cash_cost": 0,
-      "energy_cost": 8,
-      "prerequisites": {},
-      "effects": { "systems_maturity": 6, "brand_equity": 2 },
-      "success_rate": 0.95,
-      "failure_effects": { "systems_maturity": 2 },
-      "narrative_success": "A few late nights with the right books and channels, and ideas start clicking — you spot three things you've been doing the hard way and fix them.",
-      "narrative_failure": "You watched a lot and applied a little. Some of it will stick; consistency is the real lesson."
-    },
-    {
-      "id": "do_work_yourself",
-      "category": "operations",
-      "stage": "foundation",
-      "label": "Do the Work Yourself",
-      "description": "Deliver everything yourself to bank cash and master the craft. Unsustainable, but it gets invoices paid.",
-      "lesson": "Do it yourself first — not forever. You can't systematize or delegate what you don't deeply understand. Master the work, bank the cash, then escape it before you become the bottleneck.",
-      "cash_cost": 0,
-      "energy_cost": 18,
-      "prerequisites": { "leads_gte": 1, "needs": ["study_business_content"] },
-      "effects": { "cash": 1000, "systems_maturity": 3, "key_person_dependency": 5 },
-      "success_rate": 0.9,
-      "failure_effects": { "cash": 400 },
-      "narrative_success": "Everything got done. Everything. You're exhausted, but every client is happy — because you did it all personally, and the invoices got paid.",
-      "narrative_failure": "You dropped a ball. One client got a late delivery. Nothing catastrophic, but a reminder that one person can't do everything."
-    },
-    {
-      "id": "hire_first_contractor",
-      "category": "operations",
-      "stage": "foundation",
-      "label": "Work With a Vendor Contractor",
-      "description": "Hand delivery to a contractor so you can focus on growing revenue instead of doing all the work yourself.",
-      "lesson": "Your first hire won't be as good as you — and that's fine. 80% done by someone else beats 100% done by you alone. But do the work yourself first: you can't hand off what you don't understand. Trading money for delivery capacity is the whole game.",
-      "cash_cost": 1500,
-      "energy_cost": 6,
-      "recurring_cost": 1500,
-      "prerequisites": { "needs": ["do_work_yourself"] },
-      "effects": { "team_size": 1, "systems_maturity": 5, "key_person_dependency": -10, "revenue_capacity": 5000 },
-      "success_rate": 0.65,
-      "failure_effects": { "team_size": 1, "systems_maturity": 2 },
-      "narrative_success": "She's not as good as you. She's 80% as good, and that 80% just bought you back twenty hours a week of capacity.",
-      "narrative_failure": "The contractor needs more hand-holding than expected. You're spending time managing instead of doing — but that's the transition."
-    },
-    {
-      "id": "hire_delivery_team",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Build a Delivery Team",
-      "description": "Hire two or three people dedicated to fulfillment. You manage, they deliver, and capacity scales past you.",
-      "lesson": "A dedicated delivery team is the leap from freelancer to business. The work happens whether you're in the room or not — that's a job becoming an asset with real capacity.",
-      "cash_cost": 5000,
-      "energy_cost": 6,
-      "prerequisites": { "systems_maturity_gte": 20 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 2, "revenue_capacity": 20000, "key_person_dependency": -20 },
-      "success_rate": 0.6,
-      "failure_effects": { "team_size": 2, "key_person_dependency": -5 },
-      "narrative_success": "The team handled this month's workload without a single escalation to you. You built something that works without you.",
-      "narrative_failure": "The team is hired and training. Quality isn't where you want it yet. You're managing more than doing — the awkward middle phase."
-    },
-    {
-      "id": "fulfillment_system",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Build Fulfillment System",
-      "description": "Document delivery end-to-end (intake, production, QA, follow-up) so you scale capacity without quality cracking.",
-      "lesson": "Turn delivery into an assembly line — intake, production, QA, delivery, follow-up, all documented. Consistency at scale lets you grow capacity without your quality cracking.",
-      "cash_cost": 2000,
-      "energy_cost": 9,
-      "prerequisites": { "systems_maturity_gte": 25, "team_size_gte": 2 },
-      "effects": { "systems_maturity": 18, "churn_rate": -0.03, "revenue_capacity": 10000, "brand_equity": 8 },
-      "success_rate": 0.6,
-      "failure_effects": { "systems_maturity": 8, "revenue_capacity": 3000 },
-      "narrative_success": "A new client moves through your system like a product on an assembly line — consistent, reliable, scalable. This is a real business now.",
-      "narrative_failure": "The system is built for 80% of cases. The other 20% still need you. But that's 80% fewer fires."
-    },
-    {
-      "id": "build_ip",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Build Proprietary IP",
-      "description": "Build proprietary tools or methodology rivals can't copy. Your moat, and your pricing power.",
-      "lesson": "A methodology competitors can't copy is a moat. Proprietary IP gives you pricing power and capacity to capture more value — not a commodity competing on price.",
-      "cash_cost": 10000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 50, "brand_equity_gte": 40 },
-      "effects": { "brand_equity": 20, "revenue_capacity": 15000, "systems_maturity": 10, "litigation_exposure": -10 },
-      "success_rate": 0.5,
-      "failure_effects": { "brand_equity": 8, "systems_maturity": 4 },
-      "narrative_success": "The proprietary framework is built and branded. Clients now come to you for the methodology, not just the service.",
-      "narrative_failure": "The IP is developed but not yet differentiated enough. More iteration needed. Still, the foundation is laid."
-    },
-    {
-      "id": "vertical_integration",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Expand Operations",
-      "description": "Bring a supplier in-house and clone your playbook into a new market to keep more margin and multiply reach.",
-      "lesson": "Once the playbook works, expand it — own more of the value chain to keep more of every dollar, and drop the proven system into a new market to multiply the business without reinventing it.",
-      "cash_cost": 28000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 5 },
-      "recurring_cost": 8000,
-      "effects": { "cogs": -3000, "customer_base": 20, "team_size": 3, "brand_equity": 12, "systems_maturity": 8 },
-      "success_rate": 0.45,
-      "failure_effects": { "customer_base": 5, "team_size": 2, "cogs": -500 },
-      "narrative_success": "You own more of the supply chain AND opened a second market — margins jumped and capacity multiplied. You're an empire now.",
-      "narrative_failure": "Expansion is messier than expected: integration overhead is real and the new market is slow. It'll take time to break even — if it does."
-    },
-    {
-      "id": "write_first_sop",
-      "category": "operations",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Document & Automate Systems",
-      "description": "Document your process step by step and automate the repeatable parts so the work runs without you.",
-      "lesson": "Document before you delegate, then automate what repeats. SOPs move the process out of your head and onto paper; automation makes sure nothing slips through the cracks — together they're the first real step from operator to owner.",
-      "cash_cost": 200,
-      "energy_cost": 12,
-      "prerequisites": {},
-      "effects": { "systems_maturity": 14, "key_person_dependency": -8, "energy": 5, "operating_expenses": -100 },
-      "success_rate": 0.82,
-      "failure_effects": { "systems_maturity": 5 },
-      "narrative_success": "What you do in your sleep now exists outside your head — written down and partly automated. Invoices go out on their own; scheduling is self-serve.",
-      "narrative_failure": "The SOP is written but incomplete and only some tasks are automated. You realize how much of your process is still instinct, not system."
-    },
-    {
-      "id": "project_management",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Implement Project Management",
-      "description": "Deploy real project tracking so everyone sees what's due, who owns it, and what's late. Nothing slips.",
-      "lesson": "Visibility is control. When everyone sees what's due, who owns it, and what's late, things stop falling through the cracks — and you stop being the human task-tracker.",
-      "cash_cost": 600,
-      "energy_cost": 10,
-      "prerequisites": { "team_size_gte": 2 },
-      "effects": { "systems_maturity": 15, "churn_rate": -0.02, "operating_expenses": -200 },
-      "success_rate": 0.75,
-      "failure_effects": { "systems_maturity": 5 },
-      "narrative_success": "For the first time, you can see every active project, every deadline, every bottleneck — in one screen. This changes everything.",
-      "narrative_failure": "The tool is set up. Adoption is mixed. Your best contractor refuses to update her tasks. People problems, not software problems."
-    },
-    {
-      "id": "middle_management",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire a Manager",
-      "description": "Add a manager so you oversee one person instead of five, buying back your time as the team grows.",
-      "lesson": "Manage one person instead of five. A management layer buys back your time and lets the team grow past your personal bandwidth — you stop being the ceiling.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "team_size_gte": 3, "systems_maturity_gte": 30 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -25, "systems_maturity": 10, "energy": 10 },
-      "success_rate": 0.5,
-      "failure_effects": { "team_size": 1, "key_person_dependency": -5 },
-      "narrative_success": "She ran the Monday meeting without you this week. The team didn't even notice you weren't there. That's the goal.",
-      "narrative_failure": "The new manager is learning. Team dynamics shifted. Two people aren't happy about the new layer. Growing pains."
-    },
-    {
-      "id": "full_systemization",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Full Systemization",
-      "description": "SOPs for everything, a manager on daily ops, and a business that runs without you. Owner, not operator.",
-      "lesson": "When the business runs without you, you've won the real prize: not just income, but freedom. You become the owner, not the operator — and your time becomes yours again.",
-      "cash_cost": 8000,
-      "energy_cost": 10,
-      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 2, "key_person_dependency_lte": 40 },
-      "effects": { "systems_maturity": 20, "key_person_dependency": -20, "energy": 15, "revenue_capacity": 15000 },
-      "success_rate": 0.5,
-      "failure_effects": { "systems_maturity": 8, "key_person_dependency": -5 },
-      "narrative_success": "You took a week off. Revenue was the same when you came back. This is what freedom looks like.",
-      "narrative_failure": "Almost. Two client issues escalated to you during your 'vacation.' Close, but the safety net has holes."
-    },
-    {
-      "id": "hire_fractional_cfo",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Hire Fractional CFO",
-      "description": "A part-time CFO who runs cash flow, debt, banking, and tax planning strategically instead of you winging it.",
-      "lesson": "Delegate the money function to someone who does it strategically — not on the side at midnight. Financial leadership is a force multiplier: better debt structure, lower taxes, smarter cash flow.",
-      "cash_cost": 3000,
-      "energy_cost": 4,
-      "one_time": true,
-      "prerequisites": { "team_size_gte": 4 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -15, "systems_maturity": 10 },
-      "success_rate": 0.85,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Your CFO restructured two loan terms in her first month, found $3,000 in unnecessary expenses, and projected your cash flow for the next six months. You should have done this two years ago.",
-      "narrative_failure": "Onboarding is taking longer than expected — your books were messier than she anticipated. But she's cleaning them up."
-    },
-    {
-      "id": "hire_hr_manager",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire an HR & Recruiting Lead",
-      "description": "Hire someone to own hiring, culture, and compliance so your team grows without you interviewing everyone.",
-      "lesson": "Past a handful of people, hiring becomes a job of its own. A people lead builds a repeatable pipeline so you recruit for fit (not desperation) and the team grows without you refereeing every issue.",
-      "cash_cost": 1800,
-      "energy_cost": 8,
-      "one_time": true,
-      "prerequisites": { "team_size_gte": 4, "systems_maturity_gte": 25 },
-      "recurring_cost": 3500,
-      "effects": { "team_size": 1, "key_person_dependency": -12, "systems_maturity": 12 },
-      "success_rate": 0.78,
-      "failure_effects": { "team_size": 1, "systems_maturity": 4 },
-      "narrative_success": "First hire she made on her own was better than your last three. The job posting, screening, and onboarding all happened while you were focused on strategy.",
-      "narrative_failure": "She's building processes. The org chart is getting formalized. It feels bureaucratic — but your team of 6+ needs it."
-    },
-    {
-      "id": "hire_executive_assistant",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire an Executive Assistant",
-      "description": "A right hand who handles credit utilization, your scores, and tax reserve every month so you never spend a turn on it.",
-      "lesson": "At some point your time is worth more than the admin. A great assistant owns the recurring financial housekeeping — utilization, credit, tax reserve — that quietly compounds in your favor while you focus on the big moves.",
-      "cash_cost": 2500,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 20000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -8 },
-      "success_rate": 0.9,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Within a week your assistant had a spreadsheet of every account, a paydown schedule to keep utilization under 30%, the DUNS file current, and the tax reserve on autopilot. You stopped thinking about any of it — which is exactly the point.",
-      "narrative_failure": "Onboarding took longer than hoped, but the systems are in place now — the financial housekeeping runs itself from here."
-    },
-    {
-      "id": "basic_quality_control",
-      "category": "operations",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Build Quality Control",
-      "description": "Add a checklist and review so work goes out right the first time, even without you. Fewer mistakes, fewer churned clients.",
-      "lesson": "Quality has to survive your absence. A simple checklist keeps the work right when you're not the one doing it — and consistent quality is what keeps clients from leaving.",
-      "cash_cost": 200,
-      "energy_cost": 8,
-      "prerequisites": {},
-      "effects": { "churn_rate": -0.03, "systems_maturity": 8, "brand_equity": 5 },
-      "success_rate": 0.8,
-      "failure_effects": { "systems_maturity": 3 },
-      "narrative_success": "Zero client complaints this month. The checklist caught two errors before they went out the door — and nobody churned.",
-      "narrative_failure": "The checklist exists. People are using it... sometimes. Consistency will take another month of enforcement."
-    },
-    {
-      "id": "client_onboarding",
-      "category": "operations",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Build Client Onboarding",
-      "description": "Build a smooth intake with contracts, expectations, and kickoff. Nail the first week and clients stay longer.",
-      "lesson": "A great client experience is designed, not improvised. Nail the first week and you cut churn, earn referrals, and justify higher prices.",
-      "cash_cost": 100,
-      "energy_cost": 10,
-      "prerequisites": { "customer_base_gte": 8 },
-      "effects": { "churn_rate": -0.03, "systems_maturity": 8, "brand_equity": 5, "litigation_exposure": -5 },
-      "success_rate": 0.85,
-      "failure_effects": { "systems_maturity": 3 },
-      "narrative_success": "New clients now get a welcome packet, a signed scope, and a kickoff call. You look like a real company now — and they stick around.",
-      "narrative_failure": "The onboarding flow is built but clunky. Half the clients still have questions the packet should have answered."
-    },
-    {
-      "id": "hire_client_success",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire Client Success Manager",
-      "description": "Hire someone to own clients after the sale. Retention rises, churn falls, and you're no longer the only one they call.",
-      "lesson": "Keeping a client is cheaper than winning one. Delighted clients don't just stay — they hand you testimonials and referrals, the cheapest, highest-converting growth there is. Retention IS marketing.",
-      "cash_cost": 2000,
-      "energy_cost": 6,
-      "prerequisites": { "customer_base_gte": 20, "team_size_gte": 2 },
-      "recurring_cost": 3000,
-      "effects": { "churn_rate": -0.04, "team_size": 1, "brand_equity": 5, "key_person_dependency": -10 },
-      "success_rate": 0.7,
-      "failure_effects": { "team_size": 1, "churn_rate": -0.01 },
-      "narrative_success": "Three clients sent thank-you emails this month — none of them were to you. Your CSM is building relationships you used to own alone.",
-      "narrative_failure": "The CSM is learning your clients. Some awkward handoffs, but the clients appreciate having a dedicated contact."
-    },
-    {
-      "id": "build_benefits_package",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Build a Real Benefits Package",
-      "description": "Offer health, retirement match, real PTO, and leave. Benefits buy loyalty and turn a job into a career.",
-      "lesson": "Pay buys attendance; benefits buy loyalty. A real package lowers turnover, raises morale, and quietly heads off the people-drama that eats founders alive — for far less than the cost of replacing everyone who leaves.",
-      "cash_cost": 4000,
-      "energy_cost": 8,
-      "prerequisites": { "team_size_gte": 3 },
-      "recurring_cost": 4000,
-      "effects": { "company_culture": 15, "churn_rate": -0.02, "key_person_dependency": -6 },
-      "success_rate": 0.85,
-      "failure_effects": { "company_culture": 6 },
-      "narrative_success": "Open enrollment went out and the Slack lit up with thank-yous. People feel taken care of — and people who feel taken care of don't quit over a bad week.",
-      "narrative_failure": "The package is partway in place — health is live, retirement is still being set up. The team noticed the effort, at least."
-    },
-    {
-      "id": "grant_stock_incentives",
-      "category": "operations",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Grant Equity / Stock Incentives",
-      "description": "Grant vesting equity so key people own the upside and act like founders, not employees. Needs a C-Corp.",
-      "lesson": "Ownership is the ultimate retention and culture tool — people who share in the upside don't leave, don't coast, and don't create drama. Equity comp is why startups out-recruit big companies. It needs a C-Corp structure (an option pool, 409A valuation) to grant properly.",
-      "cash_cost": 6000,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["c_corp"], "team_size_gte": 4 },
-      "effects": { "company_culture": 25, "key_person_dependency": -15, "churn_rate": -0.03, "partner_conflict_risk": -10 },
-      "success_rate": 0.85,
-      "failure_effects": { "company_culture": 10, "key_person_dependency": -5 },
-      "narrative_success": "You handed your key people their grant letters. The energy shifted overnight — they're not working for you anymore, they're building with you. Drama evaporates when everyone owns the outcome.",
-      "narrative_failure": "The option pool is set up but only partly granted — the 409A valuation took longer than expected. The intent landed, even if the paperwork lagged."
-    },
-    {
-      "id": "rapid_offshore_scaleup",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Rapid Offshore Scale-Up",
-      "description": "Stand up a six-person offshore delivery team this week — a fraction of local cost, ready to take work off your plate immediately. Scale capacity overnight.",
-      "lesson": "Cheap headcount without systems is a false economy: you now pay ~$12k/month for six people while quality slips, customers churn, and culture frays. Scale SYSTEMS before people — SOPs, management, culture — then hire into a machine that's ready. Overstaffed and bleeding? Use 'Restructure & Downsize' to cut payroll back.",
-      "cash_cost": 3000,
-      "recurring_cost": 12000,
-      "energy_cost": 4,
-      "prerequisites": {},
-      "effects": { "team_size": 6, "revenue_capacity": 8000, "company_culture": -22, "churn_rate": 0.06, "brand_equity": -12, "key_person_dependency": 6 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Six contractors onboarded in days — capacity jumped. Then the cracks showed: rushed work, slipping quality, clients noticing. And payroll just jumped ~$12,000/month, with no system for them to plug into.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "restructure_team",
-      "category": "operations",
-      "stage": "foundation",
-      "label": "Restructure & Downsize",
-      "description": "Trim an oversized team back to a lean core — cut the payroll that's dragging you down and refocus on the people who actually move the needle.",
-      "lesson": "Over-hiring is easy to do and painful to undo. Cutting headcount frees up cash fast, but it's never free: severance, a morale hit, and more work back on your plate. The real lesson is to scale people INTO systems and revenue — never ahead of them.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "team_size_gte": 4 },
-      "effects": {},
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "",
-      "narrative_failure": ""
-    }
-  ]
-}
-,
-  "actions_finance": {
-  "version": "1.0.0",
-  "actions": [
-    {
-      "id": "epic_life_membership",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Epic Life Membership",
-      "description": "A done-for-you wealth concierge — a team that runs your financial playbook every month (protection, credit, banking, your tax-free policy, then passive income). Because they do the work, enrolling never costs you energy or one of your monthly moves — their action runs on top of yours each turn. ⚠️ First game? Try a run without it.",
-      "lesson": "The wealthy don't run the whole financial playbook themselves — they hire specialists who run it for them. A concierge trades a monthly fee for time and flawless execution: the protective and wealth-building moves happen on schedule whether or not you remember them. (This is a real service — the game just lets you feel the value.)",
-      "cash_cost": 500,
-      "recurring_cost": 300,
-      "energy_cost": 0,
-      "prerequisites": {},
-      "effects": {},
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Welcome to Epic Life. Your concierge team is on it — from here the financial playbook runs in the background. Watch for the 🌟 Epic Life updates each month as each piece clicks into place.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "hire_cfo",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Fractional CFO",
-      "description": "Bring on a part-time CFO who flags your best finance move each month and tidies your credit so you can borrow more, cheaper.",
-      "lesson": "A fractional CFO is the cheapest way to start thinking like the wealthy: structure, credit, and tax working as a system. Part-time now — but even part-time, a good CFO lets you borrow more and safer than you could alone.",
-      "cash_cost": 4000,
-      "energy_cost": 5,
-      "prerequisites": { "monthly_revenue_gte": 35000, "personal_credit_score_gte": 660, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": -8, "personal_credit_score": 4, "_cfo_hired": true },
-      "success_rate": 0.9,
-      "failure_effects": { "audit_risk": -3, "_cfo_hired": true },
-      "narrative_success": "Your fractional CFO is in. They highlight the smartest finance move each month and have already widened your borrowing capacity a little — the start of leveraging harder and safer.",
-      "narrative_failure": "The fractional CFO is still untangling your books. Guidance starts next month."
-    },
-    {
-      "id": "promote_cfo_fulltime",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CFO to Full-Time",
-      "description": "Promote your CFO to full-time to unlock far more credit, cheaper debt, and safe higher leverage — turning OPM into your growth engine.",
-      "lesson": "This is the real unlock: a great CFO lets you leverage harder AND safer — more credit, better rates, higher safe utilization — so other people's money funds your growth instead of your own cash. That's how the wealthy scale fast. But you can only afford the CFO once that leverage is already working: the chicken-and-egg ceiling that separates operators from owners.",
-      "cash_cost": 18000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cfo"], "monthly_revenue_gte": 80000, "personal_credit_score_gte": 700, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": -10, "personal_credit_score": 6, "_cfo_fulltime": true },
-      "success_rate": 0.92,
-      "failure_effects": { "audit_risk": -4, "_cfo_fulltime": true },
-      "narrative_success": "Your full-time CFO is in the seat. Credit lines widen, your rates drop, and you can safely carry more leverage — OPM is now doing the heavy lifting on growth. The salary is elite; the capital efficiency more than pays for it.",
-      "narrative_failure": "The full-time CFO is restructuring the capital stack; the bigger credit and rate improvements land shortly. Payroll hits now."
-    },
-    {
-      "id": "private_banking",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Open a Private Banking Relationship",
-      "description": "For $2M+ clients: deposit to earn ~5%/yr while borrowing against it at just 1%/yr. Your money keeps earning as near-free cash funds your deals.",
-      "lesson": "This is how the ultra-wealthy leverage hardest: never sell your assets, never stop earning on them — borrow against them at near-zero rates instead. Your deposit earns ~5% while you borrow at 1%, so the spread is free money and the borrowed cash compounds into more assets. OPM, perfected.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "liquid_cash_gte": 2000000 },
-      "effects": { "personal_credit_score": 5, "_private_banking": true },
-      "success_rate": 0.95,
-      "failure_effects": { "_private_banking": true },
-      "narrative_success": "",
-      "narrative_failure": "The private bank approved your relationship, but the deposit and credit facility are still being set up — your interest and 1% line go live next month."
-    },
-    {
-      "id": "private_equity_fund",
-      "category": "finance",
-      "stage": "leverage",
-      "label": "Invest in a Private Equity Fund",
-      "description": "Commit roughly half of your available cash to a PE fund scaling private companies. It locks up (illiquid), but it's marked up the moment you're in and pays monthly distributions — returns public markets can't match. The exact amount committed shows on the result.",
-      "lesson": "Private equity is how the wealthy earn outsized, mostly-passive returns — owning slices of real businesses, marked up over time, throwing off distributions. Illiquidity is the price of the premium: you trade access-anytime for higher compounding.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 50000 },
-      "effects": {},
-      "success_rate": 0.85,
-      "failure_effects": {},
-      "narrative_success": "",
-      "narrative_failure": "The capital call went through, but the fund's first deals are still closing — distributions start once they deploy."
-    },
-    {
-      "id": "setup_family_office",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Set Up a Family Office",
-      "description": "The billionaire setup: a dedicated team running your investments, taxes, estate, and giving as one coordinated machine.",
-      "lesson": "A family office turns scattered wealth into a coordinated system — investment, tax, legal, and legacy under one roof. It costs real money to run, but at scale the tax savings and better decisions pay for it many times over.",
-      "cash_cost": 15000,
-      "energy_cost": 5,
-      "prerequisites": { "monthly_revenue_gte": 60000 },
-      "recurring_cost": 5000,
-      "effects": { "audit_risk": -10, "key_person_dependency": -8, "lifestyle_legacy": 10, "_family_office": true },
-      "success_rate": 0.9,
-      "failure_effects": { "_family_office": true },
-      "narrative_success": "Your family office is running. A dedicated team now coordinates your investments, taxes, estate, and giving — and your portfolio's yield ticks up as they optimize allocation. Runs about $5,000/mo, and it earns its keep.",
-      "narrative_failure": "The family office is staffed but still onboarding your accounts. Coordination — and the efficiency gains — ramp up over the next month."
-    },
-    {
-      "id": "dynasty_trust",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Establish a Dynasty Trust",
-      "description": "Move assets into a multi-generational trust — shielded from lawsuits, estate taxes, and creditors, passing to heirs intact for generations.",
-      "lesson": "The ultra-wealthy don't just build wealth — they make it permanent. A dynasty trust removes assets from your taxable estate and walls them off from lawsuits, letting wealth compound across generations without being taxed at each death. Legacy, engineered.",
-      "cash_cost": 20000,
-      "energy_cost": 5,
-      "prerequisites": { "needs": ["setup_family_office"] },
-      "effects": { "trust_structure": "dynasty", "litigation_exposure": -25, "audit_risk": -8, "tax_rate": -0.02, "lifestyle_legacy": 25, "_dynasty_trust": true },
-      "success_rate": 0.92,
-      "failure_effects": { "lifestyle_legacy": 8, "_dynasty_trust": true },
-      "narrative_success": "The dynasty trust is funded. Your wealth now sits outside your estate — protected from lawsuits and estate tax, compounding for generations. Your great-grandchildren will benefit from this signature.",
-      "narrative_failure": "The trust is drafted and partially funded — the attorney is still moving assets in. Protection is building."
-    },
-    {
-      "id": "establish_board",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Convene a Board of Directors",
-      "description": "Install a board to govern the company. With your execs running it and a board overseeing, the business runs without you — put it on autopilot.",
-      "lesson": "The final stage of leverage is governance. When executives run operations and a board provides oversight, the founder becomes truly optional — free to live, invest, and lead at the highest level. This is what 'the business runs without you' actually looks like.",
-      "cash_cost": 12000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro", "hire_coo", "hire_cfo", "activate_passive_income"] },
-      "recurring_cost": 3000,
-      "effects": { "key_person_dependency": -12, "lifestyle_legacy": 8, "_board_active": true },
-      "success_rate": 0.95,
-      "failure_effects": { "_board_active": true },
-      "narrative_success": "Your board is seated. Between your executive team and board oversight, the company governs itself — use “Let the Board run the month” any time to autopilot, and spend your energy on the big moves only you can make.",
-      "narrative_failure": "The board is forming — a couple of seats still to fill. Governance is taking shape."
-    },
-    {
-      "id": "establish_business",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Form LLC & Set Up Books",
-      "description": "Form your LLC, open a business bank account, and set up bookkeeping — making your business a real legal entity with clean, separate finances.",
-      "lesson": "Separate yourself from the business from day one. The LLC shields your personal assets, the business account stops commingling, and bookkeeping lets you prove income to lenders — the foundation everything else is built on.",
-      "cash_cost": 700,
-      "energy_cost": 12,
-      "prerequisites": { "entity_structure_in": ["none", "sole_prop"] },
-      "recurring_cost": 150,
-      "effects": { "entity_structure": "llc", "systems_maturity": 12, "audit_risk": -12, "personal_credit_score": 5, "litigation_exposure": -15, "personal_guarantee_exposure": -5000 },
-      "success_rate": 0.92,
-      "failure_effects": { "entity_structure": "llc", "systems_maturity": 4 },
-      "narrative_success": "The LLC is filed, the EIN issued, a business checking account is open, and your books are live. Your business exists as its own legal person with clean financials — and bookkeeping runs about $150/mo from here.",
-      "narrative_failure": "The LLC is filed and the account is open, but the bookkeeping setup is half-done — categories are a work in progress. Still running about $150/mo."
-    },
-    {
-      "id": "build_dnb_profile",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Build Your D&B Business Credit Profile",
-      "description": "Get a D-U-N-S number, business phone/address/website, and net-30 vendor accounts so lenders see business credit, not just your personal score.",
-      "lesson": "Lenders check your BUSINESS credit (D&B / Paydex), not just your personal score. A DUNS number, a real address and phone, a web/social presence, and vendor tradelines that report on-time payments build a business credit identity — so the company borrows on its own name, off your personal guarantee. Each business credit line you add deepens the file too.",
-      "cash_cost": 600,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": {},
-      "success_rate": 0.9,
-      "failure_effects": {},
-      "narrative_success": "D-U-N-S number issued. Business phone, address, website and socials are live, and three net-30 vendors are reporting your on-time payments. Your D&B profile is officially building — and climbs as the tradelines age and you add credit history.",
-      "narrative_failure": "Paperwork delays on the DUNS registration held things up — resubmit next month."
-    },
-    {
-      "id": "build_personal_credit",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Build Personal Credit",
-      "description": "Dispute errors and clear collections to rebuild your score over a few months — and your card issuer may automatically raise your limit, which lowers utilization without you paying anything down.",
-      "lesson": "Building credit is mechanics, not magic. The biggest levers are on-time payments and low utilization — keep card balances well under 30% of the limit. Disputing genuine errors and resolving collections helps too. Start early if you're carrying collections; the cleanup takes a couple of months to show.",
-      "cash_cost": 600,
-      "energy_cost": 10,
-      "prerequisites": {},
-      "effects": {},
-      "success_rate": 0.7,
-      "failure_effects": { "personal_credit_score": 5 },
-      "narrative_success": "You pulled all three reports, challenged the genuine errors, knocked down a couple of balances, and put a plan against the collections. The corrections take 30-90 days, and you'll watch your score climb month over month as the file cleans up.",
-      "narrative_failure": "Mixed-up paperwork stalled the disputes and one collection wouldn't budge — only a little movement this month. Run it again to keep the cleanup going."
-    },
-    {
-      "id": "pay_down_debt",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Aggressive Debt Paydown",
-      "description": "Use spare cash to pay down revolving balances toward the 30% utilization sweet spot — the fastest lever on your credit score.",
-      "lesson": "Utilization (how much of your revolving limit you're using) is one of the biggest levers on your credit score — get it under 30%. Don't rush to kill cheap installment loans; that money is better kept working unless your debt-to-income is also too high.",
-      "cash_cost": 0,
-      "energy_cost": 5,
-      "prerequisites": { "total_debt_gte": 500 },
-      "effects": {},
-      "success_rate": 0.95,
-      "failure_effects": {},
-      "narrative_success": "Two thousand dollars gone from the balance. The interest savings alone will compound from here.",
-      "narrative_failure": "Paid down most of it. An unexpected expense ate part of the payment. Still progress."
-    },
-    {
-      "id": "debt_restructure",
-      "category": "finance",
-      "stage": "leverage",
-      "label": "Restructure & Optimize Your Debt",
-      "description": "The full debt playbook in one move: drop utilization, shift balances onto business credit (off your personal report), and pull working cash.",
-      "lesson": "The optimal debt move in one sequence: revolving → installment drops your utilization, then moving it onto business credit takes it off your personal report entirely, and the 0% intro buys time. Same debt, restructured into a higher score and usable cash.",
-      "cash_cost": 800,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 600 },
-      "effects": { "dscr": 0.2, "operating_expenses": -200, "personal_credit_score": 10, "business_credit_profile": "building" },
-      "success_rate": 0.75,
-      "failure_effects": { "personal_credit_score": 4, "business_credit_limit": 3000 },
-      "narrative_success": "",
-      "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
-    },
-    {
-      "id": "bank_personal_loan",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Take Out a Term Loan",
-      "description": "Apply for a fixed-rate term loan — personal-sized before your LLC, larger and business-sized after — to fund growth or consolidate debt.",
-      "lesson": "Debt isn't the enemy — UNPRODUCTIVE debt is. Borrowing to grow a business that pays you back is how you buy freedom in years instead of decades. The 'safe' path — a salaried job — trades your time for the most heavily-taxed income there is.",
-      "cash_cost": 200,
-      "energy_cost": 6,
-      "prerequisites": { "personal_credit_score_gte": 640 },
-      "effects": { "personal_credit_score": 3 },
-      "success_rate": 0.6,
-      "failure_effects": { "personal_credit_score": -3 },
-      "narrative_success": "Approved for $10,000. The loan officer barely hesitated — your credit spoke for itself. Cash in account by Friday.",
-      "narrative_failure": "Declined. The loan officer said your debt-to-income was borderline. Try paying down some debt first."
-    },
-    {
-      "id": "business_credit_line",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Open / Expand Business Credit Line",
-      "description": "Open or stack a revolving credit line in the business name — cash on demand, lower utilization, and dry powder ready when you need it.",
-      "lesson": "Business credit borrows on the company's name and assets — not yours. This is how you scale with other people's money without putting your household on the line. Each added line lowers utilization and sits ready as dry powder — access is an asset even when idle.",
-      "cash_cost": 200,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp"], "personal_credit_score_gte": 650 },
-      "effects": { "business_credit_profile": "building" },
-      "success_rate": 0.6,
-      "failure_effects": { "business_credit_profile": "building", "personal_credit_score": -2 },
-      "narrative_success": "Approved for $15,000. The banker shook your hand and said 'come back when you need more.' You will.",
-      "narrative_failure": "Declined — the bank pulled your personal credit and didn't like what it saw. The hard inquiry dinged your score a couple points. Pay down utilization and reapply."
-    },
-    {
-      "id": "banking_relationship",
-      "category": "finance",
-      "stage": "leverage",
-      "label": "Build Banking Relationship",
-      "description": "Open a business account, run your deposits through their bank, and meet your banker regularly — so you're a known, trusted customer before you ever need a loan. Banks lend bigger lines, and approve far more readily, to people who already bank with them.",
-      "lesson": "Capital is a relationship business. Bankers fund people they know and trust — open the account, keep deposits flowing, and build the relationship BEFORE you need money. When you do apply, you'll qualify more easily and for larger amounts than a stranger walking in cold.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "personal_credit_score": 5, "business_credit_profile": "established", "business_credit_limit": 5000 },
-      "success_rate": 0.75,
-      "failure_effects": { "personal_credit_score": 2 },
-      "narrative_success": "The branch manager knows your name now. When you need capital, you won't be a stranger walking in cold.",
-      "narrative_failure": "Good meeting, but the banker transferred branches. You're starting the relationship over with someone new."
-    },
-    {
-      "id": "combined_insurance",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Business Insurance Stack",
-      "description": "One stack of business-paid cover: income protection, critical-illness, key-person, and liability.",
-      "lesson": "Protect the engine before you build on it: cover your income if you can't work, get tax-free cash if you're seriously ill, replace yourself for the company, and absorb lawsuits — all tax-deductible.",
-      "cash_cost": 500,
-      "recurring_cost": 550,
-      "energy_cost": 4,
-      "prerequisites": { "customer_base_gte": 1 },
-      "effects": { "key_person_dependency": -12, "litigation_exposure": -15 },
-      "success_rate": 0.92,
-      "failure_effects": {},
-      "narrative_success": "The stack is in force, all on the business books. Income protection covers your family if you can't work, critical & chronic illness riders pay you a tax-free lump sum if your health gives out, the key-person payout would fund your replacement, and the liability policy stands between a lawsuit and everything you've built. Premiums run about $550/mo.",
-      "narrative_failure": "Applications submitted; underwriting wants more medical records on one. The other two are active. Should fully clear next month."
-    },
-    {
-      "id": "elect_s_corp",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Elect S-Corp & Operating Agreement",
-      "description": "Put yourself on payroll, adopt an operating agreement, and elect S-Corp taxation to legally cut your self-employment tax.",
-      "lesson": "How your income is STRUCTURED matters as much as how much you earn. A documented salary plus S-Corp election splits salary from distributions and legally cuts self-employment tax — and the operating agreement hardens your liability shield. Levers a W-2 employee never gets.",
-      "cash_cost": 2500,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure": "llc" },
-      "recurring_cost": 300,
-      "effects": { "entity_structure": "s_corp", "audit_risk": -3, "litigation_exposure": -10, "personal_credit_score": 5 },
-      "success_rate": 0.85,
-      "failure_effects": { "entity_structure": "s_corp" },
-      "narrative_success": "You're on payroll, the operating agreement is signed, and the S-Corp election is filed. Your tax advisor estimates $8,000–$12,000 in annual savings — and lenders now see a real, bankable business.",
-      "narrative_failure": "Payroll is running and the election is filed, but at a lower salary than planned. Savings are real, just smaller until revenue catches up."
-    },
-    {
-      "id": "reincorporate_c_corp",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Reincorporate as a C-Corp",
-      "description": "Convert to a C-Corp — built for scale and investors. Adds a layer of corporate tax but unlocks stock options and equity grants for your team.",
-      "lesson": "A C-Corp trades a bit of tax efficiency for the ability to issue equity — option pools, 409A valuations, QSBS. It's the structure venture-backed companies use because ownership is the best recruiting and retention tool there is. The right move once people, not cash, are your scarcest resource.",
-      "cash_cost": 5000,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["s_corp", "multi_entity"], "monthly_revenue_gte": 40000 },
-      "recurring_cost": 500,
-      "effects": { "entity_structure": "c_corp", "audit_risk": -2 },
-      "success_rate": 0.85,
-      "failure_effects": { "entity_structure": "c_corp" },
-      "narrative_success": "The C-Corp conversion is filed, the option pool is authorized, and your cap table is investor-ready. You can now put real ownership in your people's hands.",
-      "narrative_failure": "The conversion went through, though the option pool paperwork is still being finalized. The structure is in place to grant equity soon."
-    },
-    {
-      "id": "asset_protection_stack",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Asset Protection Stack",
-      "description": "Layer a holding company, trust, and umbrella policy over your business — lawsuits hit the operating company, your wealth sits untouchable above it.",
-      "lesson": "A holding company owns the assets; the operating company takes the risk. Add a trust and umbrella and one lawsuit can't erase a decade of building. The wealthy protect first, then grow.",
-      "cash_cost": 10000,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp"] },
-      "effects": { "entity_structure": "multi_entity", "trust_structure": "full", "litigation_exposure": -40, "personal_guarantee_exposure": -15000, "audit_risk": 5 },
-      "success_rate": 0.7,
-      "failure_effects": { "entity_structure": "multi_entity", "trust_structure": "basic_llc", "litigation_exposure": -15, "audit_risk": 8 },
-      "narrative_success": "A holding company now owns the operating business, and the attorney delivered the trust documents. Your assets are held by entities that don't have your name on the door. Bulletproof.",
-      "narrative_failure": "The holding structure is filed and a basic shield is in place, but the full trust setup needs more time. Partially protected."
-    },
-    {
-      "id": "wyoming_holding_llc",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Form a Wyoming Holding LLC",
-      "description": "Stand up a Wyoming holding LLC above your business — registered agent, business address, and a real operating agreement. A clean parent entity that owns the valuable pieces, shields them from operating liabilities, and makes banks take you seriously.",
-      "lesson": "A holding company owns; the operating company does the risky work — so a lawsuit or bad debt against operations can't reach what's held above it. Wyoming adds strong charging-order protection and privacy. Critically, the clean setup gets your business the CORRECT NAICS industry code — without it, lenders can flag a mismatched code and decline you until it's fixed. A proper operating agreement, right NAICS code, and registered agent are exactly what underwriters want before extending real credit. Structure first, then leverage.",
-      "cash_cost": 3000,
-      "energy_cost": 5,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 660 },
-      "effects": { "_holding_company": true, "litigation_exposure": -20, "personal_guarantee_exposure": -12000, "business_credit_limit": 12000, "audit_risk": 2 },
-      "success_rate": 0.9,
-      "failure_effects": { "_holding_company": true, "litigation_exposure": -8, "business_credit_limit": 5000 },
-      "narrative_success": "The Wyoming holding LLC is filed — registered agent in Cheyenne, operating agreement executed, NAICS code assigned. It sits above your operating company, owning the valuable pieces, and your banker noticed the clean structure: your borrowing line just got friendlier.",
-      "narrative_failure": "The entity is formed and the registered agent is in place, but the operating agreement and asset transfers are still being finalized. The shell is up; the protection firms up as you complete the paperwork."
-    },
-    {
-      "id": "key_man_policy",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": false,
-      "label": "Insure Your Key Operators",
-      "description": "Put key-man and loan-protection policies on the people running your income properties. If one is lost, the policy retires that property's specific mortgage — so a tragedy can't cascade into a margin call. Re-take it as you add assets to keep coverage current.",
-      "lesson": "Leverage on people and assets is only safe when the people are insured. A key-man / loan-protection policy means a sick or lost operator retires the loan on THEIR asset instead of blowing up the whole portfolio. It covers that specific debt — never a windfall — and it's what lets the wealthy borrow at scale against income-producing assets without the leverage becoming a time bomb.",
-      "cash_cost": 2500,
-      "energy_cost": 4,
-      "prerequisites": { "_asset_units_gte": 1 },
-      "effects": {},
-      "success_rate": 1,
-      "narrative_success": "Key-man and loan-protection policies are bound on your operators.",
-      "narrative_failure": "Key-man and loan-protection policies are bound on your operators."
-    },
-    {
-      "id": "hire_general_counsel",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire General Counsel",
-      "description": "Put a lawyer on retainer to review contracts, lock down IP, and handle disputes — turning ruinous lawsuits into routine correspondence.",
-      "lesson": "Most legal disasters are cheap to prevent and ruinous to fix. In-house counsel reviewing your contracts and IP turns existential lawsuits into routine correspondence — protection that pays for itself the first time it's needed.",
-      "cash_cost": 3000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 25000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 3000,
-      "effects": { "team_size": 1, "litigation_exposure": -25, "audit_risk": -8, "personal_guarantee_exposure": -10000 },
-      "success_rate": 0.9,
-      "failure_effects": { "team_size": 1, "litigation_exposure": -8 },
-      "narrative_success": "Your counsel rewrote your contracts, filed your trademarks, and put a demand-letter process in place. The next time someone threatens to 'get their lawyer involved,' yours picks up the phone.",
-      "narrative_failure": "Counsel is on retainer and reviewing the backlog — contracts first, IP next. The shield is going up, just not all at once."
-    },
-    {
-      "id": "advanced_tax_strategy",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Advanced Tax Strategy",
-      "description": "Engage a year-round tax strategist — maxing retirement vehicles, cost segregation, and deductions to legally slash your tax bill.",
-      "lesson": "Taxes are most people's single largest lifetime expense. Year-round planning — not an April scramble — legally minimizes them. That's the difference between building wealth and funding someone else's budget.",
-      "cash_cost": 3500,
-      "energy_cost": 5,
-      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "operating_expenses": -2000, "audit_risk": 5 },
-      "success_rate": 0.7,
-      "failure_effects": { "operating_expenses": -500, "audit_risk": 5 },
-      "narrative_success": "Your effective tax rate dropped from 32% to 21%. Retirement vehicles maxed, cost segregation done, deductions captured — all legal. Your CPA high-fived you.",
-      "narrative_failure": "Some strategies implemented, others need documentation. Partial savings this year, full effect next."
-    },
-    {
-      "id": "monthly_tax_reserve",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Set Up Monthly Tax Reserve",
-      "description": "Automatically set aside a slice of revenue each month for taxes, so tax season stops being a year-end surprise.",
-      "lesson": "Set aside taxes every month and tax season stops being a crisis. That money was never yours — treat it that way and you'll never get blindsided.",
-      "cash_cost": 0,
-      "energy_cost": 4,
-      "one_time": true,
-      "prerequisites": { "needs": ["establish_business"] },
-      "effects": {},
-      "success_rate": 0.95,
-      "failure_effects": {},
-      "narrative_success": "Tax reserve is active. Every month, a slice of revenue goes into a separate pot. Future you will be grateful.",
-      "narrative_failure": "Set up started but your bookkeeping needs cleanup first. Should be running next month."
-    },
-    {
-      "id": "fund_accumulation_policy",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Fund Accumulation Policy",
-      "description": "Open an IUL policy that compounds ~7% tax-free. The cost shown is setup only — ongoing funding comes automatically from your monthly cash flow.",
-      "lesson": "This is your tax-advantaged money engine. Build the income and credit capacity FIRST, then open and fund it: a steady monthly contribution (minus a small ~2% cost of insurance) compounds tax-free, and you can borrow against up to 90% of the cash value anytime — no bank approval. Consistency beats lump sums.",
-      "cash_cost": 500,
-      "energy_cost": 4,
-      "one_time": true,
-      "prerequisites": { "cash_gte": 50000 },
-      "effects": { "insurance_cash_value": 3000 },
-      "success_rate": 0.95,
-      "failure_effects": {},
-      "narrative_success": "Policy in force and monthly funding is on. Your first $3,000 is in the cash value, growing ~7% tax-free, and automatic contributions keep feeding it. You can borrow against up to 90% of it anytime — no bank approval needed.",
-      "narrative_failure": "Underwriting needs more info. Should be approved next month."
-    },
-    {
-      "id": "activate_passive_income",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Activate Tax-Free Passive Income",
-      "description": "Turn on a monthly tax-free income stream drawn against your policy's cash value — which keeps compounding while the loan nets from the death benefit.",
-      "lesson": "This is the crown jewel. You draw tax-free income as a loan against your policy while the cash value keeps growing — the 7% growth outruns the 5% loan cost, so the gap funds your lifestyle forever. The loan is repaid from the death benefit, not your pocket. Income without work, without tax, without ever selling the asset.",
-      "cash_cost": 0,
-      "energy_cost": 4,
-      "prerequisites": { "insurance_cash_value_gte": 5000 },
-      "effects": {},
-      "success_rate": 1.0,
-      "failure_effects": {},
-      "narrative_success": "The income switch is on. Each month the insurer wires you a tax-free check drawn against your cash value — and your policy keeps compounding as if you never touched it. You're being paid to own the asset.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "policy_loan",
-      "category": "finance",
-      "stage": "foundation",
-      "label": "Take a Policy Loan",
-      "description": "Borrow up to 90% against your policy's cash value — no credit check, no bank approval — while the cash value keeps growing.",
-      "lesson": "You just accessed cash tax-free — no bank, no credit check — and your money kept compounding as if you never touched it. This is how the wealthy spend without selling assets or triggering a tax bill. You became your own bank.",
-      "cash_cost": 0,
-      "energy_cost": 2,
-      "prerequisites": { "insurance_cash_value_gte": 1000 },
-      "effects": {},
-      "success_rate": 1.0,
-      "failure_effects": {},
-      "narrative_success": "Policy loan approved instantly — no credit check, no application. The money is in your account tomorrow, and your cash value keeps compounding as if you never touched it.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "premium_financing",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Premium Financing Strategy",
-      "description": "Use a low-interest bank loan to fund a big policy that compounds ~7% tax-free — pocketing the spread on the bank's money. For high-net-worth players.",
-      "lesson": "Premium financing is leverage for the ultra-wealthy: the bank lends against your collateral to fund a tax-free asset that grows faster than the loan costs. You pocket the spread without spending your own cash — but it only works at real scale (millions in net worth) where the policy and collateral are large enough.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "net_worth_gte": 5000000 },
-      "effects": {},
-      "success_rate": 0.9,
-      "failure_effects": {},
-      "narrative_success": "The premium financing deal is structured — the bank's money, compounding tax-free in your policy.",
-      "narrative_failure": "The bank's terms came back tighter than expected. Try again once your collateral is stronger."
-    },
-    {
-      "id": "buy_real_estate",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Buy Income-Producing Property",
-      "description": "Buy a rental or small commercial property with the bank's money — monthly cashflow, appreciation, and tax benefits while the tenant pays it down.",
-      "lesson": "This is leverage. You control a six-figure income-producing asset with a fraction of your own cash — the bank funds the rest, the tenant pays it down, and it appreciates while you sleep. Paying all cash would be the INEFFICIENT move.",
-      "cash_cost": 25000,
-      "energy_cost": 8,
-      "prerequisites": { "personal_credit_score_gte": 680, "dscr_gte": 1.5, "cash_gte": 25000 },
-      "effects": { "real_estate_owned": 1 },
-      "success_rate": 0.55,
-      "failure_effects": { "real_estate_owned": 1 },
-      "narrative_success": "Keys in hand. The duplex cash-flows $700/month after mortgage, taxes, and insurance. Passive income is real now.",
-      "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
-    },
-    {
-      "id": "private_lending",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Become a Private Lender",
-      "description": "Become the bank: lend your capital to other entrepreneurs' deals, earning 8-15% interest secured by their assets.",
-      "lesson": "Now YOU'RE the bank. Your capital earns double-digit returns secured by someone else's assets — money working hard while you don't lift a finger. That's passive income.",
-      "cash_cost": 20000,
-      "energy_cost": 5,
-      "prerequisites": { "cash_gte": 30000, "personal_credit_score_gte": 700 },
-      "effects": { "monthly_revenue": 2000 },
-      "success_rate": 0.6,
-      "failure_effects": { "monthly_revenue": 800 },
-      "narrative_success": "First deal funded — $20,000 at 12%, secured by the borrower's equipment. Monthly checks arriving. You're the bank now.",
-      "narrative_failure": "The deal funded, but the borrower's been slow on payments. Secured, so you're protected — but it's stressful."
-    },
-    {
-      "id": "acquire_competitor",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Acquire a Competitor",
-      "description": "Buy a smaller competitor — its cash flow becomes your passive income, and the deal's write-offs cut your taxes.",
-      "lesson": "At scale you buy income, not just customers. A well-structured acquisition pays you twice: passive cash flow from day one, plus depreciation and amortization write-offs that legally shrink your tax bill. The deal funds itself.",
-      "cash_cost": 30000,
-      "energy_cost": 8,
-      "prerequisites": { "cash_gte": 30000, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": 3 },
-      "success_rate": 0.55,
-      "failure_effects": {},
-      "narrative_success": "",
-      "narrative_failure": ""
-    },
-    {
-      "id": "fast_working_capital",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Fast Working Capital",
-      "description": "Need cash fast? $25,000 by tomorrow, approved on your sales alone — no credit check, no collateral. They just take a small cut of your revenue until it's paid back.",
-      "lesson": "That was a merchant cash advance: $25k now, but you repay ~$32,500 — a 30% fee — and they siphon 20% of your revenue every month until it's cleared, choking cash flow for months. No credit check (they pre-approve on your sales), so it spares your score but bleeds your top line. Real capital comes from credit and banking you build BEFORE you're desperate.",
-      "cash_cost": 0,
-      "energy_cost": 2,
-      "prerequisites": { "monthly_revenue_gte": 10000 },
-      "effects": { "cash": 25000 },
-      "mca_factor": 1.3,
-      "mca_holdback": 0.2,
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Approved on your revenue alone — $25,000 hits your account overnight, no credit pull. The catch you skimmed: they now take 20% of every dollar you bring in until they've collected about $32,500 — a 30% fee on top.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "offmarket_guaranteed_fund",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Off-Market 'Guaranteed' Fund",
-      "description": "An invite-only placement a peer swears by — guaranteed double-digit returns, insider access, closing this week. Put your capital to work in something the public never sees.",
-      "lesson": "Guaranteed + exclusive + closing-this-week is the fingerprint of a scam — often reaching you through someone you trust. Real returns are never guaranteed, and the rush is the tell. You lost most of your capital plus audit and legal exposure. The crown jewel is structured, vetted passive income — not yield chased into the dark.",
-      "cash_cost": 30000,
-      "energy_cost": 2,
-      "prerequisites": { "cash_gte": 30000 },
-      "effects": { "investment_positions": 3000, "litigation_exposure": 12, "audit_risk": 10 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "You wired the funds before the 'window closed.' The monthly statements looked great — until they stopped coming. The manager is unreachable, the fund's 'assets' can't be verified, and now there are lawyers and the IRS asking questions.",
-      "narrative_failure": ""
-    }
-  ]
-}
-,
-  "lifestyle_options": {
-  "version": "1.0.0",
-  "actions": [
-    {"id":"executive_health_retreat","category":"lifestyle","subcategory":"health","label":"Executive Health Retreat","description":"A week at a luxury wellness retreat — bloodwork panels, IV therapy, personal chef, guided recovery. The reset button for people who can afford to press it.","cash_cost":8000,"energy_cost":-25,"effects":{"lifestyle_health":25,"energy":25,"fitness_level":15},"narrative":"Seven days of silence, supplements, and sleep. You came back a different person. Your team noticed before you said anything."},
-    {"id":"concierge_medicine","category":"lifestyle","subcategory":"health","label":"Join a Concierge Medical Practice","description":"Pay a retainer for a doctor who actually knows your name. Same-day appointments, proactive health monitoring, direct cell phone access.","cash_cost":2000,"energy_cost":-8,"effects":{"lifestyle_health":18,"energy":10,"fitness_level":8},"recurring_cost":500,"narrative":"Your doctor texted you — texted — about your lab results. 'Everything looks great, but let's adjust your vitamin D.' This is what healthcare is supposed to feel like."},
-    {"id":"fitness_training","category":"lifestyle","subcategory":"health","label":"Hire a Personal Trainer","description":"Three sessions a week with someone who won't let you skip. Structured training, accountability, results.","cash_cost":800,"energy_cost":-12,"effects":{"lifestyle_health":20,"energy":12,"fitness_level":20},"recurring_cost":200,"narrative":"The trainer doesn't care about your quarterly revenue. She cares about your deadlift form. For three hours a week, you're not a CEO — you're an athlete."},
-    {"id":"gym_routine","category":"lifestyle","subcategory":"health","label":"Start a Gym Routine","description":"Three days a week. Nothing heroic — just showing up consistently. Your energy and focus improve.","cash_cost":150,"energy_cost":-10,"effects":{"lifestyle_health":15,"energy":10,"fitness_level":10,"lifestyle_experiences":3},"recurring_cost":150,"narrative":"You haven't missed a workout in three weeks. You're sleeping better. Thinking clearer. Funny how moving your body fixes your brain."},
-    {"id":"sleep_routine","category":"lifestyle","subcategory":"health","label":"Optimize Your Sleep","description":"Blackout curtains, no screens after 9, consistent bedtime. The cheapest performance upgrade that exists.","cash_cost":200,"energy_cost":-15,"effects":{"lifestyle_health":15,"energy":15,"fitness_level":5},"narrative":"You're sleeping seven hours now instead of five. The difference isn't subtle — your decision-making is sharper, your patience is longer, and that afternoon crash is gone."},
-    {"id":"morning_routine","category":"lifestyle","subcategory":"health","label":"Build a Morning Routine","description":"Wake up early. Journal, move, plan the day before the day plans you. Discipline before the inbox.","cash_cost":0,"energy_cost":-10,"effects":{"lifestyle_health":8,"energy":10,"fitness_level":3},"narrative":"5:30 AM. Coffee, journal, twenty minutes of movement, then the three most important tasks before anyone else is awake. You own the morning now."},
-    {"id":"annual_physical","category":"lifestyle","subcategory":"health","label":"Get a Full Physical","description":"Blood work, stress test, the works. Know your numbers before they surprise you.","cash_cost":500,"energy_cost":-3,"effects":{"lifestyle_health":8,"energy":5,"fitness_level":5},"narrative":"The doctor said everything looks good — except your cortisol. 'You're running hot,' she said. 'Dial it back before your body does it for you.'"},
-    {"id":"luxury_vacation","category":"lifestyle","subcategory":"relationships","label":"Luxury Family Vacation","description":"First class, five-star, no budget. Show your family what you've been building this for. Two weeks of undivided presence.","cash_cost":9000,"energy_cost":-25,"effects":{"lifestyle_relationships":30,"lifestyle_experiences":20,"energy":25},"narrative":"Your kid looked at you across the dinner table in Santorini and said, 'This is the best trip ever.' You realized it wasn't the hotel — it was that you left your laptop at home."},
-    {"id":"couples_retreat","category":"lifestyle","subcategory":"relationships","label":"Couples Retreat Weekend","description":"A guided weekend away with your partner — structured conversations, reconnection exercises, no distractions.","cash_cost":2200,"energy_cost":-10,"effects":{"lifestyle_relationships":22,"lifestyle_spiritual":5,"energy":10},"narrative":"You said things you'd been holding for months. So did she. It wasn't easy — but by Sunday night you were holding hands again."},
-    {"id":"family_trip","category":"lifestyle","subcategory":"relationships","label":"Family Trip","description":"A real vacation. Not a 'working from the hotel' trip. Phone off, out of office on.","cash_cost":2200,"energy_cost":-20,"effects":{"lifestyle_relationships":20,"lifestyle_experiences":15,"energy":20},"narrative":"Your kid asked if you could do this 'every month.' You can't. But the fact that they asked means you've been gone too long."},
-    {"id":"date_night","category":"lifestyle","subcategory":"relationships","label":"Weekly Date Night","description":"Put the phone away. Be present with the person who's been watching you disappear into work.","cash_cost":400,"energy_cost":-5,"effects":{"lifestyle_relationships":18,"energy":5},"recurring_cost":400,"narrative":"She laughed at dinner — really laughed — for the first time in months. You realized you'd missed the sound."},
-    {"id":"bucket_list_experience","category":"lifestyle","subcategory":"experiences","label":"Bucket List Experience","description":"Skydiving, racing a supercar, private cooking class with a Michelin chef — pick the thing you always said 'someday' about.","cash_cost":3500,"energy_cost":-15,"effects":{"lifestyle_experiences":25,"energy":15,"lifestyle_relationships":5},"narrative":"You jumped out of a plane at 14,000 feet. For thirty seconds, nothing existed but wind and sky and the absurd joy of being alive."},
-    {"id":"private_jet","category":"lifestyle","subcategory":"experiences","label":"Fly Private","description":"Charter — or fractionally own — a private jet. No security lines, no layovers, no wasted days. The ultimate time-and-energy purchase the truly wealthy make.","cash_cost":80000,"energy_cost":-15,"effects":{"lifestyle_experiences":30,"lifestyle_relationships":10,"energy":15},"recurring_cost":15000,"narrative":"Wheels up forty minutes after you decided to go. You made the meeting, the recital, and dinner at home — same day. Time is the one asset you can't make more of, so you stopped wasting it in terminals."},
-    {"id":"superyacht_charter","category":"lifestyle","subcategory":"experiences","label":"Charter a Superyacht","description":"A week on a crewed superyacht in the Med — family, closest friends, a chef, and nowhere to be. The kind of trip that becomes the story your kids tell for decades.","cash_cost":38000,"energy_cost":-25,"effects":{"lifestyle_experiences":35,"lifestyle_relationships":15,"energy":25},"narrative":"Anchored off a quiet cove, phones in a drawer, your family laughing on the deck at sunset. You realized this — not the revenue chart — was the entire point."},
-    {"id":"private_estate","category":"lifestyle","subcategory":"experiences","label":"Buy a Private Estate Retreat","description":"A second home on land that takes your breath away — a place that's only ever joy, never work. Somewhere the whole family gathers for generations.","cash_cost":150000,"energy_cost":-10,"one_time":true,"effects":{"lifestyle_experiences":25,"lifestyle_relationships":18,"lifestyle_legacy":12,"energy":12},"recurring_cost":10000,"narrative":"The deed has your name on it, but you already think of it as the family's place. The kids picked their rooms. This is what the work was for."},
-    {"id":"masterclass_workshop","category":"lifestyle","subcategory":"experiences","label":"Elite Workshop or Masterclass","description":"A weekend intensive with a world-class expert — photography, wine, leadership. Learning at the highest level.","cash_cost":3000,"energy_cost":-8,"effects":{"lifestyle_experiences":18,"energy":8,"brand_equity":5,"leads":3},"narrative":"The instructor was a former CEO turned artist. The other attendees were the kind of people you want in your network. You learned to paint — and picked up two warm leads."},
-    {"id":"adventure_trip","category":"lifestyle","subcategory":"experiences","label":"Solo Adventure","description":"Go somewhere you've never been. Alone. Remember what it feels like to be a person, not a role.","cash_cost":2000,"energy_cost":-15,"effects":{"lifestyle_experiences":20,"energy":15,"lifestyle_spiritual":5},"narrative":"Standing on a mountain in another state, phone dead, watching the sun go down. Your business is still running. You might be okay."},
-    {"id":"learn_new_skill","category":"lifestyle","subcategory":"experiences","label":"Learn Something New","description":"Take a class in something that has nothing to do with your business. Cooking, music, a language.","cash_cost":500,"energy_cost":-5,"effects":{"lifestyle_experiences":10,"energy":5},"narrative":"Your pottery is terrible. You love it. For two hours a week, you're a beginner again — and it's the most relaxed you've been in months."},
-    {"id":"spiritual_pilgrimage","category":"lifestyle","subcategory":"spiritual","label":"Spiritual Pilgrimage","description":"Walk the Camino, visit a sacred site, or take a solo journey to a place that pulls at your soul. Not a vacation — a reckoning.","cash_cost":4000,"energy_cost":-18,"effects":{"lifestyle_spiritual":25,"lifestyle_experiences":15,"energy":18},"narrative":"You walked for twelve days. By the end, the blisters didn't matter. Something shifted — not in your business plan, but in your relationship with why you're building at all."},
-    {"id":"silent_retreat","category":"lifestyle","subcategory":"spiritual","label":"Silent Meditation Retreat","description":"Ten days. No phone, no talking, no distractions. Just you and the noise in your head — until the noise stops.","cash_cost":3000,"energy_cost":-20,"effects":{"lifestyle_spiritual":28,"lifestyle_health":10,"energy":20},"narrative":"By day three you wanted to leave. By day seven you didn't want it to end. You came back quieter — and that quiet became the most productive force in your life."},
-    {"id":"faith_community","category":"lifestyle","subcategory":"spiritual","label":"Join a Faith Community","description":"Find a church, temple, sangha, or circle. Belong to something bigger than your P&L statement.","cash_cost":200,"energy_cost":-5,"effects":{"lifestyle_spiritual":20,"lifestyle_relationships":5,"energy":5},"recurring_cost":200,"narrative":"The pastor asked how business was going. You said 'hard.' He said 'good — that means you're growing.' Simple words. They landed."},
-    {"id":"meditation_practice","category":"lifestyle","subcategory":"spiritual","label":"Start a Meditation Practice","description":"Ten minutes a day. Sit with the noise in your head instead of running from it. Free — all it costs is showing up.","cash_cost":0,"energy_cost":-8,"effects":{"lifestyle_spiritual":18,"energy":8,"lifestyle_health":5},"narrative":"You sat still for ten minutes today without reaching for your phone. It was the hardest and easiest thing you've done all month."},
-    {"id":"start_foundation","category":"lifestyle","subcategory":"philanthropy","label":"Launch a Charitable Foundation","description":"Set up a donor-advised fund or small foundation. Give strategically, build legacy, and get the tax benefits.","cash_cost":10000,"energy_cost":-6,"one_time":true,"effects":{"lifestyle_philanthropy":30,"energy":6,"lifestyle_legacy":10,"brand_equity":15,"audit_risk":-5},"narrative":"The foundation is established. Your name is on something that will outlast your business. The first grant went to a scholarship fund — the kid's thank-you letter is framed on your wall."},
-    {"id":"philanthropic_foundation_major","category":"lifestyle","subcategory":"philanthropy","label":"Endow a Major Foundation","description":"Fund a serious, named foundation with professional staff and a real endowment — the kind that moves the needle on a cause and defines a family's public legacy for generations.","cash_cost":100000,"energy_cost":-8,"one_time":true,"effects":{"lifestyle_philanthropy":38,"energy":8,"lifestyle_legacy":22,"brand_equity":25,"audit_risk":-10},"recurring_cost":5000,"narrative":"The foundation made its first major grant this week — a seven-figure commitment to a cause you've cared about for years. Your name is now attached to something that will outlive you, and do good the whole time."},
-    {"id":"major_donation","category":"lifestyle","subcategory":"philanthropy","label":"Make a Major Donation","description":"Write a five-figure check to a cause that defines what you stand for.","cash_cost":10000,"energy_cost":-6,"effects":{"lifestyle_philanthropy":25,"energy":6,"brand_equity":10,"lifestyle_legacy":8},"narrative":"The hospital wing dedication had your name on a small plaque. You didn't do it for the plaque — but your kids saw it."},
-    {"id":"charity_donation","category":"lifestyle","subcategory":"philanthropy","label":"Charitable Giving","description":"Write a check to a cause that matters. Not for the tax deduction — for the reminder that money is a tool, not a scoreboard.","cash_cost":2000,"energy_cost":-5,"effects":{"lifestyle_philanthropy":18,"energy":5,"brand_equity":3,"audit_risk":-2},"narrative":"The director of the food bank sent a handwritten thank-you note. It's pinned above your desk now."},
-    {"id":"volunteer_time","category":"lifestyle","subcategory":"philanthropy","label":"Volunteer Your Time","description":"Spend a Saturday building houses, mentoring kids, or serving meals.","cash_cost":0,"energy_cost":-5,"effects":{"lifestyle_philanthropy":15,"lifestyle_relationships":3,"energy":5,"lifestyle_legacy":5},"narrative":"You spent six hours building a wheelchair ramp for a stranger. Your back hurts. Your heart doesn't."},
-    {"id":"write_book","category":"lifestyle","subcategory":"legacy","label":"Write Your Book","description":"Hire a ghostwriter or lock yourself in a cabin. Document what you've learned — the failures, the wins, the real story.","cash_cost":5000,"energy_cost":-8,"one_time":true,"effects":{"lifestyle_legacy":30,"energy":8,"brand_equity":20,"leads":10},"narrative":"The manuscript is done. 47,000 words of everything you wish someone had told you. The publisher said yes."},
-    {"id":"art_collection","category":"lifestyle","subcategory":"legacy","label":"Build an Art Collection","description":"Acquire serious art — pieces you love that also appreciate, pass to your heirs, and can be donated for tax advantage. Beauty on the walls, value on the balance sheet.","cash_cost":50000,"energy_cost":-8,"effects":{"lifestyle_legacy":22,"energy":8,"lifestyle_experiences":8,"brand_equity":10},"recurring_cost":300,"narrative":"The first major piece arrived and went up over the fireplace. Your advisor calls it an appreciating asset; you just call it the thing you stop to look at every morning."},
-    {"id":"family_wealth_council","category":"lifestyle","subcategory":"legacy","label":"Establish Family Wealth Council","description":"Monthly family meetings about money, values, and the future. Teach your kids what school won't.","cash_cost":1000,"energy_cost":-6,"effects":{"lifestyle_legacy":22,"energy":6,"lifestyle_relationships":10},"recurring_cost":200,"narrative":"Your teenager asked about compound interest at dinner. Your partner brought up charitable giving goals. This is generational wealth — the conversations."},
-    {"id":"estate_planning","category":"lifestyle","subcategory":"legacy","label":"Estate Planning Session","description":"Meet with an estate attorney. Make sure what you're building survives you and benefits the people you love. A one-time setup.","cash_cost":3000,"energy_cost":-6,"one_time":true,"effects":{"lifestyle_legacy":20,"energy":6,"trust_structure":"basic_llc"},"narrative":"Signing the will felt strange — like acknowledging mortality while you're in the middle of building. But your family is protected now."},
-    {"id":"mentor_others","category":"lifestyle","subcategory":"legacy","label":"Mentor a Young Entrepreneur","description":"Find someone two years behind you. Share what you've learned. Teaching clarifies your own thinking.","cash_cost":0,"energy_cost":-8,"effects":{"lifestyle_legacy":18,"energy":8,"lifestyle_relationships":3,"brand_equity":3,"lifestyle_philanthropy":5},"narrative":"Your mentee landed her first client this month. She texted you at 11 PM. You smiled when you saw it in the morning."},
-    {"id":"therapy_coaching","category":"lifestyle","subcategory":"health","label":"Start Therapy or Coaching","description":"Talk to someone who isn't your spouse, your partner, or your mirror. Process the stress before it processes you.","cash_cost":600,"energy_cost":-12,"effects":{"lifestyle_health":15,"lifestyle_relationships":10,"energy":12},"recurring_cost":400,"narrative":"You said things out loud you've been carrying silently for months. The therapist didn't fix anything — but naming it made it lighter."},
-    {"id":"company_retreat","category":"lifestyle","subcategory":"relationships","label":"Take the Team on a Company Retreat","description":"Fly the whole team somewhere great — work sessions in the morning, real connection the rest of the time. People who feel valued and bonded stop creating drama and start covering for each other.","cash_cost":12000,"energy_cost":-10,"effects":{"company_culture":18,"lifestyle_relationships":10,"key_person_dependency":-8,"churn_rate":-0.02,"energy":10,"brand_equity":3},"narrative":"By the second night, the org-chart silos were gone — just people who actually like working together. The pettiness and politics that were brewing? Defused. Culture is the cheapest insurance against people problems."},
-    {"id":"nutrition_coach","category":"lifestyle","subcategory":"health","label":"Dial In Your Diet & Nutrition","description":"Work with a nutritionist and chef-prepared meals built around your bloodwork. Stop running your body on gas-station fuel.","cash_cost":1200,"energy_cost":-6,"effects":{"lifestyle_health":16,"energy":12,"fitness_level":14},"recurring_cost":300,"narrative":"Real food, dialed to your body. The 3pm crash is gone, your labs improved, and you're leaner than you've been in years — without thinking about it."},
-    {"id":"leadership_coaching","category":"lifestyle","subcategory":"legacy","label":"Executive Leadership Coaching","description":"A seasoned coach who's run bigger companies than yours. Sharpen how you think, decide, and lead — the operating system behind everything else.","cash_cost":4000,"energy_cost":-6,"effects":{"lifestyle_legacy":20,"brand_equity":6,"energy":6},"recurring_cost":800,"narrative":"Your coach asked one question that reframed a decision you'd been agonizing over for weeks. You lead differently now — calmer, clearer, more deliberate."},
-    {"id":"dream_car","category":"lifestyle","subcategory":"experiences","label":"Buy Your Dream Car","description":"The car you taped to your wall as a kid. Not an investment, not a write-off — a pure, unapologetic reward for the years of grind.","cash_cost":45000,"energy_cost":-8,"one_time":true,"effects":{"lifestyle_experiences":26,"energy":14},"recurring_cost":1200,"narrative":"You sat in the driver's seat in the dealership lot for a full minute before turning the key. Some desires you satisfy not because they're smart — but because you earned the right to."},
-    {"id":"world_sabbatical","category":"lifestyle","subcategory":"experiences","label":"Take a Sabbatical Around the World","description":"Three months. Hand the keys to your team and go see the world — slowly, deliberately, with no agenda but wonder.","cash_cost":18000,"energy_cost":-30,"effects":{"lifestyle_experiences":24,"lifestyle_spiritual":14,"lifestyle_relationships":10,"energy":30},"narrative":"You came home changed. The business survived without you — which proved you built something real — and you returned with a head full of horizons and a tank that's finally full."},
-    {"id":"dream_home","category":"lifestyle","subcategory":"experiences","label":"Build Your Dream Home","description":"The house you design from the ground up — every room how you imagined it. The physical proof of the life you set out to build.","cash_cost":300000,"energy_cost":-10,"one_time":true,"effects":{"lifestyle_experiences":30,"lifestyle_relationships":15,"lifestyle_legacy":12,"energy":12},"recurring_cost":12000,"narrative":"You walked through the finished house with your family at golden hour. Every detail was a choice you got to make. This is what the years of work were quietly aiming at the whole time."},
-    {"id":"nature_hike","category":"lifestyle","subcategory":"health","label":"Go for a Hike","description":"Lace up and get out into nature — a long trail, fresh air, no notifications. Free, and it resets your head and body at the same time.","cash_cost":0,"energy_cost":-12,"effects":{"lifestyle_health":10,"energy":12,"fitness_level":8,"lifestyle_spiritual":4},"narrative":"Two hours on the trail, phone in your pocket the whole time. You came back sweaty, clear-headed, and weirdly optimistic about a problem that had felt impossible that morning."},
-    {"id":"treat_dessert","category":"lifestyle","subcategory":"experiences","label":"Treat Yourself to Dessert","description":"Stop and enjoy something small and indulgent — a great dessert, a fancy coffee, your favorite snack. A tiny, cheap reward.","cash_cost":25,"energy_cost":-5,"effects":{"lifestyle_experiences":6,"energy":5},"narrative":"You sat down with the good dessert and actually tasted it instead of working through lunch. Five dollars and ten minutes, and the afternoon felt lighter."},
-    {"id":"retail_therapy","category":"lifestyle","subcategory":"experiences","label":"A Little Retail Therapy","description":"Buy yourself something you've been wanting — nothing major, just a pick-me-up. It doesn't fix anything, but it feels good and clears your head.","cash_cost":300,"energy_cost":-8,"effects":{"lifestyle_experiences":10,"energy":8},"narrative":"New shoes, a gadget, whatever it was — you grinned a little carrying the bag out. Sometimes a small, silly purchase is exactly the reset you needed."},
-    {"id":"spa_massage","category":"lifestyle","subcategory":"health","label":"Spa Day & Massage","description":"Book a massage and a few hours at the spa. Let someone else take care of you for an afternoon.","cash_cost":300,"energy_cost":-14,"effects":{"lifestyle_health":12,"energy":14,"fitness_level":4},"narrative":"The knot you'd been carrying in your shoulders for months finally let go on the table. You walked out loose, calm, and human again."},
-    {"id":"home_cooking","category":"lifestyle","subcategory":"health","label":"Cook Healthy at Home","description":"Stop living on takeout and gas-station food. A little meal prep, real ingredients — cheap, and your body notices fast.","cash_cost":150,"energy_cost":-8,"effects":{"lifestyle_health":10,"energy":8,"fitness_level":8},"recurring_cost":120,"narrative":"You batch-cooked on Sunday and ate real food all week. Cheaper than takeout, and the afternoon slump quietly disappeared."},
-    {"id":"rec_sports_league","category":"lifestyle","subcategory":"health","label":"Join a Rec Sports League","description":"Sign up for a weekly pickup league — basketball, soccer, softball. Exercise that doesn't feel like exercise, plus a built-in social circle.","cash_cost":300,"energy_cost":-10,"effects":{"lifestyle_health":12,"fitness_level":12,"lifestyle_relationships":6,"energy":10},"recurring_cost":80,"narrative":"Thursday-night games became the thing you look forward to all week. You're fitter, you've got new friends who aren't from work, and you forgot what burnout felt like for a couple hours."}
-  ]
-}
-,
-  "events": {
-  "version": "1.0.0",
-  "events": [
-    {
-      "id": "key_operator_loss",
-      "category": "people",
-      "requires": { "_asset_units_gte": 1 },
-      "base_probability": 0.04,
-      "probability_scales_with": "_asset_units",
-      "scale_factor": 0.03,
-      "narrative": "The operator running one of your income properties is suddenly out — a serious illness, then weeks in the hospital. They can't run the asset, tenants are calling, and the mortgage on that building doesn't pause for anyone.",
-      "act": 3,
-      "choices": [
-        { "label": "Handle the fallout", "effects": {}, "outcome_narrative": "You step in to stabilize the property and sort out what the policies cover." }
-      ]
-    },
-    {
-      "id": "liability_lawsuit",
-      "category": "litigation",
-      "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },
-      "base_probability": 0.11,
-      "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.00000022,
-      "narrative": "It finally happens. A client's project went sideways and they blame your work — their attorney is demanding $40,000 in damages, and the complaint names you personally.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Settle out of court",
-          "effects": { "cash": -6000, "brand_equity": -4 },
-          "outcome_narrative": "You settled to make it go away. Expensive, but the alternative was a year of legal fees and a court date hanging over everything."
-        },
-        {
-          "label": "Fight it with your attorney",
-          "effects": { "cash": -8000, "energy": -15, "litigation_exposure": 5 },
-          "outcome_narrative": "Your attorney mounts a defense. It drags on and drains you, but you refuse to be shaken down."
-        }
-      ],
-      "protection": {
-        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-        "protected_note": "Because the business is an LLC, the lawsuit stopped at the company. Your home, your savings, and your personal credit are untouched — this is exactly what the LLC is for.",
-        "unprotected_note": "You never formed an LLC, so there was no legal wall between you and the business. The claim came straight for your personal assets and credit. A $300 LLC filing would have contained all of this.",
-        "unprotected_extra": { "cash": -8000, "personal_credit_score": -40, "personal_guarantee_exposure": 15000 }
-      },
-      "mitigated_by": ["client_onboarding", "basic_quality_control", "hire_general_counsel"]
-    },
-    {
-      "id": "founder_health_crisis",
-      "category": "personal",
-      "requires": { "monthly_revenue_gte": 6000 },
-      "base_probability": 0.035,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "You wake up and can't get out of bed. The doctor is blunt: weeks of recovery, maybe longer. The business runs on your hours — and those hours just stopped.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Push through, work from bed",
-          "effects": { "energy": -20, "fitness_level": -15, "lifestyle_health": -12 },
-          "outcome_narrative": "You kept the lights on by sheer will. It cost you — your body and the people who love you both noticed."
-        },
-        {
-          "label": "Rest and let the business coast",
-          "effects": { "customer_base": -3 },
-          "outcome_narrative": "You took the time to heal. A few clients drifted while you were out, but you came back whole."
-        }
-      ],
-      "protection": {
-        "shielded_when": { "insurance_coverage_gte": 1 },
-        "protected_note": "Your income protection policy kicked in, replacing much of your income while you recovered. This is the exact scenario it exists for — you healed without the money stopping.",
-        "unprotected_note": "With no income protection, there was no safety net. Every day you couldn't work was a day with nothing coming in — and the bills never paused.",
-        "unprotected_extra": { "cash": -9000, "total_debt": 4000 },
-        "claim_pct": 0.8,
-        "critical_illness": true,
-        "recovery_months": 3
-      },
-      "mitigated_by": ["write_first_sop", "full_systemization"]
-    },
-    {
-      "id": "key_person_loss",
-      "category": "people",
-      "requires": { "team_size_gte": 2, "key_person_dependency_gte": 35 },
-      "base_probability": 0.08,
-      "probability_scales_with": "key_person_dependency",
-      "scale_factor": 0.001,
-      "narrative": "Your right hand — the one team member who holds half the operation in their head — is suddenly out: a serious health emergency has put them on indefinite leave, and it's unclear if they'll be back. Overnight, critical knowledge and your biggest client relationships went dark.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Scramble to cover the gap",
-          "effects": { "energy": -15, "systems_maturity": -5, "customer_base": -2 },
-          "outcome_narrative": "You and the team absorbed the blow, working nights to keep clients from noticing while your colleague recovers. Mostly, it worked."
-        },
-        {
-          "label": "Hire a replacement fast",
-          "effects": { "cash": -6000, "energy": -8 },
-          "outcome_narrative": "You paid up to backfill the role quickly. The new hire needs ramp time, but the bleeding stopped."
-        }
-      ],
-      "protection": {
-        "shielded_by": "keyman_insurance",
-        "payout": 25000,
-        "protected_note": "This is exactly what key-person insurance is for: when a critical person is lost to illness, injury, or death, the policy pays the business a lump sum. It funded a fast, well-paid replacement and bridged the gap — the business barely skipped a beat.",
-        "unprotected_note": "With no key-person coverage, there was no benefit to cushion the blow. You ate the cost and the chaos directly, and a few clients slipped away during the scramble.",
-        "unprotected_extra": { "cash": -8000, "customer_base": -3 }
-      },
-      "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
-    },
-    {
-      "id": "capital_crunch",
-      "category": "debt",
-      "requires": { "monthly_revenue_gte": 8000 },
-      "base_probability": 0.08,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "Your main equipment dies / a critical bill comes due — it can't wait. You need $15,000 immediately, so you go looking for financing.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Cover it from cash reserves",
-          "effects": { "cash": -15000 },
-          "outcome_narrative": "You had the reserves to handle it outright — no new debt, no lender, no drama. This is exactly why you keep a buffer."
-        },
-        {
-          "label": "Finance it and keep moving",
-          "effects": { "total_debt": 15000, "operating_expenses": 150 },
-          "outcome_narrative": "You got the money and got back to work. Now to pay it back."
-        }
-      ],
-      "mitigated_by": ["banking_relationship", "fund_accumulation_policy"],
-      "protection": {
-        "shielded_when": { "personal_credit_score_gte": 680 },
-        "protected_note": "Your strong credit landed a low-interest loan, approved fast. Good credit is cheapest precisely when you need money in a hurry — the years of building it just paid off.",
-        "unprotected_note": "Your weak credit meant predatory terms — high interest and fees stacked on top. Borrowing is most expensive exactly when you can least afford it. This is why you build credit BEFORE you need it.",
-        "unprotected_extra": { "total_debt": 8000, "personal_credit_score": -10, "operating_expenses": 250 }
-      }
-    },
-    {
-      "id": "major_lawsuit_wealth",
-      "category": "litigation",
-      "requires": { "monthly_revenue_gte": 25000 },
-      "base_probability": 0.09,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "A serious claim lands: a major client alleges your work cost them six figures, and they've hired an aggressive firm coming after everything you've built.",
-      "act": 3,
-      "choices": [
-        {
-          "label": "Settle to limit exposure",
-          "effects": { "cash": -12000, "brand_equity": -5 },
-          "outcome_narrative": "You negotiated it down and settled. A heavy hit, but you contained it and moved on."
-        },
-        {
-          "label": "Fight it to the end",
-          "effects": { "cash": -15000, "energy": -20, "litigation_exposure": 10 },
-          "outcome_narrative": "A long, draining fight — but you prevailed. It cost time and focus you'll never get back."
-        }
-      ],
-      "protection": {
-        "shielded_when": { "trust_structure_not": "none" },
-        "protected_note": "Your trust and asset-protection structure did its job — the wealth they came for was legally walled off and out of reach. The fortress held, exactly as designed.",
-        "unprotected_note": "With no trust or asset-protection structure, everything you'd accumulated was exposed. They went after the accounts and forced personal guarantees — the wealth was sitting in the open.",
-        "unprotected_extra": { "cash": -20000, "personal_guarantee_exposure": 30000 }
-      },
-      "mitigated_by": ["keyman_insurance", "hire_general_counsel"]
-    },
-    {
-      "id": "scaling_chaos",
-      "category": "operations",
-      "requires": { "monthly_revenue_gte": 20000, "systems_maturity_lte": 40 },
-      "base_probability": 0.13,
-      "probability_scales_with": "monthly_revenue",
-      "scale_factor": 0.0000006,
-      "narrative": "Growth outran your systems. Orders are slipping, two clients got the wrong deliverable, and your team is firefighting instead of working. You scaled the revenue but not the machine — and it's breaking.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Pull all-nighters and fix it yourself",
-          "effects": { "energy": -20, "key_person_dependency": 8, "customer_base": -3 },
-          "outcome_narrative": "You personally caught up the backlog — at the cost of your sleep and by making the business depend on you even more. A patch, not a fix."
-        },
-        {
-          "label": "Refund affected clients and apologize",
-          "effects": { "cash": -6000, "brand_equity": -6, "customer_base": -4 },
-          "outcome_narrative": "You ate the cost and the reputation hit. The clients appreciated the honesty, but a few walked. Growth without systems has a price."
-        }
-      ],
-      "mitigated_by": ["fulfillment_system", "full_systemization", "basic_quality_control", "project_management"]
-    },
-    {
-      "id": "client_dispute",
-      "category": "litigation",
-      "requires": { "customer_base_gte": 10 },
-      "base_probability": 0.08,
-      "probability_scales_with": "customer_base",
-      "scale_factor": 0.001,
-      "narrative": "An email from an attorney lands in your inbox. A former client claims you didn't deliver what was promised — and they want their money back, plus damages.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Settle quickly",
-          "effects": { "cash": -3000, "brand_equity": -3 },
-          "outcome_narrative": "You wrote the check. It stung. But the alternative was six months of legal fees and the distraction of a court date hanging over you."
-        },
-        {
-          "label": "Fight it with your attorney",
-          "effects": { "cash": -5000, "energy": -10, "brand_equity": 2 },
-          "outcome_narrative": "Your attorney sent a response letter. The claim has no teeth — your contract was solid. But it'll cost you to prove it."
-        },
-        {
-          "label": "Offer a partial refund and resolution",
-          "effects": { "cash": -1500, "brand_equity": 2, "customer_base": -1 },
-          "outcome_narrative": "She accepted the partial refund. You lost the client but kept your reputation. Fair trade."
-        }
-      ],
-      "mitigated_by": ["client_onboarding", "basic_quality_control", "hire_general_counsel"]
-    },
-    {
-      "id": "key_employee_quits",
-      "category": "people",
-      "requires": { "team_size_gte": 2 },
-      "base_probability": 0.07,
-      "probability_scales_with": "team_size",
-      "scale_factor": 0.015,
-      "narrative": "Your best performer just gave two weeks' notice. She got an offer she can't refuse — or rather, one you can't match.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Counter-offer with a raise",
-          "effects": { "cash": -3000, "operating_expenses": 1000 },
-          "outcome_narrative": "She stayed. But you both know it bought time, not loyalty. Start cross-training — now."
-        },
-        {
-          "label": "Let her go, redistribute work",
-          "effects": { "energy": -15, "systems_maturity": -5, "team_size": -1, "operating_expenses": -2000 },
-          "outcome_narrative": "The team absorbed the gap. You can feel the strain by week three. But you didn't panic-spend."
-        },
-        {
-          "label": "Wish her well, immediately start hiring",
-          "effects": { "cash": -1500, "team_size": -1, "energy": -8, "operating_expenses": -1000 },
-          "outcome_narrative": "Clean break. Job posted that afternoon. You'll find someone — hopefully before the workload crushes the remaining team."
-        }
-      ],
-      "mitigated_by": ["write_first_sop", "hire_hr_manager", "middle_management", "hire_general_counsel"]
-    },
-    {
-      "id": "rate_hike",
-      "category": "debt",
-      "requires": { "_bad_debt_gte": 8000 },
-      "base_probability": 0.1,
-      "probability_scales_with": "_bad_debt",
-      "scale_factor": 0.000002,
-      "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive. The lender's letter arrives with the new payment schedule.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Refinance to fixed rate",
-          "effects": { "cash": -2000, "operating_expenses": 300 },
-          "outcome_narrative": "Locked in. More expensive monthly, but at least it's predictable now. No more surprises."
-        },
-        {
-          "label": "Absorb the increase",
-          "effects": { "operating_expenses": 500, "dscr": -0.2 },
-          "outcome_narrative": "You'll handle it. The margin is thinner, but the cash stays in the business where it's needed."
-        },
-        {
-          "label": "Accelerate paydown",
-          "effects": { "cash": -5000, "total_debt": -5000, "dscr": 0.1 },
-          "outcome_narrative": "You threw cash at the balance. Painful, but every dollar you kill now saves you three in interest over the life of the loan."
-        }
-      ],
-      "mitigated_by": ["banking_relationship", "advanced_tax_strategy"]
-    },
-    {
-      "id": "market_recession",
-      "category": "macro",
-      "requires": { "monthly_revenue_gte": 10000, "customer_base_gte": 8 },
-      "base_probability": 0.04,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "It's all over the news. Consumer confidence is cratering, clients are cutting budgets, and your pipeline just went from 'healthy' to 'terrifying' in two weeks.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Play offense — borrow cheap, grab market share",
-          "effects": { "total_debt": 6000, "customer_base": 9, "brand_equity": 10, "leads": 8, "energy": -10 },
-          "outcome_narrative": "While competitors went dark, you got loud — funded with the bank's money, not your own. You scooped up their abandoned customers at the cheapest acquisition cost you'll ever see. Recessions transfer market share to whoever has the nerve and the capital to act."
-        },
-        {
-          "label": "Reposition to recession-proof demand",
-          "effects": { "cash": -2500, "brand_equity": 6, "customer_base": 2, "churn_rate": -0.03, "energy": -8 },
-          "outcome_narrative": "You reframed the offer around what clients can't cut even in a downturn — the must-haves, not the nice-to-haves. Slower, but the customers you keep are far stickier now."
-        },
-        {
-          "label": "Batten down — cut to the core and wait",
-          "effects": { "operating_expenses": -3000, "team_size": -1, "energy": -10, "systems_maturity": -5, "brand_equity": -3 },
-          "outcome_narrative": "You cut deep: a contractor let go, subscriptions killed, the lease renegotiated. You'll survive the winter — but you're playing defense while bolder operators take your customers."
-        }
-      ],
-      "mitigated_by": ["business_credit_line", "build_offer"]
-    },
-    {
-      "id": "burnout_crisis",
-      "category": "burnout",
-      "requires": { "energy_lte": 20 },
-      "base_probability": 0.15,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "You woke up this morning and couldn't get out of bed. Not physically — mentally. The thought of opening your laptop made your chest tight. Your body is telling you something your ambition won't admit.",
-      "act": 1,
-      "choices": [
-        {
-          "label": "Take a week off completely",
-          "effects": { "energy": 25, "cash": -2000, "lifestyle_health": 5 },
-          "outcome_narrative": "You disappeared for seven days. The business survived. You came back with something you'd lost — perspective."
-        },
-        {
-          "label": "Push through it",
-          "effects": { "energy": -10, "lifestyle_health": -8, "lifestyle_relationships": -5 },
-          "outcome_narrative": "You pushed. You always push. But the headaches are daily now, and your partner stopped asking how your day was."
-        },
-        {
-          "label": "Hire help to offload immediately",
-          "effects": { "cash": -2000, "energy": 15, "team_size": 1, "operating_expenses": 1500 },
-          "outcome_narrative": "Emergency contractor hired. Expensive, but you can breathe again. This is a band-aid — you need a real fix."
-        }
-      ],
-      "mitigated_by": ["gym_routine", "meditation_practice", "middle_management"]
-    },
-    {
-      "id": "irs_inquiry",
-      "category": "audit",
-      "requires": { "audit_risk_gte": 20 },
-      "base_probability": 0.06,
-      "probability_scales_with": "audit_risk",
-      "scale_factor": 0.002,
-      "narrative": "A letter from the IRS. Not the scary kind — the 'we'd like to verify some deductions' kind. But your stomach dropped anyway.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Hire a tax attorney immediately",
-          "effects": { "cash": -4000, "energy": -5 },
-          "outcome_narrative": "The attorney handled everything. Clean resolution, no penalties — worth every penny of the fee."
-        },
-        {
-          "label": "Handle it with your CPA",
-          "effects": { "cash": -1500, "energy": -10, "audit_risk": -5 },
-          "outcome_narrative": "Your CPA walked you through it. Minor adjustment, small payment. Crisis averted, lesson learned."
-        },
-        {
-          "label": "Respond yourself to save money",
-          "effects": { "cash": -500, "energy": -15, "audit_risk": 5 },
-          "outcome_narrative": "You sent the documentation yourself. They came back with more questions. This might drag on."
-        }
-      ],
-      "mitigated_by": ["basic_bookkeeping", "s_corp_election", "tax_optimization"]
-    },
-    {
-      "id": "big_client_opportunity",
-      "category": "opportunity",
-      "requires": { "brand_equity_gte": 25, "monthly_revenue_gte": 5000 },
-      "base_probability": 0.05,
-      "probability_scales_with": "brand_equity",
-      "scale_factor": 0.002,
-      "narrative": "A major company just reached out. They saw your work and want to discuss a contract that could double your monthly revenue. But they have conditions.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Take the contract, scale up to deliver",
-          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
-          "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
-        },
-        {
-          "label": "Negotiate better terms first",
-          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
-          "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
-        },
-        {
-          "label": "Decline — not ready to scale yet",
-          "effects": { "brand_equity": 3 },
-          "outcome_narrative": "You said no. It hurt. But you know your systems can't handle it yet, and a blown delivery would damage more than a declined offer."
-        }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "partner_offer",
-      "category": "opportunity",
-      "requires": { "monthly_revenue_gte": 8000, "brand_equity_gte": 20 },
-      "base_probability": 0.03,
-      "probability_scales_with": "brand_equity",
-      "scale_factor": 0.001,
-      "narrative": "Someone wants in. A successful entrepreneur in a related space is proposing a partnership — their capital and connections, your operation and hustle.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Accept the partnership (give 30% equity)",
-          "effects": { "cash": 20000, "available_credit": 10000, "partner_conflict_risk": 30, "brand_equity": 10, "customer_base": 4 },
-          "outcome_narrative": "The deal is signed. A capital injection in the bank and a Rolodex of connections. But 30% of every future dollar belongs to someone else now."
-        },
-        {
-          "label": "Counter with a revenue-share, no equity",
-          "effects": { "cash": 5000, "customer_base": 3, "partner_conflict_risk": 10 },
-          "outcome_narrative": "She accepted the rev-share. Less capital upfront, but you kept your equity. Smart — if you can grow without the full injection."
-        },
-        {
-          "label": "Decline politely",
-          "effects": { "brand_equity": 2 },
-          "outcome_narrative": "You passed. She respected it. The door stays open for later — and you still own 100% of what you're building."
-        }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "real_estate_deal",
-      "category": "opportunity",
-      "requires": { "cash_gte": 15000, "personal_credit_score_gte": 680 },
-      "base_probability": 0.05,
-      "probability_scales_with": "personal_credit_score",
-      "scale_factor": 0.0001,
-      "narrative": "Your banker called with an off-market deal. A duplex in a solid neighborhood, below market value. The seller needs to close fast. It's the kind of deal that doesn't come around often.",
-      "act": 3,
-      "choices": [
-        {
-          "label": "Make the offer, use available credit",
-          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
-          "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
-        },
-        {
-          "label": "Pass — too much capital tied up right now",
-          "effects": {},
-          "outcome_narrative": "You passed. It was the right call for your cash position, even if it stings. Another deal will come."
-        }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "embezzlement",
-      "category": "people",
-      "requires": { "team_size_gte": 3, "systems_maturity_lte": 40 },
-      "base_probability": 0.04,
-      "probability_scales_with": "team_size",
-      "scale_factor": 0.01,
-      "narrative": "The numbers don't add up. After three hours of digging, you find it — someone on your team has been skimming. Small amounts, but consistently, for months.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Fire them, don't press charges",
-          "effects": { "cash": -3000, "team_size": -1, "energy": -10, "systems_maturity": 5 },
-          "outcome_narrative": "Gone by end of day. You'll never recover the money, but you plugged the hole. Time to install real financial controls."
-        },
-        {
-          "label": "Fire and prosecute",
-          "effects": { "cash": -5000, "team_size": -1, "energy": -15, "systems_maturity": 5, "brand_equity": -3 },
-          "outcome_narrative": "The police report is filed. The attorney is engaged. It'll cost more to prosecute than you lost — but some things aren't about the money."
-        },
-        {
-          "label": "Confront privately, demand repayment",
-          "effects": { "cash": 1000, "team_size": -1, "energy": -8, "systems_maturity": 3 },
-          "outcome_narrative": "He admitted it, crying. Agreed to pay back what he could. You fired him anyway, but quietly. Trust is gone."
-        }
-      ],
-      "mitigated_by": ["basic_bookkeeping", "project_management", "fulfillment_system"]
-    },
-    {
-      "id": "health_scare",
-      "category": "burnout",
-      "requires": { "energy_lte": 40 },
-      "base_probability": 0.06,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "You're in the ER. Chest pains that turned out to be stress-induced, not cardiac — this time. The doctor looked at you the way doctors look at people who aren't listening.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Cancel everything for two weeks",
-          "effects": { "energy": 30, "cash": -3000, "lifestyle_health": 10 },
-          "outcome_narrative": "Two weeks of nothing. The business wobbled but didn't fall. You came back lighter. The ER bill is on the fridge as a reminder."
-        },
-        {
-          "label": "Scale back to half-days",
-          "effects": { "energy": 15, "cash": -1000, "lifestyle_health": 5 },
-          "outcome_narrative": "Half-days for a month. The urgent things got done. The rest waited. Most of it didn't matter as much as you thought."
-        },
-        {
-          "label": "Go right back to work",
-          "effects": { "energy": -15, "lifestyle_health": -10, "lifestyle_relationships": -10 },
-          "outcome_narrative": "You were back at your desk the next morning. Your partner didn't say anything. The silence was louder than a fight."
-        }
-      ],
-      "mitigated_by": ["gym_routine", "annual_physical"],
-      "protection": {
-        "shielded_when": { "insurance_coverage_gte": 1 },
-        "protected_note": "Your health & income protection covered the lost weeks and the ER bill — you could actually afford to rest. The policy did exactly what it's for.",
-        "unprotected_note": "With no coverage, the ER bill and the missed work both came straight out of pocket. Recovering cost you twice.",
-        "unprotected_extra": { "cash": -4000 },
-        "claim_pct": 0.85,
-        "critical_illness": true,
-        "recovery_months": 2
-      }
-    },
-    {
-      "id": "windfall_referral",
-      "category": "opportunity",
-      "requires": { "brand_equity_gte": 35 },
-      "base_probability": 0.03,
-      "probability_scales_with": "brand_equity",
-      "scale_factor": 0.002,
-      "narrative": "A past client referred you to their entire network in a single email blast. Your inbox exploded overnight.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Take on everyone",
-          "effects": { "customer_base": 8, "energy": -15, "key_person_dependency": 10 },
-          "outcome_narrative": "Eight new clients in a month. Your calendar is a war zone. Revenue is up — so is your blood pressure."
-        },
-        {
-          "label": "Cherry-pick the best fits",
-          "effects": { "customer_base": 4, "brand_equity": 5 },
-          "outcome_narrative": "You picked four. Said no to the rest — gracefully. The four you took are ideal clients. Quality over quantity."
-        }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "crypto_friend_scam",
-      "category": "opportunity",
-      "scam": true,
-      "requires": { "monthly_revenue_gte": 5000 },
-      "base_probability": 0.05,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "A friend who's suddenly driving a new car says he's made a killing on a crypto coin — 'guaranteed 10x, it's already mooning.' He needs you to buy in TODAY through his guy, before it's too late. The site looks slick. The returns look unreal.",
-      "act": 2,
-      "choices": [
-        { "label": "Go all in — don't miss out", "scam_trap": true, "effects": { "cash": -14000, "total_debt": 5000, "personal_credit_score": -18, "energy": -22 }, "outcome_narrative": "You didn't just use cash — you maxed two cards to size up the 'sure thing.' For two weeks the dashboard showed you up 300%. Then withdrawals 'paused,' the group chat went silent, and your friend vanished. A rug pull: the money's gone, you're carrying new card debt, and your credit took the hit. The most expensive lesson of the year." },
-        { "label": "Put in a small starter position", "effects": { "cash": -1500, "energy": -3 }, "outcome_narrative": "You tried a small position to see how it played out. When it collapsed it stung but didn't hurt — and you learned the lesson cheap: if it's guaranteed and urgent, it's a scam." },
-        { "label": "Tell him you'll think about it", "effects": { "energy": 3 }, "outcome_narrative": "You held off. Three weeks later the coin went to zero and took your friend's savings with it. The best move that month was the one you didn't make." }
-      ],
-      "protection": {
-        "shielded_by": "hire_fractional_cfo",
-        "shielded_multiplier": 0.15,
-        "protected_note": "Your CFO took the 'fund' apart in ten minutes — no audited returns, anonymous team, gated withdrawals. She flagged it as a rug pull and kept your exposure to almost nothing.",
-        "unprotected_note": "With no one to sanity-check it, the FOMO won. A trusted advisor — even a fractional CFO — is exactly who catches a too-good-to-be-true pitch before your money does."
-      },
-      "mitigated_by": []
-    },
-    {
-      "id": "coworker_investment_scam",
-      "category": "opportunity",
-      "scam": true,
-      "requires": { "monthly_revenue_gte": 12000 },
-      "base_probability": 0.04,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "A well-connected acquaintance pitches a 'private fund' paying a steady 4% a month, guaranteed. He shows you statements — early investors are getting paid like clockwork — and can 'squeeze you in' if you wire funds this week.",
-      "act": 2,
-      "choices": [
-        { "label": "Wire a big chunk — those returns are incredible", "scam_trap": true, "effects": { "cash": -28000, "total_debt": 8000, "personal_credit_score": -12, "energy": -22 }, "outcome_narrative": "You wired a huge chunk — and pulled a credit line to add more. The monthly statements kept arriving, right up until the regulators showed up. A Ponzi: early payouts funded by new investors' money, and you were near the bottom of the pyramid. You recovered cents on the dollar — and you're still paying off the credit you used to chase it." },
-        { "label": "Start with a modest position", "effects": { "cash": -3000 }, "outcome_narrative": "You put in a little to test it and watched. When it unraveled you'd lost some — and gained a permanent allergy to 'guaranteed monthly returns.'" },
-        { "label": "Ask to see audited returns first", "effects": { "energy": 3, "brand_equity": 2 }, "outcome_narrative": "You asked for audited statements and a real custodian. He got evasive, so you passed. When it imploded and took down half his contacts, your reputation for level-headedness quietly went up." }
-      ],
-      "protection": {
-        "shielded_by": "setup_family_office",
-        "shielded_multiplier": 0.1,
-        "protected_note": "Your family office ran due diligence and flagged it as a textbook Ponzi — no real custodian, returns too smooth to be real. They kept you almost entirely out.",
-        "unprotected_note": "Nobody vetted the deal for you. Real wealth runs every 'opportunity' through advisors and custodians — guaranteed, too-smooth returns are the oldest red flag there is."
-      },
-      "mitigated_by": []
-    },
-    {
-      "id": "lender_calls_note",
-      "category": "debt",
-      "requires": { "dscr_lte": 1.1, "_bad_debt_gte": 10000 },
-      "base_probability": 0.12,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "The lender wants updated financials. Your DSCR is borderline. The tone of the email is polite, but the subtext is clear: we're watching.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Provide financials and negotiate",
-          "effects": { "energy": -8, "personal_credit_score": -5 },
-          "outcome_narrative": "They reviewed, frowned, and renewed — with a higher rate. You're on a short leash now."
-        },
-        {
-          "label": "Pay down balance to improve DSCR",
-          "effects": { "cash": -5000, "total_debt": -5000, "dscr": 0.3 },
-          "outcome_narrative": "The extra payment brought your DSCR back to comfortable. The lender relaxed. But your cash position is tighter."
-        }
-      ],
-      "mitigated_by": ["banking_relationship", "basic_bookkeeping"]
-    },
-    {
-      "id": "partner_dispute",
-      "category": "partner",
-      "requires": { "partner_conflict_risk_gte": 15 },
-      "base_probability": 0.1,
-      "probability_scales_with": "partner_conflict_risk",
-      "scale_factor": 0.003,
-      "narrative": "Your partner wants to take the company in a different direction. What started as a 'strategic discussion' is now a power struggle. The operating agreement is sitting on the table between you.",
-      "act": 2,
-      "choices": [
-        {
-          "label": "Buy them out",
-          "effects": { "cash": -15000, "partner_conflict_risk": -30, "energy": -10 },
-          "outcome_narrative": "Check written. Equity reclaimed. You're alone again — and it's the most expensive relief you've ever felt."
-        },
-        {
-          "label": "Compromise on direction",
-          "effects": { "energy": -8, "partner_conflict_risk": -10, "brand_equity": -5 },
-          "outcome_narrative": "You met in the middle. Neither of you got what you wanted. The partnership survives, barely."
-        },
-        {
-          "label": "Lawyer up",
-          "effects": { "cash": -8000, "energy": -20, "partner_conflict_risk": 10 },
-          "outcome_narrative": "The attorneys are involved now. Every conversation goes through legal. The business is running on fumes of goodwill."
-        }
-      ],
-      "mitigated_by": ["form_llc", "asset_protection", "hire_general_counsel"]
-    },
-    {
-      "id": "staff_raise_demand",
-      "category": "people",
-      "requires": { "team_size_gte": 2 },
-      "base_probability": 0.12,
-      "probability_scales_with": "team_size",
-      "scale_factor": 0.02,
-      "narrative": "Your team wants raises. Three of your best people have been approached by competitors offering 20% more. They haven't accepted yet — but they're waiting to see what you do.",
-      "act": 2,
-      "choices": [
-        { "label": "Give everyone a 15% raise", "effects": { "operating_expenses": 2000, "energy": 5 }, "outcome_narrative": "The raises went through. Morale is high, and your competitor's recruiter stopped calling. But your margins just got thinner." },
-        { "label": "Raise your top 2, hold the rest", "effects": { "operating_expenses": 1000, "team_size": -1, "brand_equity": -3 }, "outcome_narrative": "Your top performers stayed. One of the others didn't — she left quietly, and two clients noticed." },
-        { "label": "No raises — the budget is tight", "effects": { "team_size": -2, "key_person_dependency": 15, "energy": -10 }, "outcome_narrative": "Two people quit within the month. The workload landed back on your desk. You saved money and lost momentum." }
-      ],
-      "mitigated_by": ["hire_hr_manager", "middle_management"]
-    },
-    {
-      "id": "major_lawsuit",
-      "category": "litigation",
-      "requires": { "monthly_revenue_gte": 15000, "customer_base_gte": 30 },
-      "base_probability": 0.06,
-      "probability_scales_with": "litigation_exposure",
-      "scale_factor": 0.002,
-      "narrative": "A former client is suing for breach of contract and negligence. Their attorney is aggressive, and the amount they're claiming would materially hurt your business. This isn't a nuisance suit.",
-      "act": 2,
-      "choices": [
-        { "label": "Settle out of court", "effects": { "cash": -15000, "brand_equity": -5 }, "outcome_narrative": "You wrote the check. It hurt. But six months of litigation would have cost more — in money and in focus." },
-        { "label": "Fight it — hire a litigation attorney", "effects": { "cash": -15000, "energy": -20, "operating_expenses": 2000 }, "outcome_narrative": "The attorney says you have a strong case. But strong cases still take months and serious legal fees. The stress is real." },
-        { "label": "Counter-sue for damages", "effects": { "cash": -20000, "energy": -25, "brand_equity": 5 }, "outcome_narrative": "Your counter-suit caught them off guard. It'll take longer, but your attorney thinks you'll come out ahead. Maybe." }
-      ],
-      "mitigated_by": ["client_onboarding", "asset_protection", "form_llc", "hire_general_counsel"],
-      "protection": {
-        "shielded_when": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-        "protected_note": "Your LLC kept the claim at the company — they couldn't reach through to your home and savings, so the hit came out of the business, not your personal life.",
-        "unprotected_note": "With no LLC, there was no wall between you and the business. The suit came straight for your personal assets and credit alongside the company.",
-        "shielded_multiplier": 0.6,
-        "unprotected_extra": { "personal_credit_score": -25, "personal_guarantee_exposure": 15000 }
-      }
-    },
-    {
-      "id": "key_client_loss",
-      "category": "people",
-      "requires": { "customer_base_gte": 15, "monthly_revenue_gte": 8000 },
-      "base_probability": 0.08,
-      "probability_scales_with": "churn_rate",
-      "scale_factor": 2,
-      "narrative": "Your biggest client just called. They're moving to a competitor. They were 20% of your revenue. The conversation was polite, but the damage is immediate.",
-      "act": 2,
-      "choices": [
-        { "label": "Offer a steep discount to keep them", "effects": { "brand_equity": -8 }, "outcome_narrative": "They stayed — at 30% less. You kept the account but set a precedent that quietly drags your pricing power. Other clients will hear about this." },
-        { "label": "Let them go, double down on pipeline", "effects": { "customer_base": -4, "leads": 10, "energy": -8 }, "outcome_narrative": "They're gone — about a fifth of your book walked out the door with them. It stings, and you can feel it in the numbers. But you redirected that energy into new prospects. Diversification is a lesson you won't forget." },
-        { "label": "Ask for an exit interview to learn why", "effects": { "customer_base": -4, "systems_maturity": 5, "brand_equity": 3 }, "outcome_narrative": "They still left — that chunk of revenue is gone — but the feedback was honest and painful. Three things you could have done better. You wrote them down and fixed all three." }
-      ],
-      "mitigated_by": ["hire_client_success", "crm_pipeline"]
-    },
-    {
-      "id": "cash_flow_crisis",
-      "category": "debt",
-      "requires": { "monthly_revenue_gte": 10000 },
-      "base_probability": 0.07,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "Three clients paid late this month. Your payroll is due Friday. Your credit line is nearly maxed. For the first time, you're not sure the math works.",
-      "act": 2,
-      "choices": [
-        { "label": "Draw from credit line, pay the penalty", "effects": { "cash": -2000, "total_debt": 5000, "personal_credit_score": -5 }, "outcome_narrative": "Payroll met. But the interest on that emergency draw is going to compound. You need a cash buffer." },
-        { "label": "Negotiate delayed payroll with team", "effects": { "energy": -15, "team_size": -1, "operating_expenses": -2000 }, "outcome_narrative": "Most of the team understood. One didn't — she walked. The rest got paid a week late. Trust took a hit." },
-        { "label": "Call clients and demand immediate payment", "effects": { "cash": 3000, "brand_equity": -5, "customer_base": -2 }, "outcome_narrative": "Two clients paid immediately. One fired you on the spot. The third ghosted. Cash flow solved, relationships damaged." }
-      ],
-      "mitigated_by": ["basic_bookkeeping", "business_credit_line", "fund_accumulation_policy"]
-    },
-    {
-      "id": "competitor_poaches_staff",
-      "category": "people",
-      "requires": { "team_size_gte": 3, "monthly_revenue_gte": 15000 },
-      "base_probability": 0.06,
-      "probability_scales_with": "team_size",
-      "scale_factor": 0.01,
-      "narrative": "A competitor just hired your operations manager — and she's trying to bring two of your team members with her. They know your SOPs, your clients, and your pricing.",
-      "act": 2,
-      "choices": [
-        { "label": "Match offers and add equity incentive", "effects": { "operating_expenses": 3000, "partner_conflict_risk": 5 }, "outcome_narrative": "They stayed. But the equity conversation opened a door you weren't ready to open. Retention costs just went up permanently." },
-        { "label": "Let them go, enforce non-compete", "effects": { "team_size": -2, "key_person_dependency": 15, "cash": -5000, "systems_maturity": -5 }, "outcome_narrative": "The attorney sent cease-and-desist letters. Two team members left anyway. Your systems are being tested without the people who built them." },
-        { "label": "Rebuild fast — hire replacements immediately", "effects": { "cash": -3000, "energy": -15, "team_size": -1, "leads": -5 }, "outcome_narrative": "You lost two, hired one. The new person is green. You're back in the weeds while they ramp up." }
-      ],
-      "mitigated_by": ["hire_hr_manager", "write_first_sop"]
-    },
-    {
-      "id": "tax_audit",
-      "category": "audit",
-      "requires": { "audit_risk_gte": 15, "monthly_revenue_gte": 10000 },
-      "base_probability": 0.05,
-      "probability_scales_with": "audit_risk",
-      "scale_factor": 0.003,
-      "narrative": "Full audit. Not a letter — an agent. They want three years of records, entity documentation, and explanations for every deduction you've taken. Your accountant looks worried.",
-      "act": 2,
-      "choices": [
-        { "label": "Hire a tax attorney and cooperate fully", "effects": { "cash": -7000, "energy": -15, "audit_risk": -15 }, "outcome_narrative": "The attorney guided every response. Six weeks of stress, but the outcome was clean — minor adjustments, no penalties. Your books are bulletproof now." },
-        { "label": "Let your CPA handle it", "effects": { "cash": -3000, "energy": -20, "audit_risk": -5, "total_debt": 5000 }, "outcome_narrative": "Your CPA did her best. The IRS found disallowed deductions plus penalties. It could have been worse." },
-        { "label": "Stall and provide minimal documentation", "effects": { "cash": -1000, "audit_risk": 20, "personal_credit_score": -10, "total_debt": 10000 }, "outcome_narrative": "Bad move. The IRS assessed penalties for non-cooperation — a stack of back taxes, and your file is flagged for future scrutiny." }
-      ],
-      "mitigated_by": ["basic_bookkeeping", "tax_planning_session", "hire_fractional_cfo"]
-    },
-    {
-      "id": "supply_chain_disruption",
-      "category": "macro",
-      "requires": { "monthly_revenue_gte": 10000 },
-      "base_probability": 0.05,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "Your primary vendor just doubled their prices. No warning, no negotiation — take it or leave it. Every project in your pipeline just got more expensive.",
-      "act": 2,
-      "choices": [
-        { "label": "Absorb the cost, protect client relationships", "effects": { "cogs": 2000, "brand_equity": 3 }, "outcome_narrative": "You ate the margin hit. Clients don't know anything changed. But your profitability just took a serious dent." },
-        { "label": "Pass the cost to clients", "effects": { "customer_base": -3, "brand_equity": -5 }, "outcome_narrative": "Price increase announced — you protected your margins instead of eating the vendor hike. Three clients left over it and some goodwill eroded, but the rest grumbled and stayed." },
-        { "label": "Find a new vendor immediately", "effects": { "energy": -15, "cogs": 500, "systems_maturity": -3 }, "outcome_narrative": "New vendor found in two weeks. Cheaper, but the transition was messy. Two deliveries were late during the switch." }
-      ],
-      "mitigated_by": ["vertical_integration", "fulfillment_system"]
-    },
-    {
-      "id": "viral_negative_review",
-      "category": "litigation",
-      "requires": { "brand_equity_gte": 20, "customer_base_gte": 15 },
-      "base_probability": 0.06,
-      "probability_scales_with": "brand_equity",
-      "scale_factor": 0.001,
-      "narrative": "A former client posted a scathing review that went viral in your industry. Screenshots are being shared. Your phone is ringing — and not with good news.",
-      "act": 2,
-      "choices": [
-        { "label": "Respond publicly with transparency", "effects": { "brand_equity": -5, "leads": -5, "energy": -10 }, "outcome_narrative": "Your public response was honest and human. Half the comments praised your transparency. The other half still believe the review. Time will tell." },
-        { "label": "Hire a PR firm for damage control", "effects": { "cash": -5000, "brand_equity": -2, "leads": -3 }, "outcome_narrative": "The PR firm buried it with positive content and testimonials. The fire is out, but the smoke lingers." },
-        { "label": "Ignore it and focus on delivery", "effects": { "brand_equity": -10, "leads": -8, "customer_base": -2 }, "outcome_narrative": "Silence was interpreted as guilt. Two prospects cited the review when they declined. Your reputation will recover — but slowly." }
-      ],
-      "mitigated_by": ["basic_quality_control", "hire_client_success", "content_engine"]
-    },
-    {
-      "id": "acquisition_offer",
-      "category": "opportunity",
-      "requires": { "monthly_revenue_gte": 25000, "systems_maturity_gte": 40 },
-      "base_probability": 0.04,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "A private equity firm reached out. They want to buy your company. The offer is serious — 3x annual revenue. But the terms include a 2-year earn-out where you stay on as an employee.",
-      "act": 3,
-      "choices": [
-        { "label": "Take the offer — life-changing money", "effects": { "cash": 100000, "customer_base": -10, "key_person_dependency": 50, "energy": -20 }, "outcome_narrative": "The check cleared. You're wealthy on paper. But now you report to a board, and the company you built doesn't feel like yours anymore." },
-        { "label": "Counter at 5x revenue", "effects": { "brand_equity": 10 }, "outcome_narrative": "They came back at 4x. The negotiation continues. Either way — someone thinks your company is worth buying. That's the real win." },
-        { "label": "Decline — this isn't for sale", "effects": { "brand_equity": 5, "energy": 10 }, "outcome_narrative": "You said no. The PE firm respected it. And something crystallized — you're not building to sell. You're building to own." }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "employee_harassment_claim",
-      "category": "people",
-      "requires": { "team_size_gte": 4 },
-      "base_probability": 0.04,
-      "probability_scales_with": "team_size",
-      "scale_factor": 0.008,
-      "narrative": "An employee filed a formal harassment complaint against a manager. This is serious — legally, ethically, and for your company culture. How you handle this defines who you are as a leader.",
-      "act": 2,
-      "choices": [
-        { "label": "Investigate thoroughly, suspend the manager", "effects": { "cash": -5000, "energy": -15, "team_size": -1, "systems_maturity": 5, "brand_equity": 5 }, "outcome_narrative": "Investigation confirmed the complaint. Manager terminated. The team saw you take it seriously. Trust in leadership actually went up." },
-        { "label": "Mediate between both parties", "effects": { "energy": -10, "brand_equity": -3, "litigation_exposure": 10 }, "outcome_narrative": "The mediation was tense. Both parties are still here, but the tension is palpable. You might have delayed the problem, not solved it." },
-        { "label": "Bring in an outside HR consultant", "effects": { "cash": -8000, "energy": -8, "systems_maturity": 8, "litigation_exposure": -10 }, "outcome_narrative": "The consultant handled it professionally. New policies in place, training scheduled, and the company is protected. Expensive but worth it." }
-      ],
-      "mitigated_by": ["hire_hr_manager"]
-    },
-    {
-      "id": "policy_loan_opportunity",
-      "category": "opportunity",
-      "requires": { "insurance_cash_value_gte": 20000 },
-      "base_probability": 0.05,
-      "probability_scales_with": "insurance_cash_value",
-      "scale_factor": 0.0000008,
-      "narrative": "An opportunity lands that needs cash fast — and for once, you don't need a bank. Your policy's cash value is sitting right there, ready to borrow against tax-free, no credit check, while it keeps compounding.",
-      "act": 3,
-      "choices": [
-        { "label": "Borrow against the policy and fund the deal", "effects": { "insurance_loan_balance": 15000, "investment_positions": 15000, "other_monthly_revenue": 180 }, "outcome_narrative": "You pulled tax-free cash from your policy in days — no application, no approval — and deployed it into a passive position. The cash value kept growing as if you never touched it. This is what being your own bank feels like." },
-        { "label": "Pass — keep the policy untouched", "effects": { "insurance_cash_value": 1000 }, "outcome_narrative": "You let it ride. The opportunity passed, but your cash value kept compounding. There will be other deals." }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "passive_income_milestone",
-      "category": "opportunity",
-      "requires": { "insurance_passive_loan_total_gte": 1 },
-      "base_probability": 0.06,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "You notice it on a quiet morning: money hit your account this month that you didn't work for. The tax-free policy income is real, recurring, and growing — the engine is running without you.",
-      "act": 3,
-      "choices": [
-        { "label": "Reinvest it into the policy", "effects": { "insurance_cash_value": 3000, "lifestyle_health": 3 }, "outcome_narrative": "You fed the income right back into the engine. Compounding on compounding — and a little more peace of mind." },
-        { "label": "Take the day off and enjoy it", "effects": { "energy": 15, "lifestyle_relationships": 5, "lifestyle_health": 3 }, "outcome_narrative": "You closed the laptop and spent the day with people you love, funded by money that arrived on its own. This is the whole point." }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "pre_ipo_allocation",
-      "category": "opportunity",
-      "requires": { "needs": ["private_banking"], "cash_gte": 30000 },
-      "base_probability": 0.07,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "Your private banker calls with something that never touches the open market: an allocation in a late-stage, pre-IPO company before it lists — plus a private-credit deal on the side. These rooms are invitation-only, and you're in the room now.",
-      "act": 3,
-      "choices": [
-        { "label": "Take the pre-IPO allocation", "effects": { "cash": -40000, "investment_positions": 58000, "other_monthly_revenue": 300 }, "outcome_narrative": "Your name is on the cap table before the IPO. It's illiquid and not guaranteed — but it's already marked up, throws off a small distribution, and these are the deals that build real wealth quietly." },
-        { "label": "Take the safer private-credit deal", "effects": { "cash": -25000, "investment_positions": 27000, "other_monthly_revenue": 320 }, "outcome_narrative": "You funded a private-credit deal at ~15% annual instead — less upside, but steady interest checks and far less risk than the pre-IPO bet. You're the bank in a room most people never enter." },
-        { "label": "Pass — keep your powder dry", "effects": {}, "outcome_narrative": "You passed. Off-market deals are a privilege, not an obligation — and your banker will call again. Liquidity is its own kind of opportunity." }
-      ],
-      "mitigated_by": []
-    },
-    {
-      "id": "team_mutiny",
-      "category": "people",
-      "requires": { "company_culture_lte": 35, "team_size_gte": 4 },
-      "base_probability": 0.10,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "It started as grumbling and became a revolt. Three of your best people are threatening to walk together this week — and they've been talking to the rest of the team. The culture you let rot is about to cost you the company's ability to deliver.",
-      "act": 2,
-      "choices": [
-        { "label": "Emergency retention — raises, equity talk, a real mea culpa", "effects": { "cash": -25000, "operating_expenses": 4000, "company_culture": 22, "energy": -20 }, "outcome_narrative": "You got in a room, owned the failures, and put real money and ownership on the table. Most of them stayed — and the ones who did now trust you more. Expensive lesson: culture isn't a perk, it's the foundation." },
-        { "label": "Let them walk and rebuild from the ashes", "effects": { "team_size": -3, "customer_base": -6, "key_person_dependency": 25, "company_culture": 8, "brand_equity": -8, "energy": -15 }, "outcome_narrative": "They left, and they took institutional knowledge and momentum with them. Delivery is back on your shoulders for now. You'll rebuild — hopefully with a culture worth staying for this time." }
-      ],
-      "mitigated_by": ["build_benefits_package", "grant_stock_incentives", "hire_hr_manager"]
-    },
-    {
-      "id": "star_defection",
-      "category": "people",
-      "requires": { "company_culture_lte": 35, "monthly_revenue_gte": 25000, "team_size_gte": 3 },
-      "base_probability": 0.09,
-      "probability_scales_with": null,
-      "scale_factor": 0,
-      "narrative": "Your single best performer — the one who owns your biggest relationships — just resigned. And they're not just leaving: they're opening a competing shop, and your top clients got the call this morning.",
-      "act": 3,
-      "choices": [
-        { "label": "Enforce the non-compete in court", "effects": { "cash": -20000, "energy": -20, "customer_base": -3, "company_culture": -5 }, "outcome_narrative": "Your lawyers moved fast and slowed them down — but litigation is ugly, expensive, and the team watched the whole thing. You kept most clients; you spent a fortune and a lot of goodwill doing it." },
-        { "label": "Counter-offer hard to keep the clients", "effects": { "operating_expenses": 2000, "brand_equity": -6, "company_culture": 5 }, "outcome_narrative": "You called every at-risk client personally and sweetened terms. You held most of the book — at thinner margins — and the rest of the team saw you fight for the relationships." },
-        { "label": "Let them go, circle the wagons", "effects": { "customer_base": -8, "company_culture": 4, "team_size": -1 }, "outcome_narrative": "You let the clients that wanted to leave, leave, and poured energy into the people who stayed. It hurt the top line — but you stopped the bleeding and kept your culture intact for the ones who matter." }
-      ],
-      "mitigated_by": ["grant_stock_incentives", "hire_general_counsel", "hire_client_success"]
-    }
-  ]
-}
-,
-  "stage_thresholds": {
-  "version": "1.0.0",
-  "thresholds": {
-    "marketing": {
-      "foundation_to_leverage": { "monthly_revenue_gte": 5000, "customer_base_gte": 15, "brand_equity_gte": 15 },
-      "leverage_to_wealth": { "monthly_revenue_gte": 25000, "customer_base_gte": 50, "brand_equity_gte": 40 }
-    },
-    "operations": {
-      "foundation_to_leverage": { "systems_maturity_gte": 20, "team_size_gte": 1, "monthly_revenue_gte": 5000 },
-      "leverage_to_wealth": { "systems_maturity_gte": 50, "team_size_gte": 4, "key_person_dependency_lte": 40 }
-    },
-    "finance": {
-      "foundation_to_leverage": { "personal_credit_score_gte": 640, "monthly_revenue_gte": 3000, "entity_structure_not": "none" },
-      "leverage_to_wealth": { "personal_credit_score_gte": 700, "business_credit_profile": "established", "dscr_gte": 1.5, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] }
-    }
-  }
-}
-,
-  "scoring_weights": {
-  "version": "3.0.0",
-  "_comment": "v3: six end-game pillars per DESIGN.md. Passive (tax-free) income is the crown jewel. Leverage and Freedom encode the win condition ('max wealth & lifestyle with the MINIMUM of your own money and time'). Protection and Net Worth round out the 'don't lose it' and 'did you actually get rich' pillars. Credit and tax are NOT standalone scores — credit is folded into Leverage/Protection as an enabler, and tax-free quality lives inside Passive Income & Protection. business_revenue carries ZERO weight (fuel, not the goal) and is computed inline for archetype flavor only. player_description is shown to players on tap; it deliberately avoids weights/formulas so the scoring system isn't given away.",
-  "dimensions": {
-    "passive_income": {
-      "weight": 0.26,
-      "label": "Passive Income",
-      "player_description": "Money that arrives without you working for it — and lands in your pocket largely <strong>tax-free</strong>. Policy-loan income, real-estate cash flow, lending interest. This is the dream: income that doesn't need your hours."
-    },
-    "leverage_efficiency": {
-      "weight": 0.18,
-      "label": "Leverage",
-      "player_description": "Controlling large, productive assets with <strong>other people's money</strong> (good debt) instead of your own cash. The more you build while tying up the least of your own money, the stronger this gets."
-    },
-    "protection": {
-      "weight": 0.14,
-      "label": "Protection",
-      "player_description": "How well your wealth is <strong>shielded</strong> — the right legal entity, asset-protection structures, insurance coverage, and cash reserves. It's what keeps one lawsuit, accident, or bad month from wiping you out."
-    },
-    "freedom": {
-      "weight": 0.14,
-      "label": "Freedom",
-      "player_description": "How little the business depends on <strong>you</strong>. Systems, a team, and leaders who run it without you in the chair — so your time is your own. The other half of true wealth."
-    },
-    "lifestyle": {
-      "weight": 0.16,
-      "label": "Lifestyle",
-      "player_description": "The life the money is <strong>for</strong> — your health, relationships, experiences, and the mark you leave. Wealth built by wrecking your life isn't paradise, so this also caps your overall score."
-    },
-    "net_worth": {
-      "weight": 0.12,
-      "label": "Net Worth",
-      "player_description": "What you'd keep if you cashed out today — assets and equity minus what you owe. The scoreboard of wealth built. Good, asset-backed debt is treated kindly; bad debt hurts."
-    }
-  },
-  "lifestyle_sub_weights": {
-    "health": 0.20,
-    "relationships": 0.20,
-    "experiences": 0.15,
-    "spiritual": 0.15,
-    "philanthropy": 0.15,
-    "legacy": 0.15
-  }
-}
-,
-  "archetypes": {
-  "version": "1.0.0",
-  "win_archetypes": [
-    {
-      "id": "cashflow_king",
-      "title": "Cashflow King",
-      "subtitle": "The money works for you now",
-      "requires_dominant": "passive_income",
-      "description": "You built rivers of income that flow without you lifting a finger.",
-      "epilogue": "The alarm didn't go off this morning — because you don't set one anymore. The rental properties deposited their monthly rent while you slept. The insurance policy's cash value grew another tick. The business you built runs on systems and people, not on your personal hours.\n\nYou're not retired. You're free. There's a difference.\n\nThe money comes in whether you work or not. You choose to work because you want to — on the projects that interest you, with the people you like, on your schedule. That's not wealth as a number. That's wealth as a lifestyle.\n\nYour banker smiles when you walk in now. Not because you need anything — because you don't."
-    },
-    {
-      "id": "empire_builder",
-      "title": "Empire Builder",
-      "subtitle": "You didn't build a business. You built an engine.",
-      "requires_dominant": "business_revenue",
-      "description": "Revenue, team, systems — you built something that scales.",
-      "epilogue": "The company crossed a threshold somewhere around month twenty, and you felt it — the moment it stopped being your job and started being its own thing. A machine that runs, grows, and serves people whether you're in the building or not.\n\nYour team handles the day-to-day. Your systems handle the exceptions. Your brand brings in clients you've never met. You built something bigger than yourself, and that's exactly the point.\n\nThe revenue numbers are impressive. But what really matters is that they'd stay impressive if you stepped away for a month. That's not a business. That's an empire."
-    },
-    {
-      "id": "freedom_architect",
-      "title": "Freedom Architect",
-      "subtitle": "You built a life, not just a balance sheet",
-      "requires_dominant": "lifestyle",
-      "requires_secondary": "passive_income",
-      "description": "High lifestyle score and strong passive income — the rare founder who built wealth without sacrificing life.",
-      "epilogue": "Your partner said something last week that stuck with you: 'You're here now. Like, really here.'\n\nShe's right. The business runs. The income flows. The trust protects it. And you're present — at dinner, at the gym, at the school play, at the meditation cushion, at the volunteer build site on Saturdays.\n\nYou didn't just build wealth. You built a life you don't need a vacation from. The hardest part wasn't the financial engineering — it was learning to stop when every instinct said keep going.\n\nMost founders sacrifice the life to build the business. You found the third door — the one where you build both."
-    },
-    {
-      "id": "leverage_master",
-      "title": "Leverage Master",
-      "subtitle": "Other people's money, your wealth",
-      "requires_dominant": "net_worth",
-      "description": "Net worth through strategic use of credit, real estate, and OPM.",
-      "epilogue": "Your net worth statement doesn't look like most people's. It's not a savings account — it's a portfolio of leveraged assets, each one producing income, appreciating in value, and sheltered behind entities and trusts that your attorney built like a fortress.\n\nYou used the bank's money to build your wealth. Every dollar of debt is backed by an asset worth more. Every asset is protected by a structure designed to survive anything short of an act of God.\n\nThe banker who once made you nervous now sends you deal flow. The credit score that used to feel like a cage is now a tool you wield with precision. You learned the game — and now you're winning it."
-    },
-    {
-      "id": "the_grinder",
-      "title": "The Grinder",
-      "subtitle": "You built a high-paying job, not freedom",
-      "requires_dominant": "business_revenue",
-      "description": "Big revenue, but little leverage, passive income, or tax structure — the whole point of the game, missed.",
-      "epilogue": "The revenue looks great on paper. You hit numbers most founders only talk about.\n\nBut look closer: almost all of it ran through your own two hands. No real leverage, no policy throwing off tax-free income, no structure shielding what you earned. The day you stop, the money stops.\n\nYou didn't build wealth — you built a high-paying job with your name on the door. The whole point was to make other people's money and smart structure do the heavy lifting, so the business pays you whether you show up or not.\n\nThe good news: every dollar of that revenue is fuel. Point it at leverage, a cash-value policy, and tax efficiency next time, and the same effort buys freedom instead of just income."
-    },
-    {
-      "id": "burnout_billionaire",
-      "title": "Burnout Billionaire",
-      "subtitle": "You won the game and lost the plot",
-      "requires_dominant": "business_revenue",
-      "requires_low": "lifestyle",
-      "description": "Big numbers, terrible lifestyle. A cautionary tale in spreadsheet form.",
-      "epilogue": "The numbers are impressive. Genuinely impressive. Revenue, net worth, tax efficiency — by every financial measure, you crushed it.\n\nBut you're reading this alone. The gym membership lapsed eighteen months ago. Your last vacation was... you can't remember. Your partner stopped fighting about your hours — which is worse than the fighting.\n\nYou built an empire and forgot to live in it. The money is real. The cost was real too. And the thing about time is that you can't buy it back, no matter how optimized your tax strategy is.\n\nThis isn't a failure. It's a warning. The next 36 months don't have to look like the last."
-    }
-  ]
-}
-,
-  "characters": {
-  "version": "1.0.0",
-  "characters": {
-    "mentor": {
-      "name": "Marcus Webb",
-      "role": "mentor",
-      "description": "Serial entrepreneur turned coach. Built and sold two companies before 40. Now he helps others avoid his mistakes — for a fee.",
-      "relationship_states": {
-        "unavailable": { "description": "Haven't met yet" },
-        "introduced": { "description": "First meeting", "tone": "Warm but evaluating" },
-        "advising": { "description": "Active mentorship", "tone": "Direct, occasionally blunt" },
-        "trusted": { "description": "Deep relationship", "tone": "Honest, invested in your success" }
-      },
-      "lines": {
-        "introduced": [
-          "I've seen a hundred founders in your exact position. The ones who made it got honest about what's broken and fixed the foundation before chasing growth. So here's what I'd be asking myself first: what's actually broken right now?",
-          "The fancy stuff everyone wants to skip to? It doesn't work without the boring stuff first. Here's the question I'd sit with: what boring thing are you avoiding?"
-        ],
-        "advising": [
-          "Last month you {last_action}. That was {assessment}. Here's what I'd be asking myself next: does your next move build on it, or scatter your focus?",
-          "Your numbers say one thing, your energy says another. Here's what I'd do next — sit with the harder question: which one are you pretending isn't true?"
-        ],
-        "trusted": [
-          "Remember when you first walked in here? Look at your numbers now — that's discipline, not luck. So here's what I'd ask now: what got you here that won't get you to the next level?",
-          "I'm going to push back. You're ready, but your systems aren't. Here's the question I'd answer before you scale: what breaks first if you double tomorrow?"
-        ]
-      }
-    },
-    "banker": {
-      "name": "Diana Chen",
-      "role": "banker",
-      "description": "VP of commercial lending at a regional bank. Professional, data-driven, and surprisingly human once you earn her trust.",
-      "relationship_states": {
-        "stranger": { "description": "No relationship", "tone": "Formal, by-the-book" },
-        "skeptical": { "description": "Knows you, not impressed", "tone": "Polite but guarded" },
-        "neutral": { "description": "Established account", "tone": "Professional, straightforward" },
-        "trusted": { "description": "Strong relationship", "tone": "Proactive, brings you deals" },
-        "champion": { "description": "Advocate for your business", "tone": "Goes to bat for you internally" }
-      },
-      "lines": {
-        "stranger": [
-          "We'll need at least six months of bank statements and your last two tax returns to start the conversation."
-        ],
-        "skeptical": [
-          "Your revenue is there, but your DSCR makes me nervous. Come back when the ratio improves."
-        ],
-        "neutral": [
-          "Your account has been consistent. Let's talk about what comes next — what do you need capital for?"
-        ],
-        "trusted": [
-          "I saw a deal come across my desk that might interest you. Off-market, below appraisal. Want me to send it over?"
-        ],
-        "champion": [
-          "I went to the credit committee for you. They approved it. You've earned a lot of trust here."
-        ]
-      }
-    },
-    "rival": {
-      "name": "Jordan Blake",
-      "role": "rival",
-      "description": "Started around the same time you did. Flashier, louder, always posting wins on social media. Sometimes ahead of you, sometimes flaming out.",
-      "relationship_states": {
-        "unknown": { "description": "Haven't crossed paths" },
-        "acquaintance": { "description": "Know of each other" },
-        "competitor": { "description": "Directly competing" },
-        "fallen": { "description": "They failed" },
-        "respect": { "description": "Mutual respect earned" }
-      },
-      "lines": {
-        "acquaintance": [
-          "You see Jordan's latest post? New office, new car, talking about '10x growth.' The comments are eating it up."
-        ],
-        "competitor": [
-          "Jordan just poached one of your leads. Same pitch, lower price. It's personal now — or it feels like it.",
-          "Word is Jordan took on a big investor. More cash, more risk. Interesting choice."
-        ],
-        "fallen": [
-          "Jordan's company went dark last month. Website down, phone disconnected. The social media posts stopped around the same time. You feel... complicated things about this.",
-          "Someone who used to work for Jordan called you looking for a job. They said it was chaos behind the scenes for months."
-        ],
-        "respect": [
-          "Jordan reached out — not to compete, but to collaborate. Turns out you both learned the same lessons the hard way.",
-          "You ran into Jordan at a conference. The bravado is gone. What's left is someone who actually gets it."
-        ]
-      }
-    },
-    "family": {
-      "name": "Your Family",
-      "role": "family",
-      "description": "The people waiting at home. Their patience is real but not infinite.",
-      "relationship_states": {
-        "strained": { "description": "They're worried about you", "tone": "Tense, careful" },
-        "coping": { "description": "Making it work", "tone": "Supportive but tired" },
-        "stable": { "description": "Good place", "tone": "Present, connected" },
-        "thriving": { "description": "Flourishing together", "tone": "Joyful, grounded" }
-      },
-      "lines": {
-        "strained": [
-          "The kids asked when you'd be home for dinner again. Your partner answered for you: 'Soon.' Neither of them believed it.",
-          "You missed another recital. The video your partner sent was captioned with just a period."
-        ],
-        "coping": [
-          "Dinner together tonight. The conversation felt a little stiff at first, then your kid told a joke and everyone laughed. Progress.",
-          "Your partner said 'I can see you're trying.' That landed harder than any business win this month."
-        ],
-        "stable": [
-          "Saturday morning pancakes have become a thing. No phones at the table. Your kid started calling it 'family meeting.'",
-          "Your partner planned a weekend trip without asking about your calendar. They knew you'd be available. That's trust."
-        ],
-        "thriving": [
-          "Your kid brought their school project to your office. 'I want to build a business like yours,' they said. You teared up at your desk.",
-          "Date night isn't a calendar event anymore — it's just what you do. The business runs. The family runs. You did it."
-        ]
-      }
-    }
-  }
-}
-,
-  "narrative_beats": {
-  "version": "1.0.0",
-  "fixed_beats": [
-    {
-      "month": 1,
-      "archetype": "stuck",
-      "title": "The Reckoning",
-      "narrative": "You pulled your credit report this morning. The number stared back at you like a verdict. Collections accounts you'd been ignoring. A credit card balance that grew while you weren't looking. The wreckage of a life event you didn't choose, turned into a financial score you have to fix.\n\nBut here's the thing — you've built something before. The instincts are still there. The hustle is still there. What's missing is the foundation. Time to build one.",
-      "mentor_line": "Marcus Webb slides a napkin across the table. 'Three numbers: your credit score, your total debt, your monthly revenue. No judgment — just math. Now here's what I'd sit with: which one, if you moved it first, changes everything else?'"
-    },
-    {
-      "month": 1,
-      "archetype": "new",
-      "title": "Day One",
-      "narrative": "Your business officially exists as of today. No clients, no revenue, no reputation — just a laptop, an idea, and the savings account that's going to fund this dream until it funds itself.\n\nEveryone you told said some version of 'that's brave.' What they meant was 'that's terrifying.' They're not wrong.",
-      "mentor_line": "Marcus Webb leans back in his chair. 'Forget the logo, the website, the five-year plan — none of it matters yet. Here's the only question I'd be asking myself this month: who is the one person who'd pay you for what you do, and what's stopping you from asking them today?'"
-    },
-    {
-      "month": 1,
-      "archetype": "established",
-      "title": "The Wake-Up Call",
-      "narrative": "The tax bill arrived yesterday. It was... larger than expected. Your accountant said, 'We should talk about your entity structure,' which is accountant for 'you're leaving money on the table and I've been telling you for two years.'\n\nYour business made good money last year. Your tax strategy was to make good money and hope for the best. That's not a strategy. And looking at the rest of your setup — no asset protection, no succession plan, key-man dependency through the roof — you realize the business is successful despite your structure, not because of it.\n\nTime to build the scaffolding around what you've already created.",
-      "mentor_line": "Marcus Webb looks at your P&L and nods slowly. 'The revenue's real, the profit's real — but it's all exposed. One lawsuit, one health scare, one bad quarter from gone. So here's the question I'd ask before anything else: what would you lose tomorrow if everything went wrong today?'"
-    },
-    {
-      "month": 6,
-      "archetype": null,
-      "title": "Six-Month Check-In",
-      "narrative": "Half a year in. The spreadsheet tells one story — the numbers, the trajectory, the cold math of progress. But sitting here at the end of month six, the real story is about what you've learned about yourself as much as what you've built.\n\nAre you the kind of person who fixes the foundation or skips to the roof? Who invests in protection or rolls the dice? Who builds systems or stays the hero? Six months of answers are on the board.",
-      "mentor_line": null
-    },
-    {
-      "month": 12,
-      "archetype": null,
-      "title": "Year One Complete",
-      "narrative": "Twelve months. A full year of decisions, risks taken and avoided, money earned and spent and borrowed and repaid. You are not the same person who started this.\n\nThe question now isn't whether you can survive — you've proven that. The question is whether you can build something that outlasts your daily effort. Year two is where the answer takes shape.",
-      "mentor_line": "Marcus Webb reviews your year-end numbers. 'Year one proves the model works. Year two proves it works without you in every seat. Here's what I'd be asking myself now: which seat are you most afraid to give up?'"
-    },
-    {
-      "month": 18,
-      "archetype": null,
-      "title": "The Midpoint Crisis",
-      "narrative": "Month eighteen. You're halfway through, and the landscape looks different from up here. More is at stake now — more revenue, more people depending on you, more assets to protect, more ways things can go sideways.\n\nThis is the inflection point. The choices you make in the next six months will determine whether the back half of this journey is about scaling something strong or patching something fragile.",
-      "mentor_line": "Marcus Webb is unusually serious today. 'The next six months are where most founders either level up or stall out — the tactics that got you here won't get you there. Here's the question I'd answer first: what's the one thing you've been avoiding?'"
-    },
-    {
-      "month": 24,
-      "archetype": null,
-      "title": "Year Two Complete",
-      "narrative": "Two years. Twenty-four months of building. The business has a shape now — a real shape, with systems and people and customers who would notice if it disappeared.\n\nThe final year isn't about building more. It's about building right. Protection, passive income, tax efficiency, and the life you're supposed to be living while all this happens.\n\nTwelve months to finish what you started.",
-      "mentor_line": null
-    },
-    {
-      "month": 30,
-      "archetype": null,
-      "title": "The Test",
-      "narrative": "Everything you've built gets tested this month. Not by you — by circumstances. The market shifts. A key relationship is strained. A number you've been watching finally crosses a line.\n\nThis is the moment the foundation either holds or cracks. Every decision you made — every system you built, every protection you put in place, every relationship you maintained or neglected — shows its weight right now.",
-      "mentor_line": "Marcus Webb calls instead of meeting in person. His voice is calm. 'This is the month that separates the builders from the survivors. Everything until now was preparation. Here's what I'd be asking myself: did you build it to hold?'"
-    },
-    {
-      "month": 36,
-      "archetype": null,
-      "title": "The Verdict",
-      "narrative": "Thirty-six months. The journey ends — or rather, this chapter of it does. The numbers will tell one version of the story. The radar chart will show six dimensions of what you built.\n\nBut the real verdict is simpler: Did you build something that lasts? Did you build something that works without you? Did you build a life worth living while you built the business?\n\nThe answers are in the choices you made — all of them, from month one to right now.",
-      "mentor_line": "Marcus Webb shakes your hand. 'I've seen a lot of people sit where you're sitting — most are still stuck where they started. You're not. Here's the question that matters more than the numbers: did you build a life worth living while you built this?'"
-    }
-  ],
-  "monthly_cliffhangers": [
-    { "text": "You're doing real business now — but the business is still legally just you. No LLC means every client and every contract is a direct line to your personal savings. One bad dispute could take it all.", "requires": { "monthly_revenue_gte": 5000, "entity_structure": "none" } },
-    { "text": "A client offhandedly mentioned 'getting their lawyer involved.' Probably nothing. But you have no LLC — no legal shield. If they're serious, there's nothing between them and everything you own.", "requires": { "monthly_revenue_gte": 9000, "entity_structure": "none" } },
-    { "text": "You felt run-down all week. It hit you: you ARE the business. If your body quit tomorrow, the income would stop cold — and you have nothing in place to replace it.", "requires": { "monthly_revenue_gte": 6000, "insurance_coverage_lte": 0 } },
-    { "text": "You've built something real now — accounts, maybe property, serious income. And it's all sitting in the open. No trust, no asset protection. One determined lawsuit could reach all of it.", "requires": { "monthly_revenue_gte": 25000, "trust_structure": "none" } },
-    { "text": "Your best employee asked for 'a few minutes to chat' tomorrow. Those words never precede good news.", "requires": { "team_size_gte": 1 } },
-    { "text": "You overheard two team members talking about job postings. They went quiet when you walked by.", "requires": { "team_size_gte": 2 } },
-    { "text": "The banker asked you to come in next week. She didn't say why. She sounded... careful.", "requires": { "total_debt_gte": 5000 } },
-    { "text": "Your biggest client's contract renews next month. They haven't said anything. The silence is louder than a complaint.", "requires": { "customer_base_gte": 5 } },
-    { "text": "A competitor just launched something that looks a lot like your offer. Coincidence? Doesn't matter — the market noticed.", "requires": { "monthly_revenue_gte": 3000 } },
-    { "text": "The quarterly tax estimate arrived. The number has an extra digit this time.", "requires": { "monthly_revenue_gte": 5000 } },
-    { "text": "The phone rang as you were locking up. You didn't answer. The voicemail light blinks — it can wait until morning. Or can it?", "requires": {} },
-    { "text": "An email arrived at 11:47 PM. Subject line: 'We need to talk.' You'll open it tomorrow.", "requires": {} },
-    { "text": "The market report came out today. The trends are shifting. Your industry is in the crosshairs — for better or worse.", "requires": {} },
-    { "text": "You realized today that you can't remember the last time you did something just for fun. Not networking, not 'productive rest.' Just fun.", "requires": { "energy_lte": 50 } }
-  ]
-}
-,
-};
 // Entrepreneur Paradise — game code
 let CONFIG={};
 async function loadConfig(){const files=['starting_positions','actions_marketing','actions_operations','actions_finance','lifestyle_options','events','stage_thresholds','scoring_weights','archetypes','characters','narrative_beats'];let ue=false;for(const f of files){if(!ue){try{const _cv=(typeof PATCH_NOTES!=='undefined'&&PATCH_NOTES[0])?PATCH_NOTES[0].v:'';const r=await fetch('config/'+f+'.json'+(_cv?'?v='+_cv:''));if(!r.ok)throw 0;CONFIG[f]=await r.json();continue;}catch(e){ue=true;}}if(ue&&window.EMBEDDED_CONFIG&&window.EMBEDDED_CONFIG[f])CONFIG[f]=window.EMBEDDED_CONFIG[f];}}
@@ -3038,6 +17,7 @@ const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
 const GOOGLE_G='<svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:middle;flex-shrink:0;"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.6 44 30.9 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
+const LOAN_APPROVAL=['bank_personal_loan'];/* term loans underwritten on DTI; the rest of CREDIT_APPROVAL is revolving credit underwritten on utilization */
 // Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
 const EPIC_WAIVED=['wyoming_holding_llc','build_personal_credit','debt_restructure'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
@@ -3064,8 +44,15 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.42.3',d:'2026-06-30 20:00',n:[
-'New: 🧪 Beta Tester access on the main menu. Got a beta code? Enter it to try the in-progress Finance & Economy overhaul build. The live game is unchanged.',
+{v:'0.43.0',d:'2026-06-30 19:00',n:[
+'BIG update — Finance & Economy overhaul (testing build). Your small business now caps lean (~$80–200k/mo, set by your SYSTEMS, not headcount) — real wealth comes from FINANCE leveraging the cash & credit it throws off.',
+'A live economy: an Expansion → Boom → Downturn → Recovery cycle plays out across your 36 months. The prepared get rich in the bust; the over-leveraged get squeezed.',
+'New play — Velocity Banking: run your household through a line of credit and sweep surplus cash flow at your debt. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.',
+'New keystone — Buy the Dip: in the downturn, deploy tax-free policy cash and reserves into distressed assets at a deep discount.',
+'Real-estate leverage now has teeth: over-leverage (high LTV, thin reserves) can trigger a margin call / forced sale in the crash, while conservative leverage rides through.',
+'Loans vs. credit now underwrite separately — term loans on your debt-to-income, revolving credit on your utilization (no more one dragging the other down).',
+'Leaner, more focused action menus so each decision matters more (extra options temporarily set aside for this test build).',
+'Scoring rewards finance MASTERY — net worth, passive income and leverage efficiency now climb on a curve that separates dabblers from pros.',
 ]},
 {v:'0.42.2',d:'2026-06-30 18:00',n:[
 'Fixed utilization reading ~96% “but healthy” the moment you bought real estate — your mortgage was wrongly counted as credit-card utilization. Now your score climbs as it should.',
@@ -3496,13 +483,8 @@ if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
 h+=item('🎟','Redeem Code','Unlock content with a code','Game.showRedeem()');
-h+=item('🧪','Beta Tester','Try the new overhaul (code required)','Game.showBeta()');
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
 mm.innerHTML=h;},
-// ---- Beta access: gate the in-progress Finance & Economy overhaul build behind a code. Correct code → redirect to the /beta/ subfolder where the testing build is hosted. ----
-BETA_CODE:'beta',BETA_URL:'beta/index.html',
-showBeta(){const h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">The <strong>Finance &amp; Economy overhaul</strong> is in testing. Enter the beta code to jump to the testing build. It\'s a work in progress — your progress there is separate from the live game.</div><input id="beta-input" class="name-input" placeholder="Enter beta code" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key===\'Enter\')Game.enterBeta()"><button class="btn-primary" style="margin-top:4px;" onclick="Game.enterBeta()">Enter Beta</button><div id="beta-msg" style="min-height:18px;margin-top:10px;font-size:0.82rem;font-weight:600;text-align:center;line-height:1.45;"></div>';this.showPopup('🧪 Beta Tester Access',h);setTimeout(()=>{const i=document.getElementById('beta-input');if(i)i.focus();},40);},
-enterBeta(){const el=document.getElementById('beta-input'),msg=document.getElementById('beta-msg');if(!msg)return;const code=this._normCode(el&&el.value);if(!code){msg.style.color='var(--text2)';msg.textContent='Enter the code first.';return;}if(code!==this.BETA_CODE){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);},
 showMainMenu(){this.showScreen('title-screen');const mm=document.getElementById('main-menu');if(mm)mm.style.display='';['profile-select','resume-list','whats-new'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});this.renderMainMenu();this._renderUpdateIcon();window.scrollTo(0,0);},
 showProfileSelect(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const ps=document.getElementById('profile-select');if(ps)ps.style.display='';this.renderArchetypes();window.scrollTo(0,0);},
 showLoadGame(){const mm=document.getElementById('main-menu');if(mm)mm.style.display='none';const rl=document.getElementById('resume-list');if(rl)rl.style.display='';this.renderSaves();window.scrollTo(0,0);},
@@ -3685,7 +667,7 @@ const reps=[];cats.forEach(c=>{const cheapest=byCat[c].slice().sort((a,b)=>(a.ca
 const repIds=new Set(reps.map(a=>a.id));
 const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0));
 return[...reps,...rest].slice(0,CAP);}
-const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
+const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
 isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
 
@@ -3835,7 +817,7 @@ const bizCash=s.cash||0,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.busi
 const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0),bizScore=this.calcBizCreditScore();
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
-const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
+const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
 const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
@@ -3846,6 +828,7 @@ P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
+if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)')+' <span style="font-size:0.54rem;color:var(--accent);font-weight:600;">tax-free</span>',null,null,'p_passive');
 P+=row('Expense/mo',m(persExp,'var(--gold)'),null,null,'p_expense');
 P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
@@ -3894,17 +877,17 @@ const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
 const inq=s.credit_inquiries||0;const fNew=Math.max(0.3,(s._credit_repair?0.7:0.85)-Math.min(0.45,inq*0.06));/* new credit (10%): hard inquiries (and an open repair) cap the top — each inquiry shaves a little */
 return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Real-life credit underwriting for approval actions (lines, cards, term loans): personal utilization is the dominant gate — above 30% approval odds fall off a cliff — and the lender pulls your personal myFICO 3B even for BUSINESS credit (the owner personally guarantees it). Returns the chance of approval.
-_creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.round(s.personal_credit_score||600);
-let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
+_creditApprovalChance(isLoan){const s=this.state,score=Math.round(s.personal_credit_score||600);
+// The dominant gate differs by product: a term LOAN is underwritten on debt-to-income (can your cash flow service the payment?); a revolving CREDIT line/card is underwritten on UTILIZATION (how much of your existing limits are you already using?). They don't cross-contaminate — high utilization never sinks a loan, and high DTI never sinks a card.
+let p;if(isLoan){const dti=this.calcDTI();p=dti<=36?0.92:dti<=43?0.6:dti<=55?0.35:dti<=70?0.18:0.08;}
+else{const u=this.calcPersUtil();p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — the cliff is only ABOVE 30% */}
 const inq=s.credit_inquiries||0,inqMult=inq>=5?0.5:inq>=2?0.85:1;/* a stack of recent hard inquiries reads as credit-hungry — 5+ roughly halves approval odds */
 // Derogatories are an approval KILLER in real life — lenders decline on active collections/charge-offs almost regardless of the score. One mark stings; a few nearly shut you out. (Clearing them — credit repair / Epic — is the path back in.)
 const neg=s.credit_negatives||0,negMult=neg<=0?1:neg===1?0.6:neg===2?0.4:neg===3?0.25:neg===4?0.15:0.08;
-// Ability to repay: lenders underwrite capacity, not just willingness. High debt-to-income (and a business that can't cover its debt service) makes them nervous.
-const dti=this.calcDTI(),dtiMult=dti<=36?1:dti<=43?0.85:dti<=55?0.6:0.35;const dscr=s.dscr||0,dscrMult=(dscr>0&&dscr<1)?0.65:1;
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
 // Banking relationship → the lender already knows you (deposits + history) → easier yes. NAICS classification → a verified holding-company code reads as a legit business; an unverified/wrong code gets flagged and declined until fixed.
 const bankMult=this._hasBanking()?1.12:1;const _hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure);const naicsMult=this._naicsVerified()?1.05:(_hasEntity?0.75:1);/* only a real business entity can carry a wrong NAICS code; no entity = personal loan, NAICS irrelevant */
-return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*dtiMult*dscrMult*bankMult*naicsMult));},
+return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*bankMult*naicsMult));},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
@@ -3925,7 +908,7 @@ let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_deb
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
 // Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
-STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
@@ -4311,20 +1294,78 @@ return u;},
 _neededBy(id){if(!this.__neededBy){const m={};const all=[].concat(CONFIG.actions_marketing.actions,CONFIG.actions_operations.actions,CONFIG.actions_finance.actions);for(const b of all){const n=(b.prerequisites&&b.prerequisites.needs)||[];for(const nid of n)(m[nid]=m[nid]||[]).push(b.id);}this.__neededBy=m;}return this.__neededBy[id]||[];},
 // A not-yet-taken action is a "gateway" when some other action is gated behind completing it (`needs`). Completing it once builds out the tree, so the auto-pilot should prioritize it over repeating a grind.
 _isGateway(a){return !(this.state._completed_actions||[]).includes(a.id)&&this._neededBy(a.id).length>0;},
+// ORG CAPACITY — how big a team your infrastructure can actually carry. The founder alone leads only a handful: finite bandwidth, narrow span of control, and (honestly) a builder's lack of large-team LEADERSHIP skill — the skills that won early customers aren't the skills to lead 50. Systems extend the founder's reach but cap out (~8 solo: you're still the single bottleneck). Real scale comes from MANAGEMENT — hiring people who bring the leadership the founder doesn't have. Strong culture lets people self-manage. Team beyond this = "management debt".
+_orgCapacity(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id),sys=s.systems_maturity||0;
+ const founderBase=3;/* a founder personally leads only a few people well */
+ const founderCeiling=Math.min(5,sys/20);/* systems extend your reach — but only so far (~8 solo max); you're not a trained large-team leader */
+ const sysMult=1+sys/100;/* systems make each real manager more effective */
+ let mgmt=0;if(c('middle_management'))mgmt+=5;if(c('full_systemization'))mgmt+=6;if(c('hire_hr_manager'))mgmt+=5;if(s._mgr_marketing)mgmt+=5;if(s._coo_hired)mgmt+=6;if(s._coo_fulltime)mgmt+=5;
+ const cultureBonus=Math.max(0,((s.company_culture==null?45:s.company_culture)-45)/12);/* high culture = people self-manage, less oversight needed */
+ return Math.round((founderBase+founderCeiling+mgmt*sysMult+cultureBonus)*10)/10;},
+_orgOverextension(){return Math.max(0,(this.state.team_size||0)-this._orgCapacity());},
+// "Go big" plays that backfire if your SYSTEMS can't absorb the demand/scale. Value = the systems_maturity you need before they pay off instead of setting you back.
+_SCALE_TRAPS:{national_ad_blitz:55,influencer_megadeal:50,franchise_licensing:60,rapid_offshore_scaleup:45},
+// MACRO CYCLE — the economy moves in a readable loop: Expansion → Boom → Downturn → Recovery → … Each phase sets the drivers the finance game keys off: the IUL index credit (0% floor in a bust, capped in a boom), market interest rates (variable-loan & credit cost), asset prices (cheap in a downturn = the buying opportunity), and credit availability (frozen in a bust). Booms precede busts — that's the lesson: prepare while it's good, act when it turns. Returns/durations carry mild randomness so timing isn't a metronome, but the ORDER is learnable.
+_CYCLE_PHASES:{expansion:{idx:0.09,rate:0.045,asset:1.0,tight:false,rev:1.0,dur:[5,8],tell:'📈 Expansion — steady growth. Build your war chest and keep leverage conservative; the cycle always turns.'},boom:{idx:0.12,rate:0.065,asset:1.14,tight:false,rev:1.06,dur:[3,5],tell:'🔥 Boom — markets are hot and assets are pricey (don’t overpay), rates are climbing, and recruiters are circling your people. Booms precede busts — get liquid and ready.'},downturn:{idx:0.0,rate:0.055,asset:0.74,tight:true,rev:0.85,dur:[3,6],tell:'📉 Downturn — assets are ON SALE and forced sellers are everywhere, but credit is freezing up. If you prepared (funded policy, reserves, low leverage) this is when fortunes are made; if you over-borrowed, this is the squeeze.'},recovery:{idx:0.11,rate:0.035,asset:0.9,tight:false,rev:0.96,dur:[4,6],tell:'🌱 Recovery — the rebound. The ones who bought the dip are watching it pay off; rates are low and credit is loosening again.'}},
+_advanceMarketCycle(){const s=this.state;
+ // ONE compressed cycle across the 3-year game, shaped like real life: a calm expansion, a frothy boom, then THE downturn (~year 2) and a recovery. The downturn is INEVITABLE but jittered — its month and depth are rolled once per run — so the lesson always lands but can't be timed. You know a bust is coming; you just don't know exactly when. Stay ready.
+ if(s._downturn_start==null){s._downturn_start=14+Math.floor(Math.random()*8);/* hits month 14-21 */s._downturn_len=4+Math.floor(Math.random()*4);/* lasts 4-7 months */s._downturn_depth=0.8+Math.random()*0.5;/* severity 0.8-1.3 */}
+ const m=this.month||1,ds=s._downturn_start,de=ds+s._downturn_len,boomStart=ds-4,depth=s._downturn_depth||1;
+ let phase;if(m<boomStart)phase='expansion';else if(m<ds)phase='boom';else if(m<de)phase='downturn';else phase='recovery';
+ const P=this._CYCLE_PHASES[phase];
+ s._index_return=(phase==='downturn')?0:Math.max(0,Math.min(0.12,P.idx+(Math.random()-0.5)*0.03))/12;/* monthly IUL credit: TRUE 0% in a bust (the floor — no growth while your loan keeps compounding), else up to ~12% cap */
+ s._market_rate=Math.round((P.rate+(P.tight?0.015:0)+(Math.random()-0.5)*0.008)*1000)/1000;/* variable loan / credit rate — ticks up when credit tightens */
+ s._asset_discount=(phase==='downturn')?Math.max(0.6,1-0.26*depth):P.asset;/* deeper bust = cheaper assets */
+ s._credit_tight=P.tight;s._cycle={phase:phase};
+ s._market_cycle=(phase==='boom')?'boom':(phase==='downturn')?'recession':'normal';/* back-compat with existing event scaling */
+ // Telegraph: once per phase turn, PLUS an escalating warning in the last boom month before the bust — the signs are there if you read them.
+ if(s._cycle_phase_shown!==phase){s._cycle_phase_shown=phase;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:P.tell}]);}
+ else if(phase==='boom'&&m>=ds-1&&!s._cycle_warned){s._cycle_warned=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:'⚠️ The market is overheating — rates climbing, valuations stretched, everyone euphoric. A turn is coming; you can feel it. Get liquid, trim leverage, keep your powder dry.'}]);}
+ return phase;},
+// DRY POWDER — the capital you can actually deploy in a frozen credit market (the buy-the-dip fuel). In a downturn banks won't lend, so what counts is your POLICY cash value (borrowable tax-free, no credit check, untouched by the crash thanks to the 0% floor) and the CASH RESERVES you kept liquid instead of over-extending. Credit lines are deliberately excluded — that's the lesson: the prepared act, the over-leveraged are frozen out.
+_dryPowder(){const s=this.state;
+ const policy=Math.max(0,Math.round(0.9*(s.insurance_cash_value||0)-(s.insurance_loan_balance||0)));/* up to ~90% of cash value, less any existing loan */
+ const burn=Math.max(0,this.calcMonthlyBurn());const cash=Math.max(0,Math.round((s.cash||0)+(s.personal_cash||0)-burn));/* keep ~1 month of operating cash back */
+ return {policy:policy,cash:cash,total:policy+cash};},
+// Best stage-available action within one ADIR function group (excluding hires) — used by delegation specialists to run "their function" each month.
+_bestInGroup(cat,grpName){const grp=(ADIR[cat]||[]).find(g=>g[0]===grpName);if(!grp)return null;const ids=grp[1];const acts=this.getAvailableActions(cat).filter(a=>ids.includes(a.id)&&!/^(hire_|promote_)/.test(a.id)&&!this.isActionLocked(a));if(!acts.length)return null;return acts.slice().sort((a,b)=>this._actionValue(b,cat)-this._actionValue(a,cat))[0];},
+// Golden-path / handler-based payoffs that live in resolveMonth, not config effects — valued explicitly so executives chase real wealth-building (passive income highest, per DESIGN.md).
+_HV:{activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000},
+// Rough value of a (possibly locked) action without recursing back into _actionValue — used to decide which locked targets are worth working toward.
+_lockedTargetValue(L,cat){let v=this._HV[L.id]||0;const ef=this.scaleActionEffects(L.effects||{},cat);v+=(ef.other_monthly_revenue||0)*6000+(ef.customer_base||0)*800+(ef.revenue_capacity||0)*1.2+(ef.brand_equity||0)*250+(ef.systems_maturity||0)*180+(ef.team_size||0)*1200+(ef.insurance_cash_value||0)*0.5+(ef.dscr||0)*2500;return v;},
+// If `a` advances the prerequisites of a LOCKED, high-value action in this track, reward it — so the execs build TOWARD the unlock (raise brand for the national ad blitz, elect S-Corp for the wealth tier, hit the systems threshold for vertical integration) instead of only ever taking what's already open.
+_unlockBonus(a,cat){const s=this.state,pool=this.getAvailableActions(cat)||[],ef=this.scaleActionEffects(a.effects||{},cat),aef=a.effects||{};let bonus=0;
+ for(const L of pool){if(L.id===a.id||this.isActionCompleted(L)||!this.isActionLocked(L))continue;const Lval=this._lockedTargetValue(L,cat);if(Lval<10000)continue;/* only chase genuinely worthwhile targets */
+  const pr=L.prerequisites||{};let weight=0;
+  if(pr.needs&&pr.needs.includes(a.id))weight=1;/* a clears a needs-gate — decisive */
+  for(const k in pr){
+   if(k.endsWith('_gte')){const stat=k.replace('_gte','');const gap=pr[k]-(s[stat]||0);if(gap>0&&(ef[stat]||0)>0)weight=Math.max(weight,Math.min(1,(ef[stat]||0)/gap));}/* weight by the FRACTION of the remaining gap this move closes — the action that crosses the threshold beats one that only nudges it */
+   else if(k==='entity_structure'||k==='entity_structure_in'){const want=k==='entity_structure'?[pr[k]]:pr[k];if(aef.entity_structure&&want.includes(aef.entity_structure))weight=1;}
+   else if(k==='business_credit_profile'){if(aef.business_credit_profile===pr[k])weight=1;}
+  }
+  if(weight>0)bonus+=Math.min(Lval,80000)*0.22*weight;
+ }
+ return Math.min(bonus,32000);},
 // Estimate an action's real value (projected, scaled impact) so an executive auto-pick lands on a genuinely high-leverage move, not a random low-value one.
 _actionValue(a,cat){const s=this.state,ef=this.scaleActionEffects(a.effects||{},cat);let v=0;
-v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+=(ef.revenue_capacity||0)*1.2;v+=(ef.systems_maturity||0)*180;v+=(ef.other_monthly_revenue||0)*6000;v+=(ef.team_size||0)*1200;v+=(ef.sales_conversion||0)*400;v+=(ef.dscr||0)*2500;v+=(ef.insurance_cash_value||0)*0.5;
+v+=(ef.customer_base||0)*800;v+=(ef.leads||0)*150;v+=(ef.brand_equity||0)*250;v+=(ef.revenue_capacity||0)*1.2;v+=(ef.systems_maturity||0)*320;v+=(ef.other_monthly_revenue||0)*6000;v+=(ef.team_size||0)*((s.team_size||0)>=8?-700:300);v+=(ef.sales_conversion||0)*400;v+=(ef.dscr||0)*2500;v+=(ef.insurance_cash_value||0)*0.5;
+// Systems matter more than people now — they set the revenue ceiling and tame management debt. Headcount past a lean ~8 is a LIABILITY (coordination/churn/people problems), so adding bodies there scores negative.
 v+=(ef.personal_credit_score||0)*250*Math.max(0,Math.min(1,(760-(s.personal_credit_score||600))/200)); // credit gains worthless once your score is already high
 v+=(ef.available_credit||0)*0.15*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000));v+=(ef.business_credit_limit||0)*0.12*Math.max(0.2,Math.min(1,1-(s.cash||0)/200000)); // more credit matters less when flush with cash
 v-=(ef.key_person_dependency||0)*200;v-=(ef.churn_rate||0)*30000;v-=(ef.audit_risk||0)*120;v-=(ef.operating_expenses||0)*0.4;
 // Company culture: the COO invests in it — weighted heavily when it's slipping (so benefits/equity get picked) and lightly when healthy; culture-destroying moves get penalized the same way.
 {const _cul=s.company_culture==null?45:s.company_culture;v+=(ef.company_culture||0)*(120+Math.max(0,55-_cul)*22);}
 v-=(a.cash_cost||0)*0.2;v-=Math.max(0,a.energy_cost||0)*120;
+// Recurring monthly cost is the real burden (e.g. Rapid Offshore Scale-Up adds $12k/mo in payroll) — weigh several months of it, scaled down a touch when the business easily covers it, so the auto-pilot doesn't load up on ongoing burn it doesn't need.
+if(a.recurring_cost){const profit=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));const ease=Math.max(0.35,Math.min(1,1-profit/120000));v-=a.recurring_cost*4*ease;}
 // Golden-path / handler-based moves carry their payoff in resolveMonth, not in config effects — value them explicitly so executives prioritize real wealth-building (passive income highest, per DESIGN.md).
-const HV={activate_passive_income:95000,fund_accumulation_policy:62000,buy_real_estate:72000,private_equity_fund:66000,private_lending:60000,premium_financing:52000,acquire_competitor:55000,private_banking:46000,setup_family_office:44000,dynasty_trust:42000,elect_s_corp:40000,debt_restructure:38000,combined_insurance:30000,business_credit_line:26000,bank_personal_loan:24000,banking_relationship:22000,monthly_tax_reserve:18000,advanced_tax_strategy:30000,asset_protection_stack:28000};
+const HV=this._HV;
 if(HV[a.id]!==undefined)v+=HV[a.id];
+v+=this._unlockBonus(a,cat);// reward progress toward a locked high-value action in this track (build the prerequisite, hit the stat gate) so the execs work their way up, not just sideways
+{const st=this._SCALE_TRAPS[a.id];if(st!==undefined){const sysGap=st-(s.systems_maturity||0);if(sysGap>0)v-=900*sysGap;}}// a "go big" play before your systems can deliver is a trap — heavily avoid it until you've systematized (then it's a real scaling move)
 v+=this._actionUrgency(a)*60; // fold in situational urgency
 const cnt=(s._action_counts||{})[a.id]||0;v*=Math.max(0.22,1-cnt*0.22); // steeper repeat decay so the auto-pilot stops hammering one repeatable when fresh moves are still on the table
+if((s._exec_last||{})[cat]===a.id)v*=0.2; // hard demote the exact move the execs ran LAST month for this track → they rotate (content engine ↔ sales team ↔ ...) instead of spamming the same one every turn
 if(this.isActionOutgrown(a))v*=0.3;
 if(a.one_time&&!cnt)v*=1.35; // fresh one-time unlocks are worth grabbing
 if(this._isGateway(a))v+=14000; // completing this clears a `needs` gate blocking other actions — build out the prerequisite tree before grinding
@@ -4334,7 +1375,7 @@ return v;},
 _committedCash(exceptCat){let t=0;for(const c in (this.selectedActions||{})){if(c===exceptCat||c==='lifestyle')continue;const a=this.selectedActions[c];if(a)t+=this.actionCashCost(a)||0;}return t;},
 // Would taking `a` (on top of already-committed spend) still leave a safety runway? Keeps auto/delegated play from bankrupting the month.
 _fitsRunway(a,cat){const s=this.state;const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));const liquidity=(s.cash||0)+(s.available_credit||0)+bizAvail;const burn=this.calcMonthlyBurn?this.calcMonthlyBurn():2500;const reserve=Math.max(2500,Math.round(burn));return this._committedCash(cat)+(this.actionCashCost(a)||0)<=liquidity-reserve;},
-bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board','epic_life_membership'].includes(a.id));if(!acts.length)return null;
+bestAction(cat){const acts=this.getAvailableActions(cat).filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)&&!['hire_cro','hire_coo','hire_cfo','establish_board','epic_life_membership','iul_variable_loan','open_db_plan_pretax'].includes(a.id));if(!acts.length)return null;/* the variable loan & pre-tax DB plan are deliberate high-stakes player choices — never auto-picked (the safe wash/post-tax default is what the team runs) */
 // An exec offers its own full-time promotion the moment it's available & affordable — a strategic upgrade, not a repeatable grind.
 const promo=acts.find(a=>/^promote_(cro|coo|cfo)_fulltime$/.test(a.id));if(promo&&this.canAfford(promo)&&this._fitsRunway(promo,cat))return promo;
 // The CFO does its job in order before chasing wealth: separate the business, protect it, get the tax structure right, build the business-credit identity — these are the milestones execs were skipping.
@@ -4399,7 +1440,9 @@ for(const spec of specs){const a=fin(spec.id);if(!a)continue;
  if(EPIC_WAIVED.includes(a.id)){perk.cash_cost=0;perk._waivedFee=this._epicServiceFee(a.id);}
  return perk;}
 return null;},
-boardRunMonth(){const s=this.state;if(!s._board_active)return;if(!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
+boardRunMonth(){const s=this.state;if(!s._board_active)return;const delegFin=this._canDelegateFinance();if(delegFin&&!this.selectedActions['finance']){const f=this.bestAction('finance');if(f){this.selectedActions['finance']=f;this._paymentMethods=this._paymentMethods||{};this._paymentMethods[f.id]='cash';}}
+if(!delegFin&&!this.selectedActions['finance']){if(this.currentCategory!=='finance')this.switchCategory('finance');this._focusActionList();this.showPopup('💰 Your call — the Finance move','The money decisions stay yours until you reach the <strong>Wealth stage</strong> in Finance (or switch on passive income). Pick this month\'s finance move below.');return;}
+if((this._activeCats||[]).includes('lifestyle')&&!this.selectedActions['lifestyle']){const l=this._bestLifestyle();if(l){this.selectedActions['lifestyle']=l;this._paymentMethods[l.id]='cash';}}this.resolveMonth();},
 renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
 const urgency=a=>this._actionUrgency(a);
 // Each action's direction-group name, shown as a tag on the card (replaces the old collapsible groups).
@@ -4408,13 +1451,16 @@ const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a
 const cls=done?'completed-action':isSel?'selected':locked?'locked':takenBefore?'taken-before':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const repeatBadge=(!a.one_time&&rc>0&&!isSel)?'<span class="repeat-badge">✓ done ×'+rc+'</span>':'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ RETRY — HALF COST</span>':'';
 const rehireBadge=(!done&&!locked&&this.state._rehire&&this.state._rehire[a.id])?'<span class="new-badge" style="background:var(--orange);color:#1a1205;">↻ REHIRE</span>':'';
+// Prerequisite marker: this action is a gate for other actions still to come. Mark it so the player knows it opens up the tree (tooltip lists what it unlocks).
+const _unlocks=(!done&&this._isGateway(a))?this._neededBy(a.id).filter(id=>!(this.state._completed_actions||[]).includes(id)):[];
+const unlockBadge=_unlocks.length?'<span class="new-badge" style="background:var(--blue);color:#fff;" title="Completing this unlocks: '+_unlocks.map(id=>this._esc(this.actionLabel(id)||id)).join(', ')+'">🔑 UNLOCKS'+(_unlocks.length>1?' '+_unlocks.length:'')+'</span>':'';
 const cat0=this.currentCategory;const offBadge=(this._autoPicked&&this._autoPicked[cat0]===a.id)?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">'+(cat0==='marketing'?'CRO pick':'COO pick')+'</span>':((cat0==='finance'&&this._cfoPick===a.id)?'<span class="new-badge" style="background:var(--blue);color:#fff;">CFO ★</span>':'');
 const _cc=this.actionCashCost(a);const needsCredit=!done&&!locked&&_cc&&this.state.cash<_cc&&(this.state.cash+(this.state.available_credit||0))>=_cc;
 const selBadge=isSel?'<span class="new-badge" style="background:var(--accent);color:#04130d;">✓ SELECTED</span>':'';
 const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpName+'</span>':'';
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const rescueBadge=(!done&&!locked&&a.id==='restructure_team'&&this._needsRestructure())?'<span class="new-badge" style="background:var(--red);color:#fff;">'+(this.state._toxic_closer?'⚠ FIRE THE CLOSER':'⚠ CUT PAYROLL — FIX THIS')+'</span>':'';
-const topInner=grpTag+rescueBadge+rehireBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
+const topInner=grpTag+rescueBadge+rehireBadge+unlockBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
 return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+'</h4><p>'+desc+'</p>'+(!done?this.actionPreview(a):'')+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
 // est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
@@ -4431,7 +1477,7 @@ a.id==='fast_working_capital'?'<span class="cost-tag cost-recurring" title="repa
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
 (()=>{const FR=['hire_cro','hire_coo','hire_cfo'],FU=['promote_cro_fulltime','promote_coo_fulltime','promote_cfo_fulltime'];const amt=FR.includes(a.id)?this.calcExecFrac():FU.includes(a.id)?this.calcExecFull():0;return amt?'<span class="cost-tag cost-recurring" title="ongoing executive pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
-(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const ch=Math.round(this._creditApprovalChance()*100),u=this.calcPersUtil(),col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="lenders underwrite on your personal utilization + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(u>30?' · util '+u+'%':'')+'</span>';})():'')+
+(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const isLoan=LOAN_APPROVAL.includes(a.id),ch=Math.round(this._creditApprovalChance(isLoan)*100),metric=isLoan?this.calcDTI():this.calcPersUtil(),label=isLoan?'DTI':'util',col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="'+(isLoan?'term loans are underwritten on your debt-to-income (DTI)':'revolving credit is underwritten on your personal utilization')+' + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(metric>30?' · '+label+' '+metric+'%':'')+'</span>';})():'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
@@ -4446,7 +1492,7 @@ const _takenBefore=a=>!a.one_time&&((this.state._action_counts||{})[a.id]||0)>0;
 const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;const ta=_takenBefore(a)?1:0,tb=_takenBefore(b)?1:0;if(ta!==tb)return ta-tb;/* actions you've already run before sink below ones you haven't */return urgency(b)-urgency(a);});
 const locked=actions.filter(a=>!this.isActionCompleted(a)&&this.isActionLocked(a));
 const completed=actions.filter(a=>this.isActionCompleted(a));
-const lockRow=a=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';
+const lockRow=a=>{const _gw=this._neededBy(a.id).some(id=>!(this.state._completed_actions||[]).includes(id));return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;opacity:0.55;font-size:0.78rem;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_gw?' <span title="prerequisite — unlocks more actions once taken" style="color:var(--blue);">🔑</span>':'')+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+'</span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>';};
 listHtml+=avail.length?avail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No moves available here right now.</div>';
 if(locked.length)listHtml+='<div style="padding:10px 12px 2px;font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;">Unlocks next</div>'+locked.map(lockRow).join('');
 if(completed.length){if(this._showAllActions)listHtml+=hdr('Completed')+completed.map(card).join('')+'<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=false;Game.renderActions();">Show less ▴</span></div>';else listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=true;Game.renderActions();">Show '+completed.length+' completed ▾</span></div>';}
@@ -4461,7 +1507,12 @@ let epicPanel='';
 if(this.state._epic_life&&this.currentCategory==='finance')epicPanel=this._epicMilestoneCompact();
 document.getElementById('action-list').innerHTML=banner+epicPanel+listHtml;},
 // One button runs the month with the team's plan: fill any category the player didn't set with the exec/board pick, then resolve.
-runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}
+// You can only hand FINANCE to the CFO once you've actually learned it — reached the Wealth stage in Finance, or personally switched on tax-free passive income. The money decisions are the game's core lesson, so they stay yours until then (the CFO still advises). Marketing & ops can be delegated from the day you hire the exec.
+_canDelegateFinance(){return this.getStage('finance')==='wealth'||(this.state._completed_actions||[]).includes('activate_passive_income');},
+runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};const delegFin=this._canDelegateFinance();
+for(const c of ac){if(c==='lifestyle')continue;/* Life is always the player's own pick */if(c==='finance'&&!delegFin)continue;/* finance is yours until you graduate to Wealth */if(this.selectedActions[c])continue;const b=this.bestAction(c);if(b){this.selectedActions[c]=b;this._paymentMethods[b.id]=this._paymentMethods[b.id]||'cash';this._autoPicked=this._autoPicked||{};this._autoPicked[c]=b.id;}}
+// Finance stays the player's own call until Wealth stage — prompt if it's unset.
+if(ac.includes('finance')&&!delegFin&&!this.selectedActions['finance']){if(this.currentCategory!=='finance')this.switchCategory('finance');this._focusActionList();this.showPopup('💰 Your call — the Finance move','Your execs run marketing & operations, but the <strong>money decisions stay yours</strong> until you reach the <strong>Wealth stage</strong> in Finance (or switch on passive income). This is the part that actually builds wealth — pick this month\'s finance move below. Once you graduate, your CFO can take it over too.');return;}
 // Life is the player's own pick — if it's available this month and not chosen yet, prompt for it instead of silently skipping it.
 if(ac.includes('lifestyle')&&!this.selectedActions['lifestyle']){if(this.currentCategory!=='lifestyle')this.switchCategory('lifestyle');this._focusActionList();this.showPopup('🏖️ One more — your Life action','Your team has the business handled this month. <strong>Your Life action is always your own pick</strong> — choose one life investment below, then run the month.');return;}
 this.resolveMonth();},
@@ -4580,6 +1631,7 @@ if(this.state._epic_life){const _perk=this._epicLifePick();if(_perk)this.selecte
 // Resolve the Epic Life move FIRST so its before→after reflects start-of-month numbers — matching its position at the top of the results.
 const _entries=Object.entries(this.selectedActions),_isEpic=e=>e[0]==='epic'||e[0]==='epicbuy',_ordered=_entries.filter(_isEpic).concat(_entries.filter(e=>!_isEpic(e)));
 for(const[cat,action]of _ordered){
+if(cat==='marketing'||cat==='operations'||cat==='finance'){this.state._exec_last=this.state._exec_last||{};this.state._exec_last[cat]=action.id;}/* remember this month's move per track so the auto-pilot rotates next month instead of repeating it */
 const _cb={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,debt:this.state.total_debt||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0};
 const _SB=['leads','customer_base','team_size','brand_equity','systems_maturity','revenue_capacity'],_sbBefore={};_SB.forEach(k=>_sbBefore[k]=this.state[k]||0);
 const _lifeDB=cat==='lifestyle'?this.lifeDims():null,_lifeMB=cat==='lifestyle'?this.calcPersonalMastery():null,_lifeEnB=cat==='lifestyle'?Math.round(this.state.energy):null;
@@ -4594,7 +1646,7 @@ const retryBoost=(this.state._partial_actions&&this.state._partial_actions[actio
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
 const _isCreditApp=CREDIT_APPROVAL.includes(action.id);
 // Credit applications are underwritten (utilization + personal myFICO), not skill/energy-modified — a lender doesn't care how rested you are, only how your file reads.
-const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance()):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
+const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance(LOAN_APPROVAL.includes(action.id))):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 if(_isCreditApp)this.state.credit_inquiries=(this.state.credit_inquiries||0)+1;/* every application is a hard pull — they pile up and drag approval/score (Epic clears them every 6 months) */
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
@@ -4605,6 +1657,11 @@ const DELAY_IDS=['customer_acquisition_sprint','build_content_presence','build_d
 if(DELAY_IDS.includes(action.id)){const immediate={},delayed={};for(const k in effects){if(typeof effects[k]==='number'){if(k==='energy'||k==='cash'||k==='operating_expenses'||k==='team_size'||k==='key_person_dependency'){immediate[k]=effects[k];}else{delayed[k]=effects[k];}}else{immediate[k]=effects[k];}}
 effects=immediate;if(Object.keys(delayed).length){if(!this.state._delayed_effects)this.state._delayed_effects=[];this.state._delayed_effects.push({month:this.month+2,effects:delayed});}}
 this.applyEffects(effects);
+// SCALE TRAP — the seductive "go big" plays flood you with demand or headcount you can't deliver on without SYSTEMS. Pull the trigger before the infrastructure is there and it backfires realistically: refunds, 1-star reviews, churn, burnout — you go BACKWARD. Systematize first and the same play scales you. (A small team's bread-and-butter is the modest lead-gen / nurture / sales moves — these big bets are traps until you're ready.)
+{const need=this._SCALE_TRAPS[action.id];
+ if(need!==undefined&&success){const have=this.state.systems_maturity||0;if(have<need){const s=this.state,shortfall=Math.min(1,(need-have)/need),lost=Math.round((s.customer_base||0)*0.15*shortfall);
+  s.customer_base=Math.max(0,(s.customer_base||0)-lost);s.brand_equity=Math.max(0,(s.brand_equity||0)-Math.round(18*shortfall));s.churn_rate=Math.min(0.5,(s.churn_rate||0)+0.06*shortfall);s.leads=Math.max(s.customer_base||0,Math.round((s.leads||0)*(1-0.25*shortfall)));s.energy=Math.max(-40,(s.energy||0)-Math.round(10*shortfall));
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:(action.label||'Scale play')+' — backfired',narrative:'You scaled faster than your systems could deliver. The flood became refunds, bad reviews and burnout — '+(lost>0?lost+' customers lost, ':'')+'brand and churn hit. Build systems FIRST, then go big.'}]);}}}
 if(action.id==='pay_down_debt'){const s=this.state,eff=success?1:0.6,beforeUtil=this.calcPersUtil(),beforeDti=this.calcDTI(),plan=this._debtPaydownPlan();
 let payRev=Math.round(plan.payRev*eff),payLoan=Math.round(plan.payLoan*eff),total=payRev+payLoan;
 // deduct cash (business first, then personal)
@@ -4643,7 +1700,10 @@ if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','o
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='policy_loan'&&success){const sep=this.isSeparated(),cv=this.state.insurance_cash_value||0,headroom=Math.max(0,Math.round(cv*0.9)-(this.state.insurance_loan_balance||0)),loanAmt=headroom,before=sep?(this.state.personal_cash||0):(this.state.cash||0);if(loanAmt<=0){this.state._dyn_narrative='You\'ve already borrowed up to 90% of your '+this.fmtMoney(cv)+' cash value — there\'s no loan room left right now. Keep funding the policy (or let it compound) to open more borrowing capacity.';}else{if(sep)this.state.personal_cash=before+loanAmt;else this.state.cash=before+loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;effects.cash=(effects.cash||0)+loanAmt;this.state._dyn_narrative='Policy loan approved instantly — no credit check, no taxes. '+this.fmtMoney(loanAmt)+' (your remaining room up to 90% of the '+this.fmtMoney(cv)+' cash value) went straight into your personal cash: '+this.fmtMoney(before)+' → '+this.fmtMoney(before+loanAmt)+'. The cash value keeps compounding at ~7%/yr as if you never touched it; the loan accrues ~5%/yr and is netted from your death benefit — never repaid from your pocket.';}}
-if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;}
+if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;if(!this.state._iul_loan_type)this.state._iul_loan_type='wash';/* safe default: net ~0%, lapse-proof */}
+if(action.id==='velocity_banking'&&success){this.state._velocity_active=true;this.state._velocity_spiral_streak=0;}
+if(action.id==='iul_variable_loan'&&success){this.state._iul_loan_type='variable';/* opt into the index-arbitrage loan — higher income, real lapse risk */}
+if(action.id==='open_db_plan_pretax'&&success){this.state._iul_funding_type='pre_tax';/* fund the policy through a qualified DB plan with deductible business dollars — requires the corporate structure */}
 if(action.id==='hire_fractional_cfo'&&success)this.state._dyn_narrative='Your fractional CFO is on board — and the first thing she did was build you a real financial picture. Tap the new 📊 CFO Briefing on your dashboard any time: company value, net worth, runway, a 6-month projection, and exactly where she’d focus your marketing, operations, and finance.';
 // Credit repair: disputes take 30-90 days. On success, schedule the marks to fall off over ~3 months (2/mo); the score climbs each month until the file is clean (~650), after which utilization carries it higher. A clean file has little to repair → minor boost.
 if(action.id==='build_personal_credit'&&success){const s=this.state,neg=s.credit_negatives||0;
@@ -4705,10 +1765,10 @@ const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_reve
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
 // Credit declined: explain the underwriting reason (high utilization / personal myFICO pull) so the lesson lands.
-if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ';
+if(_isCreditApp&&!success){const s=this.state,isLoan=LOAN_APPROVAL.includes(action.id),u=this.calcPersUtil(),dti=this.calcDTI(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(isLoan?(dti>36?'Your <strong>debt-to-income is '+dti+'%</strong> — above the ~36% a lender wants to see your cash flow service, so the payment looks too tight. ':''):(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':''))+(isLoan?'The bank also pulled your personal <strong>myFICO 3B ('+sc+')</strong>. ':'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ');
 if(!this._naicsVerified()&&['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))_why+='Your business also tripped an underwriting flag: its <strong>NAICS industry code looks off</strong>, so the file got kicked out. A <strong>Wyoming holding-company setup</strong> assigns the correct code and clears this. ';
 if(!this._hasBanking())_why+='And you have <strong>no banking relationship</strong> here — you\'re a stranger applying cold. Build the relationship (bank and deposit with them) and they lend far more readily. ';
-_why+=(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.');this.state._dyn_narrative=_why;}
+_why+=(isLoan?(dti>36?'Lower your debt-to-income (pay down debt or grow revenue) under ~36% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'):(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'));this.state._dyn_narrative=_why;}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund,_execRun:_execRun,_energySpent:(_execRun?0:_energyCost)};
 if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
@@ -4739,12 +1799,26 @@ applyEffects(effects){for(const[k,v]of Object.entries(effects)){if(k==='entity_s
 monthlyTick(){const s=this.state;
 // C-suite salaries scale with revenue each month — adjust the portion of opex we own by the delta (keeps it in burn/EBITDA/tax/profit)
 {const ec=this.calcExecComp(),delta=ec-(s._exec_comp_applied||0);if(delta){s.operating_expenses=Math.max(0,(s.operating_expenses||0)+delta);s._exec_comp_applied=ec;}}
+// Macro cycle advances FIRST so this month's drivers (IUL index credit, market rate, asset prices, credit availability) are set before the financial sections use them.
+this._advanceMarketCycle();
 // Process delayed effects
 if(s._delayed_effects){const ready=s._delayed_effects.filter(d=>d.month<=this.month);s._delayed_effects=s._delayed_effects.filter(d=>d.month>this.month);for(const d of ready)this.applyEffects(d.effects);}
 // Toxic high-ticket closer: while he's on the team his fake promises and guarantees keep doing damage — rising churn, brand erosion, and climbing lawsuit risk. The pressure builds until you fire him (via Restructure & Downsize).
 if(s._toxic_closer){s.churn_rate=Math.min(0.5,(s.churn_rate||0)+0.03);s.brand_equity=Math.max(0,(s.brand_equity||0)-3);s.litigation_exposure=(s.litigation_exposure||0)+6;}
 // Term-limited recurring costs falling off (e.g. a merchant cash advance, once it's paid off): stop the monthly drain, drop it from the burn breakdown, and post a "paid off" note.
 if(s._recurring_expiry){for(const id of Object.keys(s._recurring_expiry)){if(this.month>=s._recurring_expiry[id]){const c=(s._active_recurring_costs||{})[id]||0;if(c){s.operating_expenses=Math.max(0,(s.operating_expenses||0)-c);delete s._active_recurring_costs[id];}delete s._recurring_expiry[id];s._pendingRipples=(s._pendingRipples||[]).concat([{source:this.actionLabel(id)||'Financed cost',narrative:'Fully paid off — the recurring payments stop. An expensive way to borrow; lesson learned.'}]);}}}
+// Delegation ladder — marketing specialists auto-run their function each month. You LEARNED the play by doing it; a specialist now repeats it for a salary (no energy, no action slot). A Marketing Manager lifts them from "solid" (0.85) to better-than-you (1.15) and the Director (CRO) takes the whole function. Only the persistent growth effects carry — the salary (recurring_cost) is already in opex.
+{const sysMat=s.systems_maturity||0;
+ // A hire is only as good as the SYSTEMS behind them. Drop people onto no SOPs/processes and the output craters AND swings wildly month to month (real life: an unsupported new hire flails). Systemize first and the same salary compounds reliably. This is the lesson — systems scale you, not headcount.
+ const sysFactor=0.15+0.85*Math.min(1,sysMat/90);/* 0.15 at zero systems → 1.0 only once truly dialed in (~90) — efficiency is earned slowly */
+ let consistency=Math.min(1,sysMat/75);if(s._mgr_marketing)consistency=Math.min(1,consistency+0.3);/* low systems = erratic; a manager steadies the team */
+ const mgrBoost=s._mgr_marketing?1.2:1.0;
+ const runSpec=(flag,grp,who)=>{if(!s[flag]||s._cro_hired)return;/* the CRO/Director covers marketing once hired */const a=this._bestInGroup('marketing',grp);if(!a)return;
+  const variance=consistency+(1-consistency)*Math.random();/* wide swing when unsystematized, tight when dialed-in */
+  const q=sysFactor*mgrBoost*variance*0.32;/* 0.32 base — deliberately slow: a specialist SUPPLEMENTS your work at real-world pace, it doesn't rocket your growth or replace strategy */
+  const ef=this.scaleActionEffects(a.effects||{},'marketing'),apply={};['leads','customer_base','brand_equity','sales_conversion','revenue_capacity'].forEach(k=>{if(ef[k])apply[k]=Math.round(ef[k]*q);});
+  if(Object.keys(apply).length){this.applyEffects(apply);const tag=sysMat<35?' — but with no systems behind them, the results are thin and uneven':(s._mgr_marketing?' — manager-coordinated, steady output':'');s._pendingRipples=(s._pendingRipples||[]).concat([{source:who,narrative:'ran '+a.label+' this month'+tag+'.'}]);}};
+ runSpec('_spec_leadgen','Lead Generation','Lead-Gen Specialist');runSpec('_spec_convert','Sales & Conversion','Sales Specialist');}
 // Churn — leaky bucket: a large base with low systems/no retention churns faster
 {const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
 // Lead decay — un-nurtured prospects go cold. The not-yet-converted lead pool shrinks each month, so you can't coast on a one-time pile of leads: without fresh marketing (and retention to slow churn) the customer base erodes. Strong brand keeps prospects warm longer. (DESIGN: only passive TAX-FREE income should arrive without work — business revenue must be worked.)
@@ -4758,9 +1832,17 @@ s.leads=Math.max(s.leads||0,s.customer_base||0); // invariant: always at least a
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+(s._completed_actions&&s._completed_actions.includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
 s.monthly_revenue=s.customer_base*revPerCust;
 // Revenue capacity cap — you can only capture demand up to what the business can deliver; beyond it revenue is heavily dampened (market saturation / strained delivery). Capacity grows via offer, sales infra, systems, team.
-{const cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);if(s.monthly_revenue>cap)s.monthly_revenue=Math.round(cap+(s.monthly_revenue-cap)*0.25);}
+// A small, efficient business has a NATURAL size ceiling. Past a healthy level, extra capacity buys sharply less revenue — you can't grind operations to infinity. Real wealth comes mid-to-late from FINANCE leveraging the cash & credit this business throws off, not from making the business itself enormous. (DESIGN.md: brute-force revenue must hit a ceiling; passive tax-free income is the crown jewel.)
+{const team=s.team_size||0,sys=s.systems_maturity||0;
+ // Your ceiling is set by SYSTEMS, not hustle or headcount (Gerber's E-Myth; Greiner's coordination crisis). A lean op tops out ~$80-120k/mo. Only deep systems infrastructure lifts it, and even maxed it walls out at the edge of "No Man's Land" (~$2M/yr) — the real stall zone (Tatum) where, without enterprise infrastructure, management debt + churn + people problems compound faster than you can grow. Headcount past a lean team buys almost nothing here. The way forward isn't a bigger business; it's FINANCE leveraging the cash & credit you built.
+ const base=45000,systemsHeadroom=Math.min(sys,100)*900,teamHeadroom=Math.min(team,8)*3000,capacityTail=Math.min(s.revenue_capacity||0,50000)*0.4;
+ const cap=base+systemsHeadroom+teamHeadroom+capacityTail;
+ // HARD wall (not a soft damp): the business physically cannot push past ~110% of its systems-set ceiling. Lean+low systems ≈ $80-110k/mo; fully systematized ≈ $180-200k (the edge of No Man's Land, ~$2M/yr). To go further you'd need enterprise infrastructure this game doesn't hand you — because the point is to plateau lean and let FINANCE build the wealth.
+ const wall=Math.round(cap*1.1);if(s.monthly_revenue>wall)s.monthly_revenue=wall;}
 // Seasonal dip — Q4 each year (months 10-12, 22-24, 34-36)
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)s.monthly_revenue=Math.round(s.monthly_revenue*0.85);
+// Macro-cycle revenue tilt — booms lift demand, downturns bite (the same cycle that drives the finance game).
+{const _ph=(s._cycle&&s._cycle.phase)||'expansion',_rt=(this._CYCLE_PHASES[_ph]||{}).rev||1;if(_rt!==1)s.monthly_revenue=Math.round((s.monthly_revenue||0)*_rt);}
 // Merchant cash advance holdback: the lender skims a fixed % of revenue every month until the (much larger) balance is cleared — then it falls off. No credit involvement; it just bleeds the top line.
 if((s._mca_balance||0)>0){const hold=Math.round((s.monthly_revenue||0)*(s._mca_holdback||0.2)),pay=Math.min(hold,s._mca_balance);if(pay>0){s.cash=(s.cash||0)-pay;s._mca_balance-=pay;}s._mca_paid=pay;if(s._mca_balance<=0){s._mca_balance=0;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Cash Advance',narrative:'Finally cleared — the revenue holdback stops. An expensive way to borrow; lesson learned.'}]);}}
 else s._mca_paid=0;
@@ -4783,18 +1865,103 @@ s.personal_cash-=personalExp; // personal pays its own living/lifestyle (+ sets 
 if(s.personal_cash<0){const d=Math.min(-s.personal_cash,Math.max(0,s.cash));if(d>0){s.cash-=d;s.personal_cash+=d;this._recordDraw(d);}}
 if(s.personal_cash<0){const bizCredit=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),liq=Math.min(-s.personal_cash,bizCredit);if(liq>0){s.business_credit_used=(s.business_credit_used||0)+liq;s.total_debt=(s.total_debt||0)+liq;s.personal_cash+=liq;this._recordDraw(liq);}} // liquidate business credit → business cash → draw
 if(s.personal_cash<0){const pc=Math.min(-s.personal_cash,Math.floor((s.available_credit||0)/1.03));if(pc>0){const fee=Math.round(pc*0.03);s.available_credit-=(pc+fee);s.total_debt=(s.total_debt||0)+pc+fee;s.personal_cash+=pc;}} // personal credit as last resort (fee fits within the limit — never overdraws available credit)
-if(insFunding>0)s.insurance_cash_value=(s.insurance_cash_value||0)+Math.round(insFunding*0.98); // the drawn funding lands in the policy (2% cost of insurance)
+if(insFunding>0){const _pre=s._iul_funding_type==='pre_tax',_cr=Math.round(insFunding*0.98);s.insurance_cash_value=(s.insurance_cash_value||0)+_cr;if(_pre)s._ytd_taxable_income=Math.max(0,(s._ytd_taxable_income||0)-insFunding);else s.insurance_basis=(s.insurance_basis||0)+_cr;} // funding lands in the policy. POST-tax: already-taxed premiums become BASIS → only gains taxed later. PRE-tax (DB-plan): the contribution is DEDUCTIBLE — it lowers your taxable income now (the real benefit) — but there's no basis, so the whole balance is taxable on a draw or lapse.
 const netInc=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s.owner_pay||0));s.capital_account=(s.capital_account||0)+netInc;} // retained profit grows the owner's equity
-else{s.cash-=(s.living_expenses||0)+(s.lifestyle_expenses||0);if(insFunding>0&&s.cash>=insFunding){s.cash-=insFunding;s.insurance_cash_value=(s.insurance_cash_value||0)+Math.round(insFunding*0.98);}}
+else{s.cash-=(s.living_expenses||0)+(s.lifestyle_expenses||0);if(insFunding>0&&s.cash>=insFunding){s.cash-=insFunding;const _cr=Math.round(insFunding*0.98);s.insurance_cash_value=(s.insurance_cash_value||0)+_cr;if(s._iul_funding_type==='pre_tax')s._ytd_taxable_income=Math.max(0,(s._ytd_taxable_income||0)-insFunding);else s.insurance_basis=(s.insurance_basis||0)+_cr;}}
 // An equity partner really takes their cut of monthly profit — this is what "they own 30% of every dollar" means in practice.
 if(s._partner_equity>0){const prof=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)),skim=Math.round(prof*s._partner_equity);if(skim>0){s.cash=(s.cash||0)-skim;s.capital_account=(s.capital_account||0)-skim;s._partner_skim=skim;}}
-// People scaling drag — headcount past 3 without management/systems creates coordination cost
-{const team=s.team_size||0;if(team>3){const hasMgmt=s._completed_actions.includes('middle_management')||s._completed_actions.includes('full_systemization')||s._completed_actions.includes('hire_hr_manager');const sysFactor=Math.max(0.1,1-(s.systems_maturity||0)/100);const coordCost=Math.round((team-3)*1500*sysFactor*(hasMgmt?0.3:1));if(coordCost>0)s.cash-=coordCost;}}
+// MANAGEMENT DEBT — when the team outgrows the infrastructure (systems + management + culture) that can support it, the gap compounds into real drag. Every reason a founder hits the wall, modeled off ONE honest ratio: team_size vs Org Capacity.
+{const cap=this._orgCapacity(),team=s.team_size||0,over=Math.max(0,team-cap);s._orgCap=Math.round(cap);s._orgOver=Math.round(over*10)/10;
+ if(over>0){
+  // A. Coordination drag — communication channels explode quadratically (Brooks's Law: n(n-1)/2). A small overrun stings; a big one hemorrhages.
+  s.cash-=Math.round(over*over*300+over*1000);
+  // B. Productivity dilution — an overstretched team delivers LESS, not more (diminishing returns + green hires + shirking you can't monitor). Over-hiring actively cuts your output.
+  s.monthly_revenue=Math.round((s.monthly_revenue||0)*Math.max(0.55,1-over*0.025));
+  // C. Culture & quality spiral — context dilutes, standards slip, customers feel it.
+  s.company_culture=Math.max(0,(s.company_culture==null?45:s.company_culture)-Math.min(7,over*0.7));
+  s.churn_rate=Math.min(0.5,(s.churn_rate||0)+Math.min(0.05,over*0.005));
+  s.brand_equity=Math.max(0,(s.brand_equity||0)-Math.min(3,over*0.3));
+  // D. Fragility — knowledge concentrates in individuals (key-person risk) when you're stretched thin.
+  s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+Math.min(5,over*0.4));
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Management debt',narrative:'Your team of '+team+' has outgrown what your systems & leadership can carry (~'+Math.round(cap)+'). Coordination, culture and quality are all slipping. Build systems and hire real managers — or trim back to a lean team.'}]);
+ }}
+ // EMPLOYEE RETENTION — keeping a team is a constant fight against a market that will out-pay and out-benefit you. People leave for more money, better benefits, equity, room to grow, or because they're burned out — and the bigger/better your team, the harder recruiters pull at them. You can only sustain the headcount your PAY, BENEFITS, EQUITY, CULTURE, GROWTH PATH and SYSTEMS can hold. Hire past that and people churn out faster than you replace them — which is exactly why small businesses stay small.
+ {const team=s.team_size||0;
+  if(team>0){const c=id=>(s._completed_actions||[]).includes(id),cul=s.company_culture==null?45:s.company_culture,over=s._orgOver||0;
+   let pull=0.03+Math.min(0.18,team*0.005)+Math.min(0.06,(s.monthly_revenue||0)/3000000);/* recruiters target your trained people; the bigger the team the more of it is in play — pull keeps climbing, so even a well-run shop can't hold an ever-larger team */
+   if(s._market_cycle==='boom')pull+=0.04;/* hot market = everyone's poaching */
+   let hold=0;if(c('build_benefits_package'))hold+=0.05;if(c('grant_stock_incentives'))hold+=0.06;if(c('hire_hr_manager'))hold+=0.03;if(c('middle_management')||s._coo_hired||s._mgr_marketing)hold+=0.03;/* career path */hold+=Math.max(-0.05,(cul-50)/600);/* culture retains or repels */
+   const burnout=Math.min(0.12,over*0.012)+((s.energy||0)<25?0.03:0);
+   const attrition=Math.max(0.01,Math.min(0.4,pull+burnout-hold));
+   const exp=team*attrition,leavers=Math.floor(exp)+((Math.random()<(exp-Math.floor(exp)))?1:0);
+   if(leavers>0){s.team_size=Math.max(0,team-leavers);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+leavers*3);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-leavers*2000);s.cash-=leavers*2500;/* backfill/recruiting cost */s.systems_maturity=Math.max(0,(s.systems_maturity||0)-Math.min(4,leavers));/* knowledge walks out, systems take a hit */
+    // THE TREADMILL — backfilling drains YOUR time (hiring, onboarding, firefighting) and the green replacements deliver less for a while. The more people, the more leave, the more you retrain — you run flat out just to stand still.
+    s.energy=Math.max(-40,(s.energy||0)-Math.min(8,leavers*3));
+    s._churn_drag=Math.min(0.35,(s._churn_drag||0)+leavers*0.04);
+    s._turnover_streak=(s._turnover_streak||0)+1;
+    s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Turnover',narrative:leavers+' '+(leavers===1?'person':'people')+' left for better pay/benefits elsewhere. Now it\'s hire, onboard, retrain — your time, not theirs — and output dips while the replacements ramp. Hold a team only by out-retaining the market: pay, benefits, equity, culture, growth.'}]);}
+   else s._turnover_streak=0;
+   // Retraining drag decays as replacements ramp up — but a constantly-churning team never gets ahead.
+   if(s._churn_drag>0){s.monthly_revenue=Math.round((s.monthly_revenue||0)*(1-s._churn_drag));s._churn_drag=Math.max(0,s._churn_drag*0.8);}
+   // THE LESSON — when you're clearly stuck on the treadmill, name it and point the way out: stop trying to out-grow a natural ceiling; let FINANCE build the wealth.
+   if((s._turnover_streak||0)>=3&&!s._scaleLessonShown){s._scaleLessonShown=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The founder’s trap',narrative:'You keep hiring and they keep leaving — every month is retraining, not progress. A small business has a natural size; you can\'t out-muscle it with more bodies. From here, real wealth doesn\'t come from a bigger payroll — it comes from FINANCE: leverage the cash & credit you\'ve built into tax-free passive income.'}]);}
+  }}
 // Tax inefficiency drag — high profit without tax structure overpays the IRS every month
 {const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0));if(profit>5000){let ineff=0.16;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.10;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;if((s.trust_structure&&s.trust_structure!=='none'&&s.trust_structure!=='basic_llc'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/30000);if(this._perks().taxSmart)ineff*=0.7;/* Tax-Smart milestone perk: a dialed-in structure trims the residual drag */s.cash-=Math.round(profit*ineff);}}
 const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses);s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
 if(!sep&&s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(taxableIncome*(s.tax_rate||0.25));s.tax_reserve+=res;s.cash-=res;}
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
+// VELOCITY BANKING — running the household through a line of credit instead of a checking account. The edge is real but conditional: park income on a simple-interest line and every surplus dollar retires MORE than a dollar of amortizing principal (the interest you'd have paid is saved), freeing capital years faster and lowering utilization → score. But it's a CASH-FLOW strategy: it only accelerates while you're cash-flow positive. Go negative and the deficit rides on the line and compounds (the spiral). And in a credit-tight downturn the lender can FREEZE/cut the line — which only hurts if you were leaning on it. Discipline (positive CF + lightly-used line) is rewarded; over-leverage is punished.
+if(s._velocity_active&&(s.total_debt||0)>0){
+ const fcf=Math.round((s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-interest-principal-(s.living_expenses||0)-(s.lifestyle_expenses||0));
+ const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
+ const lineLim=(s.business_credit_limit||0)+(persRev+(s.available_credit||0)),lineUsed=(s.business_credit_used||0)+persRev,lineUtil=lineLim>0?lineUsed/lineLim:0;
+ // HELOC/line FREEZE — once per downturn, the lender cuts the line. Devastating if you were leaning on it (high utilization); a non-event if you kept it lightly used.
+ if(s._credit_tight&&!s._velocity_frozen_cycle){s._velocity_frozen_cycle=true;
+  if(lineUtil>0.5){const cut=Math.round((s.available_credit||0)*0.4)+Math.round(Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0))*0.4);s.available_credit=Math.max(0,(s.available_credit||0)-Math.round((s.available_credit||0)*0.4));s.business_credit_limit=Math.max(s.business_credit_used||0,Math.round((s.business_credit_limit||0)*0.7));s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-8);
+   s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — line frozen',narrative:'The downturn hit and your lender slashed your credit line — and you were leaning on it. With the line you run your household through suddenly cut, you\'re scrambling for cash and your utilization just spiked. THIS is the risk of velocity banking on a heavily-used line: in a credit crunch the bank pulls the rug exactly when you need it most. The disciplined keep the line lightly used so a freeze is a non-event.'}]);}
+  else s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking',narrative:'Credit tightened in the downturn and the bank trimmed your line — but you\'d kept it lightly used, so it barely registers. This is the discipline velocity banking demands: a line you don\'t depend on can\'t be used against you.'}]);}
+ if(!s._credit_tight)s._velocity_frozen_cycle=false;/* reset once credit loosens, so the next downturn can freeze again */
+ if(fcf>0){
+  // CHUNK — sweep the surplus at the debt. The velocity edge: interest saved on the parked balance retires extra principal "for free" (~12% acceleration), so you pay down faster than a vanilla payment AND free whatever line the paydown sat on (lower utilization → score). Apply in realistic priority — personal revolving first (frees available_credit), then the business line (frees business headroom), then installment — so only genuine revolving paydown restores a limit.
+  const chunk=Math.min(fcf,s.total_debt||0);s.cash=(s.cash||0)-chunk;s.total_debt=Math.max(0,(s.total_debt||0)-chunk);
+  let pay=chunk;const rv=Math.min(pay,persRev);if(rv>0){s.available_credit=(s.available_credit||0)+rv;pay-=rv;}
+  const bz=Math.min(pay,s.business_credit_used||0);if(bz>0){s.business_credit_used=Math.max(0,(s.business_credit_used||0)-bz);pay-=bz;}/* remainder hits installment — no revolving limit to free */
+  const accel=Math.min(s.total_debt||0,Math.round(chunk*0.12));s.total_debt=Math.max(0,(s.total_debt||0)-accel);/* the interest you'd have paid, knocked off principal */
+  s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+(this.calcPersUtil()<30?2:1));
+  s._velocity_spiral_streak=0;s._velocity_chunk=chunk+accel;
+ } else if(fcf<-200){
+  // SPIRAL — negative cash flow means the deficit rides on the line and compounds. Velocity banking AMPLIFIES bad cash flow just as it amplifies good.
+  const bleed=Math.round(Math.min(-fcf,lineUsed||(-fcf))*0.04);if(bleed>0){s.cash=(s.cash||0)-bleed;s.total_debt=(s.total_debt||0)+bleed;}
+  s._velocity_spiral_streak=(s._velocity_spiral_streak||0)+1;s._velocity_chunk=0;
+  if(s._velocity_spiral_streak>=2)s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — the spiral',narrative:'Your cash flow has gone negative, and velocity banking cuts both ways: with nothing to chunk, the shortfall is riding on your line and compounding. The strategy only builds wealth while you\'re cash-flow positive — right now it\'s working against you. Fix the cash flow (cut burn, lift revenue) or the line balance keeps climbing.'}]);
+ } else s._velocity_chunk=0;
+}
+// REAL-ESTATE LEVERAGE — the downturn margin-call test. Leverage cuts both ways: in good times the bank's money amplifies your returns, but when asset prices fall the debt stays fixed while equity evaporates — and a credit-tight market means you can't refinance your way out. The OVER-leveraged (high LTV going in, property that barely services its own debt, no reserves) get a MARGIN CALL → forced to sell into the crash at the worst possible price, realizing the loss. The CONSERVATIVELY leveraged (more equity down, healthy property cash flow, reserves on hand) take only a paper dip that recovers. This is the discipline real estate demands — and the mirror image of buy-the-dip: the forced sellers in a downturn are exactly who the prepared buy from.
+if(s._credit_tight&&(s.real_estate_debt||0)>0&&(s._asset_units||0)>0&&!s._re_squeeze_cycle){s._re_squeeze_cycle=true;
+ const debt=s.real_estate_debt||0,eq=s.real_estate_equity||0,value=debt+eq,units=s._asset_units||1,depth=s._downturn_depth||1;
+ const haircut=Math.min(0.32,0.13*depth+0.05);/* property values fall 13-32% in the bust, deeper when the downturn is severe */
+ const markedValue=Math.round(value*(1-haircut)),markedEq=markedValue-debt;/* debt is fixed; equity absorbs the whole drop and can go underwater */
+ const ltv=markedValue>0?debt/markedValue:2;/* post-crash loan-to-value */
+ const reSvc=Math.round(debt*0.006),reDSCR=reSvc>0?(s._asset_income||0)/reSvc:99;/* can the rents cover the mortgage? */
+ const dp=this._dryPowder?this._dryPowder():{total:Math.max(0,(s.cash||0)+(s.personal_cash||0))},reserves=dp.total;
+ if(ltv>0.90&&reDSCR<1.1&&reserves<reSvc*6){
+  // MARGIN CALL — underwater, the property can't carry itself, and there's no cushion or refinance. The lender forces a sale of one property into the depressed market. Underwater means the sale doesn't even clear the loan — you eat the deficiency in cash, plus selling costs, and lose the income.
+  const perDebt=Math.round(debt/units),perEq=Math.round(eq/units),perInc=Math.round((s._asset_income||0)/units);
+  const proceeds=Math.round((perDebt+perEq)*(1-haircut)),deficiency=Math.max(0,perDebt-proceeds),sellCost=Math.round((perDebt+perEq)*0.06);
+  s.real_estate_debt=Math.max(0,debt-perDebt);s.total_debt=Math.max(0,(s.total_debt||0)-perDebt);
+  s.real_estate_equity=Math.max(0,eq-perEq);s._asset_units=Math.max(0,units-1);
+  s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)-perInc);s._asset_income=Math.max(0,(s._asset_income||0)-perInc);
+  s.cash=(s.cash||0)-(deficiency+sellCost);if(s.cash<0){const unc=this.coverShortfall(-s.cash);s.cash=0;if(unc>0)s.cash=-unc;}
+  s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-25);/* a forced sale / loan workout craters your credit */
+  s._re_margin_called=(s._re_margin_called||0)+1;
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — MARGIN CALL',narrative:'The crash caught you over-leveraged. Property values fell ~'+Math.round(haircut*100)+'%, your loan-to-value blew past 90% (underwater), the rents no longer cover the mortgage, and with credit frozen you can\'t refinance. The lender forced a sale — and selling into the bottom, the '+this.fmtMoney(proceeds)+' didn\'t even clear the '+this.fmtMoney(perDebt)+' loan. You ate '+this.fmtMoney(deficiency+sellCost)+' in deficiency and costs, lost '+this.fmtMoney(perInc)+'/mo of income, and your credit took a 25-point hit. THIS is over-leverage: in the good times it amplified your returns, in the bust it nearly buried you. More equity down, property that covers its own debt, and reserves are what carry you through.'}]);
+ } else {
+  // RODE IT THROUGH — leverage was conservative (or reserves/cash flow covered it). Equity dips on paper but you're never forced to sell, so it recovers with the market.
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate',narrative:'Property values dipped ~'+Math.round(haircut*100)+'% in the downturn, so your equity is down on paper. But your leverage was conservative — '+(ltv<=0.90?'healthy LTV':'')+(reDSCR>=1.1?(ltv<=0.90?', ':'')+'rents cover the mortgage':'')+(reserves>=reSvc*6?', reserves on hand':'')+' — so no lender can force your hand. You hold, the income keeps flowing, and the equity recovers as the market does. This is why you don\'t over-leverage: staying power turns a crash into a non-event.'}]);
+ }
+}
+if(!s._credit_tight)s._re_squeeze_cycle=false;/* reset once the downturn passes, so the next cycle can test again */
 // Executive Assistant: runs the financial housekeeping BEFORE the credit drift evaluates — utilization paydown, credit + D&B upkeep, tax reserve — so the score rewards the now-healthy file.
 if(s._ea_hired){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),avail=s.available_credit||0,lim=persRev+avail;
 if(lim>0&&persRev/lim>0.3){const target=Math.round(persRev-0.28*lim),pay=Math.max(0,Math.min(target,Math.round((s.cash||0)*0.5)));if(pay>0){s.cash-=pay;s.total_debt=Math.max(0,s.total_debt-pay);s.available_credit=(s.available_credit||0)+pay;}}
@@ -4812,13 +1979,22 @@ if(s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0){s._inquiriesCleare
 // Without Epic, hard inquiries still age off naturally — one drops every 6 months, so only RECENT credit-shopping keeps hurting your odds.
 else if(!s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0)s.credit_inquiries=Math.max(0,(s.credit_inquiries||0)-1);
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
-if(s.insurance_cash_value>0)s.insurance_cash_value=Math.round(s.insurance_cash_value*1.0057);
+// IUL cash value is INDEXED to the cycle now — 0% floor in a downturn, capped (~12%/yr) in a boom, ~7-8% average. Your collateral holds in a crash (the floor) exactly when assets are cheap — that's the IUL's edge.
+// IUL ENGINE — the loan TYPE is the decision. WASH (~3.5%): the borrowed slice is parked at a matching rate → net 0%, the loan can NEVER outrun the collateral, lapse-proof (but the borrowed portion stops earning the index). VARIABLE (market ~5%): the FULL cash value keeps earning the index (0-15%) → positive arbitrage when the index beats the rate, but in a downturn the index floors at 0% while the loan keeps compounding — borrow too hard and the loan passes the cash value, the policy LAPSES, and the gains become taxable ordinary income (phantom income).
+{const idx=(s._index_return!=null)?s._index_return:0.0058,variable=s._iul_loan_type==='variable',washRate=0.035/12,varRate=(s._market_rate!=null?s._market_rate:0.05)/12;
+ if((s.insurance_cash_value||0)>0){const CV=s.insurance_cash_value,loan=s.insurance_loan_balance||0;
+  if(!variable&&loan>0){const bf=Math.min(1,loan/Math.max(1,CV));s.insurance_cash_value=Math.round(CV*(1+idx*(1-bf)+washRate*bf));}/* wash: borrowed slice earns the wash rate, not the index */
+  else s.insurance_cash_value=Math.round(CV*(1+idx));
+  s._iul_last_credit=Math.round(idx*12*1000)/10;}
+ if((s.insurance_loan_balance||0)>0)s.insurance_loan_balance=Math.round((s.insurance_loan_balance||0)*(1+(variable?varRate:washRate)));}
 if(s._family_office&&(s.investment_positions||0)>0)s.investment_positions=Math.round(s.investment_positions*1.004); // family office optimizes allocation — portfolio appreciates ~5%/yr
 if((s.private_bank_balance||0)>0){const _pt2=sep?'personal_cash':'cash';s[_pt2]=(s[_pt2]||0)+Math.round(s.private_bank_balance*0.004);} // private bank deposit earns ~5%/yr while you borrow against it at 1%
 {const _pt=sep?'personal_cash':'cash';s[_pt]=(s[_pt]||0)+(s.other_monthly_revenue||0); // asset income (real estate, lending) → personal once separated
-s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const headroom=Math.max(0,Math.round(s.insurance_cash_value*0.9)-(s.insurance_loan_balance||0)),moPassive=Math.min(Math.round(s.insurance_cash_value*0.06/12),headroom),_pb=s[_pt]||0;if(moPassive>0){s[_pt]=_pb+moPassive;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:moPassive,before:Math.round(_pb),after:Math.round(_pb+moPassive),month:this.month};}}}
-if(s.insurance_loan_balance>0)s.insurance_loan_balance=Math.round(s.insurance_loan_balance*1.0041);
-if(this.month%8===0){const r=Math.random();if(r<0.2){s._market_cycle='recession';s.monthly_revenue=Math.round(s.monthly_revenue*0.85);}else if(r<0.5){s._market_cycle='boom';s.monthly_revenue=Math.round(s.monthly_revenue*1.1);}else s._market_cycle='normal';}
+s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const _var=s._iul_loan_type==='variable',cap=(_var?0.97:0.85)*s.insurance_cash_value/* variable borrows closer to the edge — and pays for it in a downturn */,headroom=Math.max(0,Math.round(cap)-(s.insurance_loan_balance||0)),moPassive=Math.min(Math.round(s.insurance_cash_value*(_var?0.08:0.06)/12),headroom),_pb=s[_pt]||0;if(moPassive>0){const _preI=s._iul_funding_type==='pre_tax',_net=_preI?Math.round(moPassive*(1-Math.min(0.4,s.tax_rate||0.25))):moPassive;/* POST-tax: income is TAX-FREE (Roth). PRE-tax: it's deferred income coming due — taxable (Traditional). */s[_pt]=_pb+_net;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:_net,gross:moPassive,taxed:_preI,before:Math.round(_pb),after:Math.round(_pb+_net),month:this.month};}}}
+// LAPSE — if the loan ever reaches the cash value, the policy collapses: gains taxed as ordinary income (you owe tax on money you already spent), and the tax-free engine is gone. Only the variable loan can get here; the wash loan is structurally safe.
+if(s._iul_loan_type==='variable'&&(s.insurance_cash_value||0)>0&&(s.insurance_loan_balance||0)>=(s.insurance_cash_value||0)*0.95){const gain=Math.max(0,(s.insurance_cash_value||0)-(s.insurance_basis||0)),tax=Math.round(gain*(s.tax_rate||0.25));s.cash=(s.cash||0)-tax;s.insurance_cash_value=0;s.insurance_loan_balance=0;s._passive_income_active=false;s._auto_fund_insurance=false;s._iul_lapsed=true;
+ s._pendingRipples=(s._pendingRipples||[]).concat([{source:'⚠ Policy LAPSED',narrative:'Your IUL collapsed — the variable loan compounded past the cash value (a downturn flatlined your growth while the loan kept accruing). The '+this.fmtMoney(gain)+' of gains are now taxable ordinary income: a '+this.fmtMoney(tax)+' bill on money you already spent. Your tax-free engine is gone. The lesson: never borrow so hard that a bad market can pass your collateral — that\'s what the wash loan protects against.'}]);}
+/* market cycle is advanced at the top of the tick; its revenue tilt is applied where revenue is computed */
 if(sep&&s.personal_cash<0){s.cash+=s.personal_cash;s.personal_cash=0;} // personal deficit rolls into the business shortfall handler below
 if(s.cash<0){const _short=Math.abs(s.cash);s.cash=0;let _unc=this.coverShortfall(_short);if(_unc>0)_unc=this._tapTaxReserveToSurvive(_unc);if(_unc>0)_unc=this._tapPersonalToSurvive(_unc);if(_unc>0){s.cash=-_unc;this._pendingLose='Your business ran out of cash and credit to cover this month\'s obligations.';}}
 // Owner pays themselves a draw/salary scaled to what the business can afford — covers a living wage once profitable (a draw pre-S-Corp, formal salary after); S-Corp just optimizes its tax treatment
@@ -4838,11 +2014,11 @@ if(s._epic_life&&s._epic_plan==='annual'&&s._epic_renew_month&&this.month>=s._ep
 // Auto-actions from key hires
 const bl=this.calcBusinessLevel();
 if(s._completed_actions&&s._completed_actions.includes('hire_fractional_cfo')){if(s.business_credit_profile==='building')s.business_credit_profile='established';s.personal_credit_score=Math.min(850,s.personal_credit_score+1);s.business_credit_limit=(s.business_credit_limit||0)+Math.round(500*bl);const pr=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));if(pr>1000){const as=Math.round(pr*0.05);s._installment_debt=(s._installment_debt||0)+as;s.available_credit=(s.available_credit||0)+Math.round(as*0.8);}}
-if(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')&&this.month%3===0&&s.monthly_revenue>(s.team_size||0)*5000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-3);}
+if(s._completed_actions&&s._completed_actions.includes('hire_hr_manager')&&this.month%3===0&&(s.team_size||0)<8&&s.monthly_revenue>(s.team_size||0)*5000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-3);}
 if(s._completed_actions&&s._completed_actions.includes('build_sales_team')){s.cash-=Math.round((s.monthly_revenue||0)*0.04);s.leads=(s.leads||0)+Math.round(6*bl);/* a dedicated sales team prospects AND closes — it converts pipeline into paying customers, not just leads */const _closed=Math.min(Math.round(3*bl),Math.max(0,(s.leads||0)-(s.customer_base||0)));if(_closed>0)s.customer_base=(s.customer_base||0)+_closed;}
 if(s._completed_actions&&s._completed_actions.includes('hire_client_success')){s.churn_rate=Math.max(0.01,(s.churn_rate||0)-0.005);}
 // FULL-TIME executives build the business on their own each month — team, capacity, pipeline, brand. Fractional execs only pick moves; the active engine is what you pay full-time pay for.
-if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl);s.systems_maturity=Math.min(100,(s.systems_maturity||0)+1);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-1);if(s.monthly_revenue>(s.team_size||0)*6000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-2);}}
+if(s._coo_fulltime){s.revenue_capacity=(s.revenue_capacity||0)+Math.round(900*bl);s.systems_maturity=Math.min(100,(s.systems_maturity||0)+1);s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-1);if((s.team_size||0)<8&&s.monthly_revenue>(s.team_size||0)*6000){s.team_size=(s.team_size||0)+1;s.operating_expenses=(s.operating_expenses||0)+2500;s.key_person_dependency=Math.max(0,(s.key_person_dependency||0)-2);}}
 if(s._cro_fulltime){s.leads=(s.leads||0)+Math.round(5*bl);s.revenue_capacity=(s.revenue_capacity||0)+Math.round(600*bl);s.brand_equity=Math.min(100,(s.brand_equity||0)+1);}
 this.state._milestones_new=this.checkMilestones();
 // Hitting a milestone is a morale win — a minor energy boost on each unlock (capped), surfaced on the milestone banner.
@@ -5001,6 +2177,8 @@ if(!this.state._first_event_seen){this.state._first_event_seen=true;setTimeout((
 evt._scaledChoices=evt.choices.map(c=>({label:c.label,outcome_narrative:c.outcome_narrative,effects:this.scaleEventEffects(c.effects,evt.category==='opportunity')}));
 // Policy loan: the deal is bounded by what your policy can actually lend (up to ~90% of cash value, less any existing loan) — NOT a generic scaled figure. Show the real number so the offer matches what you'll get, and so it's clear this is borrowed (a loan you owe), not free money.
 if(evt.id==='policy_loan_opportunity'&&evt._scaledChoices[0]){const _s=this.state,_room=Math.max(0,Math.round(0.9*(_s.insurance_cash_value||0)-(_s.insurance_loan_balance||0)));evt._scaledChoices[0].effects={insurance_loan_balance:_room,investment_positions:_room,other_monthly_revenue:Math.round(_room*0.012)};}
+// Buy-the-dip: show the live terms — the discount on the table and the dry powder you can actually deploy right now (policy + reserves), so the prepared see what they can seize and the unprepared see exactly what they're missing.
+if(evt.id==='buy_the_dip'){const _s=this.state,dp=this._dryPowder(),disc=Math.round((1-Math.max(0.6,Math.min(0.95,_s._asset_discount||0.78)))*100),enough=dp.total>=8000;note+='<div class="narrative-box fade-in" style="border-left-color:'+(enough?'var(--gold)':'var(--red)')+';margin-bottom:12px;"><strong>On the table:</strong> assets ~'+disc+'% below market. <strong>Deployable dry powder right now: '+this.fmtMoney(dp.total)+'</strong>'+(dp.policy>0?' — incl. '+this.fmtMoney(dp.policy)+' borrowable tax-free against your policy':'')+'.'+(enough?'':' <span style="color:var(--red);">Too thin to move on a deal this size — credit\'s frozen and you\'ve no reserve to deploy.</span>')+'</div>';}
 // Choices no longer reveal the outcome numbers — you decide from the narrative + your dashboard, then see results after. The ONE exception is a deal/offer (an opportunity): you should see the terms on the table (price, financing, equity), but not the downstream stat impacts.
 const isOffer=evt.category==='opportunity',OFFER_KEYS=['cash','total_debt','available_credit','real_estate_equity','investment_positions','insurance_cash_value','business_credit_limit'];
 document.getElementById('event-choices').innerHTML=note+evt._scaledChoices.map((c,i)=>{let inner='';if(isOffer){const parts=Object.entries(c.effects).filter(([k,v])=>typeof v==='number'&&v!==0&&OFFER_KEYS.includes(k)).map(([k,v])=>(MK.includes(k)?this.fmtMoney(v):(v>0?'+':'')+v)+' '+this.formatStatName(k));if(parts.length)inner='<div class="choice-effects" style="color:var(--text2);"><span style="font-weight:600;">The offer:</span> '+parts.join(', ')+'</div>';}return'<div class="choice-card fade-in" onclick="Game.resolveEvent('+i+')"><h4>'+c.label+'</h4>'+inner+'</div>';}).join('');this.currentEvent=evt;this.eventHistory.push(evt);},
@@ -5040,6 +2218,18 @@ let effects=Object.assign({},c.effects),protNote='',saleNote='';
 if(evt.id==='acquisition_offer'&&ci===0){const s=this.state,proceeds=effects.cash||0;delete effects.cash;const tax=Math.round(proceeds*0.238),net=proceeds-tax;s.personal_cash=(s.personal_cash||0)+net;s.personal_tax_ytd=(s.personal_tax_ytd||0)+tax;s.capital_account=0;saleNote='<div class="narrative-box fade-in" style="border-left-color:var(--gold);margin-top:12px;">You sold the company — converting illiquid equity into cash. The <strong>'+this.fmtMoney(proceeds)+'</strong> sale price is <strong>personal</strong> income, less <strong>'+this.fmtMoney(tax)+'</strong> in long-term capital-gains tax (~23.8%: 20% federal + 3.8% NIIT). Net to you: <strong>'+this.fmtMoney(net)+'</strong>. Your equity and its future cash flow now belong to the buyer — your wealth is only what survived the tax.</div>';}
 // Borrowing against your policy to fund a deal: you can only deploy what the policy actually supports (up to ~90% of cash value, less any existing loan). The position funded equals the amount borrowed — and the cash value itself is untouched (it keeps compounding via the monthly tick).
 if(evt.id==='policy_loan_opportunity'&&ci===0){const s=this.state,room=Math.max(0,Math.round(0.9*(s.insurance_cash_value||0)-(s.insurance_loan_balance||0))),want=effects.investment_positions||15000,deploy=Math.min(want,room);delete effects.investment_positions;delete effects.insurance_loan_balance;delete effects.other_monthly_revenue;if(deploy>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+deploy;s.investment_positions=(s.investment_positions||0)+deploy;s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(deploy*0.012);c.outcome_narrative='You borrowed '+this.fmtMoney(deploy)+' tax-free against your policy — up to ~90% of its '+this.fmtMoney(s.insurance_cash_value||0)+' cash value — and deployed it into a passive position throwing off ~'+this.fmtMoney(Math.round(deploy*0.012))+'/mo. The cash value keeps compounding as if you never touched it; the loan is simply netted from your death benefit, never repaid from your pocket.';}else{c.outcome_narrative='Your policy doesn\'t have borrowing room right now — you can borrow up to ~90% of the cash value, less any existing loan. Keep funding the policy and this kind of on-demand, tax-free deal opens back up.';}}
+// BUY THE DIP — the keystone payoff. In the downturn, the prepared deploy dry powder into distressed assets at a deep discount while the over-leveraged are frozen out (or forced sellers). Funded POLICY-FIRST (tax-free, no credit check, frozen-proof) then cash reserves; assets are marked at their post-recovery value, so the discount you captured is instant equity, plus high yield on the cheap basis. Everything is computed here — the config choice effects are empty.
+if(evt.id==='buy_the_dip'){const s=this.state;
+ if(ci===0){const dp=this._dryPowder(),discount=Math.max(0.6,Math.min(0.95,s._asset_discount||0.78));
+  const cap=Math.min(300000,Math.max(60000,Math.round(this.calcNetWorth()*0.4)));let deploy=Math.min(dp.total,cap);
+  if(deploy<8000){c.outcome_narrative='The deal of the decade is sitting right in front of you — distressed assets '+Math.round((1-discount)*100)+'% below market, motivated sellers everywhere — and you can\'t move on it. Credit is frozen, your policy has little or no cash value to borrow against, and your reserves are thin. <strong>This is the hard lesson of the downturn:</strong> the dip only pays the prepared. A funded policy you could borrow against tax-free, dry powder you kept liquid instead of over-extending — that\'s what turns a crash into the buying opportunity of a lifetime. Next cycle, be ready before the music stops.';}
+  else{let need=deploy,fromPolicy=Math.min(need,dp.policy);if(fromPolicy>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+fromPolicy;need-=fromPolicy;}
+   let fromCash=Math.min(need,dp.cash);if(fromCash>0){let r=fromCash;const fc=Math.min(r,s.cash||0);s.cash=(s.cash||0)-fc;r-=fc;if(r>0)s.personal_cash=(s.personal_cash||0)-r;need-=fromCash;}
+   deploy=fromPolicy+fromCash;const marked=Math.round(deploy/discount);/* bought at a discount, marked at post-recovery value */const dipAlpha=marked-deploy;const monthlyCF=Math.round(marked*0.011);/* cheap basis throws off high yield (~13%/yr) */
+   s.investment_positions=(s.investment_positions||0)+marked;s.other_monthly_revenue=(s.other_monthly_revenue||0)+monthlyCF;s._bought_dip=(s._bought_dip||0)+1;
+   const srcParts=[];if(fromPolicy>0)srcParts.push(this.fmtMoney(fromPolicy)+' borrowed tax-free against your policy');if(fromCash>0)srcParts.push(this.fmtMoney(fromCash)+' from your reserves');
+   c.outcome_narrative='You moved while the rest of the market was paralyzed. You deployed <strong>'+this.fmtMoney(deploy)+'</strong> ('+srcParts.join(' + ')+') into distressed assets at a <strong>'+Math.round((1-discount)*100)+'% discount</strong> — the kind of basis you only get in a crash. Marked at their normalized value of ~<strong>'+this.fmtMoney(marked)+'</strong>, you\'re already up <strong>'+this.fmtMoney(dipAlpha)+'</strong> in equity, and the cheap basis throws off <strong>'+this.fmtMoney(monthlyCF)+'/mo</strong> in passive cash flow. '+(fromPolicy>0?'This is exactly why you funded the policy: when banks slammed the window shut, your cash value didn\'t care — tax-free capital, no application, no approval, and the 0% floor meant the crash never even dented it.':'You kept your powder dry instead of over-extending, so when the discount came you could actually act.')+' This is how fortunes transfer in a downturn — to whoever prepared for it.';}}
+  else{c.outcome_narrative='You stayed liquid and let it pass. Discipline has its own value — preserving reserves is never wrong. But assets this cheap, with sellers this motivated, are exactly what the prepared spend the good years getting ready for. The cycle always turns; the question is whether you\'ll have dry powder when it does.';}}
 // Partnership deal: the cash injection scales with your business level, so put the ACTUAL amount in the narrative instead of a flat "$20K".
 if(evt.id==='partner_offer'){const cashAmt=effects.cash||0;if(ci===0){this.state._partner_equity=0.30;c.outcome_narrative='The deal is signed — <strong>'+this.fmtMoney(cashAmt)+'</strong> in the bank plus a Rolodex of connections, in exchange for 30% equity. From now on your partner takes <strong>30% of every month\'s profit</strong> — it comes straight out of your cash and equity. That\'s the real price of selling a stake.';}else if(ci===1)c.outcome_narrative='She took the revenue-share — <strong>'+this.fmtMoney(cashAmt)+'</strong> upfront and you kept all your equity. Less capital now, but every future dollar stays yours.';}
 // Key-Man Leverage — hybrid claim: losing an operator always stops that asset's income; if the operator was insured, the policy retires that property's SPECIFIC mortgage (covered = contained), otherwise the loan remains while the income that served it is gone (uninsured = the lesson). The claim never exceeds that loan — never a windfall.
@@ -5153,7 +2343,16 @@ const scores=['Body','Mind','Spirit','Heart','Luxury'].map(k=>({label:this.LIFE_
 document.getElementById('lifestyle-scores').innerHTML='<div style="display:flex;gap:8px;margin-bottom:8px;grid-column:span 3;"><div class="stat-card" style="flex:1;"><div class="stat-value stat-positive" style="font-size:0.9rem;">'+this.fmtMoney(this.isSeparated()?(s.personal_cash||0):(s.cash||0))+'</div><div class="stat-label">'+(this.isSeparated()?'Personal Cash':'Cash')+'</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" style="font-size:0.9rem;color:'+(mastery>50?'var(--accent)':mastery>25?'var(--gold)':'var(--red)')+';">'+mastery+'</div><div class="stat-label">Personal Mastery</div></div></div>'+scores.map(st=>'<div class="stat-card"><div class="stat-value stat-'+st.color+'">'+st.value+'</div><div class="stat-label">'+st.label+'</div></div>').join('');
 // Group actions by the five Personal-Development themes (weakest dimensions first)
 const themeVal={Body:d.Body,Mind:d.Mind,Spirit:d.Spirit,Heart:d.Heart,Luxury:d.Luxury};
-this._sortedLifestyle=[...CONFIG.lifestyle_options.actions].sort((a,b)=>{const ta=this.LIFE_THEME[a.subcategory]||'Luxury',tb=this.LIFE_THEME[b.subcategory]||'Luxury';if(ta!==tb)return (themeVal[ta]||0)-(themeVal[tb]||0);return (a.cash_cost||0)-(b.cash_cost||0);});
+// Rotating batch: rather than dumping all 45 options every quarter, show a curated handful per theme that CHANGES each visit. Weakest dimensions lead; freshest (not recently shown) options are preferred, so each life check-in looks different. Whatever you saw last time rotates to the back; older options cycle back in.
+const PER_THEME=3,recent=this.state._life_recent||[],pocketOf=a=>(this.isSeparated()&&this.lifeActionIsPersonal(a))?(s.personal_cash||0):(s.cash||0);
+const _themes=['Body','Mind','Spirit','Heart','Luxury'].sort((x,y)=>(themeVal[x]||0)-(themeVal[y]||0));
+let _batch=[];
+for(const th of _themes){const inTheme=CONFIG.lifestyle_options.actions.filter(a=>(this.LIFE_THEME[a.subcategory]||'Luxury')===th);
+ inTheme.sort((a,b)=>{const fa=recent.includes(a.id)?1:0,fb=recent.includes(b.id)?1:0;if(fa!==fb)return fa-fb;/* fresh first */const af=pocketOf(a)>=(a.cash_cost||0)?0:1,bf=pocketOf(b)>=(b.cash_cost||0)?0:1;if(af!==bf)return af-bf;/* affordable first */return (a.cash_cost||0)-(b.cash_cost||0);/* cheaper first */});
+ _batch=_batch.concat(inTheme.slice(0,PER_THEME));}
+this._sortedLifestyle=_batch;
+// Remember what we just showed (front = most recent) so next quarter rotates to different options; cap so older ones become eligible again.
+this.state._life_recent=_batch.map(a=>a.id).concat(recent.filter(id=>!_batch.some(a=>a.id===id))).slice(0,2*PER_THEME*_themes.length);
 let listHtml='',curSub='';
 this._sortedLifestyle.forEach(a=>{
 const theme=this.LIFE_THEME[a.subcategory]||'Luxury';
@@ -5409,11 +2608,20 @@ calculateFinalScores(){const s=this.state;
 const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.real_estate_equity||0,reDebt=s.real_estate_debt||0,invest=s.investment_positions||0,polLoan=s.insurance_loan_balance||0,pbBal=s.private_bank_balance||0,pbLoan=s.private_bank_loan||0,bd=s.debt_breakdown||{};
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
 const otherDebt=Math.max(0,(s.total_debt||0)-reDebt-(bd.credit_card||0)-(bd.collections||0)-polLoan);
+// Logarithmic ladder helper (defined up here so leverage_efficiency can use it too).
+const _lg=(v,lo,hi)=>Math.max(0,Math.min(100,100*Math.log10(Math.max(1,v)/lo)/Math.log10(hi/lo)));
 // Passive, mostly tax-free, monthly income: policy-loan income (10%/yr once CV>=250k) + RE cashflow (~$700/property) + lending interest (12%/yr)
 const passiveMonthly=(s._passive_income_active?cv*0.06/12:0)+reOwned*700+invest*0.01+pbBal*0.004;
-// Leverage efficiency: % of productive asset base financed with good (OPM) debt, ramped by asset scale
-const controlled=reEquity+reDebt+invest+cv+pbBal,goodDebt=reDebt+(s.business_installment_debt||0)+polLoan+pbLoan;
-const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));
+// LEVERAGE EFFICIENCY — "max wealth with the least of your OWN money," but SAFELY. Not raw debt (over-leveraging is what the downturn margin-call punishes); efficiency is the asset base you CONTROL per dollar of your own equity, via other people's money — then gated by how safe that leverage is. A master controls ~4-5× their own capital through serviceable OPM; a blow-up (margin call, dangerous LTV, consumer debt) is the opposite of efficient and drags the score down.
+const controlled=reEquity+reDebt+invest+cv+pbBal;/* full productive asset base you command */
+const opm=reDebt+polLoan+pbLoan;/* other people's money financing that base (mortgages, policy loans, private-bank spread) */
+const netEquity=Math.max(2000,controlled-opm);/* YOUR actual skin in the game */
+const mult=controlled/netEquity;/* OPM multiple — assets controlled per dollar of your own equity */
+const scaleRamp=Math.min(1,controlled/200000);/* needs real asset scale (~$200k+) before the multiple counts — a tiny leveraged sliver doesn't max it */
+let levRaw=_lg(mult,1,5)*scaleRamp;/* 1×→0, 2×→43, 3×→68, 4×→86, 5×+→100 */
+// SAFETY gate — efficient leverage is SERVICEABLE leverage. A margin-call blow-up, a dangerously high real-estate LTV, or consumer "bad" debt all mark the leverage as reckless, not efficient — and pull the score well below a conservative borrower's.
+let safety=1;if(s._re_margin_called)safety*=0.5;const _reVal=reEquity+reDebt,_reLTV=_reVal>0?reDebt/_reVal:0;if(_reLTV>0.85)safety*=0.6;else if(_reLTV>0.75)safety*=0.85;if(badDebt>0)safety*=0.85;
+const lev=controlled<1000?0:Math.round(Math.max(0,Math.min(100,levRaw*safety)));
 // Net worth, leverage-aware: mortgage already netted inside reEquity; bad debt counts fully, other debt half, good debt not subtracted
 const nw=(s.cash||0)+(s.personal_cash||0)+reEquity+invest+cv+pbBal-polLoan-pbLoan-badDebt-otherDebt*0.5+(s.available_credit||0)*0.1;
 // Protection — how well the wealth is shielded: legal entity (liability separation) + asset-protection trust + insurance coverage + cash reserves. Credit/tax structure fold in here as the "don't lose it" pillar.
@@ -5425,7 +2633,8 @@ const burnP=Math.max(1,this.calcMonthlyBurn()),reserves=(s.tax_reserve||0)+Math.
 const resvPts=Math.min(25,(reserves/burnP/6)*25);/* ~6 months of burn held in reserve/cash = full */
 const protection=Math.round(Math.min(100,entPts+trustPts+insPts+resvPts));
 // Six end-game pillars (DESIGN.md). Passive tax-free income is the crown jewel; freedom (owner-independence) + leverage encode "max wealth & lifestyle with the least of your own money and time."
-return{passive_income:Math.min(100,passiveMonthly/120),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.min(100,Math.max(0,(nw/250000)*100))};},
+// Logarithmic ladders so finance MASTERY differentiates instead of capping early. Tuned for the lean-business economy: passive $1k→0, $10k→50, $30k→74, $100k→100; net worth $50k→0, $1M→50, $5M→77, $20M→100. A finance dabbler lands ~50; a master climbs toward 100.
+return{passive_income:Math.round(_lg(passiveMonthly,1000,100000)),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.round(_lg(nw,50000,20000000))};},
 // Strong lifestyle gate: a wrecked life caps the final score (no "paradise" if you burned out). lifestyle 65+ = full, ~32 = half, floored at 0.3.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
 determineArchetype(scores){const A=id=>CONFIG.archetypes.win_archetypes.find(a=>a.id===id)||CONFIG.archetypes.win_archetypes[0];
@@ -5456,7 +2665,3 @@ fmtMoney(n){n=Math.round(n);const a=Math.abs(n),str=a>=1000?a.toLocaleString():a
 formatStatName(k){return k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
 };
 Game.init();
-
-</script>
-</body>
-</html>
