@@ -206,13 +206,13 @@ window.EMBEDDED_CONFIG = {
       "description": "Bad credit and a brutal first year left you cash-tight and buried in debt. The business still turns a little, but lenders have shut you out completely. The hardest road there is: rebuild your credit, restructure the debt the smart way, and claw back to where capital works for you again.",
       "opening_narrative": "Six months ago, everything fell apart. The divorce settlement gutted your savings. The business credit card you'd been juggling finally caught up. Your credit score reads like a failing grade, and the bank that used to return your calls doesn't anymore.\n\nBut you've built something before. You know how to sell, how to deliver, how to grind. What you need now isn't a new idea — it's a new foundation under the one you already have.",
       "initial_state": {
-        "cash": 7000,
+        "cash": 15000,
         "personal_credit_score": 540,
         "credit_negatives": 6,
         "business_credit_profile": "none",
-        "available_credit": 6000,
-        "total_debt": 27000,
-        "debt_breakdown": { "credit_card": 17000, "collections": 7000, "personal_loan": 3000 },
+        "available_credit": 9000,
+        "total_debt": 24000,
+        "debt_breakdown": { "credit_card": 17000, "collections": 4000, "personal_loan": 3000 },
         "_installment_debt": 3000,
         "dscr": 0.6,
         "personal_guarantee_exposure": 17000,
@@ -220,7 +220,7 @@ window.EMBEDDED_CONFIG = {
         "cogs": 800,
         "operating_expenses": 1200,
         "customer_base": 22,
-        "churn_rate": 0.10,
+        "churn_rate": 0.08,
         "brand_equity": 22,
         "systems_maturity": 10,
         "team_size": 0,
@@ -244,7 +244,7 @@ window.EMBEDDED_CONFIG = {
         "lifestyle_spiritual": 10,
         "lifestyle_philanthropy": 5,
         "lifestyle_legacy": 5,
-        "revenue_capacity": 7000,
+        "revenue_capacity": 11000,
         "living_expenses": 2200,
         "lifestyle_expenses": 0,
         "tax_reserve": 0,
@@ -281,10 +281,10 @@ window.EMBEDDED_CONFIG = {
       "description": "Starting from zero — no customers, no track record, just some savings and an idea. The cleanest slate there is, and the gentlest way to learn the game.",
       "opening_narrative": "You handed in your resignation letter three weeks ago. Your savings account has enough runway for maybe four months if you're careful — three if you're not.\n\nYou've got a laptop, a half-finished website, and a service you believe people will pay for. No customers yet. No reputation. No safety net. Just the kind of terrified excitement that either builds something real or burns out by month six.\n\nThe first sale is all that matters right now.",
       "initial_state": {
-        "cash": 10000,
+        "cash": 14000,
         "personal_credit_score": 670,
         "business_credit_profile": "none",
-        "available_credit": 6000,
+        "available_credit": 8000,
         "total_debt": 4000,
         "debt_breakdown": { "credit_card": 4000 },
         "_installment_debt": 0,
@@ -318,8 +318,8 @@ window.EMBEDDED_CONFIG = {
         "lifestyle_spiritual": 30,
         "lifestyle_philanthropy": 10,
         "lifestyle_legacy": 5,
-        "revenue_capacity": 0,
-        "living_expenses": 3200,
+        "revenue_capacity": 3000,
+        "living_expenses": 2800,
         "lifestyle_expenses": 0,
         "tax_reserve": 0,
         "tax_rate": 0.25,
@@ -2495,6 +2495,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.46.0',d:'2026-06-30 10:24',n:[
+'Your business now grows like a real one — no invisible wall. Revenue is bounded by what you can actually DELIVER (your founder + team + systems) and what the market will give you (your brand). A solo founder tops out lean (~$70–90k/mo); to serve more clients you must HIRE — and past a small team, more growth needs a stronger BRAND, not more bodies. The plateau is earned and emergent, never an arbitrary cap.',
+'Over-sell what you can serve and the clients you can\'t support churn back out — delivery capacity is real, so you can\'t just buy your way past the ceiling. The way up from a maxed-out lean business is FINANCE leveraging the cash & credit it throws off. That\'s the whole point.',
+'Rebalanced the tough early starts (Stuck & New founders) for the leaner, more realistic economy: a bit more opening runway and a faster first ramp, so a careful player can claw their way up.',
+'The Revenue and CFO breakdowns now show your addressable market and explain where your real ceiling comes from.',
+]},
 {v:'0.45.0',d:'2026-06-30 07:13',n:[
 'New Epic Life perk — Velocity Banking (Finance → Debt & Credit, members only). Run your household through a line of credit and sweep your surplus straight at your debt, paying it down years faster. You choose the vehicle: a HELOC against your property (attacks the mortgage and builds equity quicker) or a credit line (attacks revolving debt).',
 'You\'re in the driver\'s seat: pick how aggressively to sweep (Conservative 50% / Balanced 75% / Aggressive 100% of each month\'s surplus), then use the ⚡ Velocity chip on your dashboard to chunk extra cash, retune, switch vehicle, or pause — any month, no turn needed. A live readout shows interest saved, equity built, and your payoff date with vs. without velocity.',
@@ -3542,7 +3548,16 @@ h+=this._statFooter();this.showPopup('Debt Breakdown'+(scope?(' — '+(biz&&!per
 
 showEbitda(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0,ebitda=rev-cogs-opex;this.showPopup(this.term('EBITDA'),'<div class="breakdown-row"><span>Revenue</span><span style="color:var(--accent)">$'+this.fmt(rev)+'</span></div><div class="breakdown-row"><span>- '+this.term('COGS')+'</span><span style="color:var(--red)">$'+this.fmt(cogs)+'</span></div><div class="breakdown-row"><span>- Operating Expenses</span><span style="color:var(--red)">$'+this.fmt(opex)+'</span></div><div class="breakdown-row breakdown-total"><span>= '+this.term('EBITDA')+'</span><span style="color:'+(ebitda>=0?'var(--accent)':'var(--red)')+'">$'+this.fmt(ebitda)+'</span></div>');},
 
-showRevenue(scope){const s=this.state,biz=s.monthly_revenue||0,cust=s.customer_base||0,perCust=cust>0?Math.round(biz/cust):0,cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);
+// Soft addressable-market reach (in CLIENTS) — single source of truth for the emergent revenue plateau. Conversion saturates toward this in monthlyTick (rising CAC, no hard cap). Reach is the LESSER of two real limits, so the bottleneck shifts as you grow — which is what makes a lean business plateau and forces real investment to break through:
+//  • DELIVERY CAPACITY — how many recurring accounts you can actually serve & KEEP. The founder alone carries a small book; each client-facing hire adds a real head of capacity; SYSTEMS multiply how many accounts each person can hold (automation/delivery infra). A SOLO operator tops out ~$50-80k/mo no matter the demand — to serve more you must HIRE (which then triggers the management-debt + retention treadmill below: the real "No Man's Land").
+//  • MARKET DEMAND — how many clients actually want you, from brand/offer/sales-infra. Once you've hired enough to serve everyone who wants you, MORE staff buys nothing; growth then requires widening the market (brand, offer) at diminishing returns.
+// Net: low team → capacity-bound (hire); high team → demand-bound (build brand). Both gates are real work, the ceiling lands in the ~$2-3M/yr No Man's Land band, and the smart way up stays FINANCE. (DESIGN.md: brute-force revenue hits a ceiling; FINANCE builds the wealth.)
+mktReach(s){s=s||this.state;const team=s.team_size||0,sys=Math.min(s.systems_maturity||0,100),offer=(s._completed_actions||[]).includes('build_offer');
+ const perHead=22+sys*0.30,founderCap=55+sys*0.35,capacity=founderCap+Math.min(team,12)*perHead;
+ const demand=45+(s.brand_equity||0)*1.3+(offer?30:0)+Math.min(s.revenue_capacity||0,60000)/1200;
+ return Math.max(30,Math.min(capacity,demand));},
+
+showRevenue(scope){const s=this.state,biz=s.monthly_revenue||0,cust=s.customer_base||0,perCust=cust>0?Math.round(biz/cust):0,reach=Math.round(this.mktReach(s));
 const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passive=(s.other_monthly_revenue||0)+policyPassive,salary=s.owner_pay||0;
 const wantP=scope!=='business',wantB=scope!=='personal';
 const head=(t,col)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:0 0 6px;">'+t+'</div>';
@@ -3550,7 +3565,7 @@ let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);l
 if(wantB){h+=head('Business Revenue','var(--blue)');
 h+='<div class="breakdown-row"><span>'+cust+' '+(cust===1?'customer':'customers')+' × ~'+this.fmtMoney(perCust)+'/mo</span><span style="color:var(--accent)">'+this.fmtMoney(biz)+'</span></div>';
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)h+='<div class="breakdown-detail">Seasonal Q4 dip applied (−15%)</div>';
-h+='<div class="breakdown-detail">Delivery capacity '+this.fmtMoney(cap)+'/mo — demand past this is heavily dampened.</div>';}
+h+='<div class="breakdown-detail">Addressable market ~'+reach+' customers ('+cust+' won). As you saturate it, new customers cost more to win — so a lean business naturally plateaus. Grow it via brand/offer, or build wealth through FINANCE.</div>';}
 if(wantP){h+=head('Personal Income','var(--accent)');
 if(salary>0)h+='<div class="breakdown-row"><span>Owner salary / draw</span><span style="color:var(--accent)">'+this.fmtMoney(salary)+'</span></div>';
 if(passive>0){if((s.real_estate_owned||0)>0)h+='<div class="breakdown-detail">· '+s.real_estate_owned+' rental propert'+(s.real_estate_owned>1?'ies':'y')+'</div>';
@@ -3685,9 +3700,10 @@ const burn=this.calcMonthlyBurn(),netFlow=rev-cogs-burn;
 const runway=netFlow>=0?'Profitable':(Math.floor(((s.cash||0)+(s.personal_cash||0)+(s.available_credit||0))/Math.max(1,-netFlow))+' mo runway');
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+((s._completed_actions||[]).includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
 const convRate=Math.min(0.5,0.05+(s.skill_marketing||0)/300+(s.brand_equity||0)/1000+Math.min(0.20,(s.sales_conversion||0)*0.01));
-const cap=8000+((s.team_size||0)*5000)+(s.revenue_capacity||0);
-let cust=s.customer_base||0,leads=s.leads||0;for(let i=0;i<6;i++){const conv=Math.floor(leads*convRate);cust+=conv;leads=Math.max(0,leads-conv);cust=Math.max(0,cust-Math.floor(cust*(s.churn_rate||0.05)));}
-let projRev=cust*revPerCust;if(projRev>cap)projRev=Math.round(cap+(projRev-cap)*0.25);projRev+=(s.other_monthly_revenue||0);
+// Soft addressable-market reach (mirrors the live engine): customer growth saturates here — rising CAC, no hard cap. Revenue plateaus lean on its own.
+const reach=this.mktReach(s),_cy=Math.min(s.systems_maturity||0,100);
+let cust=s.customer_base||0,leads=s.leads||0;for(let i=0;i<6;i++){const sat=Math.max(0,1-cust/reach),conv=Math.floor(Math.max(0,leads-cust)*convRate*sat);cust+=conv;const scn=Math.min(0.4,(s.churn_rate||0.05)+Math.max(0,(cust-30)/30*0.01)*Math.max(0.3,1-_cy/100));cust=Math.max(0,cust-Math.floor(cust*scn));}
+let projRev=cust*revPerCust+(s.other_monthly_revenue||0);
 const row=(l,v,col)=>'<div class="breakdown-row"><span>'+l+'</span><span style="color:'+(col||'var(--text)')+';font-weight:700">'+v+'</span></div>';
 const head=(t,c,first)=>'<div style="font-weight:700;color:'+c+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+c+';padding-bottom:3px;margin:'+(first?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
 let h='<div style="font-size:0.72rem;color:var(--text2);font-style:italic;margin-bottom:8px;">Your fractional CFO’s read on the business:</div>';
@@ -3706,13 +3722,13 @@ h+=row('DSCR',(s.dscr>=99?'—':s.dscr),(s.dscr>=1.25||s.dscr>=99)?'var(--accent
 h+='<div class="breakdown-detail">Company value ≈ 3× annual profit (or 0.5× revenue early). Net worth includes the business, your cash, assets and policy, minus debt.</div>';
 h+=head('6-Month Projection','var(--blue)');
 h+=row('Customers',cust);h+=row('Revenue/mo',this.fmtMoney(projRev),'var(--accent)');
-h+='<div class="breakdown-detail">At your current conversion ('+Math.round(convRate*100)+'%) and churn ('+Math.round((s.churn_rate||0)*100)+'%/mo). Delivery capacity tops out at '+this.fmtMoney(cap)+'/mo — beyond it, revenue is heavily dampened.</div>';
+h+='<div class="breakdown-detail">At your current conversion ('+Math.round(convRate*100)+'%) and churn ('+Math.round((s.churn_rate||0)*100)+'%/mo). Your addressable market is ~'+Math.round(reach)+' customers — as you approach it each new customer costs more to win (saturation), so revenue plateaus lean. The way up from here is FINANCE leveraging the cash &amp; credit this business throws off.</div>';
 h+=head('Where I’d Focus','var(--gold)');
-h+='<div class="breakdown-detail" style="margin-bottom:5px;"><strong style="color:var(--accent)">Marketing:</strong> '+this._cfoMktg(s,cap,convRate)+'</div>';
+h+='<div class="breakdown-detail" style="margin-bottom:5px;"><strong style="color:var(--accent)">Marketing:</strong> '+this._cfoMktg(s,reach,convRate)+'</div>';
 h+='<div class="breakdown-detail" style="margin-bottom:5px;"><strong style="color:var(--blue)">Operations:</strong> '+this._cfoOps(s)+'</div>';
 h+='<div class="breakdown-detail"><strong style="color:var(--gold)">Finance:</strong> '+this._cfoFin(s)+'</div>';
 this.showPopup('CFO Briefing',h);},
-_cfoMktg(s,cap,convRate){if((s.monthly_revenue||0)>=cap*0.9)return 'You’re near delivery capacity ('+this.fmtMoney(cap)+'/mo). Raise capacity (hire delivery, systemize) before pouring in more leads — extra demand is wasted.';if(convRate<0.12&&(s.leads||0)>10)return 'Conversion is '+Math.round(convRate*100)+'% with '+(s.leads||0)+' leads waiting. A sales action (CRM, sales hire, webinar, email nurture) turns that pipeline into revenue.';if((s.customer_base||0)<10)return 'Thin pipeline. Pour into lead gen (outreach, ads, referrals, lead magnet) to fill the top of the funnel.';return 'Funnel looks healthy. Lift value-per-customer (sharpen your Offer, build brand) to grow revenue without more headcount.';},
+_cfoMktg(s,reach,convRate){if((s.customer_base||0)>=reach*0.85)return 'You’ve nearly saturated your addressable market (~'+Math.round(reach)+' customers) — each new one now costs more to win. Widen it (sharpen your Offer, build brand, expand into new segments/systems) or, better, start putting this cash flow to work in FINANCE.';if(convRate<0.12&&(s.leads||0)>10)return 'Conversion is '+Math.round(convRate*100)+'% with '+(s.leads||0)+' leads waiting. A sales action (CRM, sales hire, webinar, email nurture) turns that pipeline into revenue.';if((s.customer_base||0)<10)return 'Thin pipeline. Pour into lead gen (outreach, ads, referrals, lead magnet) to fill the top of the funnel.';return 'Funnel looks healthy. Lift value-per-customer (sharpen your Offer, build brand) to grow revenue without more headcount.';},
 _cfoOps(s){if((s.churn_rate||0)>0.06)return 'Churn is '+Math.round((s.churn_rate||0)*100)+'%/mo — you’re leaking customers as fast as you win them. Retention (client success, onboarding, quality control) plugs the bucket.';if((s.key_person_dependency||0)>50)return 'Key-person dependency is '+(s.key_person_dependency||0)+'. The business leans too hard on you — document SOPs and add a manager so it runs without you.';if((s.team_size||0)>3&&(s.systems_maturity||0)<40)return 'Your team ('+(s.team_size||0)+') has outgrown your systems — coordination is costing you. Systemize before hiring more.';return 'Operations are stable. Keep building systems and lowering key-person dependency to scale without your hours.';},
 _cfoFin(s){if(!this.isSeparated())return 'Form an LLC — it shields your personal assets from lawsuits and unlocks business credit. This is your #1 gap.';if(this.calcPersUtil()>50)return 'Personal credit utilization is '+this.calcPersUtil()+'%. Restructure your debt onto business credit to drop utilization and lift your score.';const opProfit=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));if(opProfit>8000&&!['s_corp','c_corp','multi_entity'].includes(s.entity_structure))return 'At '+this.fmtMoney(opProfit)+'/mo profit you’re overpaying self-employment tax. Elect S-Corp to split salary and distributions.';if(opProfit>4000&&!(s._completed_actions||[]).includes('fund_accumulation_policy'))return 'You’re profitable but cash sits idle. Open an accumulation policy and fund it — it compounds tax-free and becomes your passive-income engine.';if((s._completed_actions||[]).includes('fund_accumulation_policy')&&!s._passive_income_active&&(s.insurance_cash_value||0)>5000)return 'Your policy is built up — activate tax-free passive income to start paying yourself without working.';return 'Solid footing. Keep funding the policy and deploying into income assets (real estate, private lending) for passive, tax-free cash flow.';},
 
@@ -4432,25 +4448,24 @@ if(s._recurring_expiry){for(const id of Object.keys(s._recurring_expiry)){if(thi
   if(Object.keys(apply).length){this.applyEffects(apply);const tag=sysMat<35?' — but with no systems behind them, the results are thin and uneven':(s._mgr_marketing?' — manager-coordinated, steady output':'');s._pendingRipples=(s._pendingRipples||[]).concat([{source:who,narrative:'ran '+a.label+' this month'+tag+'.'}]);}};
  runSpec('_spec_leadgen','Lead Generation','Lead-Gen Specialist');runSpec('_spec_convert','Sales & Conversion','Sales Specialist');}
 // Churn — leaky bucket: a large base with low systems/no retention churns faster
-{const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
+{const sizeChurn=Math.max(0,((s.customer_base||0)-30)/30*0.01)*Math.max(0.3,1-(s.systems_maturity||0)/100);const effChurn=Math.min(0.4,(s.churn_rate||0)+sizeChurn);s.customer_base=Math.max(0,s.customer_base-Math.floor(s.customer_base*effChurn));}
 // Lead decay — un-nurtured prospects go cold. The not-yet-converted lead pool shrinks each month, so you can't coast on a one-time pile of leads: without fresh marketing (and retention to slow churn) the customer base erodes. Strong brand keeps prospects warm longer. (DESIGN: only passive TAX-FREE income should arrive without work — business revenue must be worked.)
 {const decay=Math.max(0.05,0.18-(s.brand_equity||0)/1000);const pool=Math.max(0,(s.leads||0)-(s.customer_base||0));const stale=Math.floor(pool*decay);if(stale>0)s.leads=Math.max(s.customer_base||0,(s.leads||0)-stale);}
 // Lead conversion — leads are CUMULATIVE contacts you keep; only the not-yet-converted pool turns into customers, so leads never go below customers.
+// SOFT ADDRESSABLE MARKET (rising CAC / saturation) — a lean business can only win & keep so many customers before each new one costs more to acquire and retain. Conversion falls toward zero as your base approaches this reach, so customer count finds a NATURAL equilibrium instead of climbing forever. Reach widens with brand (demand), systems (delivery + retention capacity) and a lean team, and expands via offer/market plays. THIS is what makes the business plateau lean — no artificial wall; to grow you must genuinely widen the market, at diminishing returns. (DESIGN.md: brute-force revenue hits a ceiling; FINANCE builds the wealth.)
+const reach=this.mktReach(s);
+s._mktReach=Math.round(reach);
+const satFactor=Math.max(0,1-(s.customer_base||0)/reach); // 1 when the market is wide open, →0 as you saturate it (rising CAC)
 const baseConv=0.05,skillConv=(s.skill_marketing||0)/300,brandConv=(s.brand_equity||0)/1000,salesConv=Math.min(0.20,(s.sales_conversion||0)*0.01);
-const convRate=Math.min(0.5,baseConv+skillConv+brandConv+salesConv);const pool=Math.max(0,(s.leads||0)-(s.customer_base||0));const converted=Math.floor(pool*convRate);
+const convRate=Math.min(0.5,baseConv+skillConv+brandConv+salesConv)*satFactor;const pool=Math.max(0,(s.leads||0)-(s.customer_base||0));const converted=Math.floor(pool*convRate);
 s.customer_base=(s.customer_base||0)+converted; // converting a lead doesn't delete the contact — leads stay
+// OVER-CAPACITY RETENTION — you can ACQUIRE more clients than you can serve (a big launch, aggressive sales, a viral month, action effects that add customers directly), but you can't KEEP them: service slips past your delivery reach and the overflow churns back to what you can actually deliver well. Capacity — not just demand — is the real constraint, which is why a lean business can't simply buy its way past the ceiling. (Closes the funnel-bypass: the saturation above only throttles NEW conversions; this governs the total book however it grew.)
+if((s.customer_base||0)>reach){const overflow=(s.customer_base||0)-reach;s.customer_base=Math.round(reach+overflow*0.45);s._overserved=Math.round(overflow);}else s._overserved=0;
 s.leads=Math.max(s.leads||0,s.customer_base||0); // invariant: always at least as many leads (total contacts) as customers
 // Revenue = customers × value per customer (recalculated each month)
 const revPerCust=Math.round(100+(s.brand_equity||0)*5+(s._completed_actions&&s._completed_actions.includes('build_offer')?200:0)+(s.skill_marketing||0)*2);
 s.monthly_revenue=s.customer_base*revPerCust;
-// Revenue capacity cap — you can only capture demand up to what the business can deliver; beyond it revenue is heavily dampened (market saturation / strained delivery). Capacity grows via offer, sales infra, systems, team.
-// A small, efficient business has a NATURAL size ceiling. Past a healthy level, extra capacity buys sharply less revenue — you can't grind operations to infinity. Real wealth comes mid-to-late from FINANCE leveraging the cash & credit this business throws off, not from making the business itself enormous. (DESIGN.md: brute-force revenue must hit a ceiling; passive tax-free income is the crown jewel.)
-{const team=s.team_size||0,sys=s.systems_maturity||0;
- // Your ceiling is set by SYSTEMS, not hustle or headcount (Gerber's E-Myth; Greiner's coordination crisis). A lean op tops out ~$80-120k/mo. Only deep systems infrastructure lifts it, and even maxed it walls out at the edge of "No Man's Land" (~$2M/yr) — the real stall zone (Tatum) where, without enterprise infrastructure, management debt + churn + people problems compound faster than you can grow. Headcount past a lean team buys almost nothing here. The way forward isn't a bigger business; it's FINANCE leveraging the cash & credit you built.
- const base=45000,systemsHeadroom=Math.min(sys,100)*900,teamHeadroom=Math.min(team,8)*3000,capacityTail=Math.min(s.revenue_capacity||0,50000)*0.4;
- const cap=base+systemsHeadroom+teamHeadroom+capacityTail;
- // HARD wall (not a soft damp): the business physically cannot push past ~110% of its systems-set ceiling. Lean+low systems ≈ $80-110k/mo; fully systematized ≈ $180-200k (the edge of No Man's Land, ~$2M/yr). To go further you'd need enterprise infrastructure this game doesn't hand you — because the point is to plateau lean and let FINANCE build the wealth.
- const wall=Math.round(cap*1.1);if(s.monthly_revenue>wall)s.monthly_revenue=wall;}
+// NO HARD WALL — the lean plateau is now EMERGENT (DESIGN.md; Gerber's E-Myth, Greiner's coordination crisis, Tatum's "No Man's Land"). Revenue = customers × value, and customer growth self-limits at your addressable-market reach (rising CAC, above), a residual size-churn floor means a bigger base always leaks, and over-hiring triggers management-debt drag below. A lean op tops out ~$80-120k/mo and a fully-systematized one ~$180-220k — not because a clamp says so, but because the market saturates and the bucket leaks. To push higher you must genuinely widen the market (brand, offer, systems) at diminishing returns; the real way forward is FINANCE leveraging the cash & credit this business throws off.
 // Seasonal dip — Q4 each year (months 10-12, 22-24, 34-36)
 const monthInYear=((this.month-1)%12)+1;if(monthInYear>=10)s.monthly_revenue=Math.round(s.monthly_revenue*0.85);
 // Macro-cycle revenue tilt — booms lift demand, downturns bite (the same cycle that drives the finance game).
