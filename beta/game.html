@@ -2369,6 +2369,13 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.43.3',d:'2026-06-29 22:10',n:[
+'Result P&L fix: your owner pay is no longer double-counted as an expense — it\'s a draw that funds your living expenses (which are already counted). Total expenses, net, and runway now reflect the real cash swing.',
+'Economy at a glance: the current market phase (Expansion / Boom / Downturn / Recovery) now shows as a persistent signal right above the category icons.',
+'Cleaner cards: credit/loan actions no longer show a success %, just a plain "approval not guaranteed" warning when your odds are low. Passive income no longer labels itself "tax-free" on the dashboard.',
+'Naming your company now happens in month 2, right after the business panel unlocks and its walkthrough finishes — a calmer moment than mid-first-turn.',
+'Dashboard tidy: Net Worth now sits on the Business side and Passive income on the Personal side, each right above its Debt row.',
+]},
 {v:'0.43.2',d:'2026-06-29 21:30',n:[
 'Leaner action menus — Marketing & Operations trimmed to 10 focused moves each, Finance to the core wealth path. Less clutter, clearer flow: learn the business → delegate to a manager → focus on Finance.',
 'Result Cash & Credit panel reordered as a mini P&L (revenue & expenses up top, then accessible capital, then balance sheet).',
@@ -2960,7 +2967,9 @@ if(!ov){ov=document.createElement('div');ov.id='tut-overlay';ov.innerHTML='<div 
 const tip=document.getElementById('tut-tip');ov.style.pointerEvents='auto';ov.style.touchAction='none';tip.style.pointerEvents='auto';
 tip.innerHTML='<div class="tut-title">'+title+'</div><div class="tut-body">'+body+'</div><div class="tut-nav"><div class="tut-spacer"></div><button class="tut-next" onclick="Game._closeSpotlight()">Got it</button></div>';
 const target=sel?document.querySelector(sel):null;setTimeout(()=>this._positionSpotlight(target,null),60);setTimeout(()=>this._positionSpotlight(target,null),380);},
-_closeSpotlight(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();this._seq=null;},
+_closeSpotlight(){const ov=document.getElementById('tut-overlay');if(ov)ov.remove();this._seq=null;
+// After the business-panel walkthrough ends, name the company (month 2+, business unlocked, not yet named).
+if(this._nameAfterBizTip){this._nameAfterBizTip=false;if(this.month>=2&&this.isSeparated()&&!(this.state&&this.state.company_name)){setTimeout(()=>{if(document.getElementById('popup-container').style.display!=='block')this.promptCompanyName(true);},350);}}},
 // A short multi-step guided spotlight (e.g. the business-unlock walk: financials first, then Leads/Customers/Staff). Steps: [{sel,t,b}].
 _spotlightSeq(steps,idx){this._seq=steps;this._seqIdx=idx||0;this._renderSeqStep();},
 _seqNext(){if(!this._seq)return;this._seqIdx++;if(this._seqIdx>=this._seq.length)return this._closeSpotlight();this._renderSeqStep();},
@@ -3042,7 +3051,7 @@ const tips=[
 {k:'epic',show:this._reveal('epic'),sel:'#epic-btn',t:'⭐ Epic Life Membership',b:'A done-for-you wealth concierge is now available — this <strong>⭐</strong> icon. It\'s powerful and runs the financial playbook for you. If you\'re still learning, try finishing a run <em>without</em> it first.'},
 {k:'networth',show:this._reveal('networth')&&this.calcNetWorth()>0,sel:'#dash-networth',t:'📈 Net Worth Is Now Tracked',b:'Your dashboard now shows <strong>Net Worth</strong> right here — everything you own minus everything you owe, with a month-over-month trend. This is the real scoreboard of the wealth you\'re building.'},
 ];
-for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_shown.push(tip.k);if(tip.seq){if(document.querySelector(tip.seq[0].sel))this._spotlightSeq(tip.seq,0);else this.showPopup(tip.seq[0].t,tip.seq[0].b);}else if(document.querySelector(tip.sel))this._spotlightTip(tip.sel,tip.t,tip.b);else this.showPopup(tip.t,tip.b);return;}}},
+for(const tip of tips){if(tip.show&&s._tips_shown.indexOf(tip.k)<0){s._tips_shown.push(tip.k);if(tip.k==='business'&&!s.company_name)this._nameAfterBizTip=true;/* once the business-panel walkthrough closes, prompt for the company name */if(tip.seq){if(document.querySelector(tip.seq[0].sel))this._spotlightSeq(tip.seq,0);else this.showPopup(tip.seq[0].t,tip.seq[0].b);}else if(document.querySelector(tip.sel))this._spotlightTip(tip.sel,tip.t,tip.b);else this.showPopup(tip.t,tip.b);return;}}},
 // C-suite compensation scales with the company. Fractional (part-time) is affordable; full-time A-players cost ~3-4x — only sustainable with strong margins + leverage. That gap is the "can't afford good people" ceiling.
 calcExecFrac(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(3500,Math.min(11000,3500+r*0.025)));},
 calcExecFull(){const r=this.state.monthly_revenue||0;return Math.round(Math.max(12000,Math.min(48000,12000+r*0.07)));},
@@ -3160,16 +3169,15 @@ const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)
 const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
-if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)')+' <span style="font-size:0.54rem;color:var(--accent);font-weight:600;">tax-free</span>',null,null,'p_passive');
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
 P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
+if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
-{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* once revealed (on a positive month), Net Worth stays visible even if it dips negative again — shown in red */if(this._reveal('networth'))P+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
 const gauge=(label,v,col,sub,id,subBelow)=>'<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+((sub&&!subBelow)?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+col+'"></div></div>'+((sub&&subBelow)?'<div style="font-size:0.54rem;color:'+col+';font-weight:600;margin-top:3px;line-height:1.2;">'+sub+'</div>':'')+'</div>';
@@ -3187,6 +3195,7 @@ B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,nul
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
+{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* Net Worth (consolidated) lives on the business side, right above debt; once revealed it stays visible even if it dips negative (shown red) */if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
 {const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
@@ -3479,11 +3488,15 @@ const el=document.getElementById('bars-section');if(el){el.innerHTML='';el.style
 
 renderStepIndicator(){const ac=this._activeCats||CATS,ci=ac.indexOf(this.currentCategory),total=ac.length;document.getElementById('step-indicator').innerHTML='Step '+(ci+1)+'/'+total+': '+ac.map(c=>{if(this.selectedActions[c])return'<span style="color:var(--accent)">✓ '+CL[c]+'</span>';if(c===this.currentCategory)return'<span class="step-current">→ '+CL[c]+'</span>';return'<span>'+CL[c]+'</span>';}).join(' · ');},
 CAT_ICON:{marketing:'📣',operations:'⚙️',finance:'💰',lifestyle:'🏖️'},
+// Short, at-a-glance read on the current economy phase — shown persistently above the category icons.
+_ECON_LABELS:{expansion:{i:'📈',n:'Expansion',d:'steady growth — build reserves, keep leverage low',c:'var(--accent)'},boom:{i:'🔥',n:'Boom',d:'hot & frothy — get liquid, a turn is coming',c:'var(--gold)'},downturn:{i:'📉',n:'Downturn',d:'assets on sale but credit is freezing — the prepared win',c:'var(--red)'},recovery:{i:'🌱',n:'Recovery',d:'rebound — rates low, credit loosening',c:'var(--accent)'}},
 renderCategoryTabs(){const ac=this._activeCats||CATS;
+const _ph=(this.state._cycle&&this.state._cycle.phase)||'expansion',_E=this._ECON_LABELS[_ph]||this._ECON_LABELS.expansion;
+const econ='<div id="econ-signal" title="The economy moves in a loop: Expansion → Boom → Downturn → Recovery. Read it and prepare." style="display:flex;align-items:center;gap:6px;font-size:0.66rem;color:var(--text2);margin-bottom:6px;padding:4px 9px;background:rgba(127,127,127,0.08);border-radius:6px;line-height:1.35;"><span style="font-size:0.9rem;">'+_E.i+'</span><span><strong style="color:'+_E.c+';">'+_E.n+'</strong> <span style="color:var(--text2);">· '+_E.d+'</span></span></div>';
 const tabs=ac.map(c=>{const on=this.currentCategory===c,done=!!this.selectedActions[c];return '<div'+(c==='lifestyle'?' id="life-btn"':'')+' class="cat-tab cat-icon'+(on?' active':done?' done':'')+'" title="'+CL[c]+'" onclick="Game.switchCategory(\''+c+'\')">'+(this.CAT_ICON[c]||'•')+(done&&!on?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>';}).join('');
 const member=!!this.state._epic_life,pendingEpic=!!this.state._epic_enroll_pending;
 const epic=(!this._tutActive&&(this._reveal('epic')||member||pendingEpic))?'<div id="epic-btn" class="cat-tab cat-icon" title="Epic Life Membership" style="background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>':'';
-document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
+document.getElementById('cat-tabs').innerHTML=econ+'<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
@@ -3812,7 +3825,7 @@ a.id==='fast_working_capital'?'<span class="cost-tag cost-recurring" title="repa
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
 (()=>{const MGR=['hire_sales_manager','hire_ops_manager','hire_cfo'];const s=this.state,mgr=Math.round(Math.max(2500,Math.min(4500,2500+(s.monthly_revenue||0)*0.015)));const amt=a.id==='hire_cfo'?Math.round(mgr*0.6):MGR.includes(a.id)?mgr:0;return amt?'<span class="cost-tag cost-recurring" title="ongoing manager pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
-(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const isLoan=LOAN_APPROVAL.includes(a.id),ch=Math.round(this._creditApprovalChance(isLoan)*100),metric=isLoan?this.calcDTI():this.calcPersUtil(),label=isLoan?'DTI':'util',col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="'+(isLoan?'term loans are underwritten on your debt-to-income (DTI)':'revolving credit is underwritten on your personal utilization')+' + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(metric>30?' · '+label+' '+metric+'%':'')+'</span>';})():'')+
+(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const isLoan=LOAN_APPROVAL.includes(a.id),ch=this._creditApprovalChance(isLoan);if(ch>=0.6)return '';/* decent odds — no clutter, just let them apply */const msg=ch<0.35?'Approval unlikely right now':'Approval not guaranteed';return '<span class="cost-tag" style="background:rgba(239,68,68,0.12);color:var(--red);" title="'+(isLoan?'term loans are underwritten on your debt-to-income (DTI)':'revolving credit is underwritten on your personal utilization')+' + myFICO 3B — pay down balances / debt to improve your odds">⚠ '+msg+'</span>';})():'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
@@ -4048,7 +4061,7 @@ else{const before=s.personal_credit_score||0;s.personal_credit_score=Math.min(85
 if(Math.random()<0.45){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),lim=persRev+(s.available_credit||0),bump=Math.round(Math.max(1500,lim*0.15));s.available_credit=(s.available_credit||0)+bump;s._dyn_narrative=(s._dyn_narrative||'')+' <strong>Bonus:</strong> a card issuer automatically raised your limit by '+this.fmtMoney(bump)+' — that drops your utilization and quietly lifts your score, no payment required.';}}
 if(success){const _reg={establish_business:['form_llc','open_business_account','basic_bookkeeping'],build_personal_credit:['build_personal_credit_repair','build_personal_credit_optimize'],elect_s_corp:['payroll_setup','s_corp_election'],asset_protection_stack:['multi_entity','asset_protection']}[action.id];if(_reg)_reg.forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 // Forming the LLC → prompt the founder to name their company (shown on the dashboard + leaderboard; sets up future player-vs-player features). Fired after the results render.
-if(action.id==='establish_business'&&success&&!this.state.company_name)this._pendingCompanyName=true;
+if(action.id==='establish_business'&&success&&!this.state.company_name)this.state._needs_company_name=true;/* prompt is deferred until after the business panel unlocks AND its tutorial ends (handled in _closeSpotlight), so naming lands ~month 2 in a calm moment */
 if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';}
 if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.total_debt=(effects.total_debt||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
 if(action.id==='hire_general_counsel'&&success){this.state._gc_hired=true;}
@@ -4458,7 +4471,7 @@ const accessible=cashNow+(s.available_credit||0)+bizAvail1;
 // Swing vs the previous month's accessible capital (stored end-of-month). No swing in month 1 — there's no prior month to compare to.
 const accDelta=(this._prevAccessible!=null)?Math.round(accessible-this._prevAccessible):null;this._prevAccessible=accessible;
 const accSwing=accDelta?'<span style="font-weight:700;color:'+(accDelta>0?'var(--accent)':'var(--red)')+';">'+(accDelta>0?'▲':'▼')+fm(Math.abs(accDelta))+'</span>':'';
-const netFlow=(s.monthly_revenue||0)-(s.cogs||0)-this.calcMonthlyBurn();
+const netFlow=(s.monthly_revenue||0)-(s.cogs||0)-(this.calcMonthlyBurn()-(s.owner_pay||0));/* owner pay is a draw funding living (already in burn), not a net outflow — exclude so runway matches the real cash swing */
 // Stash this month's runway (in months; null when cash-flow positive) so resultPrimary can fire an early "short runway" warning when the player opens the Cash & Credit panel.
 this._lastRunwayMo=netFlow>=0?null:accessible/Math.max(1,-netFlow);
 const runway=netFlow>=0?'Profitable':(Math.max(0,Math.floor(accessible/Math.max(1,-netFlow)))+' mo');
@@ -4467,7 +4480,7 @@ const accCol=accessible<=0?'var(--red)':'var(--accent)';/* out of cash + credit 
 // Bottom section — business revenue, then total money out this month: recurring burn (opex + payroll + living/lifestyle + debt service) + COGS + this month's action costs + any merchant cash-advance holdback (folded into the total, footnoted with #).
 const revRow=((s.monthly_revenue||0)>0||(st.rev||0)>0)?posRow('📈','Business revenue',st.rev||0,s.monthly_revenue||0,true):'';
 const mcaPaid=s._mca_paid||0;
-const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=burnOut+cogsOut+sp.total+mcaPaid;
+const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=(burnOut-(s.owner_pay||0))+cogsOut+sp.total+mcaPaid;/* owner pay is a draw to you (it funds your living expenses, which ARE counted) — not a separate outflow, so exclude it to avoid double-counting */
 const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('credit');
 // Expense breakdown — mini P&L layout
 const _execComp=this.calcExecComp?this.calcExecComp():0;
@@ -4475,7 +4488,7 @@ const _opexBase=Math.max(0,(s.operating_expenses||0)-_execComp);
 const _debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
 const _rev=s.monthly_revenue||0;
 const _gross=_rev-cogsOut;
-const _opInc=_gross-_opexBase-_execComp-(s.owner_pay||0);
+const _opInc=_gross-_opexBase-_execComp;
 const _netFlow=_opInc-(s.living_expenses||0)-(s.lifestyle_expenses||0)-_debtSvc-sp.total-mcaPaid;
 const _iRow=(lbl,amt,col)=>'<div style="display:flex;justify-content:space-between;font-size:0.72rem;padding:2px 0;"><span style="color:var(--text2);">'+lbl+'</span><span style="color:'+(col||'var(--text)')+';font-weight:600;">'+amt+'</span></div>';
 const _div='<div style="border-top:1px dashed rgba(127,127,127,0.25);margin:4px 0;"></div>';
@@ -4486,7 +4499,6 @@ const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);bord
   (cogsOut>0?_div:'')+
   (_opexBase>0?_iRow('Operating expenses','−'+fm(_opexBase),'var(--red)'):'')+
   (_execComp>0?_iRow('Manager pay','−'+fm(_execComp),'var(--red)'):'')+
-  ((s.owner_pay||0)>0?_iRow('Owner pay','−'+fm(s.owner_pay||0),'var(--red)'):'')+
   _div+
   ((s.living_expenses||0)>0?_iRow('Living expenses','−'+fm(s.living_expenses||0),'var(--red)'):'')+
   ((s.lifestyle_expenses||0)>0?_iRow('Lifestyle','−'+fm(s.lifestyle_expenses||0),'var(--red)'):'')+
@@ -4495,8 +4507,9 @@ const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);bord
   (mcaPaid>0?_iRow('MCA holdback','−'+fm(mcaPaid),'var(--red)'):'')+
   _div+
   _iRow('Net this month',(_netFlow>=0?'+':'−')+fm(Math.abs(_netFlow)),_netFlow>=0?'var(--accent)':'var(--red)')+
+  ((s.owner_pay||0)>0?'<div style="font-size:0.62rem;color:var(--text2);margin-top:5px;line-height:1.4;">💼 You paid yourself '+fm(s.owner_pay||0)+' this month — that\'s a draw that funds your living expenses above, not an extra cost.</div>':'')+
   '</div>';
-const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses this month <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
+const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong></span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
 const mcaFoot=(mcaPaid>0||(s._mca_balance||0)>0)?'<div style="font-size:0.66rem;color:var(--text2);text-align:right;margin-top:-1px;">'+((s._mca_balance||0)>0?' · '+fm(s._mca_balance)+' left':' · cleared')+'</div>':'';
 const plBlock='<div style="margin-bottom:7px;padding-bottom:7px;border-bottom:1px dashed var(--border);">'+revRow+expLine+mcaFoot+'</div>';
 const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+plBlock+capBlock+rows+'</div>';this._monthCashSummary=null;}
@@ -4514,7 +4527,7 @@ if(!recur||this.month-last>=4){s._ownerRescueLastShown=this.month;
   :'<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>';
  setTimeout(()=>this.showPopup(recur?'⚠ Leaning on Personal Savings Again':'🛟 Saved by Your Personal Savings',body),260);}}
 // LLC just formed → name the company (skip if a rescue pop-up is already up; rare on a formation month).
-if(this._pendingCompanyName){this._pendingCompanyName=false;setTimeout(()=>{if(document.getElementById('popup-container').style.display!=='block')this.promptCompanyName(true);},300);}},
+},
 
 nextMonth(){
 // Insolvency ends the run immediately after the Cash & Credit card — no event/tax detour first. You already saw HOW it blew up (red panel + game-over walkthrough); piling an event and a tax bill on top before the end screen was just tedious. Clear any queued event/tax and go straight to game over.
