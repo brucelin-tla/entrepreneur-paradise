@@ -164,6 +164,23 @@
       "failure_effects": {},
       "narrative_success": "The post hit millions — a flood of curiosity clicks, a screenshot-worthy spike, a rush of new leads. Then: crickets. The audience wasn't your buyer, the bump evaporated within a week, and the few who did sign up churned fast.",
       "narrative_failure": ""
+    },
+    {
+      "id": "hire_highticket_closer",
+      "category": "marketing",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Hire a High-Ticket Closer",
+      "description": "A smooth, expensive closer swears he'll 10x your sales overnight with high-ticket offers. Big promises, big personality, ~$9k/mo. What could go wrong?",
+      "lesson": "A great closer can transform revenue — but the wrong one closes with fake guarantees that wreck your brand, gaslight your team, and invite lawsuits. Hiring raw closing skill without character is a classic, costly trap; you'll have to fire him, and he won't go quietly.",
+      "cash_cost": 6000,
+      "energy_cost": 4,
+      "recurring_cost": 9000,
+      "prerequisites": { "needs": ["establish_business"], "customer_base_gte": 15 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "He starts Monday and immediately starts closing big-ticket deals — the numbers spike, the pipeline buzzes. He's loud, expensive, and already acting like he owns the place. But hey, revenue's up. For now.",
+      "narrative_failure": ""
     }
   ]
 }

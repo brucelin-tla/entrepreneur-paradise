@@ -168,6 +168,23 @@
       "failure_effects": {},
       "narrative_success": "Six contractors onboarded in days — capacity jumped. Then the cracks showed: rushed work, slipping quality, clients noticing. And payroll just jumped ~$12,000/month, with no system for them to plug into.",
       "narrative_failure": ""
+    },
+    {
+      "id": "hire_star_operator",
+      "category": "operations",
+      "stage": "leverage",
+      "one_time": true,
+      "label": "Hire a Star Operator",
+      "description": "A standout operator with a brilliant résumé wants in — sharp, polished, clearly talented. He's here for the opportunity, not necessarily the mission. ~$7k/mo. The work would get noticeably better, fast.",
+      "lesson": "Raw talent isn't the same as buy-in. A great operator who never bought your vision will do exactly their job and not an inch more — flagging problems for you to solve, never owning the outcome — and walk the moment the startup gets hard. Hire for mission-fit, not just the résumé; culture is what turns a hire into a believer.",
+      "cash_cost": 4000,
+      "recurring_cost": 7000,
+      "energy_cost": 4,
+      "prerequisites": { "needs": ["establish_business"], "monthly_revenue_gte": 10000 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "He starts immediately and the work sharpens overnight — cleaner delivery, fewer dropped balls. Impressive. You catch yourself hoping he sticks around... and notice he hasn't asked a single question about where the company's headed.",
+      "narrative_failure": ""
     }
   ]
 }
