@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1063,6 +1063,21 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "real_estate_owned": 1 },
       "narrative_success": "Keys in hand. The duplex cash-flows $700/month after mortgage, taxes, and insurance. Passive income is real now.",
       "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
+    },
+    {
+      "id": "velocity_banking",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Velocity Banking",
+      "description": "Run your household through a line of credit and sweep every surplus dollar at your debt — paying down a mortgage or revolving balance years faster. You set the aggressiveness; chunk extra anytime from the ⚡ panel, no turn needed.",
+      "lesson": "Velocity banking turns idle cash into accelerated principal: parking income on a simple-interest line saves the interest you'd otherwise pay, and that saving knocks EXTRA principal off your amortizing debt — so it pays down years faster and your equity builds quicker. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "prerequisites": { "personal_credit_score_gte": 640 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "Velocity banking is on. Your surplus now sweeps straight at your target debt every month — and you can chunk extra whenever cash flow allows, from the ⚡ Velocity panel on your dashboard.",
+      "narrative_failure": "You set up the line, but the paperwork hit a snag this month."
     }
   ]
 }
@@ -2331,7 +2346,7 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Build Your Foundation',['establish_business','build_dnb_profile','build_personal_credit','banking_relationship']],['Debt & Credit',['pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line']],['Protect & Optimize Taxes',['elect_s_corp','wyoming_holding_llc','combined_insurance','monthly_tax_reserve']],['Build Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','buy_real_estate']]],marketing:[['Your Team',['hire_sales_manager']],['Get Leads',['cold_outreach','basic_social_content','paid_ads_test','influencer_megadeal']],['Build Trust',['build_offer','content_engine','referral_asks']],['Close the Sale',['do_sales_yourself','crm_pipeline']]],operations:[['Your Team',['hire_ops_manager']],['Deliver the Work',['study_business_content','do_work_yourself','hire_first_contractor','rapid_offshore_scaleup']],['Build Systems',['write_first_sop','fulfillment_system','project_management']],['Keep Customers Happy',['basic_quality_control','client_onboarding']]]};
+const ADIR={finance:[['Build Your Foundation',['establish_business','build_dnb_profile','build_personal_credit','banking_relationship']],['Debt & Credit',['pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','velocity_banking']],['Protect & Optimize Taxes',['elect_s_corp','wyoming_holding_llc','combined_insurance','monthly_tax_reserve']],['Build Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','buy_real_estate']]],marketing:[['Your Team',['hire_sales_manager']],['Get Leads',['cold_outreach','basic_social_content','paid_ads_test','influencer_megadeal']],['Build Trust',['build_offer','content_engine','referral_asks']],['Close the Sale',['do_sales_yourself','crm_pipeline']]],operations:[['Your Team',['hire_ops_manager']],['Deliver the Work',['study_business_content','do_work_yourself','hire_first_contractor','rapid_offshore_scaleup']],['Build Systems',['write_first_sop','fulfillment_system','project_management']],['Keep Customers Happy',['basic_quality_control','client_onboarding']]]};
 // Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
 const TRAPS=['rapid_offshore_scaleup','influencer_megadeal'];
 // Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
@@ -2369,6 +2384,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.44.0',d:'2026-06-29 23:55',n:[
+'New playable strategy — Velocity Banking (Finance → Debt & Credit). Run your household through a line of credit and sweep your surplus straight at your debt, paying it down years faster. You choose the vehicle: a HELOC against your property (attacks the mortgage and builds equity quicker) or a credit line (attacks revolving debt).',
+'You\'re in the driver\'s seat: pick how aggressively to sweep (Conservative 50% / Balanced 75% / Aggressive 100% of each month\'s surplus), then use the ⚡ Velocity chip on your dashboard to chunk extra cash, retune, switch vehicle, or pause — any month, no turn needed. A live readout shows interest saved, equity built, and your payoff date with vs. without velocity.',
+'Real estate now behaves like the real thing: your mortgage actually amortizes each month and that paid-down principal becomes equity (tenants paying down your loan), and the property appreciates ~3%/yr — so buying, holding, and accelerating the loan all build real wealth over time.',
+'The discipline still bites: velocity banking only accelerates while you\'re cash-flow positive — go negative and the deficit rides the line, and in a credit crunch an over-used line can get frozen. Keep it lightly used and it\'s pure upside.',
+]},
 {v:'0.43.6',d:'2026-06-29 23:40',n:[
 'Real estate reworked to be realistic: its real benefit is now the depreciation tax shield (it actually lowers your taxable income), the rent just about covers the mortgage, and the economy sets your entry price — buy in a downturn and you start with more equity. No more fantasy 30%/yr rent yields.',
 'Business dashboard funnel readout: Leads → Customers → Brand Equity (brand is the lever that lifts both conversion and revenue per customer). Staff & Culture show only once you\'ve hired.',
@@ -3056,6 +3077,60 @@ calcDebtPrincipal(){const s=this.state,bizDebt=(s.total_debt||0)-(s.real_estate_
 calcMonthlyBurn(){const s=this.state;return(s.operating_expenses||0)+(s.owner_pay||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0)+this.calcDebtInterest()+this.calcDebtPrincipal();},
 // Total net worth: all assets (cash, investments, real-estate equity, policy cash value, retained business equity, private-bank balance) minus all debt.
 calcNetWorth(st){const s=st||this.state;const cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,debt=(s.total_debt||0)+(s.insurance_loan_balance||0)+(s.private_bank_loan||0);return cash+inv+re+cv+cap+pbb-debt;},
+// VELOCITY BANKING ENGINE (shared) — apply a "chunk": a lump payment swept at your debt. The edge: parking income on a simple-interest line saves the interest you'd otherwise pay, and that saving knocks EXTRA principal off (~12% acceleration). Routes to the MORTGAGE (paying it down builds equity dollar-for-dollar and shaves years) when you run a HELOC against owned property, otherwise to REVOLVING debt (frees the limit → lower utilization → score). Caps the contribution at your cash and the target balance so it can never overdraw or overpay. Reused by both the month-end auto-sweep and the dashboard "Chunk extra now" button so they behave identically.
+_velocityApply(amount){const s=this.state;const heloc=s._velocity_vehicle==='heloc'&&(s.real_estate_debt||0)>0;const target=heloc?'mortgage':'revolving';
+ const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0));
+ const targetBal=target==='mortgage'?(s.real_estate_debt||0):(s.total_debt||0)-(s.real_estate_debt||0);
+ amount=Math.max(0,Math.min(Math.round(amount),Math.floor(Math.max(0,s.cash||0)),Math.ceil(targetBal/1.12)));/* contribution capped so chunk + ~12% accel never overshoots the balance */
+ if(amount<=0||targetBal<=0)return{total:0,accel:0,target,equity:0};
+ const accel=Math.min(Math.max(0,targetBal-amount),Math.round(amount*0.12));s.cash=(s.cash||0)-amount;let equityBuilt=0;
+ if(target==='mortgage'){const pay=Math.min((s.real_estate_debt||0),amount+accel);s.real_estate_debt=Math.max(0,(s.real_estate_debt||0)-pay);s.total_debt=Math.max(0,(s.total_debt||0)-pay);s.real_estate_equity=(s.real_estate_equity||0)+pay;equityBuilt=pay;}
+ else{let pay=amount+accel;s.total_debt=Math.max(0,(s.total_debt||0)-pay);const rv=Math.min(pay,persRev);if(rv>0){s.available_credit=(s.available_credit||0)+rv;pay-=rv;}const bz=Math.min(pay,s.business_credit_used||0);if(bz>0){s.business_credit_used=Math.max(0,(s.business_credit_used||0)-bz);pay-=bz;}/* remainder hits installment — no revolving limit to free */}
+ s._velocity_interest_saved=(s._velocity_interest_saved||0)+accel;s._velocity_total_chunked=(s._velocity_total_chunked||0)+amount;if(equityBuilt)s._velocity_equity_built=(s._velocity_equity_built||0)+equityBuilt;
+ s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+(this.calcPersUtil()<30?2:1));
+ return{total:amount+accel,accel,target,equity:equityBuilt};},
+// Live readout for the velocity panel/popup: which debt is being attacked, payoff ETA at the normal amortization pace vs with the recent velocity chunk, and lifetime interest saved / equity built.
+_velocityReadout(){const s=this.state;const heloc=s._velocity_vehicle==='heloc'&&(s.real_estate_debt||0)>0;const target=heloc?'mortgage':'revolving';
+ const targetBal=target==='mortgage'?(s.real_estate_debt||0):Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0));
+ const modeKey=s._velocity_mode||'balanced';
+ const modeLabel={conservative:'Conservative',balanced:'Balanced',aggressive:'Aggressive'}[modeKey]||'Balanced';
+ const targetLabel=target==='mortgage'?'Mortgage':'Revolving debt';const vehicleLabel=heloc?'HELOC (home equity)':'credit line';
+ const normalPay=target==='mortgage'?Math.max(1,Math.round(targetBal*0.005)):Math.max(1,Math.round(targetBal*0.01));
+ const chunk=s._velocity_chunk||0,withVel=normalPay+chunk;
+ const etaBase=targetBal>0?Math.ceil(targetBal/normalPay):0,etaVel=targetBal>0&&withVel>0?Math.ceil(targetBal/withVel):0;
+ const fmtMo=m=>m<=0?'—':m>=24?(Math.round(m/12*10)/10)+' yrs':m+' mo';
+ return{heloc,target,targetBal,modeKey,modeLabel,targetLabel,vehicleLabel,interestSaved:s._velocity_interest_saved||0,equityBuilt:s._velocity_equity_built||0,totalChunked:s._velocity_total_chunked||0,etaBaseText:fmtMo(etaBase),etaVelText:fmtMo(etaVel)};},
+// The Velocity Banking control panel — reached from the Finance action card (turn-on consumes the finance move) OR the ⚡ dashboard chip (ongoing tuning & manual chunks are free, no turn).
+openVelocityControl(){const s=this.state;const active=!!s._velocity_active;
+ const reDebt=(s.real_estate_debt||0),reEq=(s.real_estate_equity||0),hasRE=reDebt>0&&reEq>0;
+ const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-reDebt),hasLine=lineCap>0||revDebt>0;
+ if(!s._velocity_vehicle)s._velocity_vehicle=hasRE?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';if(s._velocity_vehicle==='heloc'&&!hasRE)s._velocity_vehicle='line';
+ const cash=Math.max(0,Math.floor(s.cash||0));
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">Park your income on a line of credit and <strong>sweep every surplus dollar at your debt</strong>. The interest you\'d have paid is redirected to principal (~12% acceleration), so the balance falls years faster — and on a mortgage, that paid-down principal becomes <strong>equity</strong>.</div>';
+ const vBtn=(key,label,sub,enabled)=>{const on=s._velocity_vehicle===key;return '<div '+(enabled?'onclick="Game.velSetVehicle(\''+key+'\')" style="cursor:pointer;':'style="opacity:0.45;')+'flex:1;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on&&enabled?'rgba(34,197,94,0.12)':'var(--surface)')+';border-radius:6px;padding:8px;text-align:center;"><div style="font-size:0.74rem;font-weight:700;color:'+(on&&enabled?'var(--accent)':'var(--text)')+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Vehicle</div><div style="display:flex;gap:8px;margin-bottom:12px;">'+vBtn('heloc','🏠 HELOC',hasRE?'Home equity → attack the mortgage':'Buy a rental first',hasRE)+vBtn('line','💳 Credit line',hasLine?'A line → attack revolving debt':'Open a line first',hasLine)+'</div>';
+ const mBtn=(key,label,sub)=>{const on=(s._velocity_mode||'balanced')===key;return '<div onclick="Game.velSetMode(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:0.7rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.54rem;color:var(--text2);margin-top:2px;">'+sub+'</div></div>';};
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Aggressiveness — surplus swept each month</div><div style="display:flex;gap:6px;margin-bottom:12px;">'+mBtn('conservative','Conservative','50%')+mBtn('balanced','Balanced','75%')+mBtn('aggressive','Aggressive','100%')+'</div>';
+ if(active){const vd=this._velocityReadout();
+  h+='<div style="border-top:1px solid var(--border);margin:10px 0;padding-top:8px;">';
+  h+='<div class="breakdown-row"><span>Attacking</span><span>'+vd.targetLabel+' · '+this.fmtMoney(vd.targetBal)+'</span></div>';
+  h+='<div class="breakdown-row"><span>Payoff — normal</span><span style="color:var(--text2)">'+vd.etaBaseText+'</span></div>';
+  h+='<div class="breakdown-row"><span>Payoff — with velocity</span><span style="color:var(--accent)">'+vd.etaVelText+'</span></div>';
+  h+='<div class="breakdown-row"><span>Interest saved to date</span><span style="color:var(--accent)">'+this.fmtMoney(vd.interestSaved)+'</span></div>';
+  if(vd.equityBuilt>0)h+='<div class="breakdown-row"><span>Extra equity built</span><span style="color:var(--accent)">'+this.fmtMoney(vd.equityBuilt)+'</span></div>';
+  h+='</div>';
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:4px 0;">Chunk extra now — from your '+this.fmtMoney(cash)+' cash · no turn</div>';
+  if(cash>0){const presets=[2000,5000,10000].filter(a=>a<=cash);const cBtn=(amt,lbl)=>'<button onclick="Game.velChunk('+amt+')" style="flex:1;background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+lbl+'</button>';let chunks='';presets.forEach(a=>chunks+=cBtn(a,'💥 '+this.fmtMoney(a)));chunks+=cBtn(cash,'💥 Max');h+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'+chunks+'</div>';}
+  else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:10px;">No spare cash to chunk right now — build surplus first.</div>';
+  h+='<button onclick="Game.velPause()" style="width:100%;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:0.74rem;cursor:pointer;">⏸ Pause velocity banking</button>';
+ } else {const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);
+  h+=canOn?'<button onclick="Game.velTurnOn()" style="width:100%;background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:11px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Turn on Velocity Banking</button><div style="font-size:0.58rem;color:var(--text2);text-align:center;margin-top:6px;">Uses this month\'s finance move to set up the line. Tuning &amp; extra chunks after that are free.</div>':'<div style="font-size:0.74rem;color:var(--gold);text-align:center;padding:8px;line-height:1.5;">You need a line to run your cash flow through. Open a business/personal credit line, or buy a rental property to borrow against, then come back.</div>';}
+ this.showPopup('⚡ Velocity Banking',h);},
+velSetVehicle(v){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;if(v==='heloc'&&!hasRE)return;s._velocity_vehicle=v;this.openVelocityControl();if(s._velocity_active)this._refreshDashboards();},
+velSetMode(m){this.state._velocity_mode=m;this.openVelocityControl();if(this.state._velocity_active)this._refreshDashboards();},
+velChunk(amt){const s=this.state;if(!s._velocity_active)return;const res=this._velocityApply(amt);if(res.total>0)s._velocity_chunk=(s._velocity_chunk||0)+res.total;this._refreshDashboards();this.openVelocityControl();},
+velPause(){this.state._velocity_active=false;this.hidePopup();this._refreshDashboards();this.showPopup('⚡ Velocity Banking paused','Velocity banking is off. Your surplus stays in cash and your debt amortizes at the normal pace. Turn it back on anytime from the Finance menu → Debt &amp; Credit.');},
+velTurnOn(){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0)),hasLine=lineCap>0||revDebt>0;if(s._velocity_vehicle==='heloc'&&!hasRE)s._velocity_vehicle='line';const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);if(!canOn){this.openVelocityControl();return;}this.hidePopup();this.selectAction('finance','velocity_banking');},
 // Progressive disclosure: hide advanced UI until it's relevant, so the early game isn't overwhelming. Reveals are STICKY (once shown, stay shown) and adapt to archetype (relevant state reveals early).
 _reveal(f){const s=this.state;if(!s._revealed)s._revealed={};if(s._revealed[f])return true;const m=this.month,sep=this.isSeparated();let on=false;
 switch(f){
@@ -3150,7 +3225,7 @@ return scaled;},
 renderMonth(){
 this._atCheckpoint=false;/* we're rendering a real month now — clear the checkpoint flag so saves record this month */
 this._syncExecCompletions();/* heal any exec role filled via a failed roll so the menu doesn't re-offer it (covers older saves too) */
-this.showScreen('game-screen');this.selectedActions={};this.currentCategory='marketing';this._showAllActions=false;this._isQuarterlyMonth=(this.month%3===0);this.updateStages();this._setupActionMenu();
+this.showScreen('game-screen');this.selectedActions={};this.currentCategory='marketing';this._showAllActions=false;this._isQuarterlyMonth=(this.month%3===0);if(this.state)this.state._velocity_chunk=0;/* reset the velocity readout each planning turn; manual chunks (this screen) + the month-end auto-sweep accumulate into it */this.updateStages();this._setupActionMenu();
 this._renderCompanyName();
 const hs=CATS.map(c=>this.getStage(c)).reduce((a,b)=>({foundation:0,leverage:1,wealth:2}[a]>={foundation:0,leverage:1,wealth:2}[b]?a:b));
 const badge=document.getElementById('stage-badge');badge.textContent=hs;badge.style.background=hs==='wealth'?'var(--gold)':hs==='leverage'?'var(--blue)':'var(--accent2)';
@@ -3236,7 +3311,8 @@ B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div sty
 }
 const hasCfo=s._cfo_hired||(s._completed_actions||[]).includes('hire_fractional_cfo');const cfoBtn=hasCfo?'<div onclick="Game.showCfoReport()" style="cursor:pointer;text-align:center;background:var(--surface);border:1px solid var(--blue);border-radius:var(--radius-sm);padding:7px;margin-bottom:8px;font-size:0.76rem;font-weight:600;color:var(--blue);">📊 CFO Briefing — value, net worth, assets, runway & projections</div>':'';
 const achBtn=this._reveal('achievements')?'<div onclick="Game.showAchievements()" style="cursor:pointer;text-align:center;background:var(--surface);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:7px;margin-bottom:8px;font-size:0.76rem;font-weight:600;color:var(--gold);">🏆 Achievements — '+((s._milestones_achieved||[]).length)+'/'+MILESTONES.length+' milestones</div>':'';
-const _dash=document.getElementById(targetId||'stats-dashboard');_dash.style.display='block';_dash.innerHTML=cfoBtn+achBtn+'<div style="display:flex;align-items:stretch;gap:16px;"><div style="flex:1;min-width:0;">'+P+'</div><div style="width:1px;background:var(--border);"></div><div id="biz-col" style="flex:1;min-width:0;">'+B+'</div></div>';},
+const velBtn=s._velocity_active?(()=>{const vd=this._velocityReadout();return '<div onclick="Game.openVelocityControl()" style="cursor:pointer;text-align:center;background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:7px;margin-bottom:8px;font-size:0.74rem;font-weight:600;color:var(--accent);">⚡ Velocity · '+vd.modeLabel+' → '+vd.targetLabel+' · saved '+this.fmtMoney(vd.interestSaved)+' · tap to chunk / tune</div>';})():'';
+const _dash=document.getElementById(targetId||'stats-dashboard');_dash.style.display='block';_dash.innerHTML=cfoBtn+achBtn+velBtn+'<div style="display:flex;align-items:stretch;gap:16px;"><div style="flex:1;min-width:0;">'+P+'</div><div style="width:1px;background:var(--border);"></div><div id="biz-col" style="flex:1;min-width:0;">'+B+'</div></div>';},
 
 calcPersUtil(){const s=this.state,persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),persLim=persRev+(s.available_credit||0);return persLim>0?Math.round((persRev/persLim)*100):0;},/* exclude the real-estate mortgage — it's installment debt, not revolving credit-card utilization. Counting it spiked util to ~96% the moment you leveraged into RE, contradicting the paydown logic (which already excludes it). Now matches the canonical personal-revolving formula used everywhere else. */
 calcBizUtil(){const s=this.state,bizUsed=s.business_credit_used||0,bizLim=s.business_credit_limit||0;return bizLim>0?Math.round((bizUsed/bizLim)*100):0;},
@@ -3901,7 +3977,7 @@ if(ac.includes('finance')&&!delegFin&&!this.selectedActions['finance']){if(this.
 if(ac.includes('lifestyle')&&!this.selectedActions['lifestyle']){if(this.currentCategory!=='lifestyle')this.switchCategory('lifestyle');this._focusActionList();this.showPopup('🏖️ One more — your Life action','Your team has the business handled this month. <strong>Your Life action is always your own pick</strong> — choose one life investment below, then run the month.');return;}
 this.resolveMonth();},
 
-selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;this._paymentMethod='cash';this.selectAction(cat,id);},
+selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(id==='velocity_banking'){this.openVelocityControl();return;}/* velocity banking opens its control panel instead of a plain queue: turn-on consumes the finance turn, ongoing tuning/chunks are free */this._paymentMethod='cash';this.selectAction(cat,id);},
 
 getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}{const ec=this.actionEnergyCost(a);if(ec>0&&(s.energy||0)-ec<-40)return'Too exhausted';}for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;if(k==='liquid_cash_gte')return'Need '+this.fmtMoney(v)+' in cash';if(k==='cash_gte')return'Need '+this.fmtMoney(v)+' in cash or credit';if(k==='net_worth_gte')return'Need '+this.fmtMoney(v)+' net worth';if(k.endsWith('_gte'))return'Need '+k.replace('_gte','').replace(/_/g,' ')+' ≥ '+v;if(k.endsWith('_lte'))return'Need '+k.replace('_lte','').replace(/_/g,' ')+' ≤ '+v;if(k.endsWith('_in')||k==='entity_structure')return'Need upgrade';}return'Locked';},
 actionLabel(id){for(const c of ['actions_marketing','actions_operations','actions_finance']){const a=((CONFIG[c]||{}).actions||[]).find(x=>x.id===id);if(a)return a.label;}return id.replace(/_/g,' ');},
@@ -4086,7 +4162,7 @@ this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_wor
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='policy_loan'&&success){const sep=this.isSeparated(),cv=this.state.insurance_cash_value||0,headroom=Math.max(0,Math.round(cv*0.9)-(this.state.insurance_loan_balance||0)),loanAmt=headroom,before=sep?(this.state.personal_cash||0):(this.state.cash||0);if(loanAmt<=0){this.state._dyn_narrative='You\'ve already borrowed up to 90% of your '+this.fmtMoney(cv)+' cash value — there\'s no loan room left right now. Keep funding the policy (or let it compound) to open more borrowing capacity.';}else{if(sep)this.state.personal_cash=before+loanAmt;else this.state.cash=before+loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;effects.cash=(effects.cash||0)+loanAmt;this.state._dyn_narrative='Policy loan approved instantly — no credit check, no taxes. '+this.fmtMoney(loanAmt)+' (your remaining room up to 90% of the '+this.fmtMoney(cv)+' cash value) went straight into your personal cash: '+this.fmtMoney(before)+' → '+this.fmtMoney(before+loanAmt)+'. The cash value keeps compounding at ~7%/yr as if you never touched it; the loan accrues ~5%/yr and is netted from your death benefit — never repaid from your pocket.';}}
 if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;if(!this.state._iul_loan_type)this.state._iul_loan_type='wash';/* safe default: net ~0%, lapse-proof */}
-if(action.id==='velocity_banking'&&success){this.state._velocity_active=true;this.state._velocity_spiral_streak=0;}
+if(action.id==='velocity_banking'&&success){const s=this.state;s._velocity_active=true;s._velocity_spiral_streak=0;if(!s._velocity_vehicle)s._velocity_vehicle=((s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0)?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';const vd=this._velocityReadout(),pct=({conservative:'50%',balanced:'75%',aggressive:'100%'})[s._velocity_mode];s._dyn_narrative='Velocity banking is ON — running through your '+vd.vehicleLabel+', sweeping '+pct+' of each month\'s surplus at your '+vd.targetLabel.toLowerCase()+' ('+this.fmtMoney(vd.targetBal)+'). The interest you\'d have paid now knocks extra principal off, so it pays down years faster'+(vd.target==='mortgage'?' and your equity builds quicker':'')+'. Chunk extra or retune anytime from the ⚡ Velocity chip on your dashboard — no turn needed.';}
 if(action.id==='iul_variable_loan'&&success){this.state._iul_loan_type='variable';/* opt into the index-arbitrage loan — higher income, real lapse risk */}
 if(action.id==='open_db_plan_pretax'&&success){this.state._iul_funding_type='pre_tax';/* fund the policy through a qualified DB plan with deductible business dollars — requires the corporate structure */}
 if(action.id==='hire_fractional_cfo'&&success)this.state._dyn_narrative='Your fractional CFO is on board — and the first thing she did was build you a real financial picture. Tap the new 📊 CFO Briefing on your dashboard any time: company value, net worth, runway, a 6-month projection, and exactly where she’d focus your marketing, operations, and finance.';
@@ -4243,6 +4319,10 @@ const sep=this.isSeparated(); // business & personal money split once an LLC is 
 // Business operating cash: revenue in; COGS, opex, debt service out
 s.cash+=s.monthly_revenue-s.cogs-s.operating_expenses;
 const interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();s.cash-=interest;s.cash-=principal;s.total_debt=Math.max(0,s.total_debt-principal);
+// REAL-ESTATE AMORTIZATION: the RE share of this month's principal isn't just debt service — it converts mortgage debt into EQUITY (tenants paying down your loan). Mirror it into real_estate_debt (down) and real_estate_equity (up) so the mortgage actually amortizes and the equity actually builds — the real-world mechanic velocity banking exists to accelerate.
+{const rePrin=Math.min(s.real_estate_debt||0,Math.round((s.real_estate_debt||0)*0.005));if(rePrin>0){s.real_estate_debt=Math.max(0,(s.real_estate_debt||0)-rePrin);s.real_estate_equity=(s.real_estate_equity||0)+rePrin;s._re_amort_ytd=(s._re_amort_ytd||0)+rePrin;}
+// Appreciation: the property gains value over time (~3%/yr), all of which lands in your equity (debt is fixed). Paused in a credit-tight downturn — the margin-call/haircut logic handles drops there.
+if((s._asset_units||0)>0&&!s._credit_tight){const appr=Math.round(((s.real_estate_debt||0)+(s.real_estate_equity||0))*0.0025);if(appr>0){s.real_estate_equity=(s.real_estate_equity||0)+appr;s._re_appr_ytd=(s._re_appr_ytd||0)+appr;}}}
 // Payroll: people only leave if you genuinely can't make payroll after this month's revenue and ALL your available credit (personal + business)
 {const payroll=(s.team_size||0)*2500,reserves=Math.max(0,s.cash)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));if(payroll>0&&reserves<payroll){const lost=Math.min(s.team_size||0,Math.ceil((payroll-reserves)/2500));s.team_size=Math.max(0,(s.team_size||0)-lost);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+lost*8);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-lost*2000);}}
 // Owner draw/salary moves business→personal to cover personal needs; personal expenses paid from personal cash (commingled before the LLC)
@@ -4316,19 +4396,16 @@ if(s._velocity_active&&(s.total_debt||0)>0){
   else s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking',narrative:'Credit tightened in the downturn and the bank trimmed your line — but you\'d kept it lightly used, so it barely registers. This is the discipline velocity banking demands: a line you don\'t depend on can\'t be used against you.'}]);}
  if(!s._credit_tight)s._velocity_frozen_cycle=false;/* reset once credit loosens, so the next downturn can freeze again */
  if(fcf>0){
-  // CHUNK — sweep the surplus at the debt. The velocity edge: interest saved on the parked balance retires extra principal "for free" (~12% acceleration), so you pay down faster than a vanilla payment AND free whatever line the paydown sat on (lower utilization → score). Apply in realistic priority — personal revolving first (frees available_credit), then the business line (frees business headroom), then installment — so only genuine revolving paydown restores a limit.
-  const chunk=Math.min(fcf,s.total_debt||0);s.cash=(s.cash||0)-chunk;s.total_debt=Math.max(0,(s.total_debt||0)-chunk);
-  let pay=chunk;const rv=Math.min(pay,persRev);if(rv>0){s.available_credit=(s.available_credit||0)+rv;pay-=rv;}
-  const bz=Math.min(pay,s.business_credit_used||0);if(bz>0){s.business_credit_used=Math.max(0,(s.business_credit_used||0)-bz);pay-=bz;}/* remainder hits installment — no revolving limit to free */
-  const accel=Math.min(s.total_debt||0,Math.round(chunk*0.12));s.total_debt=Math.max(0,(s.total_debt||0)-accel);/* the interest you'd have paid, knocked off principal */
-  s.personal_credit_score=Math.min(850,(s.personal_credit_score||0)+(this.calcPersUtil()<30?2:1));
-  s._velocity_spiral_streak=0;s._velocity_chunk=chunk+accel;
+  // AUTO-SWEEP — chunk a fraction of this month's surplus per your aggressiveness setting (conservative 50% / balanced 75% / aggressive 100%). The actual mechanics (route to the mortgage vs revolving, ~12% velocity acceleration, equity build, score) live in _velocityApply so the dashboard "Chunk extra now" button reuses the exact same engine.
+  const modeFrac=({conservative:0.5,balanced:0.75,aggressive:1.0})[s._velocity_mode]||0.75;
+  const res=this._velocityApply(fcf*modeFrac);
+  s._velocity_spiral_streak=0;s._velocity_chunk=(s._velocity_chunk||0)+res.total;/* add to any manual chunk already done this month for the result readout */
  } else if(fcf<-200){
   // SPIRAL — negative cash flow means the deficit rides on the line and compounds. Velocity banking AMPLIFIES bad cash flow just as it amplifies good.
   const bleed=Math.round(Math.min(-fcf,lineUsed||(-fcf))*0.04);if(bleed>0){s.cash=(s.cash||0)-bleed;s.total_debt=(s.total_debt||0)+bleed;}
-  s._velocity_spiral_streak=(s._velocity_spiral_streak||0)+1;s._velocity_chunk=0;
+  s._velocity_spiral_streak=(s._velocity_spiral_streak||0)+1;/* leave _velocity_chunk intact — a manual chunk made during planning still counts toward the readout */
   if(s._velocity_spiral_streak>=2)s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — the spiral',narrative:'Your cash flow has gone negative, and velocity banking cuts both ways: with nothing to chunk, the shortfall is riding on your line and compounding. The strategy only builds wealth while you\'re cash-flow positive — right now it\'s working against you. Fix the cash flow (cut burn, lift revenue) or the line balance keeps climbing.'}]);
- } else s._velocity_chunk=0;
+ }
 }
 // REAL-ESTATE LEVERAGE — the downturn margin-call test. Leverage cuts both ways: in good times the bank's money amplifies your returns, but when asset prices fall the debt stays fixed while equity evaporates — and a credit-tight market means you can't refinance your way out. The OVER-leveraged (high LTV going in, property that barely services its own debt, no reserves) get a MARGIN CALL → forced to sell into the crash at the worst possible price, realizing the loss. The CONSERVATIVELY leveraged (more equity down, healthy property cash flow, reserves on hand) take only a paper dip that recovers. This is the discipline real estate demands — and the mirror image of buy-the-dip: the forced sellers in a downturn are exactly who the prepared buy from.
 if(s._credit_tight&&(s.real_estate_debt||0)>0&&(s._asset_units||0)>0&&!s._re_squeeze_cycle){s._re_squeeze_cycle=true;

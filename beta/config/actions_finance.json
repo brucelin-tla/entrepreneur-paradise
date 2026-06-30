@@ -285,6 +285,21 @@
       "failure_effects": { "real_estate_owned": 1 },
       "narrative_success": "Keys in hand. The duplex cash-flows $700/month after mortgage, taxes, and insurance. Passive income is real now.",
       "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
+    },
+    {
+      "id": "velocity_banking",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Velocity Banking",
+      "description": "Run your household through a line of credit and sweep every surplus dollar at your debt — paying down a mortgage or revolving balance years faster. You set the aggressiveness; chunk extra anytime from the ⚡ panel, no turn needed.",
+      "lesson": "Velocity banking turns idle cash into accelerated principal: parking income on a simple-interest line saves the interest you'd otherwise pay, and that saving knocks EXTRA principal off your amortizing debt — so it pays down years faster and your equity builds quicker. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "prerequisites": { "personal_credit_score_gte": 640 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "Velocity banking is on. Your surplus now sweeps straight at your target debt every month — and you can chunk extra whenever cash flow allows, from the ⚡ Velocity panel on your dashboard.",
+      "narrative_failure": "You set up the line, but the paperwork hit a snag this month."
     }
   ]
 }
