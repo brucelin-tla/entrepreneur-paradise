@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.43.0 — 2026-06-30 (TESTING BUILD — wip/finance-economy-overhaul, not merged to main)
+**Finance & Economy overhaul: lean-business ceiling + Finance-as-wealth-engine + macro cycle + capital-recycling trio**
+
+Large reshaping of the whole economy. Pushed to the `wip/finance-economy-overhaul` branch for mobile playtest — **not merged to `main`/production** (live remains v0.42.2). Harness-verified across all three archetypes (full 36-month runs, no bugs/crashes/console errors); awaiting human playtest.
+
+- **Business revenue ceiling** — small business caps lean (~$80k lean → ~$200k maxed), set by `systems_maturity`, not headcount (hard wall in `monthlyTick`). Org-Capacity / management-debt model (founder ceiling ~8) + employee-retention treadmill make brute-forcing a bigger business hit a wall. Real wealth comes from Finance.
+- **Macro cycle** (`_advanceMarketCycle`/`_CYCLE_PHASES`) — one jittered Expansion → Boom → Downturn (~mo 14–21) → Recovery arc drives the IUL index credit, market rates, asset prices, and credit availability.
+- **IUL engine** — cash value indexed to the cycle; wash vs. variable policy loans (with LAPSE risk), post-tax vs. pre-tax (DB-plan) funding; passive tax-free income as the crown jewel.
+- **Buy the Dip** (keystone) — in the downturn, deploy policy cash + reserves (`_dryPowder`, credit excluded) into distressed assets at a discount; alpha booked via `investment_positions`.
+- **Velocity Banking** (`velocity_banking` + `monthlyTick` block) — cash-flow-gated chunk mechanic: positive CF accelerates debt payoff (interest-saved acceleration) and frees the line; negative CF spirals; HELOC freeze in a credit-tight downturn punishes leaning on the line, rewards discipline.
+- **RE margin-call / over-leverage test** — downturn marks property down a depth-scaled haircut; over-leveraged (LTV>90 + DSCR<1.1 + thin reserves) get a forced sale + deficiency + credit hit; conservative leverage rides through.
+- **Underwriting split** — term loans underwrite on DTI, revolving credit on utilization, no cross-contamination (`_creditApprovalChance(isLoan)` + `LOAN_APPROVAL`).
+- **Scoring rescale** — `net_worth`, `passive_income`, and `leverage_efficiency` now on logarithmic ladders that reward mastery; leverage_efficiency measures asset base controlled per dollar of own equity, gated by safety (margin-call/LTV/bad-debt drag it down).
+- **Leaner action menus** — curated to a lean active set (Marketing 11, Operations 12, Finance 25 = 48) via per-action `enabled:false` (reversible; redundant moves + traps set aside for this test build).
+
 ## v0.42.2 — 2026-06-30
 **Utilization/RE bug, exec auto-play prerequisites, lifestyle pocket fix, event throttle, checkpoint resume, leaderboard detail, Established head-start**
 

@@ -103,6 +103,7 @@
     },
     {
       "id": "fulfillment_system",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Build Fulfillment System",
@@ -119,6 +120,7 @@
     },
     {
       "id": "build_ip",
+      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Build Proprietary IP",
@@ -135,6 +137,7 @@
     },
     {
       "id": "vertical_integration",
+      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Expand Operations",
@@ -169,6 +172,7 @@
     },
     {
       "id": "project_management",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -219,6 +223,7 @@
     },
     {
       "id": "hire_fractional_cfo",
+      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "label": "Hire Fractional CFO",
@@ -237,6 +242,7 @@
     },
     {
       "id": "hire_hr_manager",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Hire an HR & Recruiting Lead",
@@ -273,6 +279,7 @@
     },
     {
       "id": "hire_leadgen_specialist",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -291,6 +298,7 @@
     },
     {
       "id": "hire_sales_specialist",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -309,6 +317,7 @@
     },
     {
       "id": "hire_marketing_manager",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -327,6 +336,7 @@
     },
     {
       "id": "basic_quality_control",
+      "enabled": false,
       "category": "operations",
       "stage": "foundation",
       "one_time": true,
@@ -361,6 +371,7 @@
     },
     {
       "id": "hire_client_success",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "label": "Hire Client Success Manager",
@@ -396,6 +407,7 @@
     },
     {
       "id": "grant_stock_incentives",
+      "enabled": false,
       "category": "operations",
       "stage": "wealth",
       "one_time": true,
@@ -413,6 +425,7 @@
     },
     {
       "id": "rapid_offshore_scaleup",
+      "enabled": false,
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
@@ -431,6 +444,7 @@
     },
     {
       "id": "restructure_team",
+      "enabled": false,
       "category": "operations",
       "stage": "foundation",
       "label": "Restructure & Downsize",

@@ -72,6 +72,7 @@
     },
     {
       "id": "private_equity_fund",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "label": "Invest in a Private Equity Fund",
@@ -88,6 +89,7 @@
     },
     {
       "id": "setup_family_office",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -114,7 +116,7 @@
       "lesson": "The ultra-wealthy don't just build wealth — they make it permanent. A dynasty trust removes assets from your taxable estate and walls them off from lawsuits, letting wealth compound across generations without being taxed at each death. Legacy, engineered.",
       "cash_cost": 20000,
       "energy_cost": 5,
-      "prerequisites": { "needs": ["setup_family_office"] },
+      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
       "effects": { "trust_structure": "dynasty", "litigation_exposure": -25, "audit_risk": -8, "tax_rate": -0.02, "lifestyle_legacy": 25, "_dynasty_trust": true },
       "success_rate": 0.92,
       "failure_effects": { "lifestyle_legacy": 8, "_dynasty_trust": true },
@@ -123,6 +125,7 @@
     },
     {
       "id": "establish_board",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -159,6 +162,7 @@
     },
     {
       "id": "build_dnb_profile",
+      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "one_time": true,
@@ -325,6 +329,7 @@
     },
     {
       "id": "reincorporate_c_corp",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "one_time": true,
@@ -360,6 +365,7 @@
     },
     {
       "id": "wyoming_holding_llc",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -393,6 +399,7 @@
     },
     {
       "id": "hire_general_counsel",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "one_time": true,
@@ -513,6 +520,7 @@
     },
     {
       "id": "policy_loan",
+      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "label": "Take a Policy Loan",
@@ -561,6 +569,7 @@
     },
     {
       "id": "private_lending",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Become a Private Lender",
@@ -577,6 +586,7 @@
     },
     {
       "id": "acquire_competitor",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Acquire a Competitor",
@@ -593,6 +603,7 @@
     },
     {
       "id": "fast_working_capital",
+      "enabled": false,
       "category": "finance",
       "stage": "foundation",
       "one_time": true,
@@ -612,6 +623,7 @@
     },
     {
       "id": "offmarket_guaranteed_fund",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "one_time": true,

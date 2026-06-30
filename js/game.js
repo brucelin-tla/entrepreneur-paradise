@@ -17,6 +17,7 @@ const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
 const GOOGLE_G='<svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:middle;flex-shrink:0;"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.6 44 30.9 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line'];
+const LOAN_APPROVAL=['bank_personal_loan'];/* term loans underwritten on DTI; the rest of CREDIT_APPROVAL is revolving credit underwritten on utilization */
 // Advisory/setup services the Epic concierge performs in-house, so the member pays NO fee (just the membership). These are professional fees — NOT capital deployment (funding a policy, tax reserve, buying assets, insurance premiums are never "waived"). Savings shown via _epicServiceFee.
 const EPIC_WAIVED=['wyoming_holding_llc','build_personal_credit','debt_restructure'];
 // Milestones / achievements — grouped by category. check(state, game)=>bool. Surfaced on the results screen and called out by the mentor.
@@ -43,6 +44,16 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.43.0',d:'2026-06-30 19:00',n:[
+'BIG update — Finance & Economy overhaul (testing build). Your small business now caps lean (~$80–200k/mo, set by your SYSTEMS, not headcount) — real wealth comes from FINANCE leveraging the cash & credit it throws off.',
+'A live economy: an Expansion → Boom → Downturn → Recovery cycle plays out across your 36 months. The prepared get rich in the bust; the over-leveraged get squeezed.',
+'New play — Velocity Banking: run your household through a line of credit and sweep surplus cash flow at your debt. Powerful while cash-flow positive; it bites if you go negative or lean on the line in a downturn.',
+'New keystone — Buy the Dip: in the downturn, deploy tax-free policy cash and reserves into distressed assets at a deep discount.',
+'Real-estate leverage now has teeth: over-leverage (high LTV, thin reserves) can trigger a margin call / forced sale in the crash, while conservative leverage rides through.',
+'Loans vs. credit now underwrite separately — term loans on your debt-to-income, revolving credit on your utilization (no more one dragging the other down).',
+'Leaner, more focused action menus so each decision matters more (extra options temporarily set aside for this test build).',
+'Scoring rewards finance MASTERY — net worth, passive income and leverage efficiency now climb on a curve that separates dabblers from pros.',
+]},
 {v:'0.42.2',d:'2026-06-30 18:00',n:[
 'Fixed utilization reading ~96% “but healthy” the moment you bought real estate — your mortgage was wrongly counted as credit-card utilization. Now your score climbs as it should.',
 'Fixed the menu asking you to “hire a fractional CRO” when you already have one (a failed hire roll left the role unmarked). Self-heals existing games.',
@@ -656,7 +667,7 @@ const reps=[];cats.forEach(c=>{const cheapest=byCat[c].slice().sort((a,b)=>(a.ca
 const repIds=new Set(reps.map(a=>a.id));
 const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0));
 return[...reps,...rest].slice(0,CAP);}
-const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
+const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
 isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
 
@@ -866,17 +877,17 @@ const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
 const inq=s.credit_inquiries||0;const fNew=Math.max(0.3,(s._credit_repair?0.7:0.85)-Math.min(0.45,inq*0.06));/* new credit (10%): hard inquiries (and an open repair) cap the top — each inquiry shaves a little */
 return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Real-life credit underwriting for approval actions (lines, cards, term loans): personal utilization is the dominant gate — above 30% approval odds fall off a cliff — and the lender pulls your personal myFICO 3B even for BUSINESS credit (the owner personally guarantees it). Returns the chance of approval.
-_creditApprovalChance(){const s=this.state,u=this.calcPersUtil(),score=Math.round(s.personal_credit_score||600);
-let p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — no penalty; the cliff is only ABOVE 30% */
+_creditApprovalChance(isLoan){const s=this.state,score=Math.round(s.personal_credit_score||600);
+// The dominant gate differs by product: a term LOAN is underwritten on debt-to-income (can your cash flow service the payment?); a revolving CREDIT line/card is underwritten on UTILIZATION (how much of your existing limits are you already using?). They don't cross-contaminate — high utilization never sinks a loan, and high DTI never sinks a card.
+let p;if(isLoan){const dti=this.calcDTI();p=dti<=36?0.92:dti<=43?0.6:dti<=55?0.35:dti<=70?0.18:0.08;}
+else{const u=this.calcPersUtil();p=u<=30?0.92:u<=40?0.5:u<=50?0.3:u<=70?0.15:0.07;/* at/under 30% utilization is the healthy zone — the cliff is only ABOVE 30% */}
 const inq=s.credit_inquiries||0,inqMult=inq>=5?0.5:inq>=2?0.85:1;/* a stack of recent hard inquiries reads as credit-hungry — 5+ roughly halves approval odds */
 // Derogatories are an approval KILLER in real life — lenders decline on active collections/charge-offs almost regardless of the score. One mark stings; a few nearly shut you out. (Clearing them — credit repair / Epic — is the path back in.)
 const neg=s.credit_negatives||0,negMult=neg<=0?1:neg===1?0.6:neg===2?0.4:neg===3?0.25:neg===4?0.15:0.08;
-// Ability to repay: lenders underwrite capacity, not just willingness. High debt-to-income (and a business that can't cover its debt service) makes them nervous.
-const dti=this.calcDTI(),dtiMult=dti<=36?1:dti<=43?0.85:dti<=55?0.6:0.35;const dscr=s.dscr||0,dscrMult=(dscr>0&&dscr<1)?0.65:1;
 const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600?0.5:0.3;
 // Banking relationship → the lender already knows you (deposits + history) → easier yes. NAICS classification → a verified holding-company code reads as a legit business; an unverified/wrong code gets flagged and declined until fixed.
 const bankMult=this._hasBanking()?1.12:1;const _hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure);const naicsMult=this._naicsVerified()?1.05:(_hasEntity?0.75:1);/* only a real business entity can carry a wrong NAICS code; no entity = personal loan, NAICS irrelevant */
-return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*dtiMult*dscrMult*bankMult*naicsMult));},
+return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*bankMult*naicsMult));},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
@@ -1466,7 +1477,7 @@ a.id==='fast_working_capital'?'<span class="cost-tag cost-recurring" title="repa
 (a.recurring_cost?'<span class="cost-tag cost-recurring" title="recurring monthly cost">🔁 💵'+a.recurring_cost+'/mo</span>':'')+
 (()=>{const FR=['hire_cro','hire_coo','hire_cfo'],FU=['promote_cro_fulltime','promote_coo_fulltime','promote_cfo_fulltime'];const amt=FR.includes(a.id)?this.calcExecFrac():FU.includes(a.id)?this.calcExecFull():0;return amt?'<span class="cost-tag cost-recurring" title="ongoing executive pay — scales with your revenue">🔁 ~'+this.fmt(amt)+'/mo pay</span>':'';})()+
 (needsCredit?'<span class="cost-tag" style="background:rgba(59,130,246,0.15);color:var(--blue)">credit available</span>':'')+
-(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const ch=Math.round(this._creditApprovalChance()*100),u=this.calcPersUtil(),col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="lenders underwrite on your personal utilization + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(u>30?' · util '+u+'%':'')+'</span>';})():'')+
+(!done&&!locked&&CREDIT_APPROVAL.includes(a.id)?(()=>{const isLoan=LOAN_APPROVAL.includes(a.id),ch=Math.round(this._creditApprovalChance(isLoan)*100),metric=isLoan?this.calcDTI():this.calcPersUtil(),label=isLoan?'DTI':'util',col=ch>=70?'var(--accent)':ch>=45?'var(--gold)':'var(--red)';return '<span class="cost-tag" style="background:'+(ch<45?'rgba(239,68,68,0.12)':'rgba(127,127,127,0.12)')+';color:'+col+';" title="'+(isLoan?'term loans are underwritten on your debt-to-income (DTI)':'revolving credit is underwritten on your personal utilization')+' + myFICO 3B">'+(ch<45?'⚠ ':'')+'~'+ch+'% approval'+(metric>30?' · '+label+' '+metric+'%':'')+'</span>';})():'')+
 (outgrown?'<span class="cost-tag" style="background:rgba(156,163,180,0.1);color:var(--text2);font-size:0.65rem;">lower impact</span>':'')+
 (done?'<span class="cost-tag cost-done">✓ Done</span>':'')+
 (!done&&locked?'<span class="cost-tag cost-locked">'+reason+'</span>':'')+
@@ -1635,7 +1646,7 @@ const retryBoost=(this.state._partial_actions&&this.state._partial_actions[actio
 const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboarding — fewer partials in the first 3 months
 const _isCreditApp=CREDIT_APPROVAL.includes(action.id);
 // Credit applications are underwritten (utilization + personal myFICO), not skill/energy-modified — a lender doesn't care how rested you are, only how your file reads.
-const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance()):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
+const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<this._creditApprovalChance(LOAN_APPROVAL.includes(action.id))):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
 if(_isCreditApp)this.state.credit_inquiries=(this.state.credit_inquiries||0)+1;/* every application is a hard pull — they pile up and drag approval/score (Epic clears them every 6 months) */
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
@@ -1754,10 +1765,10 @@ const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_reve
 if(buffs[action.id]){const b=buffs[action.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:action.label});}
 this.lifestyleHistory.push(action);}
 // Credit declined: explain the underwriting reason (high utilization / personal myFICO pull) so the lesson lands.
-if(_isCreditApp&&!success){const s=this.state,u=this.calcPersUtil(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':'')+'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ';
+if(_isCreditApp&&!success){const s=this.state,isLoan=LOAN_APPROVAL.includes(action.id),u=this.calcPersUtil(),dti=this.calcDTI(),sc=Math.round(s.personal_credit_score||0);let _why='Declined. '+(isLoan?(dti>36?'Your <strong>debt-to-income is '+dti+'%</strong> — above the ~36% a lender wants to see your cash flow service, so the payment looks too tight. ':''):(u>30?'Your personal credit utilization is at <strong>'+u+'%</strong> — well above the ~30% lenders want to see, so you read as overextended. ':''))+(isLoan?'The bank also pulled your personal <strong>myFICO 3B ('+sc+')</strong>. ':'Even though this is business credit, the bank pulled your personal <strong>myFICO 3B ('+sc+')</strong> and leaned on your personal guarantee. ');
 if(!this._naicsVerified()&&['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))_why+='Your business also tripped an underwriting flag: its <strong>NAICS industry code looks off</strong>, so the file got kicked out. A <strong>Wyoming holding-company setup</strong> assigns the correct code and clears this. ';
 if(!this._hasBanking())_why+='And you have <strong>no banking relationship</strong> here — you\'re a stranger applying cold. Build the relationship (bank and deposit with them) and they lend far more readily. ';
-_why+=(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.');this.state._dyn_narrative=_why;}
+_why+=(isLoan?(dti>36?'Lower your debt-to-income (pay down debt or grow revenue) under ~36% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'):(u>30?'Pay your revolving balances under 30% and reapply — approval odds jump sharply.':'Shore up the gaps above, then reapply.'));this.state._dyn_narrative=_why;}
 const _dn=this.state._dyn_narrative;this.state._dyn_narrative=null;this.actionHistory.push(action);(this._playLog=this._playLog||[]).push({m:this.month,c:cat,l:action.label,s:success});const _ro={action,success,effects,narrative:_dn||(cat==='lifestyle'?action.narrative:(success?action.narrative_success:action.narrative_failure)),cost:_cost,fund:_fund,_execRun:_execRun,_energySpent:(_execRun?0:_energyCost)};
 if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
@@ -1926,6 +1937,31 @@ if(s._velocity_active&&(s.total_debt||0)>0){
   if(s._velocity_spiral_streak>=2)s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Velocity Banking — the spiral',narrative:'Your cash flow has gone negative, and velocity banking cuts both ways: with nothing to chunk, the shortfall is riding on your line and compounding. The strategy only builds wealth while you\'re cash-flow positive — right now it\'s working against you. Fix the cash flow (cut burn, lift revenue) or the line balance keeps climbing.'}]);
  } else s._velocity_chunk=0;
 }
+// REAL-ESTATE LEVERAGE — the downturn margin-call test. Leverage cuts both ways: in good times the bank's money amplifies your returns, but when asset prices fall the debt stays fixed while equity evaporates — and a credit-tight market means you can't refinance your way out. The OVER-leveraged (high LTV going in, property that barely services its own debt, no reserves) get a MARGIN CALL → forced to sell into the crash at the worst possible price, realizing the loss. The CONSERVATIVELY leveraged (more equity down, healthy property cash flow, reserves on hand) take only a paper dip that recovers. This is the discipline real estate demands — and the mirror image of buy-the-dip: the forced sellers in a downturn are exactly who the prepared buy from.
+if(s._credit_tight&&(s.real_estate_debt||0)>0&&(s._asset_units||0)>0&&!s._re_squeeze_cycle){s._re_squeeze_cycle=true;
+ const debt=s.real_estate_debt||0,eq=s.real_estate_equity||0,value=debt+eq,units=s._asset_units||1,depth=s._downturn_depth||1;
+ const haircut=Math.min(0.32,0.13*depth+0.05);/* property values fall 13-32% in the bust, deeper when the downturn is severe */
+ const markedValue=Math.round(value*(1-haircut)),markedEq=markedValue-debt;/* debt is fixed; equity absorbs the whole drop and can go underwater */
+ const ltv=markedValue>0?debt/markedValue:2;/* post-crash loan-to-value */
+ const reSvc=Math.round(debt*0.006),reDSCR=reSvc>0?(s._asset_income||0)/reSvc:99;/* can the rents cover the mortgage? */
+ const dp=this._dryPowder?this._dryPowder():{total:Math.max(0,(s.cash||0)+(s.personal_cash||0))},reserves=dp.total;
+ if(ltv>0.90&&reDSCR<1.1&&reserves<reSvc*6){
+  // MARGIN CALL — underwater, the property can't carry itself, and there's no cushion or refinance. The lender forces a sale of one property into the depressed market. Underwater means the sale doesn't even clear the loan — you eat the deficiency in cash, plus selling costs, and lose the income.
+  const perDebt=Math.round(debt/units),perEq=Math.round(eq/units),perInc=Math.round((s._asset_income||0)/units);
+  const proceeds=Math.round((perDebt+perEq)*(1-haircut)),deficiency=Math.max(0,perDebt-proceeds),sellCost=Math.round((perDebt+perEq)*0.06);
+  s.real_estate_debt=Math.max(0,debt-perDebt);s.total_debt=Math.max(0,(s.total_debt||0)-perDebt);
+  s.real_estate_equity=Math.max(0,eq-perEq);s._asset_units=Math.max(0,units-1);
+  s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)-perInc);s._asset_income=Math.max(0,(s._asset_income||0)-perInc);
+  s.cash=(s.cash||0)-(deficiency+sellCost);if(s.cash<0){const unc=this.coverShortfall(-s.cash);s.cash=0;if(unc>0)s.cash=-unc;}
+  s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-25);/* a forced sale / loan workout craters your credit */
+  s._re_margin_called=(s._re_margin_called||0)+1;
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — MARGIN CALL',narrative:'The crash caught you over-leveraged. Property values fell ~'+Math.round(haircut*100)+'%, your loan-to-value blew past 90% (underwater), the rents no longer cover the mortgage, and with credit frozen you can\'t refinance. The lender forced a sale — and selling into the bottom, the '+this.fmtMoney(proceeds)+' didn\'t even clear the '+this.fmtMoney(perDebt)+' loan. You ate '+this.fmtMoney(deficiency+sellCost)+' in deficiency and costs, lost '+this.fmtMoney(perInc)+'/mo of income, and your credit took a 25-point hit. THIS is over-leverage: in the good times it amplified your returns, in the bust it nearly buried you. More equity down, property that covers its own debt, and reserves are what carry you through.'}]);
+ } else {
+  // RODE IT THROUGH — leverage was conservative (or reserves/cash flow covered it). Equity dips on paper but you're never forced to sell, so it recovers with the market.
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate',narrative:'Property values dipped ~'+Math.round(haircut*100)+'% in the downturn, so your equity is down on paper. But your leverage was conservative — '+(ltv<=0.90?'healthy LTV':'')+(reDSCR>=1.1?(ltv<=0.90?', ':'')+'rents cover the mortgage':'')+(reserves>=reSvc*6?', reserves on hand':'')+' — so no lender can force your hand. You hold, the income keeps flowing, and the equity recovers as the market does. This is why you don\'t over-leverage: staying power turns a crash into a non-event.'}]);
+ }
+}
+if(!s._credit_tight)s._re_squeeze_cycle=false;/* reset once the downturn passes, so the next cycle can test again */
 // Executive Assistant: runs the financial housekeeping BEFORE the credit drift evaluates — utilization paydown, credit + D&B upkeep, tax reserve — so the score rewards the now-healthy file.
 if(s._ea_hired){const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),avail=s.available_credit||0,lim=persRev+avail;
 if(lim>0&&persRev/lim>0.3){const target=Math.round(persRev-0.28*lim),pay=Math.max(0,Math.min(target,Math.round((s.cash||0)*0.5)));if(pay>0){s.cash-=pay;s.total_debt=Math.max(0,s.total_debt-pay);s.available_credit=(s.available_credit||0)+pay;}}
@@ -2572,11 +2608,20 @@ calculateFinalScores(){const s=this.state;
 const cv=s.insurance_cash_value||0,reOwned=s.real_estate_owned||0,reEquity=s.real_estate_equity||0,reDebt=s.real_estate_debt||0,invest=s.investment_positions||0,polLoan=s.insurance_loan_balance||0,pbBal=s.private_bank_balance||0,pbLoan=s.private_bank_loan||0,bd=s.debt_breakdown||{};
 const badDebt=(bd.credit_card||0)+(bd.collections||0);
 const otherDebt=Math.max(0,(s.total_debt||0)-reDebt-(bd.credit_card||0)-(bd.collections||0)-polLoan);
+// Logarithmic ladder helper (defined up here so leverage_efficiency can use it too).
+const _lg=(v,lo,hi)=>Math.max(0,Math.min(100,100*Math.log10(Math.max(1,v)/lo)/Math.log10(hi/lo)));
 // Passive, mostly tax-free, monthly income: policy-loan income (10%/yr once CV>=250k) + RE cashflow (~$700/property) + lending interest (12%/yr)
 const passiveMonthly=(s._passive_income_active?cv*0.06/12:0)+reOwned*700+invest*0.01+pbBal*0.004;
-// Leverage efficiency: % of productive asset base financed with good (OPM) debt, ramped by asset scale
-const controlled=reEquity+reDebt+invest+cv+pbBal,goodDebt=reDebt+(s.business_installment_debt||0)+polLoan+pbLoan;
-const lev=controlled<1000?0:Math.min(100,(goodDebt/controlled)*130*Math.min(1,controlled/50000));
+// LEVERAGE EFFICIENCY — "max wealth with the least of your OWN money," but SAFELY. Not raw debt (over-leveraging is what the downturn margin-call punishes); efficiency is the asset base you CONTROL per dollar of your own equity, via other people's money — then gated by how safe that leverage is. A master controls ~4-5× their own capital through serviceable OPM; a blow-up (margin call, dangerous LTV, consumer debt) is the opposite of efficient and drags the score down.
+const controlled=reEquity+reDebt+invest+cv+pbBal;/* full productive asset base you command */
+const opm=reDebt+polLoan+pbLoan;/* other people's money financing that base (mortgages, policy loans, private-bank spread) */
+const netEquity=Math.max(2000,controlled-opm);/* YOUR actual skin in the game */
+const mult=controlled/netEquity;/* OPM multiple — assets controlled per dollar of your own equity */
+const scaleRamp=Math.min(1,controlled/200000);/* needs real asset scale (~$200k+) before the multiple counts — a tiny leveraged sliver doesn't max it */
+let levRaw=_lg(mult,1,5)*scaleRamp;/* 1×→0, 2×→43, 3×→68, 4×→86, 5×+→100 */
+// SAFETY gate — efficient leverage is SERVICEABLE leverage. A margin-call blow-up, a dangerously high real-estate LTV, or consumer "bad" debt all mark the leverage as reckless, not efficient — and pull the score well below a conservative borrower's.
+let safety=1;if(s._re_margin_called)safety*=0.5;const _reVal=reEquity+reDebt,_reLTV=_reVal>0?reDebt/_reVal:0;if(_reLTV>0.85)safety*=0.6;else if(_reLTV>0.75)safety*=0.85;if(badDebt>0)safety*=0.85;
+const lev=controlled<1000?0:Math.round(Math.max(0,Math.min(100,levRaw*safety)));
 // Net worth, leverage-aware: mortgage already netted inside reEquity; bad debt counts fully, other debt half, good debt not subtracted
 const nw=(s.cash||0)+(s.personal_cash||0)+reEquity+invest+cv+pbBal-polLoan-pbLoan-badDebt-otherDebt*0.5+(s.available_credit||0)*0.1;
 // Protection — how well the wealth is shielded: legal entity (liability separation) + asset-protection trust + insurance coverage + cash reserves. Credit/tax structure fold in here as the "don't lose it" pillar.
@@ -2589,7 +2634,6 @@ const resvPts=Math.min(25,(reserves/burnP/6)*25);/* ~6 months of burn held in re
 const protection=Math.round(Math.min(100,entPts+trustPts+insPts+resvPts));
 // Six end-game pillars (DESIGN.md). Passive tax-free income is the crown jewel; freedom (owner-independence) + leverage encode "max wealth & lifestyle with the least of your own money and time."
 // Logarithmic ladders so finance MASTERY differentiates instead of capping early. Tuned for the lean-business economy: passive $1k→0, $10k→50, $30k→74, $100k→100; net worth $50k→0, $1M→50, $5M→77, $20M→100. A finance dabbler lands ~50; a master climbs toward 100.
-const _lg=(v,lo,hi)=>Math.max(0,Math.min(100,100*Math.log10(Math.max(1,v)/lo)/Math.log10(hi/lo)));
 return{passive_income:Math.round(_lg(passiveMonthly,1000,100000)),leverage_efficiency:Math.round(lev),protection:protection,freedom:this.calcFreedom(),lifestyle:Math.min(100,(s.lifestyle_health||0)*0.2+(s.lifestyle_relationships||0)*0.2+(s.lifestyle_experiences||0)*0.15+(s.lifestyle_spiritual||0)*0.15+(s.lifestyle_philanthropy||0)*0.15+(s.lifestyle_legacy||0)*0.15),net_worth:Math.round(_lg(nw,50000,20000000))};},
 // Strong lifestyle gate: a wrecked life caps the final score (no "paradise" if you burned out). lifestyle 65+ = full, ~32 = half, floored at 0.3.
 calcComposite(scores){const w=CONFIG.scoring_weights?CONFIG.scoring_weights.dimensions:{};let c=0;for(const[k,d]of Object.entries(w))c+=(scores[k]||0)*(d.weight||0);const gate=Math.max(0.3,Math.min(1,(scores.lifestyle||0)/65));return Math.round(c*6*gate);},
