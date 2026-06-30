@@ -249,7 +249,7 @@
       "base_probability": 0.1,
       "probability_scales_with": "_bad_debt",
       "scale_factor": 0.000002,
-      "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive — every business line and term loan you carry now costs more to service each month.",
+      "narrative": "The Fed raised rates again, so Prime moved up with it. Your variable-rate debt — priced at Prime plus a margin — just got more expensive: every business line and term loan you carry now costs more to service each month.",
       "act": 2,
       "choices": [
         {
@@ -423,7 +423,7 @@
         {
           "label": "Make the offer, use available credit",
           "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 650, "total_debt": 60000, "_re_depreciation": 180, "_asset_units": 1 },
-          "outcome_narrative": "Offer accepted. The rent (~$650/mo net) barely beats the mortgage — and that's fine. The real prize is the ~$180/mo depreciation write-off sheltering your taxable income, plus tenants paying down your loan and the property appreciating. Real estate's edge is the tax code, not the rent check."
+          "outcome_narrative": "Offer accepted. The rent (~$650/mo net) barely beats the mortgage — and that's fine. The win is the combination: a ~$180/mo depreciation write-off that shelters income now (it's a deferral — some is 'recaptured' at up to 25% when you sell, unless you roll into the next property via a 1031 exchange), plus tenants paying down your loan and the property appreciating. The tax treatment, leverage, and appreciation often matter as much as the rent check."
         },
         {
           "label": "Pass — too much capital tied up right now",
