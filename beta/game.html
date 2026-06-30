@@ -436,38 +436,21 @@ window.EMBEDDED_CONFIG = {
   "version": "1.0.0",
   "actions": [
     {
-      "id": "hire_cro",
+      "id": "hire_sales_manager",
       "category": "marketing",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional CRO",
-      "description": "Rent a part-time Chief Revenue Officer who picks and runs your smartest growth move each month.",
-      "lesson": "You can't afford an A-player full-time yet — so you rent one. A fractional executive is leverage on a budget: real expertise, part-time cost. It buys back your time now and proves out the role before you commit to a full salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 30000, "customer_base_gte": 45, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "brand_equity": 6, "key_person_dependency": -8, "_cro_hired": true },
-      "success_rate": 0.88,
-      "failure_effects": { "brand_equity": 2, "_cro_hired": true },
-      "narrative_success": "Your fractional CRO is on. Each month they pick and execute the smartest growth play. Part-time pay scales modestly with the company — when you can afford a full-timer, they'll do far more.",
-      "narrative_failure": "The fractional CRO is onboarding part-time. They'll be picking your growth moves from here."
-    },
-    {
-      "id": "promote_cro_fulltime",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CRO to Full-Time",
-      "description": "Make your CRO full-time so they actively build the growth engine — pricey, but powerful at scale.",
-      "lesson": "This is the ceiling great founders hit: top talent is expensive, and you can only afford it if your capital is working — credit funding growth, a tax-efficient structure protecting cash, and leverage compounding faster than payroll. Brute-force cash can't carry an A-team; efficient leverage can.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro"], "monthly_revenue_gte": 70000, "customer_base_gte": 90, "brand_equity_gte": 55 },
-      "effects": { "brand_equity": 12, "revenue_capacity": 8000, "key_person_dependency": -10, "_cro_fulltime": true },
+      "label": "Hire a Sales Manager",
+      "description": "Hand off growth to a sales manager who picks and runs your smartest marketing move each month, so you can focus on finance.",
+      "lesson": "Delegation is the pivot from operator to owner. Once you've learned how to sell and generate leads yourself, you hand the playbook to a manager. They run growth; you graduate to the higher-leverage work of structuring capital.",
+      "cash_cost": 3000,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 15000, "customer_base_gte": 20, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "brand_equity": 5, "key_person_dependency": -8, "_cro_hired": true },
       "success_rate": 0.9,
-      "failure_effects": { "brand_equity": 4, "_cro_fulltime": true },
-      "narrative_success": "Your CRO is full-time now — and it shows. They're building the growth engine every day: capacity, pipeline, brand all climbing on their own. The salary is serious, but at your scale the leverage more than covers it.",
-      "narrative_failure": "The full-time offer is signed; they're still spinning up the bigger engine. The payroll hit is real from day one."
+      "failure_effects": { "brand_equity": 2, "_cro_hired": true },
+      "narrative_success": "Your sales manager is in the seat. Each month they pick and execute the smartest growth play, so you can step back from marketing and focus on the money.",
+      "narrative_failure": "Your sales manager is onboarding. They'll be running your growth moves from here."
     },
     {
       "id": "build_offer",
@@ -487,22 +470,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Two clients pushed back on the new pricing. You compromised on one. The packaging needs another pass."
     },
     {
-      "id": "brand_pr_push",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "PR & Brand Campaign",
-      "description": "Run a brand push — podcasts, press, a refresh — to build authority and charge more.",
-      "lesson": "Authority is pricing power. When prospects already know your name from a podcast or feature, you're not discounting to win them — they expect to pay a premium, and every customer is worth more.",
-      "cash_cost": 3500,
-      "energy_cost": 5,
-      "prerequisites": { "brand_equity_gte": 20 },
-      "effects": { "brand_equity": 20, "customer_base": 5, "revenue_capacity": 5000, "leads": 12 },
-      "success_rate": 0.6,
-      "failure_effects": { "brand_equity": 8 },
-      "narrative_success": "A local business podcast featured you. Three inbound calls the next week, all mentioning the episode — and none of them flinched at your rates.",
-      "narrative_failure": "The rebrand looks great. The press pitch didn't land. Brand equity went up; the phone didn't ring more. Yet."
-    },
-    {
       "id": "content_engine",
       "category": "marketing",
       "stage": "wealth",
@@ -517,22 +484,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "brand_equity": 10 },
       "narrative_success": "The content calendar runs itself. You approved this month's posts in twenty minutes. Your brand — and your pricing power — keeps climbing.",
       "narrative_failure": "The team is producing content. It's... fine. Not your voice yet. Takes time to train a brand voice into other people."
-    },
-    {
-      "id": "franchise_licensing",
-      "category": "marketing",
-      "stage": "wealth",
-      "label": "License or Franchise",
-      "description": "Let others run your model under your brand, multiplying the value your name can capture.",
-      "lesson": "Sell the system, not your time. Licensing your playbook lets others run your model under your brand — multiplying the value your business can capture far beyond what your own delivery could ever reach.",
-      "cash_cost": 15000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 70, "brand_equity_gte": 60 },
-      "effects": { "brand_equity": 15, "revenue_capacity": 50000, "key_person_dependency": -20 },
-      "success_rate": 0.4,
-      "failure_effects": { "brand_equity": -5 },
-      "narrative_success": "Two licensees signed. They're paying you monthly for the right to use your name and your playbook. This is leverage.",
-      "narrative_failure": "One licensee signed, then struggled. Supporting them took more time than expected. The model needs refinement."
     },
     {
       "id": "cold_outreach",
@@ -583,23 +534,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The ad budget mostly evaporated. But you learned what doesn't work, which is worth something."
     },
     {
-      "id": "lead_magnet",
-      "category": "marketing",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Create a Lead Magnet",
-      "description": "Offer a free guide or checklist that captures emails — give value first, sell later.",
-      "lesson": "Give value before you ask for the sale. A free, genuinely useful resource earns trust and an email address — the start of a lead you own.",
-      "cash_cost": 100,
-      "energy_cost": 12,
-      "prerequisites": { "customer_base_gte": 3 },
-      "effects": { "leads": 15, "brand_equity": 8 },
-      "success_rate": 0.75,
-      "failure_effects": { "leads": 5, "brand_equity": 3 },
-      "narrative_success": "The lead magnet is live. Fifteen new emails in the first week. These aren't customers yet — but they raised their hand.",
-      "narrative_failure": "Downloads are trickling in. The topic might need adjusting, but you've got five new leads and a distribution channel."
-    },
-    {
       "id": "referral_asks",
       "category": "marketing",
       "stage": "foundation",
@@ -616,22 +550,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Everyone said they'd think about it. One person actually came through — better than nothing."
     },
     {
-      "id": "referral_partnerships",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Referral & Affiliate Partnerships",
-      "description": "Set up referral and commission-based affiliate partners whose audiences become your lead channel.",
-      "lesson": "Borrow other people's trust and audiences. Partners who serve your same client (but don't compete) plus affiliates working on commission turn other people's reach into a steady, near-free lead source — you mostly pay for results.",
-      "cash_cost": 800,
-      "energy_cost": 10,
-      "prerequisites": { "brand_equity_gte": 30, "customer_base_gte": 25 },
-      "effects": { "leads": 16, "customer_base": 8, "brand_equity": 9, "revenue_capacity": 8000 },
-      "success_rate": 0.62,
-      "failure_effects": { "leads": 5, "customer_base": 2, "brand_equity": 3 },
-      "narrative_success": "Partners and affiliates are live — each sending warm leads a month, on near-zero or commission-only cost. Leads from channels you didn't have to build yourself.",
-      "narrative_failure": "A couple of partners are producing; the rest signed on but haven't sent anyone yet. Follow up and nurture the network next month."
-    },
-    {
       "id": "do_sales_yourself",
       "category": "marketing",
       "stage": "foundation",
@@ -646,55 +564,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "customer_base": 1 },
       "narrative_success": "You closed a handful of deals by sheer hustle — calls, follow-ups, and asking for the sale. It's exhausting, but the pipeline turned into paying customers.",
       "narrative_failure": "A lot of calls, a few maybes, one yes. Selling is a numbers game and this month the numbers were thin — but you learned what objections to expect."
-    },
-    {
-      "id": "discount_promotion",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Offer a Discount to Drive Sales",
-      "description": "Slash prices for a flood of customers — but they're demanding bargain-hunters who erode your margins.",
-      "lesson": "Discounting is the easiest way to get customers and the hardest way to build a business. Cheap clients are the most demanding and the least loyal — you trade margin, pricing power, and energy for volume that doesn't compound. Use it sparingly, if at all.",
-      "cash_cost": 0,
-      "energy_cost": 12,
-      "prerequisites": {},
-      "effects": { "customer_base": 12, "brand_equity": -8, "sales_conversion": 3 },
-      "success_rate": 0.9,
-      "failure_effects": { "customer_base": 4, "brand_equity": -5 },
-      "narrative_success": "The promo worked — a flood of new customers signed up. But they haggle over every invoice, demand round-the-clock attention, and your margins (and your evenings) took the hit.",
-      "narrative_failure": "The discount pulled in a handful of price-shoppers and cheapened how people see you. A lot of effort for thin, fickle business."
-    },
-    {
-      "id": "webinar_funnel",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Launch a Webinar Funnel",
-      "description": "Build an automated webinar that pitches and converts leads 24/7 while you sleep.",
-      "lesson": "Build it once, it sells forever. An automated funnel turns your best pitch into an asset that converts leads 24/7 — lifting your close rate without costing you time.",
-      "cash_cost": 2000,
-      "energy_cost": 12,
-      "prerequisites": { "brand_equity_gte": 25, "needs": ["build_offer"] },
-      "effects": { "customer_base": 6, "leads": 15, "brand_equity": 12, "revenue_capacity": 10000, "sales_conversion": 5 },
-      "success_rate": 0.5,
-      "failure_effects": { "brand_equity": 5 },
-      "narrative_success": "The webinar converted at 8%. People are signing up, watching, and buying — at 2 AM while you're asleep.",
-      "narrative_failure": "Registration was decent. Conversion was terrible. The offer needs reworking, but the funnel infrastructure is built."
-    },
-    {
-      "id": "build_sales_team",
-      "category": "marketing",
-      "stage": "leverage",
-      "label": "Hire a Salesperson",
-      "description": "Hire a dedicated closer to lift conversion so you stop being the sales bottleneck.",
-      "lesson": "A dedicated closer lifts conversion on the leads you already have — more customers from the same pipeline. But sales talent is paid on results: their cost rises as revenue rises, so the real leverage comes from a better product and a warm pipeline, not just adding salespeople.",
-      "cash_cost": 3000,
-      "energy_cost": 6,
-      "recurring_cost": 3000,
-      "prerequisites": { "needs": ["build_offer"], "customer_base_gte": 8 },
-      "effects": { "team_size": 1, "revenue_capacity": 8000, "key_person_dependency": -10, "leads": 8, "sales_conversion": 7 },
-      "success_rate": 0.6,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Your new closer is converting leads you'd have let go cold. Conversion is up — and you spent the month on the business instead of in it.",
-      "narrative_failure": "The new hire is ramping slowly. Conversion hasn't moved much yet, but you got ten hours a week back."
     },
     {
       "id": "crm_pipeline",
@@ -714,39 +583,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The CRM is set up but half your data is still in sticky notes. Partial improvement — you'll migrate the rest next month."
     },
     {
-      "id": "email_campaign",
-      "category": "marketing",
-      "stage": "foundation",
-      "label": "Launch Email Nurture Campaign",
-      "description": "Build an email list and send weekly value emails that warm leads until they convert.",
-      "lesson": "An email list is an asset YOU own — not rented from an algorithm. Nurture it and cold leads warm into buyers, lifting conversion on the pipeline you already paid to fill.",
-      "cash_cost": 200,
-      "energy_cost": 10,
-      "prerequisites": { "leads_gte": 10 },
-      "effects": { "customer_base": 5, "brand_equity": 5, "sales_conversion": 4 },
-      "success_rate": 0.7,
-      "failure_effects": { "customer_base": 1, "brand_equity": 2 },
-      "narrative_success": "The email sequence is converting. Three leads became clients this month — they said your emails made them feel like they already knew you.",
-      "narrative_failure": "Open rates are decent, clicks are low. The content needs work, but the infrastructure is built."
-    },
-    {
-      "id": "vanity_follower_boost",
-      "category": "marketing",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Viral Follower Boost",
-      "description": "Buy 50,000 followers and a flood of likes overnight — instant social proof so prospects take you seriously from day one.",
-      "lesson": "Bought followers are bots, not buyers. Engagement craters, real prospects (and the platform) spot the fake numbers, and your credibility takes the hit. Social proof you buy isn't trust — a small, real, engaged audience beats a huge fake one.",
-      "cash_cost": 3500,
-      "energy_cost": 2,
-      "prerequisites": {},
-      "effects": { "brand_equity": -15, "sales_conversion": -4 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Your follower count exploded overnight — the screenshots looked impressive. But the likes are from bots in another time zone, your engagement rate fell off a cliff, and a couple of real prospects quietly noticed the numbers didn't add up.",
-      "narrative_failure": ""
-    },
-    {
       "id": "influencer_megadeal",
       "category": "marketing",
       "stage": "leverage",
@@ -762,41 +598,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": {},
       "narrative_success": "The post hit millions — a flood of curiosity clicks, a screenshot-worthy spike, a rush of new leads. Then: crickets. The audience wasn't your buyer, the bump evaporated within a week, and the few who did sign up churned fast.",
       "narrative_failure": ""
-    },
-    {
-      "id": "national_ad_blitz",
-      "category": "marketing",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "National Ad Blitz Rebrand",
-      "description": "A top agency pitches a full rebrand plus a national ad campaign — go big, dominate the category, become a household name.",
-      "lesson": "Big agencies sell spend, not results. The rebrand confused the customers you had, and 'awareness' without a tracked funnel is money on fire. At scale, ROI-measured channels and retention win — spend you can't measure is spend you lose.",
-      "cash_cost": 45000,
-      "energy_cost": 4,
-      "prerequisites": { "cash_gte": 45000 },
-      "effects": { "brand_equity": -10 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "The billboards looked incredible and the agency's deck was dazzling. Then the numbers landed: awareness up, sales flat, and your existing customers confused by the new logo and messaging. Forty-five grand, mostly gone, nothing to show on the bottom line.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "hire_highticket_closer",
-      "category": "marketing",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a High-Ticket Closer",
-      "description": "A legendary closer who guarantees he'll 10x your premium sales — books big-ticket deals on day one. Commission-heavy, but he pays for himself, right?",
-      "lesson": "A closer who hard-sells on fake guarantees books revenue today and poisons the business tomorrow — refunds, churn, a wrecked reputation, lawsuits over claims you can't keep. He's expensive, toxic, and won't go quietly: firing him (via Restructure & Downsize) means eating a legal threat. Never let someone buy short-term revenue with your integrity.",
-      "cash_cost": 0,
-      "recurring_cost": 9000,
-      "energy_cost": 4,
-      "prerequisites": {},
-      "effects": { "sales_conversion": 8, "customer_base": 8, "team_size": 1, "company_culture": -18, "_toxic_closer": true },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Three premium deals his first week — the revenue looks incredible. But he's promising clients the moon: guaranteed results, money-back-no-matter-what, things you can't deliver. He's abrasive with the team, his pay eats $9,000/month, and you dread the day those guarantees come due.",
-      "narrative_failure": ""
     }
   ]
 }
@@ -805,38 +606,21 @@ window.EMBEDDED_CONFIG = {
   "version": "1.0.0",
   "actions": [
     {
-      "id": "hire_coo",
+      "id": "hire_ops_manager",
       "category": "operations",
       "stage": "leverage",
       "one_time": true,
-      "label": "Hire a Fractional COO",
-      "description": "Rent a part-time COO who picks and runs your smartest ops move each month, cutting your dependence on you.",
-      "lesson": "Key-person dependency is the silent killer of business value. You can't carry a full-time COO yet — so you rent the expertise part-time, start systemizing, and prove the role before you commit to the salary.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 30000, "team_size_gte": 3, "systems_maturity_gte": 30, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "systems_maturity": 8, "key_person_dependency": -12, "_coo_hired": true },
-      "success_rate": 0.88,
-      "failure_effects": { "systems_maturity": 3, "key_person_dependency": -4, "_coo_hired": true },
-      "narrative_success": "Your fractional COO is steering operations a few days a month — picking the smartest systems-and-delivery move each turn. Part-time pay for now; a full-timer would build far harder.",
-      "narrative_failure": "The fractional COO is onboarding part-time. They'll be driving your ops moves from here."
-    },
-    {
-      "id": "promote_coo_fulltime",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote COO to Full-Time",
-      "description": "Bring your COO full-time to build the machine daily, growing team and capacity while you step back. Pricey.",
-      "lesson": "A full-time A-player operator is what turns a business into a sellable asset — but they're expensive. You can only carry the payroll if your systems, margins, and leverage are doing the heavy lifting. Can't afford them? That's the ceiling telling you to fix your efficiency first.",
-      "cash_cost": 15000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_coo"], "monthly_revenue_gte": 70000, "team_size_gte": 6, "systems_maturity_gte": 55 },
-      "effects": { "systems_maturity": 14, "revenue_capacity": 8000, "key_person_dependency": -20, "_coo_fulltime": true },
+      "label": "Hire an Operations Manager",
+      "description": "Hand off delivery to an operations manager who picks and runs your smartest ops move each month, cutting the business's dependence on you.",
+      "lesson": "Key-person dependency is the silent killer of business value. Once you've done the work and documented it, you hand operations to a manager. They run delivery and systems; you're freed to focus on finance and leverage.",
+      "cash_cost": 3000,
+      "energy_cost": 5,
+      "prerequisites": { "monthly_revenue_gte": 15000, "team_size_gte": 2, "systems_maturity_gte": 25, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "systems_maturity": 10, "key_person_dependency": -12, "_coo_hired": true },
       "success_rate": 0.9,
-      "failure_effects": { "systems_maturity": 5, "key_person_dependency": -8, "_coo_fulltime": true },
-      "narrative_success": "Your COO is full-time — and the machine is humming. Team and capacity grow on their own each month, and the business barely needs you. The salary is heavy, but your scale carries it.",
-      "narrative_failure": "Full-time offer signed; the bigger build is still ramping. Payroll bites from day one."
+      "failure_effects": { "systems_maturity": 4, "key_person_dependency": -4, "_coo_hired": true },
+      "narrative_success": "Your operations manager is steering delivery and systems each month, picking the smartest ops move every turn. The business runs without you in the weeds.",
+      "narrative_failure": "Your operations manager is onboarding. They'll be driving your ops moves from here."
     },
     {
       "id": "study_business_content",
@@ -888,23 +672,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The contractor needs more hand-holding than expected. You're spending time managing instead of doing — but that's the transition."
     },
     {
-      "id": "hire_delivery_team",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Build a Delivery Team",
-      "description": "Hire two or three people dedicated to fulfillment. You manage, they deliver, and capacity scales past you.",
-      "lesson": "A dedicated delivery team is the leap from freelancer to business. The work happens whether you're in the room or not — that's a job becoming an asset with real capacity.",
-      "cash_cost": 5000,
-      "energy_cost": 6,
-      "prerequisites": { "systems_maturity_gte": 20 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 2, "revenue_capacity": 20000, "key_person_dependency": -20 },
-      "success_rate": 0.6,
-      "failure_effects": { "team_size": 2, "key_person_dependency": -5 },
-      "narrative_success": "The team handled this month's workload without a single escalation to you. You built something that works without you.",
-      "narrative_failure": "The team is hired and training. Quality isn't where you want it yet. You're managing more than doing — the awkward middle phase."
-    },
-    {
       "id": "fulfillment_system",
       "category": "operations",
       "stage": "leverage",
@@ -919,39 +686,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "systems_maturity": 8, "revenue_capacity": 3000 },
       "narrative_success": "A new client moves through your system like a product on an assembly line — consistent, reliable, scalable. This is a real business now.",
       "narrative_failure": "The system is built for 80% of cases. The other 20% still need you. But that's 80% fewer fires."
-    },
-    {
-      "id": "build_ip",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Build Proprietary IP",
-      "description": "Build proprietary tools or methodology rivals can't copy. Your moat, and your pricing power.",
-      "lesson": "A methodology competitors can't copy is a moat. Proprietary IP gives you pricing power and capacity to capture more value — not a commodity competing on price.",
-      "cash_cost": 10000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 50, "brand_equity_gte": 40 },
-      "effects": { "brand_equity": 20, "revenue_capacity": 15000, "systems_maturity": 10, "litigation_exposure": -10 },
-      "success_rate": 0.5,
-      "failure_effects": { "brand_equity": 8, "systems_maturity": 4 },
-      "narrative_success": "The proprietary framework is built and branded. Clients now come to you for the methodology, not just the service.",
-      "narrative_failure": "The IP is developed but not yet differentiated enough. More iteration needed. Still, the foundation is laid."
-    },
-    {
-      "id": "vertical_integration",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Expand Operations",
-      "description": "Bring a supplier in-house and clone your playbook into a new market to keep more margin and multiply reach.",
-      "lesson": "Once the playbook works, expand it — own more of the value chain to keep more of every dollar, and drop the proven system into a new market to multiply the business without reinventing it.",
-      "cash_cost": 28000,
-      "energy_cost": 8,
-      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 5 },
-      "recurring_cost": 8000,
-      "effects": { "cogs": -3000, "customer_base": 20, "team_size": 3, "brand_equity": 12, "systems_maturity": 8 },
-      "success_rate": 0.45,
-      "failure_effects": { "customer_base": 5, "team_size": 2, "cogs": -500 },
-      "narrative_success": "You own more of the supply chain AND opened a second market — margins jumped and capacity multiplied. You're an empire now.",
-      "narrative_failure": "Expansion is messier than expected: integration overhead is real and the new market is slow. It'll take time to break even — if it does."
     },
     {
       "id": "write_first_sop",
@@ -988,93 +722,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The tool is set up. Adoption is mixed. Your best contractor refuses to update her tasks. People problems, not software problems."
     },
     {
-      "id": "middle_management",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire a Manager",
-      "description": "Add a manager so you oversee one person instead of five, buying back your time as the team grows.",
-      "lesson": "Manage one person instead of five. A management layer buys back your time and lets the team grow past your personal bandwidth — you stop being the ceiling.",
-      "cash_cost": 4000,
-      "energy_cost": 6,
-      "prerequisites": { "team_size_gte": 3, "systems_maturity_gte": 30 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -25, "systems_maturity": 10, "energy": 10 },
-      "success_rate": 0.5,
-      "failure_effects": { "team_size": 1, "key_person_dependency": -5 },
-      "narrative_success": "She ran the Monday meeting without you this week. The team didn't even notice you weren't there. That's the goal.",
-      "narrative_failure": "The new manager is learning. Team dynamics shifted. Two people aren't happy about the new layer. Growing pains."
-    },
-    {
-      "id": "full_systemization",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Full Systemization",
-      "description": "SOPs for everything, a manager on daily ops, and a business that runs without you. Owner, not operator.",
-      "lesson": "When the business runs without you, you've won the real prize: not just income, but freedom. You become the owner, not the operator — and your time becomes yours again.",
-      "cash_cost": 8000,
-      "energy_cost": 10,
-      "prerequisites": { "systems_maturity_gte": 60, "team_size_gte": 2, "key_person_dependency_lte": 40 },
-      "effects": { "systems_maturity": 20, "key_person_dependency": -20, "energy": 15, "revenue_capacity": 15000 },
-      "success_rate": 0.5,
-      "failure_effects": { "systems_maturity": 8, "key_person_dependency": -5 },
-      "narrative_success": "You took a week off. Revenue was the same when you came back. This is what freedom looks like.",
-      "narrative_failure": "Almost. Two client issues escalated to you during your 'vacation.' Close, but the safety net has holes."
-    },
-    {
-      "id": "hire_fractional_cfo",
-      "category": "operations",
-      "stage": "wealth",
-      "label": "Hire Fractional CFO",
-      "description": "A part-time CFO who runs cash flow, debt, banking, and tax planning strategically instead of you winging it.",
-      "lesson": "Delegate the money function to someone who does it strategically — not on the side at midnight. Financial leadership is a force multiplier: better debt structure, lower taxes, smarter cash flow.",
-      "cash_cost": 3000,
-      "energy_cost": 4,
-      "one_time": true,
-      "prerequisites": { "team_size_gte": 4 },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -15, "systems_maturity": 10 },
-      "success_rate": 0.85,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Your CFO restructured two loan terms in her first month, found $3,000 in unnecessary expenses, and projected your cash flow for the next six months. You should have done this two years ago.",
-      "narrative_failure": "Onboarding is taking longer than expected — your books were messier than she anticipated. But she's cleaning them up."
-    },
-    {
-      "id": "hire_hr_manager",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire an HR & Recruiting Lead",
-      "description": "Hire someone to own hiring, culture, and compliance so your team grows without you interviewing everyone.",
-      "lesson": "Past a handful of people, hiring becomes a job of its own. A people lead builds a repeatable pipeline so you recruit for fit (not desperation) and the team grows without you refereeing every issue.",
-      "cash_cost": 1800,
-      "energy_cost": 8,
-      "one_time": true,
-      "prerequisites": { "team_size_gte": 4, "systems_maturity_gte": 25 },
-      "recurring_cost": 3500,
-      "effects": { "team_size": 1, "key_person_dependency": -12, "systems_maturity": 12 },
-      "success_rate": 0.78,
-      "failure_effects": { "team_size": 1, "systems_maturity": 4 },
-      "narrative_success": "First hire she made on her own was better than your last three. The job posting, screening, and onboarding all happened while you were focused on strategy.",
-      "narrative_failure": "She's building processes. The org chart is getting formalized. It feels bureaucratic — but your team of 6+ needs it."
-    },
-    {
-      "id": "hire_executive_assistant",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire an Executive Assistant",
-      "description": "A right hand who handles credit utilization, your scores, and tax reserve every month so you never spend a turn on it.",
-      "lesson": "At some point your time is worth more than the admin. A great assistant owns the recurring financial housekeeping — utilization, credit, tax reserve — that quietly compounds in your favor while you focus on the big moves.",
-      "cash_cost": 2500,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 20000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 4000,
-      "effects": { "team_size": 1, "key_person_dependency": -8 },
-      "success_rate": 0.9,
-      "failure_effects": { "team_size": 1 },
-      "narrative_success": "Within a week your assistant had a spreadsheet of every account, a paydown schedule to keep utilization under 30%, the DUNS file current, and the tax reserve on autopilot. You stopped thinking about any of it — which is exactly the point.",
-      "narrative_failure": "Onboarding took longer than hoped, but the systems are in place now — the financial housekeeping runs itself from here."
-    },
-    {
       "id": "basic_quality_control",
       "category": "operations",
       "stage": "foundation",
@@ -1109,58 +756,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The onboarding flow is built but clunky. Half the clients still have questions the packet should have answered."
     },
     {
-      "id": "hire_client_success",
-      "category": "operations",
-      "stage": "leverage",
-      "label": "Hire Client Success Manager",
-      "description": "Hire someone to own clients after the sale. Retention rises, churn falls, and you're no longer the only one they call.",
-      "lesson": "Keeping a client is cheaper than winning one. Delighted clients don't just stay — they hand you testimonials and referrals, the cheapest, highest-converting growth there is. Retention IS marketing.",
-      "cash_cost": 2000,
-      "energy_cost": 6,
-      "prerequisites": { "customer_base_gte": 20, "team_size_gte": 2 },
-      "recurring_cost": 3000,
-      "effects": { "churn_rate": -0.04, "team_size": 1, "brand_equity": 5, "key_person_dependency": -10 },
-      "success_rate": 0.7,
-      "failure_effects": { "team_size": 1, "churn_rate": -0.01 },
-      "narrative_success": "Three clients sent thank-you emails this month — none of them were to you. Your CSM is building relationships you used to own alone.",
-      "narrative_failure": "The CSM is learning your clients. Some awkward handoffs, but the clients appreciate having a dedicated contact."
-    },
-    {
-      "id": "build_benefits_package",
-      "category": "operations",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Build a Real Benefits Package",
-      "description": "Offer health, retirement match, real PTO, and leave. Benefits buy loyalty and turn a job into a career.",
-      "lesson": "Pay buys attendance; benefits buy loyalty. A real package lowers turnover, raises morale, and quietly heads off the people-drama that eats founders alive — for far less than the cost of replacing everyone who leaves.",
-      "cash_cost": 4000,
-      "energy_cost": 8,
-      "prerequisites": { "team_size_gte": 3 },
-      "recurring_cost": 4000,
-      "effects": { "company_culture": 15, "churn_rate": -0.02, "key_person_dependency": -6 },
-      "success_rate": 0.85,
-      "failure_effects": { "company_culture": 6 },
-      "narrative_success": "Open enrollment went out and the Slack lit up with thank-yous. People feel taken care of — and people who feel taken care of don't quit over a bad week.",
-      "narrative_failure": "The package is partway in place — health is live, retirement is still being set up. The team noticed the effort, at least."
-    },
-    {
-      "id": "grant_stock_incentives",
-      "category": "operations",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Grant Equity / Stock Incentives",
-      "description": "Grant vesting equity so key people own the upside and act like founders, not employees. Needs a C-Corp.",
-      "lesson": "Ownership is the ultimate retention and culture tool — people who share in the upside don't leave, don't coast, and don't create drama. Equity comp is why startups out-recruit big companies. It needs a C-Corp structure (an option pool, 409A valuation) to grant properly.",
-      "cash_cost": 6000,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["c_corp"], "team_size_gte": 4 },
-      "effects": { "company_culture": 25, "key_person_dependency": -15, "churn_rate": -0.03, "partner_conflict_risk": -10 },
-      "success_rate": 0.85,
-      "failure_effects": { "company_culture": 10, "key_person_dependency": -5 },
-      "narrative_success": "You handed your key people their grant letters. The energy shifted overnight — they're not working for you anymore, they're building with you. Drama evaporates when everyone owns the outcome.",
-      "narrative_failure": "The option pool is set up but only partly granted — the 409A valuation took longer than expected. The intent landed, even if the paperwork lagged."
-    },
-    {
       "id": "rapid_offshore_scaleup",
       "category": "operations",
       "stage": "leverage",
@@ -1176,22 +771,6 @@ window.EMBEDDED_CONFIG = {
       "success_rate": 1,
       "failure_effects": {},
       "narrative_success": "Six contractors onboarded in days — capacity jumped. Then the cracks showed: rushed work, slipping quality, clients noticing. And payroll just jumped ~$12,000/month, with no system for them to plug into.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "restructure_team",
-      "category": "operations",
-      "stage": "foundation",
-      "label": "Restructure & Downsize",
-      "description": "Trim an oversized team back to a lean core — cut the payroll that's dragging you down and refocus on the people who actually move the needle.",
-      "lesson": "Over-hiring is easy to do and painful to undo. Cutting headcount frees up cash fast, but it's never free: severance, a morale hit, and more work back on your plate. The real lesson is to scale people INTO systems and revenue — never ahead of them.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "team_size_gte": 4 },
-      "effects": {},
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "",
       "narrative_failure": ""
     }
   ]
@@ -1217,126 +796,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": {},
       "narrative_success": "Welcome to Epic Life. Your concierge team is on it — from here the financial playbook runs in the background. Watch for the 🌟 Epic Life updates each month as each piece clicks into place.",
       "narrative_failure": ""
-    },
-    {
-      "id": "hire_cfo",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire a Fractional CFO",
-      "description": "Bring on a part-time CFO who flags your best finance move each month and tidies your credit so you can borrow more, cheaper.",
-      "lesson": "A fractional CFO is the cheapest way to start thinking like the wealthy: structure, credit, and tax working as a system. Part-time now — but even part-time, a good CFO lets you borrow more and safer than you could alone.",
-      "cash_cost": 4000,
-      "energy_cost": 5,
-      "prerequisites": { "monthly_revenue_gte": 35000, "personal_credit_score_gte": 660, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": -8, "personal_credit_score": 4, "_cfo_hired": true },
-      "success_rate": 0.9,
-      "failure_effects": { "audit_risk": -3, "_cfo_hired": true },
-      "narrative_success": "Your fractional CFO is in. They highlight the smartest finance move each month and have already widened your borrowing capacity a little — the start of leveraging harder and safer.",
-      "narrative_failure": "The fractional CFO is still untangling your books. Guidance starts next month."
-    },
-    {
-      "id": "promote_cfo_fulltime",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Promote CFO to Full-Time",
-      "description": "Promote your CFO to full-time to unlock far more credit, cheaper debt, and safe higher leverage — turning OPM into your growth engine.",
-      "lesson": "This is the real unlock: a great CFO lets you leverage harder AND safer — more credit, better rates, higher safe utilization — so other people's money funds your growth instead of your own cash. That's how the wealthy scale fast. But you can only afford the CFO once that leverage is already working: the chicken-and-egg ceiling that separates operators from owners.",
-      "cash_cost": 18000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cfo"], "monthly_revenue_gte": 80000, "personal_credit_score_gte": 700, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": -10, "personal_credit_score": 6, "_cfo_fulltime": true },
-      "success_rate": 0.92,
-      "failure_effects": { "audit_risk": -4, "_cfo_fulltime": true },
-      "narrative_success": "Your full-time CFO is in the seat. Credit lines widen, your rates drop, and you can safely carry more leverage — OPM is now doing the heavy lifting on growth. The salary is elite; the capital efficiency more than pays for it.",
-      "narrative_failure": "The full-time CFO is restructuring the capital stack; the bigger credit and rate improvements land shortly. Payroll hits now."
-    },
-    {
-      "id": "private_banking",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Open a Private Banking Relationship",
-      "description": "For $2M+ clients: deposit to earn ~5%/yr while borrowing against it at just 1%/yr. Your money keeps earning as near-free cash funds your deals.",
-      "lesson": "This is how the ultra-wealthy leverage hardest: never sell your assets, never stop earning on them — borrow against them at near-zero rates instead. Your deposit earns ~5% while you borrow at 1%, so the spread is free money and the borrowed cash compounds into more assets. OPM, perfected.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "liquid_cash_gte": 2000000 },
-      "effects": { "personal_credit_score": 5, "_private_banking": true },
-      "success_rate": 0.95,
-      "failure_effects": { "_private_banking": true },
-      "narrative_success": "",
-      "narrative_failure": "The private bank approved your relationship, but the deposit and credit facility are still being set up — your interest and 1% line go live next month."
-    },
-    {
-      "id": "private_equity_fund",
-      "category": "finance",
-      "stage": "leverage",
-      "label": "Invest in a Private Equity Fund",
-      "description": "Commit roughly half of your available cash to a PE fund scaling private companies. It locks up (illiquid), but it's marked up the moment you're in and pays monthly distributions — returns public markets can't match. The exact amount committed shows on the result.",
-      "lesson": "Private equity is how the wealthy earn outsized, mostly-passive returns — owning slices of real businesses, marked up over time, throwing off distributions. Illiquidity is the price of the premium: you trade access-anytime for higher compounding.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 50000 },
-      "effects": {},
-      "success_rate": 0.85,
-      "failure_effects": {},
-      "narrative_success": "",
-      "narrative_failure": "The capital call went through, but the fund's first deals are still closing — distributions start once they deploy."
-    },
-    {
-      "id": "setup_family_office",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Set Up a Family Office",
-      "description": "The billionaire setup: a dedicated team running your investments, taxes, estate, and giving as one coordinated machine.",
-      "lesson": "A family office turns scattered wealth into a coordinated system — investment, tax, legal, and legacy under one roof. It costs real money to run, but at scale the tax savings and better decisions pay for it many times over.",
-      "cash_cost": 15000,
-      "energy_cost": 5,
-      "prerequisites": { "monthly_revenue_gte": 60000 },
-      "recurring_cost": 5000,
-      "effects": { "audit_risk": -10, "key_person_dependency": -8, "lifestyle_legacy": 10, "_family_office": true },
-      "success_rate": 0.9,
-      "failure_effects": { "_family_office": true },
-      "narrative_success": "Your family office is running. A dedicated team now coordinates your investments, taxes, estate, and giving — and your portfolio's yield ticks up as they optimize allocation. Runs about $5,000/mo, and it earns its keep.",
-      "narrative_failure": "The family office is staffed but still onboarding your accounts. Coordination — and the efficiency gains — ramp up over the next month."
-    },
-    {
-      "id": "dynasty_trust",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Establish a Dynasty Trust",
-      "description": "Move assets into a multi-generational trust — shielded from lawsuits, estate taxes, and creditors, passing to heirs intact for generations.",
-      "lesson": "The ultra-wealthy don't just build wealth — they make it permanent. A dynasty trust removes assets from your taxable estate and walls them off from lawsuits, letting wealth compound across generations without being taxed at each death. Legacy, engineered.",
-      "cash_cost": 20000,
-      "energy_cost": 5,
-      "prerequisites": { "needs": ["setup_family_office"] },
-      "effects": { "trust_structure": "dynasty", "litigation_exposure": -25, "audit_risk": -8, "tax_rate": -0.02, "lifestyle_legacy": 25, "_dynasty_trust": true },
-      "success_rate": 0.92,
-      "failure_effects": { "lifestyle_legacy": 8, "_dynasty_trust": true },
-      "narrative_success": "The dynasty trust is funded. Your wealth now sits outside your estate — protected from lawsuits and estate tax, compounding for generations. Your great-grandchildren will benefit from this signature.",
-      "narrative_failure": "The trust is drafted and partially funded — the attorney is still moving assets in. Protection is building."
-    },
-    {
-      "id": "establish_board",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Convene a Board of Directors",
-      "description": "Install a board to govern the company. With your execs running it and a board overseeing, the business runs without you — put it on autopilot.",
-      "lesson": "The final stage of leverage is governance. When executives run operations and a board provides oversight, the founder becomes truly optional — free to live, invest, and lead at the highest level. This is what 'the business runs without you' actually looks like.",
-      "cash_cost": 12000,
-      "energy_cost": 6,
-      "prerequisites": { "needs": ["hire_cro", "hire_coo", "hire_cfo", "activate_passive_income"] },
-      "recurring_cost": 3000,
-      "effects": { "key_person_dependency": -12, "lifestyle_legacy": 8, "_board_active": true },
-      "success_rate": 0.95,
-      "failure_effects": { "_board_active": true },
-      "narrative_success": "Your board is seated. Between your executive team and board oversight, the company governs itself — use “Let the Board run the month” any time to autopilot, and spend your energy on the big moves only you can make.",
-      "narrative_failure": "The board is forming — a couple of seats still to fill. Governance is taking shape."
     },
     {
       "id": "establish_business",
@@ -1406,20 +865,20 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Paid down most of it. An unexpected expense ate part of the payment. Still progress."
     },
     {
-      "id": "debt_restructure",
+      "id": "banking_relationship",
       "category": "finance",
       "stage": "leverage",
-      "label": "Restructure & Optimize Your Debt",
-      "description": "The full debt playbook in one move: drop utilization, shift balances onto business credit (off your personal report), and pull working cash.",
-      "lesson": "The optimal debt move in one sequence: revolving → installment drops your utilization, then moving it onto business credit takes it off your personal report entirely, and the 0% intro buys time. Same debt, restructured into a higher score and usable cash.",
-      "cash_cost": 800,
-      "energy_cost": 8,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 600 },
-      "effects": { "dscr": 0.2, "operating_expenses": -200, "personal_credit_score": 10, "business_credit_profile": "building" },
+      "label": "Build Banking Relationship",
+      "description": "Open a business account, run your deposits through their bank, and meet your banker regularly — so you're a known, trusted customer before you ever need a loan. Banks lend bigger lines, and approve far more readily, to people who already bank with them.",
+      "lesson": "Capital is a relationship business. Bankers fund people they know and trust — open the account, keep deposits flowing, and build the relationship BEFORE you need money. When you do apply, you'll qualify more easily and for larger amounts than a stranger walking in cold.",
+      "cash_cost": 0,
+      "energy_cost": 6,
+      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
+      "effects": { "personal_credit_score": 5, "business_credit_profile": "established", "business_credit_limit": 5000 },
       "success_rate": 0.75,
-      "failure_effects": { "personal_credit_score": 4, "business_credit_limit": 3000 },
-      "narrative_success": "",
-      "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
+      "failure_effects": { "personal_credit_score": 2 },
+      "narrative_success": "The branch manager knows your name now. When you need capital, you won't be a stranger walking in cold.",
+      "narrative_failure": "Good meeting, but the banker transferred branches. You're starting the relationship over with someone new."
     },
     {
       "id": "bank_personal_loan",
@@ -1454,38 +913,20 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Declined — the bank pulled your personal credit and didn't like what it saw. The hard inquiry dinged your score a couple points. Pay down utilization and reapply."
     },
     {
-      "id": "banking_relationship",
+      "id": "debt_restructure",
       "category": "finance",
       "stage": "leverage",
-      "label": "Build Banking Relationship",
-      "description": "Open a business account, run your deposits through their bank, and meet your banker regularly — so you're a known, trusted customer before you ever need a loan. Banks lend bigger lines, and approve far more readily, to people who already bank with them.",
-      "lesson": "Capital is a relationship business. Bankers fund people they know and trust — open the account, keep deposits flowing, and build the relationship BEFORE you need money. When you do apply, you'll qualify more easily and for larger amounts than a stranger walking in cold.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "effects": { "personal_credit_score": 5, "business_credit_profile": "established", "business_credit_limit": 5000 },
+      "label": "Restructure & Optimize Your Debt",
+      "description": "The full debt playbook in one move: drop utilization, shift balances onto business credit (off your personal report), and pull working cash.",
+      "lesson": "The optimal debt move in one sequence: revolving → installment drops your utilization, then moving it onto business credit takes it off your personal report entirely, and the 0% intro buys time. Same debt, restructured into a higher score and usable cash.",
+      "cash_cost": 800,
+      "energy_cost": 8,
+      "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 600 },
+      "effects": { "dscr": 0.2, "operating_expenses": -200, "personal_credit_score": 10, "business_credit_profile": "building" },
       "success_rate": 0.75,
-      "failure_effects": { "personal_credit_score": 2 },
-      "narrative_success": "The branch manager knows your name now. When you need capital, you won't be a stranger walking in cold.",
-      "narrative_failure": "Good meeting, but the banker transferred branches. You're starting the relationship over with someone new."
-    },
-    {
-      "id": "combined_insurance",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Business Insurance Stack",
-      "description": "One stack of business-paid cover: income protection, critical-illness, key-person, and liability.",
-      "lesson": "Protect the engine before you build on it: cover your income if you can't work, get tax-free cash if you're seriously ill, replace yourself for the company, and absorb lawsuits — all tax-deductible.",
-      "cash_cost": 500,
-      "recurring_cost": 550,
-      "energy_cost": 4,
-      "prerequisites": { "customer_base_gte": 1 },
-      "effects": { "key_person_dependency": -12, "litigation_exposure": -15 },
-      "success_rate": 0.92,
-      "failure_effects": {},
-      "narrative_success": "The stack is in force, all on the business books. Income protection covers your family if you can't work, critical & chronic illness riders pay you a tax-free lump sum if your health gives out, the key-person payout would fund your replacement, and the liability policy stands between a lawsuit and everything you've built. Premiums run about $550/mo.",
-      "narrative_failure": "Applications submitted; underwriting wants more medical records on one. The other two are active. Should fully clear next month."
+      "failure_effects": { "personal_credit_score": 4, "business_credit_limit": 3000 },
+      "narrative_success": "",
+      "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
     },
     {
       "id": "elect_s_corp",
@@ -1506,41 +947,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "Payroll is running and the election is filed, but at a lower salary than planned. Savings are real, just smaller until revenue catches up."
     },
     {
-      "id": "reincorporate_c_corp",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Reincorporate as a C-Corp",
-      "description": "Convert to a C-Corp — built for scale and investors. Adds a layer of corporate tax but unlocks stock options and equity grants for your team.",
-      "lesson": "A C-Corp trades a bit of tax efficiency for the ability to issue equity — option pools, 409A valuations, QSBS. It's the structure venture-backed companies use because ownership is the best recruiting and retention tool there is. The right move once people, not cash, are your scarcest resource.",
-      "cash_cost": 5000,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["s_corp", "multi_entity"], "monthly_revenue_gte": 40000 },
-      "recurring_cost": 500,
-      "effects": { "entity_structure": "c_corp", "audit_risk": -2 },
-      "success_rate": 0.85,
-      "failure_effects": { "entity_structure": "c_corp" },
-      "narrative_success": "The C-Corp conversion is filed, the option pool is authorized, and your cap table is investor-ready. You can now put real ownership in your people's hands.",
-      "narrative_failure": "The conversion went through, though the option pool paperwork is still being finalized. The structure is in place to grant equity soon."
-    },
-    {
-      "id": "asset_protection_stack",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Asset Protection Stack",
-      "description": "Layer a holding company, trust, and umbrella policy over your business — lawsuits hit the operating company, your wealth sits untouchable above it.",
-      "lesson": "A holding company owns the assets; the operating company takes the risk. Add a trust and umbrella and one lawsuit can't erase a decade of building. The wealthy protect first, then grow.",
-      "cash_cost": 10000,
-      "energy_cost": 6,
-      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp"] },
-      "effects": { "entity_structure": "multi_entity", "trust_structure": "full", "litigation_exposure": -40, "personal_guarantee_exposure": -15000, "audit_risk": 5 },
-      "success_rate": 0.7,
-      "failure_effects": { "entity_structure": "multi_entity", "trust_structure": "basic_llc", "litigation_exposure": -15, "audit_risk": 8 },
-      "narrative_success": "A holding company now owns the operating business, and the attorney delivered the trust documents. Your assets are held by entities that don't have your name on the door. Bulletproof.",
-      "narrative_failure": "The holding structure is filed and a basic shield is in place, but the full trust setup needs more time. Partially protected."
-    },
-    {
       "id": "wyoming_holding_llc",
       "category": "finance",
       "stage": "leverage",
@@ -1558,55 +964,22 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": "The entity is formed and the registered agent is in place, but the operating agreement and asset transfers are still being finalized. The shell is up; the protection firms up as you complete the paperwork."
     },
     {
-      "id": "key_man_policy",
+      "id": "combined_insurance",
       "category": "finance",
-      "stage": "wealth",
-      "one_time": false,
-      "label": "Insure Your Key Operators",
-      "description": "Put key-man and loan-protection policies on the people running your income properties. If one is lost, the policy retires that property's specific mortgage — so a tragedy can't cascade into a margin call. Re-take it as you add assets to keep coverage current.",
-      "lesson": "Leverage on people and assets is only safe when the people are insured. A key-man / loan-protection policy means a sick or lost operator retires the loan on THEIR asset instead of blowing up the whole portfolio. It covers that specific debt — never a windfall — and it's what lets the wealthy borrow at scale against income-producing assets without the leverage becoming a time bomb.",
-      "cash_cost": 2500,
+      "stage": "foundation",
+      "one_time": true,
+      "label": "Business Insurance Stack",
+      "description": "One stack of business-paid cover: income protection, critical-illness, key-person, and liability.",
+      "lesson": "Protect the engine before you build on it: cover your income if you can't work, get tax-free cash if you're seriously ill, replace yourself for the company, and absorb lawsuits — all tax-deductible.",
+      "cash_cost": 500,
+      "recurring_cost": 550,
       "energy_cost": 4,
-      "prerequisites": { "_asset_units_gte": 1 },
-      "effects": {},
-      "success_rate": 1,
-      "narrative_success": "Key-man and loan-protection policies are bound on your operators.",
-      "narrative_failure": "Key-man and loan-protection policies are bound on your operators."
-    },
-    {
-      "id": "hire_general_counsel",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Hire General Counsel",
-      "description": "Put a lawyer on retainer to review contracts, lock down IP, and handle disputes — turning ruinous lawsuits into routine correspondence.",
-      "lesson": "Most legal disasters are cheap to prevent and ruinous to fix. In-house counsel reviewing your contracts and IP turns existential lawsuits into routine correspondence — protection that pays for itself the first time it's needed.",
-      "cash_cost": 3000,
-      "energy_cost": 6,
-      "prerequisites": { "monthly_revenue_gte": 25000, "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"] },
-      "recurring_cost": 3000,
-      "effects": { "team_size": 1, "litigation_exposure": -25, "audit_risk": -8, "personal_guarantee_exposure": -10000 },
-      "success_rate": 0.9,
-      "failure_effects": { "team_size": 1, "litigation_exposure": -8 },
-      "narrative_success": "Your counsel rewrote your contracts, filed your trademarks, and put a demand-letter process in place. The next time someone threatens to 'get their lawyer involved,' yours picks up the phone.",
-      "narrative_failure": "Counsel is on retainer and reviewing the backlog — contracts first, IP next. The shield is going up, just not all at once."
-    },
-    {
-      "id": "advanced_tax_strategy",
-      "category": "finance",
-      "stage": "leverage",
-      "one_time": true,
-      "label": "Advanced Tax Strategy",
-      "description": "Engage a year-round tax strategist — maxing retirement vehicles, cost segregation, and deductions to legally slash your tax bill.",
-      "lesson": "Taxes are most people's single largest lifetime expense. Year-round planning — not an April scramble — legally minimizes them. That's the difference between building wealth and funding someone else's budget.",
-      "cash_cost": 3500,
-      "energy_cost": 5,
-      "prerequisites": { "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "operating_expenses": -2000, "audit_risk": 5 },
-      "success_rate": 0.7,
-      "failure_effects": { "operating_expenses": -500, "audit_risk": 5 },
-      "narrative_success": "Your effective tax rate dropped from 32% to 21%. Retirement vehicles maxed, cost segregation done, deductions captured — all legal. Your CPA high-fived you.",
-      "narrative_failure": "Some strategies implemented, others need documentation. Partial savings this year, full effect next."
+      "prerequisites": { "customer_base_gte": 1 },
+      "effects": { "key_person_dependency": -12, "litigation_exposure": -15 },
+      "success_rate": 0.92,
+      "failure_effects": {},
+      "narrative_success": "The stack is in force, all on the business books. Income protection covers your family if you can't work, critical & chronic illness riders pay you a tax-free lump sum if your health gives out, the key-person payout would fund your replacement, and the liability policy stands between a lawsuit and everything you've built. Premiums run about $550/mo.",
+      "narrative_failure": "Applications submitted; underwriting wants more medical records on one. The other two are active. Should fully clear next month."
     },
     {
       "id": "monthly_tax_reserve",
@@ -1676,22 +1049,6 @@ window.EMBEDDED_CONFIG = {
       "narrative_failure": ""
     },
     {
-      "id": "premium_financing",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Premium Financing Strategy",
-      "description": "Use a low-interest bank loan to fund a big policy that compounds ~7% tax-free — pocketing the spread on the bank's money. For high-net-worth players.",
-      "lesson": "Premium financing is leverage for the ultra-wealthy: the bank lends against your collateral to fund a tax-free asset that grows faster than the loan costs. You pocket the spread without spending your own cash — but it only works at real scale (millions in net worth) where the policy and collateral are large enough.",
-      "cash_cost": 0,
-      "energy_cost": 6,
-      "prerequisites": { "net_worth_gte": 5000000 },
-      "effects": {},
-      "success_rate": 0.9,
-      "failure_effects": {},
-      "narrative_success": "The premium financing deal is structured — the bank's money, compounding tax-free in your policy.",
-      "narrative_failure": "The bank's terms came back tighter than expected. Try again once your collateral is stronger."
-    },
-    {
       "id": "buy_real_estate",
       "category": "finance",
       "stage": "wealth",
@@ -1706,74 +1063,6 @@ window.EMBEDDED_CONFIG = {
       "failure_effects": { "real_estate_owned": 1 },
       "narrative_success": "Keys in hand. The duplex cash-flows $700/month after mortgage, taxes, and insurance. Passive income is real now.",
       "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
-    },
-    {
-      "id": "private_lending",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Become a Private Lender",
-      "description": "Become the bank: lend your capital to other entrepreneurs' deals, earning 8-15% interest secured by their assets.",
-      "lesson": "Now YOU'RE the bank. Your capital earns double-digit returns secured by someone else's assets — money working hard while you don't lift a finger. That's passive income.",
-      "cash_cost": 20000,
-      "energy_cost": 5,
-      "prerequisites": { "cash_gte": 30000, "personal_credit_score_gte": 700 },
-      "effects": { "monthly_revenue": 2000 },
-      "success_rate": 0.6,
-      "failure_effects": { "monthly_revenue": 800 },
-      "narrative_success": "First deal funded — $20,000 at 12%, secured by the borrower's equipment. Monthly checks arriving. You're the bank now.",
-      "narrative_failure": "The deal funded, but the borrower's been slow on payments. Secured, so you're protected — but it's stressful."
-    },
-    {
-      "id": "acquire_competitor",
-      "category": "finance",
-      "stage": "wealth",
-      "label": "Acquire a Competitor",
-      "description": "Buy a smaller competitor — its cash flow becomes your passive income, and the deal's write-offs cut your taxes.",
-      "lesson": "At scale you buy income, not just customers. A well-structured acquisition pays you twice: passive cash flow from day one, plus depreciation and amortization write-offs that legally shrink your tax bill. The deal funds itself.",
-      "cash_cost": 30000,
-      "energy_cost": 8,
-      "prerequisites": { "cash_gte": 30000, "entity_structure_in": ["s_corp", "c_corp", "multi_entity"] },
-      "effects": { "audit_risk": 3 },
-      "success_rate": 0.55,
-      "failure_effects": {},
-      "narrative_success": "",
-      "narrative_failure": ""
-    },
-    {
-      "id": "fast_working_capital",
-      "category": "finance",
-      "stage": "foundation",
-      "one_time": true,
-      "label": "Fast Working Capital",
-      "description": "Need cash fast? $25,000 by tomorrow, approved on your sales alone — no credit check, no collateral. They just take a small cut of your revenue until it's paid back.",
-      "lesson": "That was a merchant cash advance: $25k now, but you repay ~$32,500 — a 30% fee — and they siphon 20% of your revenue every month until it's cleared, choking cash flow for months. No credit check (they pre-approve on your sales), so it spares your score but bleeds your top line. Real capital comes from credit and banking you build BEFORE you're desperate.",
-      "cash_cost": 0,
-      "energy_cost": 2,
-      "prerequisites": { "monthly_revenue_gte": 10000 },
-      "effects": { "cash": 25000 },
-      "mca_factor": 1.3,
-      "mca_holdback": 0.2,
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "Approved on your revenue alone — $25,000 hits your account overnight, no credit pull. The catch you skimmed: they now take 20% of every dollar you bring in until they've collected about $32,500 — a 30% fee on top.",
-      "narrative_failure": ""
-    },
-    {
-      "id": "offmarket_guaranteed_fund",
-      "category": "finance",
-      "stage": "wealth",
-      "one_time": true,
-      "label": "Off-Market 'Guaranteed' Fund",
-      "description": "An invite-only placement a peer swears by — guaranteed double-digit returns, insider access, closing this week. Put your capital to work in something the public never sees.",
-      "lesson": "Guaranteed + exclusive + closing-this-week is the fingerprint of a scam — often reaching you through someone you trust. Real returns are never guaranteed, and the rush is the tell. You lost most of your capital plus audit and legal exposure. The crown jewel is structured, vetted passive income — not yield chased into the dark.",
-      "cash_cost": 30000,
-      "energy_cost": 2,
-      "prerequisites": { "cash_gte": 30000 },
-      "effects": { "investment_positions": 3000, "litigation_exposure": 12, "audit_risk": 10 },
-      "success_rate": 1,
-      "failure_effects": {},
-      "narrative_success": "You wired the funds before the 'window closed.' The monthly statements looked great — until they stopped coming. The manager is unreachable, the fund's 'assets' can't be verified, and now there are lawyers and the IRS asking questions.",
-      "narrative_failure": ""
     }
   ]
 }
@@ -3042,11 +2331,11 @@ const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay'
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
-const ADIR={finance:[['Financial Advisor',['hire_cfo']],['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship','fast_working_capital']],['Tax & Protection',['combined_insurance','hire_general_counsel','elect_s_corp','reincorporate_c_corp','wyoming_holding_llc','asset_protection_stack','advanced_tax_strategy','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','premium_financing','buy_real_estate','private_lending','acquire_competitor','key_man_policy','offmarket_guaranteed_fund']],['Family Office & Legacy',['private_banking','private_equity_fund','setup_family_office','dynasty_trust','establish_board']]],marketing:[['Your Team',['hire_sales_manager']],['Offer & Value',['build_offer','brand_pr_push','content_engine','franchise_licensing','national_ad_blitz']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','lead_magnet','referral_asks','referral_partnerships','vanity_follower_boost','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','discount_promotion','webinar_funnel','build_sales_team','crm_pipeline','email_campaign','hire_highticket_closer']]],operations:[['Your Team',['hire_ops_manager']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','hire_delivery_team','fulfillment_system','build_ip','vertical_integration','rapid_offshore_scaleup','restructure_team']],['Systems & Freedom',['write_first_sop','project_management','middle_management','full_systemization','hire_fractional_cfo','hire_hr_manager','hire_executive_assistant']],['Quality & Retention',['basic_quality_control','client_onboarding','hire_client_success','build_benefits_package','grant_stock_incentives']]]};
+const ADIR={finance:[['Foundation & Credit',['establish_business','build_dnb_profile','build_personal_credit','pay_down_debt','debt_restructure','bank_personal_loan','business_credit_line','banking_relationship']],['Tax & Protection',['combined_insurance','elect_s_corp','wyoming_holding_llc','monthly_tax_reserve']],['Wealth & Passive Income',['fund_accumulation_policy','activate_passive_income','policy_loan','buy_real_estate']]],marketing:[['Your Team',['hire_sales_manager']],['Offer & Value',['build_offer','content_engine']],['Lead Generation',['cold_outreach','basic_social_content','paid_ads_test','referral_asks','influencer_megadeal']],['Sales & Conversion',['do_sales_yourself','crm_pipeline']]],operations:[['Your Team',['hire_ops_manager']],['Capacity & Delivery',['study_business_content','do_work_yourself','hire_first_contractor','fulfillment_system','rapid_offshore_scaleup']],['Systems & Freedom',['write_first_sop','project_management']],['Quality & Retention',['basic_quality_control','client_onboarding']]]};
 // Disguised "trap" actions — appealing on the surface, always a setback. They sit in real ADIR groups to blend in, but must NOT count toward capability milestones (e.g. building a funnel).
-const TRAPS=['fast_working_capital','offmarket_guaranteed_fund','rapid_offshore_scaleup','vanity_follower_boost','influencer_megadeal','national_ad_blitz','hire_highticket_closer'];
+const TRAPS=['rapid_offshore_scaleup','influencer_megadeal'];
 // Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
-const TRAP_META={fast_working_capital:{i:'💸',n:'Merchant Cash Advance'},offmarket_guaranteed_fund:{i:'🎰',n:'"Guaranteed" Fund Scam'},rapid_offshore_scaleup:{i:'🌏',n:'Offshore Over-Hire'},vanity_follower_boost:{i:'🤖',n:'Bought Followers'},influencer_megadeal:{i:'📣',n:'Influencer Megadeal'},national_ad_blitz:{i:'📺',n:'National Ad Blitz'},hire_highticket_closer:{i:'🎯',n:'High-Ticket Closer'}};
+const TRAP_META={rapid_offshore_scaleup:{i:'🌏',n:'Offshore Over-Hire'},influencer_megadeal:{i:'📣',n:'Influencer Megadeal'}};
 // Supabase backend (publishable key is public-safe; data is protected by Row Level Security). Used for the global leaderboard + future async-multiplayer.
 const SUPA_URL='https://widdgynledwpqaqndtvz.supabase.co';
 const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
@@ -3080,6 +2369,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.43.2',d:'2026-06-29 21:30',n:[
+'Leaner action menus — Marketing & Operations trimmed to 10 focused moves each, Finance to the core wealth path. Less clutter, clearer flow: learn the business → delegate to a manager → focus on Finance.',
+'Result Cash & Credit panel reordered as a mini P&L (revenue & expenses up top, then accessible capital, then balance sheet).',
+'Debt restructure now shows the working-capital loan in the cash & debt swing.',
+]},
 {v:'0.43.1',d:'2026-06-29 19:00',n:[
 'Manager model: hire a Sales Manager (Marketing) and Ops Manager (Operations) instead of a C-suite. Finance is always yours.',
 'Team mode activates when both managers hired — they handle their categories automatically.',
@@ -4340,7 +3634,7 @@ _orgCapacity(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id),
  const founderBase=3;/* a founder personally leads only a few people well */
  const founderCeiling=Math.min(5,sys/20);/* systems extend your reach — but only so far (~8 solo max); you're not a trained large-team leader */
  const sysMult=1+sys/100;/* systems make each real manager more effective */
- let mgmt=0;if(c('middle_management'))mgmt+=5;if(c('full_systemization'))mgmt+=6;if(c('hire_hr_manager'))mgmt+=5;if(s._mgr_marketing)mgmt+=5;if(s._coo_hired)mgmt+=6;if(s._coo_fulltime)mgmt+=5;
+ let mgmt=0;if(c('middle_management'))mgmt+=5;if(c('full_systemization'))mgmt+=6;if(c('hire_hr_manager'))mgmt+=5;if(s._mgr_marketing)mgmt+=5;if(s._coo_hired)mgmt+=6;
  const cultureBonus=Math.max(0,((s.company_culture==null?45:s.company_culture)-45)/12);/* high culture = people self-manage, less oversight needed */
  return Math.round((founderBase+founderCeiling+mgmt*sysMult+cultureBonus)*10)/10;},
 _orgOverextension(){return Math.max(0,(this.state.team_size||0)-this._orgCapacity());},
@@ -4756,7 +4050,7 @@ if(success){const _reg={establish_business:['form_llc','open_business_account','
 // Forming the LLC → prompt the founder to name their company (shown on the dashboard + leaderboard; sets up future player-vs-player features). Fired after the results render.
 if(action.id==='establish_business'&&success&&!this.state.company_name)this._pendingCompanyName=true;
 if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';}
-if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
+if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.total_debt=(effects.total_debt||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
 if(action.id==='hire_general_counsel'&&success){this.state._gc_hired=true;}
 if(action.id==='fast_working_capital'&&success){const s=this.state,adv=(action.effects&&action.effects.cash)||25000;s._mca_balance=Math.round(adv*(action.mca_factor||2));s._mca_holdback=action.mca_holdback||0.2;s._dyn_narrative='You took the advance — '+this.fmtMoney(adv)+' now, but you\'ll repay '+this.fmtMoney(s._mca_balance)+'. Starting next month the lender skims '+Math.round(s._mca_holdback*100)+'% of your revenue until it\'s cleared — it bleeds your top line, but it doesn\'t touch your credit.';}
 if(action.id==='restructure_team'&&success){const s=this.state;
@@ -4815,7 +4109,7 @@ if(cat==='lifestyle')_ro._mastery=this._masteryPanel(_lifeDB,_lifeMB,_lifeEnB);
 // Before → after on credit metrics this action moved (limit/utilization/available credit)
 {const sep=this.isSeparated(),RED='var(--red)',GRN='var(--accent)',af={bizLim:this.state.business_credit_limit||0,bizUtil:this.calcBizUtil(),persUtil:this.calcPersUtil(),avail:this.state.available_credit||0,persScore:this.state.personal_credit_score||0,cash:this.state.cash||0,pcash:this.state.personal_cash||0,debt:this.state.total_debt||0},rows=[];_ro._baKeys=[];_ro._scoreMoved=af.persScore!==_cb.persScore;
 // Cash this action moved (cost paid, or loan/sale proceeds added)
-if(Math.round(af.cash)!==Math.round(_cb.cash)){rows.push([sep?'Business cash':'Cash',this.fmtMoney(_cb.cash),this.fmtMoney(af.cash),af.cash<_cb.cash?RED:GRN]);_ro._baKeys.push('cash');}
+if(Math.round(af.cash)!==Math.round(_cb.cash)){rows.push([sep?'Business cash':'Cash',this.fmtMoney(_cb.cash),this.fmtMoney(af.cash),af.cash<_cb.cash?RED:GRN]);if(!effects.cash)_ro._baKeys.push('cash');}
 if(sep&&Math.round(af.pcash)!==Math.round(_cb.pcash)){rows.push(['Personal cash',this.fmtMoney(_cb.pcash),this.fmtMoney(af.pcash),af.pcash<_cb.pcash?RED:GRN]);_ro._baKeys.push('personal_cash');}
 if(af.persScore!==_cb.persScore)rows.push(['Personal credit score',''+_cb.persScore,''+af.persScore,af.persScore>=_cb.persScore?GRN:RED]);
 if(af.bizLim!==_cb.bizLim)rows.push(['Business credit limit',this.fmtMoney(_cb.bizLim),this.fmtMoney(af.bizLim),af.bizLim>=_cb.bizLim?GRN:RED]);
@@ -4823,7 +4117,7 @@ if(af.bizLim>0&&af.bizUtil!==_cb.bizUtil)rows.push(['Business utilization',_cb.b
 if(af.persUtil!==_cb.persUtil)rows.push(['Personal utilization',_cb.persUtil+'%',af.persUtil+'%',af.persUtil<=_cb.persUtil?GRN:RED]);
 if(af.avail!==_cb.avail&&af.bizLim===_cb.bizLim)rows.push(['Personal credit available',this.fmtMoney(_cb.avail),this.fmtMoney(af.avail),af.avail>=_cb.avail?GRN:RED]);
 // Total debt this action moved (e.g. a loan adds debt without touching the credit limit)
-if(Math.round(af.debt)!==Math.round(_cb.debt)){rows.push(['Total debt',this.fmtMoney(_cb.debt),this.fmtMoney(af.debt),af.debt>_cb.debt?RED:GRN]);_ro._baKeys.push('total_debt');}
+if(Math.round(af.debt)!==Math.round(_cb.debt)){rows.push(['Total debt',this.fmtMoney(_cb.debt),this.fmtMoney(af.debt),af.debt>_cb.debt?RED:GRN]);if(!effects.total_debt)_ro._baKeys.push('total_debt');}
 // Status-bar stats this action moved directly (leads, customers, team, etc.)
 const _sbLbl={leads:'Leads',customer_base:'Customers',team_size:'Team size',brand_equity:'Brand equity',systems_maturity:'Systems maturity',revenue_capacity:'Revenue capacity'};
 for(const k of _SB){const bv=_sbBefore[k],av=this.state[k]||0;if(Math.round(av)!==Math.round(bv)){const money=k==='revenue_capacity';rows.push([_sbLbl[k],money?this.fmtMoney(bv):''+Math.round(bv),money?this.fmtMoney(av):''+Math.round(av),av>=bv?GRN:RED]);_ro._baKeys.push(k);}}
@@ -5204,8 +4498,8 @@ const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);bord
   '</div>';
 const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses this month <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
 const mcaFoot=(mcaPaid>0||(s._mca_balance||0)>0)?'<div style="font-size:0.66rem;color:var(--text2);text-align:right;margin-top:-1px;">'+((s._mca_balance||0)>0?' · '+fm(s._mca_balance)+' left':' · cleared')+'</div>':'';
-const bottomBlock='<div style="margin-top:7px;border-top:1px dashed var(--border);padding-top:5px;">'+revRow+expLine+mcaFoot+'</div>';
-const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+capBlock+rows+bottomBlock+'</div>';this._monthCashSummary=null;}
+const plBlock='<div style="margin-bottom:7px;padding-bottom:7px;border-bottom:1px dashed var(--border);">'+revRow+expLine+mcaFoot+'</div>';
+const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+plBlock+capBlock+rows+'</div>';this._monthCashSummary=null;}
 if(!this._pendingLose&&!this.state._epic_life)html+=this._epicMilestoneCompact();/* non-members get the compact teaser here; members get the richer "Your Concierge This Month" card at the top instead */
 document.getElementById('results-content').innerHTML=html;{const nb=document.getElementById('result-next-btn');if(nb){this._ccChecked=false;nb.textContent=document.getElementById('month-cash-panel')?'💳 Check Cash & Credit':'Next Month →';}}this._pendingEvent=triggeredEvent;this._pendingTax=(this.month===12||this.month===24||this.month===36);
 if(this._tutFinalPending){this._tutFinalPending=false;this._tutStep++;setTimeout(()=>this.renderTutorialStep(),120);}
@@ -5560,7 +4854,7 @@ return out;},
 buildStatsDump(snap){if(!snap)return '';const MONEYK={cash:1,personal_cash:1,monthly_revenue:1,other_monthly_revenue:1,operating_expenses:1,cogs:1,owner_pay:1,living_expenses:1,lifestyle_expenses:1,total_debt:1,_installment_debt:1,business_installment_debt:1,real_estate_debt:1,available_credit:1,business_credit_limit:1,business_credit_used:1,insurance_cash_value:1,insurance_loan_balance:1,insurance_passive_loan_total:1,investment_positions:1,real_estate_equity:1,private_bank_balance:1,private_bank_loan:1,tax_reserve:1,capital_account:1,personal_guarantee_exposure:1,_owner_draws_total:1,personal_tax_ytd:1,_ytd_taxable_income:1};
 const fmtV=(k,v)=>{if(typeof v==='boolean')return v?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--text2)">—</span>';if(typeof v==='string')return this.formatStatName(v);if(MONEYK[k])return this.fmtMoney(Math.round(v));if(k==='churn_rate'||k==='tax_rate')return (Math.round(v*1000)/10)+'%';if(/utilization/.test(k))return Math.round(v)+'%';return (Math.round(v*100)/100);};
 const shown={},row=k=>{if(!(k in snap))return '';shown[k]=1;return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.71rem;padding:2px 0;border-bottom:1px solid rgba(127,127,127,0.08);"><span style="color:var(--text2);">'+this.formatStatName(k.replace(/^_/,''))+'</span><span style="text-align:right;white-space:nowrap;">'+fmtV(k,snap[k])+'</span></div>';};
-const groups=[['📊 Scores',['personal_mastery','freedom','dnb_score','biz_utilization','pers_utilization','actions_completed','milestones_hit','founder_role']],['💵 Money & Assets',['cash','personal_cash','available_credit','business_credit_limit','business_credit_used','total_debt','insurance_cash_value','investment_positions','real_estate_equity','real_estate_owned','real_estate_debt','private_bank_balance','private_bank_loan','tax_reserve','capital_account']],['📈 Income & Expenses',['monthly_revenue','other_monthly_revenue','owner_pay','operating_expenses','cogs','living_expenses','lifestyle_expenses','dscr']],['🏢 Business',['customer_base','leads','team_size','brand_equity','systems_maturity','key_person_dependency','sales_conversion','churn_rate','revenue_capacity','company_culture','audit_risk','litigation_exposure','partner_conflict_risk']],['🏦 Credit & Structure',['personal_credit_score','credit_negatives','business_credit_profile','_dnb_tradelines','entity_structure','trust_structure','tax_rate']],['🌴 Life & Energy',['energy','fitness_level','lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy']],['👔 Team & Roles',['_cfo_hired','_cfo_fulltime','_cro_hired','_cro_fulltime','_coo_hired','_coo_fulltime','_ea_hired','_gc_hired','_board_active','_passive_income_active','_dnb_profile','_auto_fund_insurance','_family_office']]];
+const groups=[['📊 Scores',['personal_mastery','freedom','dnb_score','biz_utilization','pers_utilization','actions_completed','milestones_hit','founder_role']],['💵 Money & Assets',['cash','personal_cash','available_credit','business_credit_limit','business_credit_used','total_debt','insurance_cash_value','investment_positions','real_estate_equity','real_estate_owned','real_estate_debt','private_bank_balance','private_bank_loan','tax_reserve','capital_account']],['📈 Income & Expenses',['monthly_revenue','other_monthly_revenue','owner_pay','operating_expenses','cogs','living_expenses','lifestyle_expenses','dscr']],['🏢 Business',['customer_base','leads','team_size','brand_equity','systems_maturity','key_person_dependency','sales_conversion','churn_rate','revenue_capacity','company_culture','audit_risk','litigation_exposure','partner_conflict_risk']],['🏦 Credit & Structure',['personal_credit_score','credit_negatives','business_credit_profile','_dnb_tradelines','entity_structure','trust_structure','tax_rate']],['🌴 Life & Energy',['energy','fitness_level','lifestyle_health','lifestyle_relationships','lifestyle_experiences','lifestyle_spiritual','lifestyle_philanthropy','lifestyle_legacy']],['👔 Team & Roles',['_cfo_hired','_cro_hired','_coo_hired','_ea_hired','_gc_hired','_board_active','_passive_income_active','_dnb_profile','_auto_fund_insurance','_family_office']]];
 let body='';for(const[title,keys]of groups){const rows=keys.map(row).join('');if(rows)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">'+title+'</div>'+rows;}
 const other=Object.keys(snap).filter(k=>!shown[k]&&!/^(_completed_actions|_actions_seen|_action_counts|_milestones_achieved)$/.test(k)).sort();
 if(other.length)body+='<div style="font-size:0.68rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">⚙ Other tracked values</div>'+other.map(row).join('');
