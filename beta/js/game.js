@@ -826,7 +826,17 @@ const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-
+const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'&#8722;')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
+const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
+let P=colHead('Personal','var(--accent)');P+=subLab('Money');
+P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
+if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)')+' <span style="font-size:0.54rem;color:var(--accent);font-weight:600;">tax-free</span>',null,null,'p_passive');
+P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
+P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
+P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
+P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
+P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 {const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* once revealed (on a positive month), Net Worth stays visible even if it dips negative again — shown in red */if(this._reveal('networth'))P+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
@@ -2129,8 +2139,24 @@ const revRow=((s.monthly_revenue||0)>0||(st.rev||0)>0)?posRow('📈','Business r
 const mcaPaid=s._mca_paid||0;
 const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=burnOut+cogsOut+sp.total+mcaPaid;
 const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('credit');
-const expLine='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses this month'+(mcaPaid>0?' <span title="includes cash-advance holdback">#</span>':'')+'</span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div>';
-const mcaFoot=(mcaPaid>0||(s._mca_balance||0)>0)?'<div style="font-size:0.66rem;color:var(--text2);text-align:right;margin-top:-1px;">'+(mcaPaid>0?'# includes '+fm(mcaPaid)+' cash-advance holdback':'cash-advance holdback')+((s._mca_balance||0)>0?' · '+fm(s._mca_balance)+' left':' · cleared')+'</div>':'';
+// Expense breakdown rows — only show lines that are non-zero
+const _bkRow=(lbl,amt)=>amt>0?'<div style="display:flex;justify-content:space-between;font-size:0.72rem;padding:2px 0;color:var(--text2);"><span>'+lbl+'</span><span style="color:var(--text);font-weight:600;">−'+fm(amt)+'</span></div>':'';
+const _execComp=this.calcExecComp?this.calcExecComp():0;
+const _opexBase=Math.max(0,(s.operating_expenses||0)-_execComp);
+const _debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
+const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);border-radius:6px;padding:7px 9px;border-top:1px dashed var(--border);">'+
+  _bkRow('Operating expenses',_opexBase)+
+  (_execComp>0?_bkRow('Manager pay',_execComp):'')+
+  _bkRow('COGS',cogsOut)+
+  _bkRow('Owner pay',s.owner_pay||0)+
+  _bkRow('Living expenses',s.living_expenses||0)+
+  _bkRow('Lifestyle',s.lifestyle_expenses||0)+
+  _bkRow('Debt service',_debtSvc)+
+  (sp.total>0?_bkRow('Action costs this month',sp.total):'')+
+  (mcaPaid>0?_bkRow('Cash-advance holdback',mcaPaid):'')+
+  '</div>';
+const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses this month <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
+const mcaFoot=(mcaPaid>0||(s._mca_balance||0)>0)?'<div style="font-size:0.66rem;color:var(--text2);text-align:right;margin-top:-1px;">'+((s._mca_balance||0)>0?' · '+fm(s._mca_balance)+' left':' · cleared')+'</div>':'';
 const bottomBlock='<div style="margin-top:7px;border-top:1px dashed var(--border);padding-top:5px;">'+revRow+expLine+mcaFoot+'</div>';
 const _lose=!!this._pendingLose;const _panelEdge=_lose?'var(--red)':'var(--gold)';const _panelTitle=_lose?'<span style="color:var(--red);">❌ Insolvent — Out of Cash & Credit</span>':'📊 Cash & Credit — This Month';html+='<div id="month-cash-panel" class="fade-in" style="background:var(--surface);border:1px solid '+(_lose?'var(--red)':'var(--border)')+';border-left:3px solid '+_panelEdge+';border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:6px;">'+_panelTitle+'</div>'+capBlock+rows+bottomBlock+'</div>';this._monthCashSummary=null;}
 if(!this._pendingLose&&!this.state._epic_life)html+=this._epicMilestoneCompact();/* non-members get the compact teaser here; members get the richer "Your Concierge This Month" card at the top instead */
