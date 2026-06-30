@@ -3080,11 +3080,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.43.1',d:'2026-06-29 20:00',n:[
-'Manager model: hire a Sales Manager (Marketing) and Ops Manager (Operations) — C-suite replaced. Finance is always yours to own.',
-'Team mode activates when both managers hired; they handle their categories, you focus on Finance.',
-'Financial Advisor replaces CFO hire — same benefit, clearer framing.',
-'Dashboard: Income/Revenue rows highlighted green, Expense red, Cash flow bold P&L summary at a glance.',
+{v:'0.43.1',d:'2026-06-29 19:00',n:[
+'Manager model: hire a Sales Manager (Marketing) and Ops Manager (Operations) instead of a C-suite. Finance is always yours.',
+'Team mode activates when both managers hired — they handle their categories automatically.',
+'Dashboard: Income/Revenue rows highlighted green, Expense rows red, Cash flow bold below.',
 ]},
 {v:'0.43.0',d:'2026-06-30 19:00',n:[
 'BIG update — Finance & Economy overhaul (testing build). Your small business now caps lean (~$80–200k/mo, set by your SYSTEMS, not headcount) — real wealth comes from FINANCE leveraging the cash & credit it throws off.',
@@ -3863,16 +3862,7 @@ const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
-const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
-let P=colHead('Personal','var(--accent)');P+=subLab('Money');
-P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
-P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
-P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
-P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
-if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)')+' <span style="font-size:0.54rem;color:var(--accent);font-weight:600;">tax-free</span>',null,null,'p_passive');
-P+=row('Expense/mo',m(persExp,'var(--gold)'),null,null,'p_expense');
-P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
-P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 {const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* once revealed (on a positive month), Net Worth stays visible even if it dips negative again — shown in red */if(this._reveal('networth'))P+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
@@ -3887,12 +3877,12 @@ if(this._reveal('mastery'))P+='<div onclick="Game.statInfo(\'p_mastery\')" style
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
+B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
+B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
+B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
-B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),null,null,'b_revenue');
-B+=row('Expense/mo',m(bizExp,'var(--gold)'),null,null,'b_expense');
-B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
 {const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
@@ -4542,7 +4532,7 @@ const s2=this.state,allExec=s2._cro_hired&&s2._coo_hired,teamMode=allExec||s2._b
 if(teamMode){const roleRow=(emoji,role,c,recId)=>{const selA=this.selectedActions[c],isAuto=selA&&(this._autoPicked||{})[c]===selA.id,id=selA?selA.id:recId,lbl=id?this.actionLabel(id):'standing pat',tag=(selA&&!isAuto)?'<span style="color:var(--accent);font-size:0.64rem;">your pick</span>':(id?'<span style="color:var(--text2);font-size:0.64rem;">'+role+'’s pick</span>':'');return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">'+emoji+' '+role+'</span><span style="text-align:right;min-width:0;"><span style="color:var(--text);">'+lbl+'</span> '+tag+'</span></div>';};
 let rows='';if(s2._cro_hired)rows+=roleRow('📣','Sales Manager','marketing',(this._autoPicked||{}).marketing);if(s2._coo_hired)rows+=roleRow('⚙️','Ops Manager','operations',(this._autoPicked||{}).operations);if(s2._cfo_hired)rows+=roleRow('💰','CFO','finance',this._cfoPick);
 if((this._activeCats||[]).includes('lifestyle'))rows+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><span style="color:var(--text2);white-space:nowrap;">🏖️ Life</span><span style="color:var(--accent);font-size:0.64rem;">always your pick</span></div>';
-banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Team’s Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Override any line by picking your own move below — anything you don’t set, your team handles (and it costs you no energy). Your 🏖️ Life action is always your own pick. When you’re ready, tap <strong>▶ Run the Month</strong> at the bottom.</div>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing &amp; Ops menus (let execs handle)':'Show all menus to override Marketing &amp; Ops')+'</span></div>':'')+'</div>';}
+banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:10px;"><div style="font-size:0.84rem;font-weight:700;color:var(--gold);margin-bottom:6px;">'+(s2._board_active?'🏛 Your Board & Team — Plan This Month':'👔 Your Managers — Plan This Month')+'</div>'+rows+'<div style="font-size:0.68rem;color:var(--text2);margin:7px 0 9px;line-height:1.45;">Your managers handle Marketing &amp; Ops — you own Finance. Override any manager line by picking your own move below.</div>'+(allExec?'<div style="text-align:center;margin-top:7px;"><span onclick="Game.toggleFocus()" style="cursor:pointer;font-size:0.72rem;color:var(--blue);font-weight:600;">'+((this._activeCats||CATS).includes('marketing')?'Hide Marketing &amp; Ops menus (let execs handle)':'Show all menus to override Marketing &amp; Ops')+'</span></div>':'')+'</div>';}
 // On the finance tab, members see their concierge roadmap milestone (replaces the old "handles these for you" list — the milestone says what's being built and what's next, which is the useful version).
 let epicPanel='';
 if(this.state._epic_life&&this.currentCategory==='finance')epicPanel=this._epicMilestoneCompact();
