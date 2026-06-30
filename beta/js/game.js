@@ -44,7 +44,7 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.44.0',d:'2026-06-29 23:55',n:[
+{v:'0.45.0',d:'2026-06-30 07:13',n:[
 'New Epic Life perk — Velocity Banking (Finance → Debt & Credit, members only). Run your household through a line of credit and sweep your surplus straight at your debt, paying it down years faster. You choose the vehicle: a HELOC against your property (attacks the mortgage and builds equity quicker) or a credit line (attacks revolving debt).',
 'You\'re in the driver\'s seat: pick how aggressively to sweep (Conservative 50% / Balanced 75% / Aggressive 100% of each month\'s surplus), then use the ⚡ Velocity chip on your dashboard to chunk extra cash, retune, switch vehicle, or pause — any month, no turn needed. A live readout shows interest saved, equity built, and your payoff date with vs. without velocity.',
 'Real estate now behaves like the real thing: your mortgage actually amortizes each month and that paid-down principal becomes equity (tenants paying down your loan), and the property appreciates ~3%/yr — so buying, holding, and accelerating the loan all build real wealth over time.',
