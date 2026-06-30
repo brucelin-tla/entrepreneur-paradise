@@ -2139,21 +2139,32 @@ const revRow=((s.monthly_revenue||0)>0||(st.rev||0)>0)?posRow('📈','Business r
 const mcaPaid=s._mca_paid||0;
 const burnOut=this.calcMonthlyBurn(),cogsOut=s.cogs||0,totalExp=burnOut+cogsOut+sp.total+mcaPaid;
 const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('credit');
-// Expense breakdown rows — only show lines that are non-zero
-const _bkRow=(lbl,amt)=>amt>0?'<div style="display:flex;justify-content:space-between;font-size:0.72rem;padding:2px 0;color:var(--text2);"><span>'+lbl+'</span><span style="color:var(--text);font-weight:600;">−'+fm(amt)+'</span></div>':'';
+// Expense breakdown — mini P&L layout
 const _execComp=this.calcExecComp?this.calcExecComp():0;
 const _opexBase=Math.max(0,(s.operating_expenses||0)-_execComp);
 const _debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
-const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);border-radius:6px;padding:7px 9px;border-top:1px dashed var(--border);">'+
-  _bkRow('Operating expenses',_opexBase)+
-  (_execComp>0?_bkRow('Manager pay',_execComp):'')+
-  _bkRow('COGS',cogsOut)+
-  _bkRow('Owner pay',s.owner_pay||0)+
-  _bkRow('Living expenses',s.living_expenses||0)+
-  _bkRow('Lifestyle',s.lifestyle_expenses||0)+
-  _bkRow('Debt service',_debtSvc)+
-  (sp.total>0?_bkRow('Action costs this month',sp.total):'')+
-  (mcaPaid>0?_bkRow('Cash-advance holdback',mcaPaid):'')+
+const _rev=s.monthly_revenue||0;
+const _gross=_rev-cogsOut;
+const _opInc=_gross-_opexBase-_execComp-(s.owner_pay||0);
+const _netFlow=_opInc-(s.living_expenses||0)-(s.lifestyle_expenses||0)-_debtSvc-sp.total-mcaPaid;
+const _iRow=(lbl,amt,col)=>'<div style="display:flex;justify-content:space-between;font-size:0.72rem;padding:2px 0;"><span style="color:var(--text2);">'+lbl+'</span><span style="color:'+(col||'var(--text)')+';font-weight:600;">'+amt+'</span></div>';
+const _div='<div style="border-top:1px dashed rgba(127,127,127,0.25);margin:4px 0;"></div>';
+const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);border-radius:6px;padding:7px 9px;">'+
+  _iRow('Revenue','+'+fm(_rev),'var(--accent)')+
+  (cogsOut>0?_iRow('COGS','−'+fm(cogsOut),'var(--red)'):'')+
+  (cogsOut>0?_iRow('Gross profit',((_gross>=0?'+':'−')+fm(Math.abs(_gross))),_gross>=0?'var(--accent)':'var(--red)'):'')+
+  (cogsOut>0?_div:'')+
+  (_opexBase>0?_iRow('Operating expenses','−'+fm(_opexBase),'var(--red)'):'')+
+  (_execComp>0?_iRow('Manager pay','−'+fm(_execComp),'var(--red)'):'')+
+  ((s.owner_pay||0)>0?_iRow('Owner pay','−'+fm(s.owner_pay||0),'var(--red)'):'')+
+  _div+
+  ((s.living_expenses||0)>0?_iRow('Living expenses','−'+fm(s.living_expenses||0),'var(--red)'):'')+
+  ((s.lifestyle_expenses||0)>0?_iRow('Lifestyle','−'+fm(s.lifestyle_expenses||0),'var(--red)'):'')+
+  (_debtSvc>0?_iRow('Debt service','−'+fm(_debtSvc),'var(--red)'):'')+
+  (sp.total>0?_iRow('Action costs','−'+fm(sp.total),'var(--red)'):'')+
+  (mcaPaid>0?_iRow('MCA holdback','−'+fm(mcaPaid),'var(--red)'):'')+
+  _div+
+  _iRow('Net this month',(_netFlow>=0?'+':'−')+fm(Math.abs(_netFlow)),_netFlow>=0?'var(--accent)':'var(--red)')+
   '</div>';
 const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses this month <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong>'+(sp.total>0&&_src.length?' <span style="color:var(--text2);font-size:0.66rem;">· '+_src.join('+')+'</span>':'')+'</span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
 const mcaFoot=(mcaPaid>0||(s._mca_balance||0)>0)?'<div style="font-size:0.66rem;color:var(--text2);text-align:right;margin-top:-1px;">'+((s._mca_balance||0)>0?' · '+fm(s._mca_balance)+' left':' · cleared')+'</div>':'';
