@@ -43,6 +43,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.42.4',d:'2026-06-29 17:28',n:[
+'Dashboard: Cash flow/mo now stands out with a colored highlight — green when positive, red when negative. Easy to spot at a glance.',
+]},
 {v:'0.42.3',d:'2026-06-30 20:00',n:[
 'New: 🧪 Beta Tester access on the main menu. Got a beta code? Enter it to try the in-progress Finance & Economy overhaul build. The live game is unchanged.',
 ]},
@@ -820,13 +823,14 @@ const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
 const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
+const cfRow=(label,net,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const bg=net>=0?'rgba(16,185,129,0.12)':'rgba(239,68,68,0.12)';const bdr=net>=0?'rgba(16,185,129,0.35)':'rgba(239,68,68,0.35)';const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:center;gap:4px;padding:6px 6px;margin:4px 0 2px;border-radius:6px;background:'+bg+';border:1px solid '+bdr+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.65rem;font-weight:700;color:var(--text);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.8rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.92rem;font-weight:800;color:'+c+';white-space:nowrap;">'+(net>=0?'+':'−')+fmt(Math.abs(net))+'</span></div>';};
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 P+=row('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),null,null,'p_income');
 P+=row('Expense/mo',m(persExp,'var(--gold)'),null,null,'p_expense');
-P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+P+=cfRow('Cash flow/mo',persInc-persExp,'dash-cashflow','p_flow');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
@@ -847,7 +851,7 @@ B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
 B+=row('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),null,null,'b_revenue');
 B+=row('Expense/mo',m(bizExp,'var(--gold)'),null,null,'b_expense');
-B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+B+=cfRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,null,'b_flow');
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
 {const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';

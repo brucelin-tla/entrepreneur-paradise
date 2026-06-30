@@ -1,5 +1,10 @@
 # Release Notes
 
+## v0.42.4 — 2026-06-29
+**Dashboard cashflow highlight**
+
+- **Cash flow/mo** row on the dashboard now has a colored background highlight — green when positive, red when negative — so it's immediately visible at a glance among the other stats. Applies to both the Personal and Business columns.
+
 ## v0.42.3 — 2026-06-30
 **Beta Tester access (gated)**
 
