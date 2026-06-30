@@ -249,23 +249,23 @@
       "base_probability": 0.1,
       "probability_scales_with": "_bad_debt",
       "scale_factor": 0.000002,
-      "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive. The lender's letter arrives with the new payment schedule.",
+      "narrative": "The Fed raised rates again. Your variable-rate debt just got more expensive — every business line and term loan you carry now costs more to service each month.",
       "act": 2,
       "choices": [
         {
           "label": "Refinance to fixed rate",
-          "effects": { "cash": -2000, "operating_expenses": 300 },
-          "outcome_narrative": "Locked in. More expensive monthly, but at least it's predictable now. No more surprises."
+          "effects": { "cash": -2000 },
+          "outcome_narrative": "Locked in. You paid to refinance into a fixed rate — a little cash now to stop the bleeding, and your debt service won't climb with the next hike."
         },
         {
           "label": "Absorb the increase",
-          "effects": { "operating_expenses": 500, "dscr": -0.2 },
-          "outcome_narrative": "You'll handle it. The margin is thinner, but the cash stays in the business where it's needed."
+          "effects": { "_rate_premium": 0.015, "dscr": -0.2 },
+          "outcome_narrative": "You'll ride the variable rate. Your monthly interest just stepped up for good (you'll see it in your debt service) — fine while cash flow is strong, dangerous if it turns."
         },
         {
           "label": "Accelerate paydown",
           "effects": { "cash": -5000, "total_debt": -5000, "dscr": 0.1 },
-          "outcome_narrative": "You threw cash at the balance. Painful, but every dollar you kill now saves you three in interest over the life of the loan."
+          "outcome_narrative": "You threw cash at the balance. Painful, but less principal means less interest at any rate — and a hike on a smaller balance barely stings."
         }
       ],
       "mitigated_by": ["banking_relationship", "advanced_tax_strategy"]

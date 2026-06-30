@@ -44,6 +44,15 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.43.4',d:'2026-06-29 22:40',n:[
+'Fixed the category icons being squashed by the new economy banner — the banner now sits in its own row right above the Step 1/3 line and the icons, and the duplicate market message on the result screen is gone.',
+'Dashboard trim: Personal Passive income now sits below Debt; Business side drops Owner Equity and shows Net Worth below Debt (no month-over-month swing).',
+'Tap your Personal Cash for a breakdown — now includes your owner draws to date (total you\'ve paid yourself out of the business).',
+'Economy banner auto-collapses to a slim chip after a couple of months, re-expanding on a phase change (or tap it anytime) — less clutter, still readable.',
+'Dashboard expenses now include debt service (interest + principal) — on the Personal side before you form an LLC, on the Business side after — so your cash flow reads true.',
+'Result screen: the Total-expenses breakdown is now a clean money-out list (revenue is shown separately above, no longer mixed into the expense total).',
+'Interest rates are now real: your variable business lines & loans float with the Fed/market rate (shown in the Debt breakdown). Booms, downturns and Fed-hike events genuinely raise your monthly debt service; recovery eases it. The "Fed raised rates" event now has teeth — "absorb it" steps your rate up for good, while paying down or refinancing blunts it.',
+]},
 {v:'0.43.3',d:'2026-06-29 22:10',n:[
 'Result P&L fix: your owner pay is no longer double-counted as an expense — it\'s a draw that funds your living expenses (which are already counted). Total expenses, net, and runway now reflect the real cash swing.',
 'Economy at a glance: the current market phase (Expansion / Boom / Downturn / Recovery) now shows as a persistent signal right above the category icons.',
@@ -696,8 +705,11 @@ const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_
 const termBiz=(s._installment_debt||0)+(s.business_installment_debt||0)+(s.business_credit_used||0);
 const re=s.real_estate_debt||0,pb=s.private_bank_loan||0;
 const riskMult=score>=760?0.7:score>=700?0.85:score>=640?1:score>=600?1.3:1.6;/* better credit = cheaper money */
-const cardRate=0.0183*(score>=720?0.85:score>=640?1:1.2);/* ~18–26% APR cards, by credit */
-return Math.round(persRev*cardRate)+Math.round(termBiz*0.008*riskMult*cfo)+Math.round(re*0.005)+Math.round(pb*0.000833);},
+// Variable-rate debt floats with the Fed/base rate the macro cycle sets (s._market_rate, ~4.5% expansion → ~7%+ in a tight downturn), plus any persistent rate-hike premium. So when the Fed raises rates (boom/downturn, or a rate-hike event), the player's monthly debt service actually climbs — and falls when rates ease.
+const baseRate=(s._market_rate!=null?s._market_rate:0.05)+(s._rate_premium||0),rateAdj=baseRate-0.05;/* delta from the ~5% neutral base the numbers were tuned around */
+const cardRate=Math.max(0.012,0.0183+rateAdj/12)*(score>=720?0.85:score>=640?1:1.2);/* ~18–26% APR cards, floating with the base rate */
+const termRate=(0.05+baseRate)/12;/* business term loans & credit lines: ~5% lender margin over the base rate */
+return Math.round(persRev*cardRate)+Math.round(termBiz*termRate*riskMult*cfo)+Math.round(re*0.005)+Math.round(pb*0.000833);},
 calcDebtPrincipal(){const s=this.state,bizDebt=(s.total_debt||0)-(s.real_estate_debt||0);return Math.round(bizDebt*0.01)+Math.round((s.real_estate_debt||0)*0.005);},
 calcMonthlyBurn(){const s=this.state;return(s.operating_expenses||0)+(s.owner_pay||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0)+this.calcDebtInterest()+this.calcDebtPrincipal();},
 // Total net worth: all assets (cash, investments, real-estate equity, policy cash value, retained business equity, private-bank balance) minus all debt.
@@ -830,9 +842,10 @@ const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value|
 const passiveInc=(s.other_monthly_revenue||0)+policyPassive+Math.round((s.private_bank_balance||0)*0.004);/* actual passive paid to cash each month (real estate, lending, PE, etc.) — matches the Income Sources breakdown */
 const persCash=sep?(s.personal_cash||0):(s.cash||0);
 const persLoan=Math.max(0,(s.total_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0))+(s.insurance_loan_balance||0);
-const persExp=(s.living_expenses||0)+(s.lifestyle_expenses||0),persInc=(s.owner_pay||0)+passiveInc,persScore=Math.round(s.personal_credit_score),persAvail=s.available_credit||0;
+const debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();/* interest + principal; mechanically paid from s.cash each month (line in monthlyTick) — pre-LLC that's the player's only cash (personal), post-LLC it's business cash */
+const persExp=(s.living_expenses||0)+(s.lifestyle_expenses||0)+(sep?0:debtSvc),persInc=(s.owner_pay||0)+passiveInc,persScore=Math.round(s.personal_credit_score),persAvail=s.available_credit||0;
 const bizCash=s.cash||0,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
-const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0),bizScore=this.calcBizCreditScore();
+const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0)+(sep?debtSvc:0),bizScore=this.calcBizCreditScore();
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
 const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
@@ -847,10 +860,10 @@ P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(3
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
 P+=netRow('Cash flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
-P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash');
+P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash','p_cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
-if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
 if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
@@ -870,9 +883,9 @@ B+=netRow('Cash flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,nul
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
-{const nwNow=this.calcNetWorth(),nwDelta=(this._nwStart!=null)?Math.round(nwNow-this._nwStart):null;let nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(nwDelta!==null&&nwDelta!==0){const dCol=nwDelta>0?'var(--accent)':'var(--red)';nwHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(nwDelta>0?'▲ +':'▼ −')+fmt(Math.abs(nwDelta))+'</span>';}/* Net Worth (consolidated) lives on the business side, right above debt; once revealed it stays visible even if it dips negative (shown red) */if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
-{const oeNow=s.capital_account||0,oeDelta=(this._oeStart!=null)?Math.round(oeNow-this._oeStart):null;let oeHtml=m(oeNow,oeNow>=0?'var(--text)':'var(--red)');if(oeDelta!==null&&oeDelta!==0){const dCol=oeDelta>0?'var(--accent)':'var(--red)';oeHtml+='<br><span style="font-size:0.52rem;color:'+dCol+';font-weight:600;">'+(oeDelta>0?'▲ +':'▼ −')+fmt(Math.abs(oeDelta))+'</span>';}B+=row('Owner Equity',oeHtml,null,null,'b_equity');}
+/* Net Worth (consolidated) lives on the business side, right below debt; once revealed it stays visible even if it dips negative (shown red). No swing shown. */
+{const nwNow=this.calcNetWorth();const nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 B+='</div><div id="biz-ops">'+subLab('Operations')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
@@ -927,7 +940,7 @@ let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_deb
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
 // Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
-STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_cash:{scope:'personal',fn:'showCash'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
@@ -980,6 +993,7 @@ const _debtTotal=(pers?(persRev+persInst):0)+(biz?(bizRev+bizInst):0)+reDbt+insL
 h+='<div class="breakdown-row breakdown-total"><span>Total Outstanding</span><span style="color:var(--red)">'+this.fmtMoney(_debtTotal)+'</span></div>';
 h+='<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px;">';
 h+='<div class="breakdown-row"><span>Monthly Payments</span><span>'+this.fmtMoney(moPay)+'</span></div>';
+{const br=Math.round(((s._market_rate!=null?s._market_rate:0.05)+(s._rate_premium||0))*1000)/10,ph=(s._cycle&&s._cycle.phase)||'expansion';h+='<div class="breakdown-row"><span>Base rate (Fed) · '+ph+'</span><span style="color:'+(br>=6?'var(--red)':br>=5?'var(--gold)':'var(--accent)')+'">'+br.toFixed(1)+'%</span></div>';h+='<div class="breakdown-detail">Your variable business lines & loans float with this rate. It climbs in booms and downturns (and after a Fed-hike event) and eases in recovery — so your monthly interest moves with it. Pay down balances or refinance to fixed to blunt the swings.</div>';}
 const persLim=persRev+(s.available_credit||0),pu=this.calcPersUtil(),bu=this.calcBizUtil();
 if(pers)h+='<div class="breakdown-row"><span>Personal '+this.term('Utilization')+'</span><span style="color:'+(pu>30?'var(--gold)':'var(--accent)')+'">'+pu+'% ('+this.fmtMoney(persRev)+'/'+this.fmtMoney(persLim)+')</span></div>';
 if(biz&&(s.business_credit_limit||0)>0)h+='<div class="breakdown-row"><span>Business '+this.term('Utilization')+'</span><span style="color:'+(bu>50?'var(--gold)':'var(--accent)')+'">'+bu+'% ('+this.fmtMoney(bizRev)+'/'+this.fmtMoney(s.business_credit_limit||0)+')</span></div>';
@@ -1008,6 +1022,14 @@ if(salary===0&&passive===0)h+='<div class="breakdown-detail">No personal income 
 h+='<div class="breakdown-row breakdown-total"><span>Personal income/mo</span><span style="color:var(--accent)">'+this.fmtMoney(salary+passive)+'</span></div>';
 if(this.isSeparated())h+='<div class="breakdown-detail" style="margin-top:6px;">Owner draws to date '+this.fmtMoney(s._owner_draws_total||0)+' · Capital account '+this.fmtMoney(s.capital_account||0)+' · Pass-through tax paid '+this.fmtMoney(s.personal_tax_ytd||0)+'</div>';}
 h+=this._statFooter();this.showPopup((wantB&&!wantP?'Business Revenue':wantP&&!wantB?'Personal Income':'Income Sources'),h);},
+// Personal cash explainer — also the home for owner draws-to-date (the cumulative cash you've pulled from the business into your own pocket), now that the Owner Equity row is gone.
+showCash(scope){const s=this.state,sep=this.isSeparated(),pc=sep?(s.personal_cash||0):(s.cash||0);
+let h=this._scopeChip(scope||'personal')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your <strong>personal cash</strong> — money in your own pocket. It pays your living and lifestyle, and it\'s where your owner pay/draws and passive income land. Don\'t let it hit zero.</div>';
+h+='<div class="breakdown-row breakdown-total"><span>Personal cash</span><span style="color:'+(pc>5000?'var(--accent)':pc<2000?'var(--red)':'var(--gold)')+'">'+this.fmtMoney(pc)+'</span></div>';
+if(sep){h+='<div class="breakdown-row"><span>Owner draws to date</span><span style="color:var(--gold)">'+this.fmtMoney(s._owner_draws_total||0)+'</span></div>';
+h+='<div class="breakdown-detail">Total you\'ve paid yourself out of the business into your personal account — money in your pocket (it draws down your business equity).</div>';
+if((s.personal_tax_ytd||0)>0)h+='<div class="breakdown-row"><span>Pass-through tax paid (YTD)</span><span style="color:var(--text2)">'+this.fmtMoney(s.personal_tax_ytd||0)+'</span></div>';}
+h+=this._statFooter();this.showPopup('Your Cash',h);},
 // Plain-language explainer for Owner Equity (the capital account) — a new owner clicking the dashboard row should learn what it is, not land on the revenue screen.
 showOwnerEquity(scope){const s=this.state,cap=s.capital_account||0;
 let h=this._scopeChip(scope||'business')+'<div style="line-height:1.6;color:var(--text2);font-size:0.86rem;margin-bottom:10px;"><strong style="color:var(--text);">Owner Equity</strong> is your <strong>stake in the business</strong> — the slice of the company\'s value that actually belongs to you (its retained worth, like the equity you\'d have in a house you own).<br><br>It <strong>grows</strong> when the business keeps profit (revenue minus costs, your pay, and taxes) and <strong>shrinks</strong> when you take money out as an owner draw'+(s._partner_equity>0?' or pay your partner their share':'')+'. It rolls into your overall <strong>Net Worth</strong>.</div>';
@@ -1165,13 +1187,22 @@ renderStepIndicator(){const ac=this._activeCats||CATS,ci=ac.indexOf(this.current
 CAT_ICON:{marketing:'📣',operations:'⚙️',finance:'💰',lifestyle:'🏖️'},
 // Short, at-a-glance read on the current economy phase — shown persistently above the category icons.
 _ECON_LABELS:{expansion:{i:'📈',n:'Expansion',d:'steady growth — build reserves, keep leverage low',c:'var(--accent)'},boom:{i:'🔥',n:'Boom',d:'hot & frothy — get liquid, a turn is coming',c:'var(--gold)'},downturn:{i:'📉',n:'Downturn',d:'assets on sale but credit is freezing — the prepared win',c:'var(--red)'},recovery:{i:'🌱',n:'Recovery',d:'rebound — rates low, credit loosening',c:'var(--accent)'}},
+// The economy signal sits in its own bar right above the step-indicator + category icons (not inside the flex icon row, which would squash the icons).
+renderEconSignal(){const s=this.state;const si=document.getElementById('step-indicator');if(!si||!s)return;let bar=document.getElementById('econ-signal');if(!bar){bar=document.createElement('div');bar.id='econ-signal';si.parentNode.insertBefore(bar,si);}const ph=(s._cycle&&s._cycle.phase)||'expansion',E=this._ECON_LABELS[ph]||this._ECON_LABELS.expansion;
+// Auto-collapse: the full description shows for the phase's first ~2 months (and the game's opening), then collapses to a slim chip to cut clutter. A new phase re-arms it; the player can tap to toggle anytime.
+if(this._econLastPhase!==ph){this._econLastPhase=ph;this._econExpanded=null;}
+const since=s._econ_phase_since||1,recentlyChanged=(this.month-since)<2;
+const expanded=(this._econExpanded!=null)?this._econExpanded:recentlyChanged;
+bar.setAttribute('title','The economy moves in a loop: Expansion → Boom → Downturn → Recovery. Tap to '+(expanded?'collapse':'expand')+'.');
+bar.setAttribute('onclick','Game._econExpanded='+(expanded?'false':'true')+';Game.renderEconSignal();');
+bar.setAttribute('style','display:flex;align-items:center;gap:6px;font-size:0.66rem;color:var(--text2);margin:0 0 6px;padding:'+(expanded?'4px 9px':'3px 9px')+';background:rgba(127,127,127,0.08);border-radius:6px;line-height:1.35;cursor:pointer;');
+bar.innerHTML='<span style="font-size:0.9rem;">'+E.i+'</span><span><strong style="color:'+E.c+';">'+E.n+'</strong>'+(expanded?' <span style="color:var(--text2);">· '+E.d+'</span>':'')+'</span>';},
 renderCategoryTabs(){const ac=this._activeCats||CATS;
-const _ph=(this.state._cycle&&this.state._cycle.phase)||'expansion',_E=this._ECON_LABELS[_ph]||this._ECON_LABELS.expansion;
-const econ='<div id="econ-signal" title="The economy moves in a loop: Expansion → Boom → Downturn → Recovery. Read it and prepare." style="display:flex;align-items:center;gap:6px;font-size:0.66rem;color:var(--text2);margin-bottom:6px;padding:4px 9px;background:rgba(127,127,127,0.08);border-radius:6px;line-height:1.35;"><span style="font-size:0.9rem;">'+_E.i+'</span><span><strong style="color:'+_E.c+';">'+_E.n+'</strong> <span style="color:var(--text2);">· '+_E.d+'</span></span></div>';
+this.renderEconSignal();
 const tabs=ac.map(c=>{const on=this.currentCategory===c,done=!!this.selectedActions[c];return '<div'+(c==='lifestyle'?' id="life-btn"':'')+' class="cat-tab cat-icon'+(on?' active':done?' done':'')+'" title="'+CL[c]+'" onclick="Game.switchCategory(\''+c+'\')">'+(this.CAT_ICON[c]||'•')+(done&&!on?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>';}).join('');
 const member=!!this.state._epic_life,pendingEpic=!!this.state._epic_enroll_pending;
 const epic=(!this._tutActive&&(this._reveal('epic')||member||pendingEpic))?'<div id="epic-btn" class="cat-tab cat-icon" title="Epic Life Membership" style="background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border-color:var(--gold);font-weight:700;" onclick="Game.showEpicLife()">⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':'')+'</div>':'';
-document.getElementById('cat-tabs').innerHTML=econ+'<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
+document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
@@ -1342,7 +1373,8 @@ _advanceMarketCycle(){const s=this.state;
  s._credit_tight=P.tight;s._cycle={phase:phase};
  s._market_cycle=(phase==='boom')?'boom':(phase==='downturn')?'recession':'normal';/* back-compat with existing event scaling */
  // Telegraph: once per phase turn, PLUS an escalating warning in the last boom month before the bust — the signs are there if you read them.
- if(s._cycle_phase_shown!==phase){s._cycle_phase_shown=phase;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:P.tell}]);}
+ // The current phase is shown persistently in the econ-signal bar above the category icons, so we no longer push a per-phase narrative ripple here (avoids a duplicate economic message). The escalating pre-bust warning below still fires — it's a distinct, can't-miss alert.
+ if(s._cycle_phase_shown!==phase){s._cycle_phase_shown=phase;s._econ_phase_since=m;}/* stamp when this phase began — drives the econ banner's auto-expand window */
  else if(phase==='boom'&&m>=ds-1&&!s._cycle_warned){s._cycle_warned=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The Market',narrative:'⚠️ The market is overheating — rates climbing, valuations stretched, everyone euphoric. A turn is coming; you can feel it. Get liquid, trim leverage, keep your powder dry.'}]);}
  return phase;},
 // DRY POWDER — the capital you can actually deploy in a frozen credit market (the buy-the-dip fuel). In a downturn banks won't lend, so what counts is your POLICY cash value (borrowable tax-free, no credit check, untouched by the crash thanks to the 0% floor) and the CASH RESERVES you kept liquid instead of over-extending. Credit lines are deliberately excluded — that's the lesson: the prepared act, the over-leveraged are frozen out.
@@ -2161,27 +2193,20 @@ const _src=[];if(sp.cash>0)_src.push('cash');if(sp.biz>0||sp.pers>0)_src.push('c
 const _execComp=this.calcExecComp?this.calcExecComp():0;
 const _opexBase=Math.max(0,(s.operating_expenses||0)-_execComp);
 const _debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
-const _rev=s.monthly_revenue||0;
-const _gross=_rev-cogsOut;
-const _opInc=_gross-_opexBase-_execComp;
-const _netFlow=_opInc-(s.living_expenses||0)-(s.lifestyle_expenses||0)-_debtSvc-sp.total-mcaPaid;
 const _iRow=(lbl,amt,col)=>'<div style="display:flex;justify-content:space-between;font-size:0.72rem;padding:2px 0;"><span style="color:var(--text2);">'+lbl+'</span><span style="color:'+(col||'var(--text)')+';font-weight:600;">'+amt+'</span></div>';
 const _div='<div style="border-top:1px dashed rgba(127,127,127,0.25);margin:4px 0;"></div>';
+// Pure expense breakdown — only money OUT (revenue lives in the Business revenue row above; this list sums to Total expenses).
 const _bkHtml='<div style="margin-top:6px;background:rgba(127,127,127,0.07);border-radius:6px;padding:7px 9px;">'+
-  _iRow('Revenue','+'+fm(_rev),'var(--accent)')+
   (cogsOut>0?_iRow('COGS','−'+fm(cogsOut),'var(--red)'):'')+
-  (cogsOut>0?_iRow('Gross profit',((_gross>=0?'+':'−')+fm(Math.abs(_gross))),_gross>=0?'var(--accent)':'var(--red)'):'')+
-  (cogsOut>0?_div:'')+
   (_opexBase>0?_iRow('Operating expenses','−'+fm(_opexBase),'var(--red)'):'')+
   (_execComp>0?_iRow('Manager pay','−'+fm(_execComp),'var(--red)'):'')+
-  _div+
   ((s.living_expenses||0)>0?_iRow('Living expenses','−'+fm(s.living_expenses||0),'var(--red)'):'')+
   ((s.lifestyle_expenses||0)>0?_iRow('Lifestyle','−'+fm(s.lifestyle_expenses||0),'var(--red)'):'')+
   (_debtSvc>0?_iRow('Debt service','−'+fm(_debtSvc),'var(--red)'):'')+
   (sp.total>0?_iRow('Action costs','−'+fm(sp.total),'var(--red)'):'')+
   (mcaPaid>0?_iRow('MCA holdback','−'+fm(mcaPaid),'var(--red)'):'')+
   _div+
-  _iRow('Net this month',(_netFlow>=0?'+':'−')+fm(Math.abs(_netFlow)),_netFlow>=0?'var(--accent)':'var(--red)')+
+  _iRow('Total expenses','−'+fm(totalExp),'var(--red)')+
   ((s.owner_pay||0)>0?'<div style="font-size:0.62rem;color:var(--text2);margin-top:5px;line-height:1.4;">💼 You paid yourself '+fm(s.owner_pay||0)+' this month — that\'s a draw that funds your living expenses above, not an extra cost.</div>':'')+
   '</div>';
 const expLine='<div onclick="var d=document.getElementById(\'exp-bk\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';" style="cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;padding:3px 0;white-space:nowrap;"><span style="color:var(--text2);">📉 Total expenses <span style="font-size:0.64rem;color:var(--blue);">▾ breakdown</span></span><span><strong style="color:var(--red);">−'+fm(totalExp)+'</strong></span></div><div id="exp-bk" style="display:none;">'+_bkHtml+'</div>';
