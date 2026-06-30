@@ -1,5 +1,30 @@
 # Release Notes
 
+## v0.46.0 — 2026-06-30 — Finance & Economy Overhaul goes LIVE
+Promotion of the accumulated beta work (v0.43–v0.46) to the live game. The headline:
+**the small business is now the fuel, not the destination — Finance is the wealth engine.**
+
+- **Emergent lean-business ceiling (no artificial wall).** Revenue plateaus organically: it's
+  bounded by what you can actually DELIVER (founder + team × systems) and the MARKET DEMAND your
+  brand earns. A solo founder tops out lean (~$70–90k/mo); to serve more you must HIRE, and past a
+  small team growth needs a stronger brand — not more bodies. Clients you can't serve churn back out.
+  Brute-forcing the business bigger hits the "No Man's Land" wall; real wealth comes from leveraging
+  the cash & credit the business throws off.
+- **Finance wealth engine + capital-recycling trio:** Velocity Banking (Epic Life perk — sweep
+  surplus at debt via HELOC/credit line), IUL / infinite-banking cash value indexed to the market
+  (true 0% floor, wash loans, lapse/MEC risk), and real-estate leverage (mortgage amortizes into
+  equity, ~3%/yr appreciation).
+- **Macro cycle:** one inevitable boom→downturn→recovery arc over 36 months — the prepared *buy the
+  dip*, the over-leveraged face margin calls and frozen credit.
+- **New finance plays:** captive insurance (§831(b)), SBA loan (DTI-underwritten), equipment
+  financing (§179 instant deduction), living trust, and a merchant-cash-advance debt trap.
+- **Character arcs:** the toxic high-ticket closer and the mercenary star operator — each with a
+  mid-arc decision that tests your culture and judgment.
+- **Real-world accuracy pass** across lessons & info screens (IUL mechanics, S-corp reasonable
+  salary, §831(b), velocity banking, MCA APR, depreciation recapture/1031, and more).
+- **Cleaner game:** manager-based delegation, leaner action menus grouped by funnel stage,
+  dashboard/result-screen polish, and a multi-persona automated playtest harness behind the scenes.
+
 ## v0.42.5 — 2026-06-29
 **Dashboard P&L row highlights**
 
