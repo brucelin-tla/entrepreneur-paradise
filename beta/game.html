@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -986,8 +986,8 @@ window.EMBEDDED_CONFIG = {
       "category": "finance",
       "stage": "foundation",
       "label": "Set a Monthly Tax Reserve",
-      "description": "Automatically set aside a slice of revenue each month for taxes, so tax season stops being a year-end surprise.",
-      "lesson": "Set aside taxes every month and tax season stops being a crisis. That money was never yours — treat it that way and you'll never get blindsided.",
+      "description": "Automatically set aside a slice of revenue each month for taxes, so tax season stops being a year-end surprise. The reserve sits in a money-market account earning ~4%/yr while it waits.",
+      "lesson": "Set aside taxes every month and tax season stops being a crisis. That money was never yours — treat it that way and you'll never get blindsided. Later, when you open a cash-value policy you can fold this reserve into it: there it grows faster and tax-free, and you simply borrow against it (tax-free) to pay the IRS when the bill comes.",
       "cash_cost": 0,
       "energy_cost": 4,
       "one_time": true,
@@ -1481,23 +1481,23 @@ window.EMBEDDED_CONFIG = {
       "base_probability": 0.05,
       "probability_scales_with": "brand_equity",
       "scale_factor": 0.002,
-      "narrative": "A major company just reached out. They saw your work and want to discuss a contract that could double your monthly revenue. But they have conditions.",
+      "narrative": "A major company just reached out. They saw your work and want a contract that could meaningfully grow your revenue. But they have conditions.",
       "act": 2,
       "choices": [
         {
           "label": "Take the contract, scale up to deliver",
-          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
-          "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
+          "effects": { "customer_base": 10, "revenue_capacity": 12000, "brand_equity": 6, "operating_expenses": 1500, "energy": -10, "key_person_dependency": 8 },
+          "outcome_narrative": "Signed. Ten new customers and the capacity to serve them — your revenue steps up. Scaling to deliver adds about $1,500/mo in costs, and leaning this hard on one client is a risk: don't let them become your whole business."
         },
         {
           "label": "Negotiate better terms first",
-          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
-          "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
+          "effects": { "customer_base": 5, "brand_equity": 12, "revenue_capacity": 6000, "operating_expenses": 600 },
+          "outcome_narrative": "They pushed back, then agreed. Smaller scope but premium terms — fewer customers, yet each is worth more (your brand and pricing power climb), and you're not dependent on them."
         },
         {
           "label": "Decline — not ready to scale yet",
           "effects": { "brand_equity": 3 },
-          "outcome_narrative": "You said no. It hurt. But you know your systems can't handle it yet, and a blown delivery would damage more than a declined offer."
+          "outcome_narrative": "You said no. It stung. But your systems can't handle it yet, and a blown delivery would cost more than a declined offer."
         }
       ],
       "mitigated_by": []
@@ -1537,13 +1537,13 @@ window.EMBEDDED_CONFIG = {
       "base_probability": 0.05,
       "probability_scales_with": "personal_credit_score",
       "scale_factor": 0.0001,
-      "narrative": "Your banker called with an off-market deal. A duplex in a solid neighborhood, below market value. The seller needs to close fast. It's the kind of deal that doesn't come around often.",
+      "narrative": "Your banker called with an off-market deal — a small duplex in a steady cash-flow market, priced a little under value because the seller needs to close fast. About $75,000 all-in: your cash covers the ~20% down, a mortgage covers the rest.",
       "act": 3,
       "choices": [
         {
           "label": "Make the offer, use available credit",
-          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
-          "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
+          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 650, "total_debt": 60000, "_re_depreciation": 180, "_asset_units": 1 },
+          "outcome_narrative": "Offer accepted. The rent (~$650/mo net) barely beats the mortgage — and that's fine. The real prize is the ~$180/mo depreciation write-off sheltering your taxable income, plus tenants paying down your loan and the property appreciating. Real estate's edge is the tax code, not the rent check."
         },
         {
           "label": "Pass — too much capital tied up right now",
@@ -2369,6 +2369,16 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.43.6',d:'2026-06-29 23:40',n:[
+'Real estate reworked to be realistic: its real benefit is now the depreciation tax shield (it actually lowers your taxable income), the rent just about covers the mortgage, and the economy sets your entry price — buy in a downturn and you start with more equity. No more fantasy 30%/yr rent yields.',
+'Business dashboard funnel readout: Leads → Customers → Brand Equity (brand is the lever that lifts both conversion and revenue per customer). Staff & Culture show only once you\'ve hired.',
+'Tutorial polish: the "burn" number now matches the dashboard (includes debt service), the walkthrough scrolls you back to the top of the results when it ends, and the short-runway warning no longer suggests cutting payroll you don\'t have.',
+'Energy & Life are now explained in one short, combined tip instead of three overlapping popups.',
+'Epic Life roadmap rebuilt: Funding Ready (clean credit + lower utilization) → Protection (insurance, holding company, banking relationship = multiple lending sources for downturns) → Build Wealth (cash-value policy, passive income, income property) → Freedom. The concierge runs it in that order and no longer spams a debt restructure you wouldn\'t be approved for.',
+'Your cash-value policy now doubles as your tax reserve: at tax time you can borrow against it (tax-free) to pay the IRS — no cash out, no credit hit, and your cash value keeps compounding behind the loan. The infinite-banking move. No policy yet? Pay from your tax reserve as before.',
+'Your tax reserve now earns ~4%/yr (a money-market account) — and when you open a cash-value policy you\'re offered the chance to fold the reserve in, where it grows faster and tax-free while still covering your taxes.',
+'"Major company reaches out" opportunity rebalanced — no more surprise upfront cash hit and a wall of red; taking the contract now clearly grows your customers, brand value and revenue capacity, with honest, modest costs.',
+]},
 {v:'0.43.5',d:'2026-06-29 23:10',n:[
 'Debt restructure is now underwritten like the credit it qualifies you for — if your utilization or DTI is too high (the same reason a credit line or loan would be declined), it can be declined too. A declined restructure costs no fee, and the card warns you up front when approval is unlikely.',
 'Result screen now shows your Runway swing (▲/▼ months) month-over-month, next to the runway number.',
@@ -2904,7 +2914,7 @@ TUTORIAL_STEPS:[
 {sel:'#stats-dashboard',title:'Your dashboard',body:'This is your whole picture — <strong>you</strong> on the left, your <strong>business</strong> on the right (locked until you form an LLC). Tap any stat anytime for a plain-English breakdown.'},
 {sel:'#dash-cash',title:'Cash is oxygen',body:function(){return '<strong>'+this.fmtMoney(this.isSeparated()?(this.state.personal_cash||0):(this.state.cash||0))+'</strong> in the bank. It funds everything until the business pays for itself — <strong>don\'t let it hit zero</strong>.';}},
 {sel:'#dash-debt',title:'Your debt',body:function(){const d=Math.max(0,(this.state.total_debt||0)-(this.state.business_credit_used||0)-(this.state.business_installment_debt||0)-(this.state.real_estate_debt||0))+(this.state.insurance_loan_balance||0);return 'About <strong>'+this.fmtMoney(d)+'</strong> in credit-card debt. Turning bad debt into good credit is a core part of the game.';}},
-{sel:'#dash-cashflow',title:'Your burn — the clock',body:function(){const exp=(this.state.living_expenses||0)+(this.state.lifestyle_expenses||0);return 'You spend ~<strong>'+this.fmtMoney(exp)+'/mo</strong> just to live. Your cash drops by this every month until revenue covers it — that\'s the clock you\'re racing.';}},
+{sel:'#dash-cashflow',title:'Your burn — the clock',body:function(){const sep=this.isSeparated();const dsvc=this.calcDebtInterest()+this.calcDebtPrincipal();const exp=(this.state.living_expenses||0)+(this.state.lifestyle_expenses||0)+(sep?0:dsvc);return 'You spend ~<strong>'+this.fmtMoney(exp)+'/mo</strong> on living costs and debt payments. Your cash drops by this every month until revenue covers it — that\'s the clock you\'re racing.';}},
 {sel:'#dash-energy',title:'Your energy',body:'Most moves cost <strong>energy</strong>, and it refills slowly. You can\'t do everything at once — that\'s why you get just <strong>three moves a month</strong>.'},
 {sel:null,title:'How you make money — the funnel',body:'<div style="text-align:center;margin-bottom:10px;font-size:0.95rem;"><span style="color:var(--accent);font-weight:700;">🎯 Leads</span> <span style="color:var(--text2);">→</span> <span style="color:var(--blue);font-weight:700;">👥 Customers</span> <span style="color:var(--text2);">→</span> <span style="color:var(--gold);font-weight:700;">💰 Revenue</span></div><div style="font-size:0.84rem;line-height:1.55;color:var(--text2);margin-bottom:8px;">Each month, a share of your <strong>leads</strong> convert into paying <strong>customers</strong> — and customers × what they pay = <strong>revenue</strong>. Marketing has three jobs, and you rotate between them:</div><div style="font-size:0.82rem;line-height:1.5;"><div style="margin:4px 0;"><strong style="color:var(--accent);">🎯 Get Leads</strong> — fill the top of the pipeline.</div><div style="margin:4px 0;"><strong style="color:var(--blue);">🤝 Build Trust</strong> — a stronger brand converts more leads <em>and</em> raises what each customer pays.</div><div style="margin:4px 0;"><strong style="color:var(--gold);">💰 Close the Sale</strong> — turn leads into customers and lift your close rate.</div></div><div style="font-size:0.78rem;color:var(--gold);margin-top:9px;">Leads go cold if you don\'t convert them — so keep all three turning.</div>'},
 {sel:'#action-list',cat:'marketing',title:'Move 1 — Get Leads',body:'Let\'s fill the top of your funnel. <strong>Tap the highlighted Marketing move.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
@@ -2998,7 +3008,7 @@ tip.innerHTML='<div class="tut-count">Step '+(this._seqIdx+1)+' of '+this._seq.l
 const target=step.sel?document.querySelector(step.sel):null;setTimeout(()=>this._positionSpotlight(target,null,true),60);setTimeout(()=>this._positionSpotlight(target,null,false),420);setTimeout(()=>this._positionSpotlight(target,null,false),900);},
 tutNext(){this._tutStep++;this.renderTutorialStep();},
 tutPrev(){if(this._tutStep>0){this._tutStep--;this.renderTutorialStep();}},
-endTutorial(){this._tutActive=false;this._tutFinalPending=false;if(this.state)this.state._tutorial_seen=true;this.autoSave();/* mark done + persist, so it won't replay on refresh */const ov=document.getElementById('tut-overlay');if(ov)ov.remove();},
+endTutorial(){this._tutActive=false;this._tutFinalPending=false;if(this.state)this.state._tutorial_seen=true;this.autoSave();/* mark done + persist, so it won't replay on refresh */const ov=document.getElementById('tut-overlay');if(ov)ov.remove();/* the tutorial ended scrolled down on the result panel — return the player to the top so they can read/scroll the results on their own */setTimeout(()=>window.scrollTo({top:0,behavior:'smooth'}),60);},
 // Interactive tutorial: the player's real game actions drive the walkthrough forward.
 _tutNotify(kind){if(!this._tutActive)return;const step=this.TUTORIAL_STEPS[this._tutStep];if(!step||step.wait!==kind)return;
 if(kind==='endturn'){this._tutFinalPending=true;const ov=document.getElementById('tut-overlay');if(ov)ov.remove();return;}
@@ -3061,12 +3071,11 @@ const _rec=this.calcEnergyRecovery();
 const tips=[
 {k:'toxic_closer',show:!!s._toxic_closer,sel:'#biz-ops',t:'⚠ Your Closer Is a Liability',b:'His fake guarantees are catching up: churn up, brand eroding, <strong>lawsuit risk rising</strong> every month — and he costs ~$9,000/mo. Fire him in <strong>⚙️ Operations</strong> → <strong>Restructure &amp; Downsize</strong> (red <strong>⚠ FIRE THE CLOSER</strong> tag). He\'ll threaten to sue, but the bleeding stops.'},
 {k:'overstaffed',show:this._overstaffed(),sel:'#biz-ops',t:'⚠ Payroll Is Bleeding You',b:'Big team, but the business is <strong>burning cash</strong>. Fast fix: <strong>⚙️ Operations</strong> → <strong>Restructure &amp; Downsize</strong> (red <strong>⚠ CUT PAYROLL</strong> tag) cuts people and trims monthly payroll. Costs severance and dents morale, but it buys survival.'},
-{k:'energy_low',show:(s.energy<=45),sel:'#dash-energy',t:'⚡ Watch Your Energy',b:'Heads up — your energy is getting low. Most moves cost energy but it only recovers <strong>+'+_rec+'/mo</strong>, so stacking high-energy actions every month will drain you. Below <strong>30</strong> your moves are <strong>more likely to fail and deliver less</strong> (and far worse once you push into the red), and the more run-down you are the <strong>easier you get sick</strong> (a medical/burnout event that costs cash and time). Recharge by investing in your 🏖️ <strong>Life</strong> (raises Mastery → faster recovery), and carry <strong>health/income protection insurance</strong> so a claim is covered when it happens.'},
 {k:'business',show:this.isSeparated(),sel:'#biz-col',seq:[
 {sel:'#biz-money',t:'🔓 Business Unlocked — the Money',b:'Your business is now its own legal entity, with finances kept <strong>separate</strong> from your personal side. Read these first: <strong>revenue</strong>, <strong>cash</strong>, <strong>credit</strong>, monthly <strong>expenses</strong>, <strong>debt</strong>, and your <strong>net worth</strong>. This is the health of the engine — and it pays you a salary/draw into your personal account.'},
-{sel:'#biz-ops',t:'Your funnel: Leads → Customers → Staff',b:'This is what drives the money. <strong>Leads</strong> come from Marketing and convert into paying <strong>Customers</strong>; your <strong>Staff</strong> delivers the work. Remember Marketing\'s three jobs: <strong style="color:var(--accent);">Get Leads</strong> to fill the pipeline, <strong style="color:var(--blue);">Build Trust</strong> so more convert (and pay more), and <strong style="color:var(--gold);">Close the Sale</strong>. Rotate between them — leads go cold if you don\'t convert them.'}
+{sel:'#biz-ops',t:'Your funnel: Leads → Customers → Brand',b:'This is what drives the money. <strong>Leads</strong> come from Marketing and convert into paying <strong>Customers</strong>, and your <strong>Brand Equity</strong> is the lever that makes more of them convert — and pay more each. Remember Marketing\'s three jobs: <strong style="color:var(--accent);">Get Leads</strong> to fill the pipeline, <strong style="color:var(--blue);">Build Trust</strong> to grow your brand, and <strong style="color:var(--gold);">Close the Sale</strong>. Rotate between them — leads go cold if you don\'t convert them.'}
 ]},
-{k:'life',show:(this._activeCats||[]).includes('lifestyle'),sel:'#life-btn',t:'🏖️ Life Check-In Unlocked',b:'Tap this 🏖️ icon for a Life action. Investing across your health, mind, spirit, relationships and experiences builds <strong>Personal Mastery</strong> — which keeps your energy recovering so you can keep acting. And when energy runs low, a Life action restores it (you can even finance one if cash is tight). Don\'t neglect it.'},
+{k:'life',show:(this._activeCats||[]).includes('lifestyle'),sel:'#life-btn',t:'⚡ Energy & 🏖️ Life',b:'Your moves cost <strong>energy</strong>, and it refills slowly — run low and they start failing (and you risk getting sick). The fix is the <strong>🏖️ Life</strong> icon: a Life action restores energy now and builds <strong>Personal Mastery</strong>, which speeds your recovery for good. Don\'t run on empty.'},
 {k:'epic',show:this._reveal('epic'),sel:'#epic-btn',t:'⭐ Epic Life Membership',b:'A done-for-you wealth concierge is now available — this <strong>⭐</strong> icon. It\'s powerful and runs the financial playbook for you. If you\'re still learning, try finishing a run <em>without</em> it first.'},
 {k:'networth',show:this._reveal('networth')&&this.calcNetWorth()>0,sel:'#dash-networth',t:'📈 Net Worth Is Now Tracked',b:'Your dashboard now shows <strong>Net Worth</strong> right here — everything you own minus everything you owe, with a month-over-month trend. This is the real scoreboard of the wealth you\'re building.'},
 ];
@@ -3219,7 +3228,9 @@ B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_d
 /* Net Worth (consolidated) lives on the business side, right below debt; once revealed it stays visible even if it dips negative (shown red). No swing shown. */
 {const nwNow=this.calcNetWorth();const nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
-B+='</div><div id="biz-ops">'+subLab('Operations')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
+const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
+// Funnel readout: Leads → Customers → Brand Equity (the lever that lifts conversion AND revenue per customer). Staff & Culture only appear once you've hired — they affect your delivery-capacity ceiling.
+B+='</div><div id="biz-ops">'+subLab('Funnel')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('✨ Brand Equity',_brand,_brand,_brC)+((s.team_size||0)>0?cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
@@ -3252,8 +3263,8 @@ const fico=score>=760?1.1:score>=720?1:score>=680?0.9:score>=640?0.75:score>=600
 // Banking relationship → the lender already knows you (deposits + history) → easier yes. NAICS classification → a verified holding-company code reads as a legit business; an unverified/wrong code gets flagged and declined until fixed.
 const bankMult=this._hasBanking()?1.12:1;const _hasEntity=['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure);const naicsMult=this._naicsVerified()?1.05:(_hasEntity?0.75:1);/* only a real business entity can carry a wrong NAICS code; no entity = personal loan, NAICS irrelevant */
 return Math.max(0.03,Math.min(0.96,p*fico*inqMult*negMult*bankMult*naicsMult));},
-// Debt restructure qualifies you for BOTH a business line (utilization) and a working-capital loan (DTI), so it's gated on the WORSE of the two — but a lending expert structures the file for you, so it gets a modest uplift over a cold DIY application. Still fails when both util and DTI read badly (exactly when a line/loan would also be declined).
-_restructureApprovalChance(){return Math.min(0.92,Math.min(this._creditApprovalChance(false),this._creditApprovalChance(true))*1.35);},
+// Debt restructure is a CONSOLIDATION — it moves your maxed personal balances onto a new business line, so high current utilization is the problem it CURES, not a reason to decline. A lender underwrites it on your income/DTI and credit health (score, derogatories, banking, entity), with an expert-assist uplift. So it's approvable exactly when you need it (high util) as long as your income can service it and your credit isn't wrecked.
+_restructureApprovalChance(){return Math.min(0.92,this._creditApprovalChance(true)*1.35);},
 // Lightweight myFICO estimate for the New Game+ customizer — same factor weights as calcFicoTarget, fed by the chosen utilization / derogatories / history / inquiries (no live state).
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
@@ -3409,7 +3420,7 @@ if(net<0&&liquid>0)h+='<div class="breakdown-detail" style="margin-top:8px;">At 
 else if(net>=0)h+='<div class="breakdown-detail" style="margin-top:8px;">You\'re cash-flow positive — no runway clock ticking.</div>';
 h+=this._statFooter();this.showPopup((side==='business'?'Business':'Personal')+' Cash Flow',h);},
 showBurn(scope){const s=this.state,opex=s.operating_expenses||0,cogs=s.cogs||0,pay=s.owner_pay||0,living=s.living_expenses||0,lifestyle=s.lifestyle_expenses||0,interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();
-const taxRes=this.state._completed_actions.includes('monthly_tax_reserve')?Math.round(((s.monthly_revenue||0)-cogs-opex)*(s.tax_rate||0.25)):0;
+const taxRes=this.state._completed_actions.includes('monthly_tax_reserve')?Math.round(Math.max(0,(s.monthly_revenue||0)-cogs-opex-(s._re_depreciation||0))*(s.tax_rate||0.25)):0;
 let detail='';if(s._active_lifestyle_costs&&Object.keys(s._active_lifestyle_costs).length)detail=Object.entries(s._active_lifestyle_costs).map(([id,cost])=>'<div class="breakdown-detail">· '+id.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())+': $'+this.fmt(cost)+'/mo</div>').join('');
 const bizTotal=opex+cogs+pay+interest+principal+taxRes,persTotal=living+lifestyle;
 const head=(t,col,first)=>'<div style="font-weight:700;color:'+col+';text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid '+col+';padding-bottom:3px;margin:'+(first?'0 0 6px':'14px 0 6px')+';">'+t+'</div>';
@@ -3422,7 +3433,7 @@ h+='<div class="breakdown-row"><span>Operating Expenses</span><span>$'+this.fmt(
 if(cogs>0)h+='<div class="breakdown-row"><span>COGS</span><span>$'+this.fmt(cogs)+'</span></div>';
 if(pay>0)h+='<div class="breakdown-row"><span>Owner Salary / Draw</span><span>$'+this.fmt(pay)+'</span></div>';
 h+='<div class="breakdown-row"><span>Debt Service</span><span>$'+this.fmt(interest+principal)+'</span></div>';
-if(taxRes)h+='<div class="breakdown-row"><span>Tax Reserve ('+Math.round((s.tax_rate||0.25)*100)+'%)</span><span>$'+this.fmt(taxRes)+'</span></div>';
+if(taxRes)h+='<div class="breakdown-row"><span>Tax Reserve ('+Math.round((s.tax_rate||0.25)*100)+'%)</span><span>$'+this.fmt(taxRes)+'</span></div>'+(((s.tax_reserve||0)>0)?'<div class="breakdown-detail">Reserve balance $'+this.fmt(Math.round(s.tax_reserve))+' earns ~4%/yr in a money market — fold it into a cash-value policy to grow it tax-free.</div>':'');
 h+='<div class="breakdown-row"><span style="color:var(--text2)">Business subtotal</span><span style="color:var(--text2)">$'+this.fmt(bizTotal)+'</span></div>';}
 if(wantP){h+=head('Personal','var(--accent)',!wantB);
 h+='<div class="breakdown-row"><span>'+this.term('Living Expenses')+'</span><span>$'+this.fmt(living)+'</span></div>';
@@ -3552,50 +3563,43 @@ h+='<button class="btn-primary" style="margin-top:8px;" onclick="Game.enrollEpic
 h+=this._epicRoadmapHtml({locked:!member});
 this.showPopup('⭐ Epic Life Membership',h);},
 // Concierge roadmap DATA — shared source of truth for the full modal view and the compact result-screen milestone. Every node maps to real game state/flags. Stages: Funding Ready → (Protection → Expense → Reserve) → Freedom.
-_epicRoadmapData(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id),sep=this.isSeparated(),ent=s.entity_structure,trust=s.trust_structure,util=this.calcPersUtil();
+_epicRoadmapData(){const s=this.state,c=id=>(s._completed_actions||[]).includes(id),ent=s.entity_structure;
 const N=(done,label)=>({done:!!done,label:label}),pctOf=g=>Math.round(g.filter(n=>n.done).length/g.length*100);
+// Trimmed to the lean finance path — every node is reachable with an action that still exists.
+// Order mirrors the concierge's execution. Funding Ready = clean credit + lower utilization (get approvable for early, small amounts).
 const fundingReady=[
  N((s.credit_negatives||0)===0&&(s.personal_credit_score||0)>=680,'Credit optimization'),
- N(c('debt_restructure'),'Debt restructure'),
- N(c('wyoming_holding_llc')||s._holding_company||['c_corp','multi_entity'].includes(ent)||c('setup_family_office'),'Holding company'),
- N(c('banking_relationship')||['trusted','champion'].includes(s._banker_state),'Banking relationship')];
-const protection=[
+ N(c('debt_restructure'),'Debt restructure')];
+// Protection = insurance + the holding company + a banking relationship: structure plus MULTIPLE sources of lending, so a downturn (when credit tightens) can't freeze you out.
+const protect=[
  N(c('combined_insurance'),'Insurance'),
- N(sep,'Legal entity'),
- N(c('hire_general_counsel'),'Contracts & counsel'),
- N((trust&&!['none','basic_llc'].includes(trust))||c('asset_protection_stack'),'Asset-protection trust')];
-const expense=[
- N(['s_corp','c_corp','multi_entity'].includes(ent)||c('advanced_tax_strategy'),'Lower taxes'),
- N(c('debt_restructure')||util<=30,'Lower debt service'),
- N(c('monthly_tax_reserve')||(s.tax_reserve||0)>0,'Reserve discipline')];
-const reserve=[
- N((s.insurance_cash_value||0)>0||c('fund_accumulation_policy'),'Accumulation policy'),
- N((s.investment_positions||0)>0,'Investments'),
- N((s.personal_cash||0)>=(s.living_expenses||0)*3,'Emergency fund')];
+ N(c('wyoming_holding_llc')||s._holding_company||['c_corp','multi_entity'].includes(ent),'Holding company'),
+ N(c('banking_relationship')||['trusted','champion'].includes(s._banker_state),'Banking relationship')];
+// Wealth = the cash-value policy (which also covers your taxes via a tax-free loan), passive income, and income property.
+const wealth=[
+ N((s.insurance_cash_value||0)>0||c('fund_accumulation_policy')||c('monthly_tax_reserve')||(s.tax_reserve||0)>0,'Cash-value policy'),
+ N(s._passive_income_active||c('activate_passive_income'),'Passive income on'),
+ N((s.real_estate_owned||0)>0||c('buy_real_estate'),'Income property')];
 const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0;
 const passiveInc=(s.other_monthly_revenue||0)+policyPassive+Math.round((s.private_bank_balance||0)*0.004);
 const persExp=(s.living_expenses||0)+(s.lifestyle_expenses||0);
 const freedomPct=persExp>0?Math.min(100,Math.round(passiveInc/persExp*100)):0;
-const debtSvc=this.calcDebtInterest()+this.calcDebtPrincipal();
-const coverInc=passiveInc+Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));
-const coverRatio=debtSvc>0?coverInc/debtSvc:null;
-const frPct=pctOf(fundingReady),pPct=pctOf(protection),ePct=pctOf(expense),rPct=pctOf(reserve);
+const frPct=pctOf(fundingReady),pPct=pctOf(protect),wPct=pctOf(wealth);
 const firstUndone=g=>g.find(n=>!n.done);
 let stage,nextNode;
 if(frPct<100){stage='Funding Ready';nextNode=(firstUndone(fundingReady)||{}).label;}
-else if(pPct<100){stage='Protection layer';nextNode=(firstUndone(protection)||{}).label;}
-else if(ePct<100){stage='Expense layer';nextNode=(firstUndone(expense)||{}).label;}
-else if(rPct<100){stage='Reserve layer';nextNode=(firstUndone(reserve)||{}).label;}
+else if(pPct<100){stage='Protection';nextNode=(firstUndone(protect)||{}).label;}
+else if(wPct<100){stage='Build Wealth';nextNode=(firstUndone(wealth)||{}).label;}
 else if(freedomPct<100){stage='Freedom';nextNode='Grow passive income to cover your lifestyle';}
 else{stage='Paradise';nextNode=null;}
-const groups=[fundingReady,protection,expense,reserve];
+const groups=[fundingReady,protect,wealth];
 const allNodes=groups.reduce((a,g)=>a+g.length,0)+1/* freedom */,doneNodes=groups.reduce((a,g)=>a+g.filter(n=>n.done).length,0)+(freedomPct>=100?1:0);
 const overallPct=Math.round(doneNodes/allNodes*100);
-// Two tracked progress bars, surfaced one at a time: Funding Ready first, then the Epic Life System (Protection + Expense + Reserve).
-const sysGroups=[protection,expense,reserve],sysAll=sysGroups.reduce((a,g)=>a+g.length,0),sysDone=sysGroups.reduce((a,g)=>a+g.filter(n=>n.done).length,0);
+// Two tracked progress bars, surfaced one at a time: Funding Ready first, then the Epic Life System (Protect + Build Wealth).
+const sysGroups=[protect,wealth],sysAll=sysGroups.reduce((a,g)=>a+g.length,0),sysDone=sysGroups.reduce((a,g)=>a+g.filter(n=>n.done).length,0);
 const systemPct=Math.round(sysDone/sysAll*100);
 const activeLabel=frPct<100?'Funding Ready':'Epic Life System',activePct=frPct<100?frPct:systemPct;
-return {fundingReady,protection,expense,reserve,frPct,pPct,ePct,rPct,policyPassive,passiveInc,persExp,freedomPct,coverRatio,stage,nextNode,overallPct,systemPct,activeLabel,activePct};},
+return {fundingReady,protect,wealth,frPct,pPct,wPct,policyPassive,passiveInc,persExp,freedomPct,stage,nextNode,overallPct,systemPct,activeLabel,activePct};},
 // Full roadmap rendered in the Epic Life modal. opts.locked dims it + frames it as a preview (for non-members per the upsell).
 _epicRoadmapHtml(opts){opts=opts||{};const locked=!!opts.locked,s=this.state,fmt=v=>this.fmtMoney(v),D=this._epicRoadmapData();
 const bar=(pct,col)=>'<div class="bar-track" style="height:7px;margin:5px 0;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+(col||'var(--gold)')+';"></div></div>';
@@ -3606,26 +3610,15 @@ if(locked)html+='<div style="font-size:0.72rem;color:var(--gold);margin-bottom:6
 html+=section('🏦 Funding Ready',D.frPct,'var(--blue)',chips(D.fundingReady));
 if(D.frPct<100){html+='<div style="font-size:0.72rem;color:var(--text2);margin-top:8px;">Finish <strong>Funding Ready</strong> to unlock the <strong>Epic Life System</strong> — a fundable profile is the foundation everything else leverages.</div></div>';return html;}
 html+='<div style="margin-top:14px;font-size:0.82rem;font-weight:700;color:var(--gold);">⭐ Epic Life System</div>';
-html+=section('🛡 Protection layer',D.pPct,'var(--accent)',chips(D.protection));
-if(D.pPct>=100)html+=section('🧾 Expense layer',D.ePct,'var(--accent)',chips(D.expense));
-else html+='<div style="font-size:0.7rem;color:var(--text2);margin-top:6px;">Protect what you have first — the next layers unlock as each fills.</div>';
-if(D.pPct>=100&&D.ePct>=100)html+=section('💎 Reserve layer',D.rPct,'var(--accent)',chips(D.reserve));
-if(D.rPct>0||s._passive_income_active){
- const covCol=D.coverRatio==null?'var(--accent)':(D.coverRatio>=1.25?'var(--accent)':D.coverRatio>=1?'var(--gold)':'var(--red)');
- const covTxt=D.coverRatio==null?'no debt':(D.coverRatio>=99?'∞':D.coverRatio.toFixed(2)+'×');
+html+=section('🛡 Protection',D.pPct,'var(--accent)',chips(D.protect));
+if(D.pPct>=100)html+=section('👑 Build Wealth',D.wPct,'var(--accent)',chips(D.wealth));
+else html+='<div style="font-size:0.7rem;color:var(--text2);margin-top:6px;">Protect what you have first — Build Wealth unlocks once this fills.</div>';
+if(D.pPct>=100&&D.wPct>=100){
  html+='<div style="margin-top:14px;border-top:1px dashed var(--border);padding-top:8px;">';
- html+='<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:0.78rem;"><span style="color:var(--text2);">🩺 Debt coverage <span style="font-size:0.64rem;">income ÷ debt service</span></span><span style="font-weight:700;color:'+covCol+';">'+covTxt+'</span></div>';
  html+=section('🕊️ Freedom — passive income covers lifestyle',D.freedomPct,D.freedomPct>=100?'var(--accent)':'var(--gold)','<div style="font-size:0.72rem;color:var(--text2);">'+fmt(D.passiveInc)+'/mo passive vs '+fmt(D.persExp)+'/mo lifestyle'+(D.policyPassive>0?' · <span style="color:var(--accent);">'+fmt(D.policyPassive)+'/mo tax-free</span>':'')+'</div>');
  if(D.freedomPct>=100)html+='<div style="margin-top:8px;padding:8px 10px;background:rgba(16,185,129,0.1);border-left:3px solid var(--accent);border-radius:var(--radius-sm);font-size:0.76rem;color:var(--accent);font-weight:600;">🏝️ Paradise: your passive income now covers your lifestyle — you\'re financially free.</div>';
  html+='</div>';
 }
-if((s._asset_units||0)>0){const units=s._asset_units||0,kunits=s._keyman_units||0,cov=units>0?Math.round(kunits/units*100):0,covCol=cov>=100?'var(--accent)':cov>=50?'var(--gold)':'var(--red)',reDebt=s.real_estate_debt||0,claims=s._keyman_claims_total||0;
- const rEng=(l,v,c2)=>'<div style="display:flex;justify-content:space-between;font-size:0.74rem;padding:2px 0;"><span style="color:var(--text2);">'+l+'</span><span style="font-weight:700;'+(c2?'color:'+c2+';':'')+'">'+v+'</span></div>';
- html+='<div style="margin-top:14px;border-top:1px dashed var(--border);padding-top:8px;"><div style="font-size:0.82rem;font-weight:700;color:var(--gold);margin-bottom:3px;">🏗️ Leverage Engine</div>';
- html+=rEng('Income properties',units)+rEng('Asset debt',fmt(reDebt))+rEng('🔑 Key-operator coverage',kunits+'/'+units+' · '+cov+'%',covCol);
- if(cov<100)html+='<div style="font-size:0.7rem;color:var(--red);margin-top:3px;line-height:1.4;">⚠ Uninsured operators — if one is lost, the loan stays but its income stops. Cover them: <strong>Finance → Insure Your Key Operators</strong>.</div>';
- if(claims>0)html+='<div style="font-size:0.7rem;color:var(--accent);margin-top:3px;line-height:1.4;">Policies have retired '+fmt(claims)+' of asset debt on operator losses — covering each specific loan, never a windfall.</div>';
- html+='</div>';}
 html+='</div>';return html;},
 // Compact milestone shown on the result screen — one glanceable bar + the next step, tappable to open the full roadmap. Members see live progress; non-members see a locked teaser that upsells.
 _epicMilestoneCompact(){const s=this.state,member=!!s._epic_life,pending=!!s._epic_enroll_pending,mem=member||pending;
@@ -3803,15 +3796,17 @@ const profit=()=>Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expe
 // Hard mode (Stuck owner): hold the expensive protective setup until the business is genuinely stable — don't bypass the dig-out or accelerate insolvency.
 const stuck=this.archetype&&this.archetype.id==='stuck',stable=(s.credit_negatives||0)===0&&profit()>3000;
 const specs=[
- // Fix credit first — it's the gate to everything else, and the player can't do these manually while Epic is active.
+ // 1. Fix credit first — it's the gate to everything else, and the player can't do these manually while Epic is active.
  {id:'build_personal_credit',need:()=>(s.credit_negatives||0)>0&&!s._credit_repair},
- {id:'debt_restructure',need:()=>util>45&&persRev()>2000},
+ // 2. Debt restructure EARLY — its job is to get utilization down, and it doesn't need a holding company or a bank yet. But only run it when the client would actually be APPROVED — otherwise it's a wasted, declined application every month.
+ {id:'debt_restructure',need:()=>util>45&&persRev()>2000&&this._restructureApprovalChance()>=0.5},
  {id:'pay_down_debt',need:()=>util>30&&(s.cash||0)>2000},
- // Holding company FIRST — then the banking relationship is built on the new LLC (so the bank sees the clean parent entity).
- {id:'wyoming_holding_llc',need:()=>this.isSeparated()&&(!stuck||stable)},
- {id:'banking_relationship',once:true,need:()=>!!s._holding_company||(s._completed_actions||[]).includes('wyoming_holding_llc')},
- {id:'asset_protection_stack',need:()=>this.isSeparated()&&(!stuck||stable)},
+ // PROTECTION — insurance, the holding company, then a banking relationship. Together these give you structure plus MULTIPLE sources of lending, so a downturn can't freeze you out.
  {id:'combined_insurance',need:()=>this.isSeparated()&&(!stuck||stable)},
+ {id:'wyoming_holding_llc',need:()=>this.isSeparated()&&(!stuck||stable)},
+ // Banking relationship comes after you're insured + structured (the bank sees a clean, protected profile) — your lending-access safety net for downturns.
+ {id:'banking_relationship',once:true,need:()=>(!!s._holding_company||(s._completed_actions||[]).includes('wyoming_holding_llc'))&&(s._completed_actions||[]).includes('combined_insurance')},
+ // WEALTH — fund the cash-value policy (which also covers your taxes via a tax-free loan), then switch on passive income.
  {id:'fund_accumulation_policy',need:()=>profit()>3000},
  {id:'activate_passive_income',need:()=>(s.insurance_cash_value||0)>5000&&!s._passive_income_active},
 ];
@@ -4036,7 +4031,7 @@ const earlyBoost=(this.month<=3&&cat!=='lifestyle')?0.25:0; // gentler onboardin
 const _isCreditApp=CREDIT_APPROVAL.includes(action.id);
 // Credit applications are underwritten (utilization + personal myFICO), not skill/energy-modified — a lender doesn't care how rested you are, only how your file reads.
 const _apprCh=action.id==='debt_restructure'?this._restructureApprovalChance():this._creditApprovalChance(LOAN_APPROVAL.includes(action.id));
-const success=cat==='lifestyle'?true:(_isCreditApp?(Math.random()<_apprCh):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost)));// life actions always land (consistent with the quarterly check-in) — you don't randomly "fail" a workout or a family trip
+const success=cat==='lifestyle'?true:(action._epic?true:(_isCreditApp?(Math.random()<_apprCh):(Math.random()<((action.success_rate||0.7)*penalty+skillBonus-diminishing+retryBoost+earlyBoost))));// life actions always land; the Epic concierge only attempts moves it has already vetted (e.g. it won't apply for credit it can't get), so its move lands too
 if(_isCreditApp)this.state.credit_inquiries=(this.state.credit_inquiries||0)+1;/* every application is a hard pull — they pile up and drag approval/score (Epic clears them every 6 months) */
 let effects=success?this.scaleActionEffects(action.effects,cat):(action.failure_effects?this.scaleActionEffects(action.failure_effects,cat):{});
 if(cat==='lifestyle')effects=this._scaleLifestyleEffects(effects); // life gains diminish as a dimension fills — cheap repeats give less, pushing variety + bigger investments
@@ -4104,7 +4099,7 @@ if(Math.random()<0.45){const persRev=Math.max(0,(s.total_debt||0)-(s._installmen
 if(success){const _reg={establish_business:['form_llc','open_business_account','basic_bookkeeping'],build_personal_credit:['build_personal_credit_repair','build_personal_credit_optimize'],elect_s_corp:['payroll_setup','s_corp_election'],asset_protection_stack:['multi_entity','asset_protection']}[action.id];if(_reg)_reg.forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 // Forming the LLC → prompt the founder to name their company (shown on the dashboard + leaderboard; sets up future player-vs-player features). Fired after the results render.
 if(action.id==='establish_business'&&success&&!this.state.company_name)this.state._needs_company_name=true;/* prompt is deferred until after the business panel unlocks AND its tutorial ends (handled in _closeSpotlight), so naming lands ~month 2 in a calm moment */
-if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';}
+if(action.id==='fund_accumulation_policy'&&success){const s=this.state;s._auto_fund_insurance=true;const cur=Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000));s._dyn_narrative='Policy opened and automatic funding is on — about '+this.fmtMoney(cur)+'/mo (scaling up with your revenue) flows into your policy, a ~2% cost of insurance off the top. Every contribution compounds tax-free and grows your borrowing base.';if((s.tax_reserve||0)>0)this._pendingReserveFold=true;/* offer to roll the existing tax reserve into the new policy */}
 if(action.id==='debt_restructure'){let _dr={success};if(success){const s=this.state,cf=this.calcCreditCapacity(),lim=Math.round(12000*cf);s.business_credit_limit=(s.business_credit_limit||0)+lim;const persRev=Math.max(0,(s.total_debt||0)-(s._installment_debt||0)-(s.business_credit_used||0)-(s.business_installment_debt||0)-(s.real_estate_debt||0)),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),moveAmt=Math.min(persRev,bizAvail);s.available_credit=(s.available_credit||0)+moveAmt;s.business_credit_used=(s.business_credit_used||0)+moveAmt;const cashLoan=Math.round(5000*cf);s.cash+=cashLoan;s.total_debt+=cashLoan;s.business_installment_debt=(s.business_installment_debt||0)+cashLoan;if(!s._completed_actions.includes('business_credit_strategy'))s._completed_actions.push('business_credit_strategy');_dr.lim=lim;_dr.moveAmt=moveAmt;_dr.cashLoan=cashLoan;effects.cash=(effects.cash||0)+cashLoan;effects.total_debt=(effects.total_debt||0)+cashLoan;effects.business_credit_limit=(effects.business_credit_limit||0)+lim;effects.business_credit_used=(effects.business_credit_used||0)+moveAmt;}this._deferRestructure=_dr;}
 if(action.id==='hire_general_counsel'&&success){this.state._gc_hired=true;}
 if(action.id==='fast_working_capital'&&success){const s=this.state,adv=(action.effects&&action.effects.cash)||25000;s._mca_balance=Math.round(adv*(action.mca_factor||2));s._mca_holdback=action.mca_holdback||0.2;s._dyn_narrative='You took the advance — '+this.fmtMoney(adv)+' now, but you\'ll repay '+this.fmtMoney(s._mca_balance)+'. Starting next month the lender skims '+Math.round(s._mca_holdback*100)+'% of your revenue until it\'s cleared — it bleeds your top line, but it doesn\'t touch your credit.';}
@@ -4135,12 +4130,20 @@ s.insurance_cash_value=(s.insurance_cash_value||0)+funded;
 s.insurance_loan_balance=(s.insurance_loan_balance||0)+borrow;
 s._dyn_narrative='Premium financing structured: the bank lent '+this.fmtMoney(borrow)+' (a low-rate loan secured by the policy), funding '+this.fmtMoney(funded)+' of premium after a ~2% cost of insurance. The cash value now compounds ~7%/yr — above the ~5% loan rate — so the spread builds tax-free wealth on the bank\'s money. Nothing leaves your pocket; the loan is netted from the death benefit.';}
 if(action.id==='bank_personal_loan'&&success){const s=this.state,_sep=this.isSeparated();let loan;if(_sep){const cf=this.calcCreditCapacity();loan=Math.round(25000*cf);s.business_installment_debt=(s.business_installment_debt||0)+loan;s._dyn_narrative='Your banking relationship delivered a '+this.fmtMoney(loan)+' fixed-rate business term loan — sized to your revenue and credit.';}else{const c2=Math.max(0.6,Math.min(2.5,((s.personal_credit_score||600)-560)/120));loan=Math.round(10000*c2);s._installment_debt=(s._installment_debt||0)+loan;s._dyn_narrative='Approved for '+this.fmtMoney(loan)+'. Your credit spoke for itself — funds in your account by Friday.';}s.cash+=loan;s.total_debt+=loan;}
-if(action.id==='buy_real_estate'){const s=this.state;const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000)),lvlRev=Math.min(2.5,this.calcBusinessLevel()),lvlOpx=Math.min(2,this.calcBusinessLevel());const baseEq=success?20000:10000,baseMort=success?80000:85000,baseRev=success?2500:1200,baseOpx=success?1800:2200;s.real_estate_debt=(s.real_estate_debt||0)+Math.round(baseMort*mult);s.real_estate_equity=(s.real_estate_equity||0)+Math.round(baseEq*mult);s.total_debt+=Math.round(baseMort*mult);s.operating_expenses=(s.operating_expenses||0)+Math.round(baseOpx*lvlOpx)+Math.round(baseOpx*(mult-1));s.monthly_revenue=(s.monthly_revenue||0)+Math.round(baseRev*lvlRev);s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(baseRev*mult);
-// Key-Man Leverage portfolio: each property is a leveraged, operator-run income asset. Track the unit + its income so the operator-loss event and key-man coverage scale with the portfolio.
-s._asset_units=(s._asset_units||0)+1;s._asset_income=(s._asset_income||0)+Math.round(baseRev*mult);
-// Depreciation write-off: a non-cash paper deduction (~building value / 27.5yr) that shelters your taxable income — the signature real-estate tax break.
-const reDepr=Math.round(baseMort*mult*0.0036);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-reDepr);s._re_depreciation=(s._re_depreciation||0)+reDepr;
-if(success)s._dyn_narrative='You closed on a '+this.fmtMoney(Math.round(baseEq*mult)+Math.round(baseMort*mult))+' property — '+this.fmtMoney(Math.round(baseEq*mult))+' equity, '+this.fmtMoney(Math.round(baseMort*mult))+' financed. It cash-flows and appreciates while you sleep — and its <strong>'+this.fmtMoney(reDepr)+'/mo depreciation write-off</strong> shelters your income, cutting your tax bill even though no cash leaves your pocket.';}
+if(action.id==='buy_real_estate'){const s=this.state;const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));
+// THE ECONOMY IS THE ENTRY LEVER: you buy at the cycle price. In a downturn assets are cheap (_asset_discount < 1), so the same purchase carries MORE built-in equity; in a boom you overpay.
+const disc=Math.max(0.6,Math.min(1.05,s._asset_discount!=null?s._asset_discount:1));
+const fairValue=Math.round((success?100000:92000)*mult);/* what the property is actually worth */
+const price=Math.round(fairValue*disc);/* what you pay this cycle */
+const mort=Math.round(price*0.8);/* 80% financed */
+const equity=fairValue-mort;/* your stake is vs FAIR value — buy cheap in a bust and you're instantly up */
+s.real_estate_debt=(s.real_estate_debt||0)+mort;s.total_debt+=mort;s.real_estate_equity=(s.real_estate_equity||0)+equity;
+// Cash flow is modest and NOT the point — net rent roughly covers the mortgage. The returns are the TAX SHIELD, tenants paying down your loan, and appreciation.
+const noi=Math.round(fairValue*(success?0.008:0.005));s.other_monthly_revenue=(s.other_monthly_revenue||0)+noi;
+s._asset_units=(s._asset_units||0)+1;s._asset_income=(s._asset_income||0)+noi;
+// THE BENEFIT — depreciation: a non-cash paper deduction (~building value / 27.5yr) that shelters your taxable income, cutting your tax bill while no cash leaves your pocket.
+const reDepr=Math.round(price*0.8/27.5/12);s._re_depreciation=(s._re_depreciation||0)+reDepr;
+s._dyn_narrative=success?('You closed on a '+this.fmtMoney(fairValue)+' property for '+this.fmtMoney(price)+(disc<0.95?' — a soft market handed you a discount, so you start with extra equity':'')+'. The rent barely beats the mortgage ('+this.fmtMoney(noi)+'/mo net), and that\'s fine: the real win is the <strong>'+this.fmtMoney(reDepr)+'/mo depreciation write-off</strong> sheltering your income, plus tenants paying down your loan and the property appreciating.'):('The deal closed on tougher terms — thinner equity and slim cash flow — but you still locked in the depreciation tax shield and a foothold in the market.');}
 if(action.id==='private_lending'){const s=this.state;if(success){const extra=Math.min(Math.round((s.cash||0)*0.4),180000),add=(extra>0?extra:0);if(extra>0)s.cash-=extra;s.investment_positions=(s.investment_positions||0)+20000+add;const pos=20000+add;s.other_monthly_revenue=(s.other_monthly_revenue||0)+Math.round(pos*0.012);s._dyn_narrative='You deployed '+this.fmtMoney(pos)+' into private loans at ~14% annual. The interest checks start arriving — you\'re the bank now.';}else{s.investment_positions=(s.investment_positions||0)+15000;s.other_monthly_revenue=(s.other_monthly_revenue||0)+180;}}
 if(action.id==='acquire_competitor'){const s=this.state;if(success){const mult=Math.max(1,Math.min(3,1+(s.monthly_revenue||0)/40000)),pos=Math.round(30000*mult),passive=Math.round(pos*0.015),writeoff=Math.round(pos*0.02);s.investment_positions=(s.investment_positions||0)+pos;s.other_monthly_revenue=(s.other_monthly_revenue||0)+passive;s.operating_expenses=Math.max(0,(s.operating_expenses||0)-writeoff);s._dyn_narrative='You acquired the competitor as an investment — '+this.fmtMoney(pos)+' in book value throwing off '+this.fmtMoney(passive)+'/mo passive cash flow, plus '+this.fmtMoney(writeoff)+'/mo in depreciation write-offs cutting your taxes.';}else{s.investment_positions=(s.investment_positions||0)+10000;s.other_monthly_revenue=(s.other_monthly_revenue||0)+150;s._dyn_narrative='Integration was rocky and much of the acquired revenue churned — but the remaining book value still trickles in passive income.';}}
 if(action.id==='private_banking'&&success){const s=this.state,sep=this.isSeparated(),pt=sep&&(s.personal_cash||0)>(s.cash||0)?'personal_cash':'cash';const deposit=Math.round((s[pt]||0)*0.85);if(deposit>0){s[pt]-=deposit;s.private_bank_balance=(s.private_bank_balance||0)+deposit;const loan=Math.round(deposit*0.9);s[pt]+=loan;s.private_bank_loan=(s.private_bank_loan||0)+loan;const moInt=Math.round(s.private_bank_balance*0.004);s._dyn_narrative='Private bank relationship open. You deposited '+this.fmtMoney(deposit)+' (earning ~5%/yr — about '+this.fmtMoney(moInt)+'/mo) and immediately drew '+this.fmtMoney(loan)+' against it at just 1%/yr. Your capital keeps earning while '+this.fmtMoney(loan)+' of near-free money lands in your account to deploy. The 5% you earn vs the 1% you pay is pure spread — this is leveraging OPM at its hardest.';}else{s._dyn_narrative='Your private bank relationship is open, but there\'s little cash to deposit right now. Build up your balance and they\'ll set up the interest-earning deposit and your 1% credit line.';}}
@@ -4244,7 +4247,7 @@ const interest=this.calcDebtInterest(),principal=this.calcDebtPrincipal();s.cash
 {const payroll=(s.team_size||0)*2500,reserves=Math.max(0,s.cash)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));if(payroll>0&&reserves<payroll){const lost=Math.min(s.team_size||0,Math.ceil((payroll-reserves)/2500));s.team_size=Math.max(0,(s.team_size||0)-lost);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+lost*8);s.operating_expenses=Math.max(0,(s.operating_expenses||0)-lost*2000);}}
 // Owner draw/salary moves business→personal to cover personal needs; personal expenses paid from personal cash (commingled before the LLC)
 // Tax reserve (optional): post-LLC the owner sets aside their pass-through tax from personal cash into the reserve, to cover the year-end bill. The tax itself is assessed/paid at year-end (showTaxEvent).
-const _taxableInc=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0));
+const _taxableInc=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s._re_depreciation||0));/* real-estate depreciation is a non-cash deduction that shelters taxable income */
 const monthlyReserve=(sep&&s._completed_actions.includes('monthly_tax_reserve'))?Math.round(_taxableInc*(s.tax_rate||0.25)):0;
 if(monthlyReserve)s.tax_reserve=(s.tax_reserve||0)+monthlyReserve;
 const insFunding=(s._completed_actions&&s._completed_actions.includes('fund_accumulation_policy')&&s._auto_fund_insurance)?Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000)):0; // accumulation IUL funding (aggressive, scales with revenue) is a personal expense, covered by the owner draw
@@ -4297,8 +4300,8 @@ if(s._partner_equity>0){const prof=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)
    if((s._turnover_streak||0)>=3&&!s._scaleLessonShown){s._scaleLessonShown=true;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'The founder’s trap',narrative:'You keep hiring and they keep leaving — every month is retraining, not progress. A small business has a natural size; you can\'t out-muscle it with more bodies. From here, real wealth doesn\'t come from a bigger payroll — it comes from FINANCE: leverage the cash & credit you\'ve built into tax-free passive income.'}]);}
   }}
 // Tax inefficiency drag — high profit without tax structure overpays the IRS every month
-{const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0));if(profit>5000){let ineff=0.16;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.10;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;if((s.trust_structure&&s.trust_structure!=='none'&&s.trust_structure!=='basic_llc'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/30000);if(this._perks().taxSmart)ineff*=0.7;/* Tax-Smart milestone perk: a dialed-in structure trims the residual drag */s.cash-=Math.round(profit*ineff);}}
-const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses);s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
+{const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0)-(s._re_depreciation||0));if(profit>5000){let ineff=0.16;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.10;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;if((s.trust_structure&&s.trust_structure!=='none'&&s.trust_structure!=='basic_llc'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/30000);if(this._perks().taxSmart)ineff*=0.7;/* Tax-Smart milestone perk: a dialed-in structure trims the residual drag */s.cash-=Math.round(profit*ineff);}}
+const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s._re_depreciation||0));s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
 if(!sep&&s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(taxableIncome*(s.tax_rate||0.25));s.tax_reserve+=res;s.cash-=res;}
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
 // VELOCITY BANKING — running the household through a line of credit instead of a checking account. The edge is real but conditional: park income on a simple-interest line and every surplus dollar retires MORE than a dollar of amortizing principal (the interest you'd have paid is saved), freeing capital years faster and lowering utilization → score. But it's a CASH-FLOW strategy: it only accelerates while you're cash-flow positive. Go negative and the deficit rides on the line and compounds (the spiral). And in a credit-tight downturn the lender can FREEZE/cut the line — which only hurts if you were leaning on it. Discipline (positive CF + lightly-used line) is rewarded; over-leverage is punished.
@@ -4379,6 +4382,7 @@ s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.m
  if((s.insurance_loan_balance||0)>0)s.insurance_loan_balance=Math.round((s.insurance_loan_balance||0)*(1+(variable?varRate:washRate)));}
 if(s._family_office&&(s.investment_positions||0)>0)s.investment_positions=Math.round(s.investment_positions*1.004); // family office optimizes allocation — portfolio appreciates ~5%/yr
 if((s.private_bank_balance||0)>0){const _pt2=sep?'personal_cash':'cash';s[_pt2]=(s[_pt2]||0)+Math.round(s.private_bank_balance*0.004);} // private bank deposit earns ~5%/yr while you borrow against it at 1%
+if((s.tax_reserve||0)>0)s.tax_reserve=Math.round((s.tax_reserve||0)*(1+0.04/12)); // tax reserve sits in a money-market account earning ~4%/yr fixed (taxable) — a policy grows faster and tax-free
 {const _pt=sep?'personal_cash':'cash';s[_pt]=(s[_pt]||0)+(s.other_monthly_revenue||0); // asset income (real estate, lending) → personal once separated
 s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const _var=s._iul_loan_type==='variable',cap=(_var?0.97:0.85)*s.insurance_cash_value/* variable borrows closer to the edge — and pays for it in a downturn */,headroom=Math.max(0,Math.round(cap)-(s.insurance_loan_balance||0)),moPassive=Math.min(Math.round(s.insurance_cash_value*(_var?0.08:0.06)/12),headroom),_pb=s[_pt]||0;if(moPassive>0){const _preI=s._iul_funding_type==='pre_tax',_net=_preI?Math.round(moPassive*(1-Math.min(0.4,s.tax_rate||0.25))):moPassive;/* POST-tax: income is TAX-FREE (Roth). PRE-tax: it's deferred income coming due — taxable (Traditional). */s[_pt]=_pb+_net;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:_net,gross:moPassive,taxed:_preI,before:Math.round(_pb),after:Math.round(_pb+_net),month:this.month};}}}
 // LAPSE — if the loan ever reaches the cash value, the policy collapses: gains taxed as ordinary income (you owe tax on money you already spent), and the tax-free engine is gone. Only the variable loan can get here; the wash loan is structurally safe.
@@ -4443,7 +4447,7 @@ if(mo!=null&&mo<=3){if(!s._runwayWarned){s._runwayWarned=true;setTimeout(()=>thi
 else if(mo==null||mo>=6){s._runwayWarned=false;}}
 return;}this.nextMonth();},
 // Short-runway warning shown on the Cash & Credit panel — points at the runway figure and tells the player how to act before insolvency.
-_lowRunwaySpotlight(){const mo=this._lastRunwayMo;if(mo==null)return;const m=Math.max(0,Math.floor(mo));const body='<div style="line-height:1.6;font-size:0.9rem;">Heads up — at this month\'s burn, your <strong>cash + all available credit</strong> lasts only about <strong>'+m+' month'+(m===1?'':'s')+'</strong>. That\'s your <strong>runway</strong>, and it\'s getting short.<br><br>Act <em>before</em> it hits zero: trim your burn (cut costs or payroll), open or draw a credit line while you still qualify, push revenue, or build a reserve. The run ends the month your bills exceed everything you can access — don\'t wait for the cliff.</div>';const sel=document.getElementById('result-runway')?'#result-runway':(document.getElementById('month-cash-panel')?'#month-cash-panel':null);if(sel)this._spotlightTip(sel,'⚠️ Short Runway — Act Now',body);else this.showPopup('⚠️ Short Runway — Act Now',body);},
+_lowRunwaySpotlight(){const mo=this._lastRunwayMo;if(mo==null)return;const m=Math.max(0,Math.floor(mo));const body='<div style="line-height:1.6;font-size:0.9rem;">Heads up — at this month\'s burn, your <strong>cash + all available credit</strong> lasts only about <strong>'+m+' month'+(m===1?'':'s')+'</strong>. That\'s your <strong>runway</strong>, and it\'s getting short.<br><br>Act <em>before</em> it hits zero: pour your moves into <strong>revenue</strong> (more leads, close more sales), <strong>open or draw a credit line</strong> while you still qualify, hold off on expensive one-off moves, and keep a cash reserve. The run ends the month your bills exceed everything you can access — don\'t wait for the cliff.</div>';const sel=document.getElementById('result-runway')?'#result-runway':(document.getElementById('month-cash-panel')?'#month-cash-panel':null);if(sel)this._spotlightTip(sel,'⚠️ Short Runway — Act Now',body);else this.showPopup('⚠️ Short Runway — Act Now',body);},
 // Result screen: jump to the end-of-month Cash & Credit panel and flash it.
 checkCashCredit(){const el=document.getElementById('month-cash-panel');if(!el)return;el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.remove('attn-flash');void el.offsetWidth;el.classList.add('attn-flash');setTimeout(()=>el.classList.remove('attn-flash'),900);},
 // Bankruptcy graphic — a clean emoji-art hero (defeated founder, money flying away). Emojis render as the platform's polished artwork. Decorative; shown in the game-over walkthrough.
@@ -4564,6 +4568,8 @@ if(!recur||this.month-last>=4){s._ownerRescueLastShown=this.month;
   ?'<div style="line-height:1.6;font-size:0.9rem;">Your business came up short <strong>again</strong> and leaned on your <strong>personal savings</strong> — <strong>$'+this.fmt(amt)+'</strong> this month ('+s._ownerRescueCount+' months total). You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> left.<br><br>This is a <strong>spiral</strong>: the business still isn\'t paying its own way, and your savings are the only thing between you and game over. Fix the burn now — cut costs, raise revenue, restructure your debt, or open credit — before the cushion runs out.</div>'
   :'<div style="line-height:1.6;font-size:0.9rem;">The business came up short this month and ran out of cash and credit — but you injected <strong>$'+this.fmt(amt)+'</strong> from your <strong>personal savings</strong> to cover it. Building that cushion ahead of time just kept you in the game.<br><br>You\'ve got <strong>$'+this.fmt(persLeft)+'</strong> of personal cash left. Don\'t make a habit of it — fix the burn (cut costs, raise revenue, or open credit) so the business pays its own way.</div>';
  setTimeout(()=>this.showPopup(recur?'⚠ Leaning on Personal Savings Again':'🛟 Saved by Your Personal Savings',body),260);}}
+// Just opened a cash-value policy and you're holding a tax reserve → offer to fold it in. The policy grows tax-free (vs the money-market reserve's taxable ~4%) and still covers taxes via a tax-free loan when due.
+if(this._pendingReserveFold){this._pendingReserveFold=false;const res=Math.round(this.state.tax_reserve||0);if(res>0&&document.getElementById('popup-container').style.display!=='block'){const into=Math.round(res*0.98);setTimeout(()=>this._confirm('🛡️ Fold your tax reserve into the policy?','<div style="line-height:1.6;font-size:0.9rem;">You\'ve got <strong>$'+this.fmt(res)+'</strong> in your tax reserve — a money-market account earning ~4%/yr (taxable). Roll it into your new policy and it compounds <strong>tax-free</strong> instead, and it still covers your taxes: when the IRS bill comes you borrow against it tax-free. A ~2% cost of insurance applies, so about <strong>$'+this.fmt(into)+'</strong> lands as cash value.</div>','Fold it in',()=>{const s=this.state,amt=Math.round(s.tax_reserve||0);if(amt>0){const credited=Math.round(amt*0.98);s.tax_reserve=0;s.insurance_cash_value=(s.insurance_cash_value||0)+credited;s.insurance_basis=(s.insurance_basis||0)+credited;this.autoSave();this.renderStats&&this.renderStats();this.showPopup('✓ Reserve Folded In','<div style="line-height:1.6;font-size:0.9rem;">Your '+this.fmtMoney(amt)+' reserve is now in the policy, compounding tax-free. When taxes are due, borrow against it tax-free — your money never stops working.</div>');}}),300);}}
 // LLC just formed → name the company (skip if a rescue pop-up is already up; rare on a formation month).
 },
 
@@ -4692,6 +4698,11 @@ this.showScreen('event-screen');this.renderStats('event-dashboard');document.get
 document.getElementById('event-box').innerHTML='<div class="event-category">TAXES</div><div class="event-narrative">The IRS doesn\'t care how hard your year was. Your accountant slides the number across the table: <strong>$'+this.fmt(taxOwed)+'</strong> owed.'+(s.tax_reserve>0?' You have $'+this.fmt(s.tax_reserve)+' in your tax reserve.':'')+'</div>';
 let choices=[];
 if(payCash>=taxOwed)choices.push('<div class="choice-card fade-in" onclick="Game.resolveTax(\'cash\','+taxOwed+')"><h4>Pay in full from '+(sep?'personal cash':'cash')+'</h4><div class="choice-effects">-$'+this.fmt(taxOwed)+(sep?' personal cash':' cash')+'</div></div>');
+// THE POLICY PATH (dual purpose): if you have a funded cash-value policy, borrow against it tax-free to pay the IRS. The borrowed slice is a wash and the rest of your cash value keeps earning ~7%/yr — so it pays your taxes AND keeps compounding. Shown first when available; nothing leaves your pocket and it never touches your credit.
+const policyBorrowable=Math.floor((s.insurance_cash_value||0)*0.9)-(s.insurance_loan_balance||0);
+if(policyBorrowable>=taxOwed&&taxOwed>0)choices.push('<div class="choice-card fade-in" onclick="Game.resolveTax(\'policy\','+taxOwed+')"><h4>🛡️ Borrow against your policy (tax-free)</h4><div class="choice-effects">+$'+this.fmt(taxOwed)+' policy loan · cash value keeps earning interest behind it · no cash out, no credit hit</div></div>');
+else if(policyBorrowable>0&&taxOwed>0&&payCash>=(taxOwed-policyBorrowable)){const rest=taxOwed-policyBorrowable;choices.push('<div class="choice-card fade-in" onclick="Game.resolveTax(\'policy_partial\','+taxOwed+')"><h4>🛡️ Borrow what your policy allows + pay the rest</h4><div class="choice-effects">+$'+this.fmt(policyBorrowable)+' policy loan, -$'+this.fmt(rest)+(sep?' personal cash':' cash')+' · cash value keeps earning</div></div>');}
+// THE RESERVE PATH (for players who set aside a tax reserve instead of a policy):
 if(s.tax_reserve>=taxOwed)choices.push('<div class="choice-card fade-in" onclick="Game.resolveTax(\'reserve\','+taxOwed+')"><h4>Pay from tax reserve</h4><div class="choice-effects">-$'+this.fmt(taxOwed)+' from reserve</div></div>');
 if(s.tax_reserve>0&&s.tax_reserve<taxOwed){const remainder=taxOwed-s.tax_reserve;choices.push('<div class="choice-card fade-in" onclick="Game.resolveTax(\'partial_reserve\','+taxOwed+')"><h4>Use reserve + pay rest from '+(sep?'personal cash':'cash')+'</h4><div class="choice-effects">-$'+this.fmt(s.tax_reserve)+' reserve, -$'+this.fmt(remainder)+(sep?' personal cash':' cash')+'</div></div>');}
 const partial=Math.round(taxOwed*0.3),debt=Math.round(taxOwed*0.7);
@@ -4703,6 +4714,8 @@ resolveTax(method,amount){const s=this.state,sep=this.isSeparated();let narrativ
 if(method==='cash'){if(sep){s.personal_cash=(s.personal_cash||0)-amount;s.personal_tax_ytd=(s.personal_tax_ytd||0)+amount;}else s.cash-=amount;narrative='Check written. Painful, but clean.';}
 else if(method==='reserve'){s.tax_reserve-=amount;if(sep)s.personal_tax_ytd=(s.personal_tax_ytd||0)+amount;narrative='This is exactly what the reserve was for.';}
 else if(method==='partial_reserve'){const remainder=amount-s.tax_reserve;if(sep){s.personal_cash=(s.personal_cash||0)-remainder;s.personal_tax_ytd=(s.personal_tax_ytd||0)+amount;}else s.cash-=remainder;s.tax_reserve=0;narrative='Reserve covered most of it. The rest came from '+(sep?'personal cash':'cash')+'.';}
+else if(method==='policy'){s.insurance_loan_balance=(s.insurance_loan_balance||0)+amount;if(sep)s.personal_tax_ytd=(s.personal_tax_ytd||0)+amount;narrative='You borrowed against your policy to pay the IRS — tax-free, no credit hit, and your cash value keeps compounding behind the loan. Your policy is your bank: this is the infinite-banking move the wealthy use to pay taxes without ever touching their invested capital.';}
+else if(method==='policy_partial'){const pb=Math.floor((s.insurance_cash_value||0)*0.9)-(s.insurance_loan_balance||0),borrow=Math.max(0,Math.min(pb,amount)),rest=amount-borrow;s.insurance_loan_balance=(s.insurance_loan_balance||0)+borrow;if(sep){s.personal_cash=(s.personal_cash||0)-rest;s.personal_tax_ytd=(s.personal_tax_ytd||0)+amount;}else s.cash-=rest;narrative='Your policy covered '+this.fmtMoney(borrow)+' of the bill tax-free (its cash value keeps earning behind the loan), and you topped up the last '+this.fmtMoney(rest)+' from '+(sep?'personal cash':'cash')+'.';}
 else if(method==='plan'){s.cash-=Math.round(amount*0.3);s.total_debt+=Math.round(amount*0.7);s.audit_risk+=10;s.operating_expenses+=Math.round(amount*0.7/12);narrative='Payment plan set up. Interest and penalties apply. Added to monthly obligations.';}
 else{s.total_debt+=amount;s.audit_risk+=20;s.operating_expenses+=Math.round(amount/12);narrative='Extension filed. Interest and penalties accrue and the IRS remembers — but a tax extension doesn\'t touch your credit score.';}
 s._ytd_taxable_income=0;

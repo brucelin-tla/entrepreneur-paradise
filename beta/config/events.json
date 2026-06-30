@@ -361,23 +361,23 @@
       "base_probability": 0.05,
       "probability_scales_with": "brand_equity",
       "scale_factor": 0.002,
-      "narrative": "A major company just reached out. They saw your work and want to discuss a contract that could double your monthly revenue. But they have conditions.",
+      "narrative": "A major company just reached out. They saw your work and want a contract that could meaningfully grow your revenue. But they have conditions.",
       "act": 2,
       "choices": [
         {
           "label": "Take the contract, scale up to deliver",
-          "effects": { "customer_base": 10, "cash": -3000, "operating_expenses": 3000, "energy": -10, "key_person_dependency": 10 },
-          "outcome_narrative": "The contract is signed. Your team is scrambling to deliver, but the revenue is real. Don't let this one client become your whole business."
+          "effects": { "customer_base": 10, "revenue_capacity": 12000, "brand_equity": 6, "operating_expenses": 1500, "energy": -10, "key_person_dependency": 8 },
+          "outcome_narrative": "Signed. Ten new customers and the capacity to serve them — your revenue steps up. Scaling to deliver adds about $1,500/mo in costs, and leaning this hard on one client is a risk: don't let them become your whole business."
         },
         {
           "label": "Negotiate better terms first",
-          "effects": { "customer_base": 6, "operating_expenses": 1500, "brand_equity": 5 },
-          "outcome_narrative": "They pushed back, then agreed to your terms. Smaller scope, better margins, and you're not dependent on them."
+          "effects": { "customer_base": 5, "brand_equity": 12, "revenue_capacity": 6000, "operating_expenses": 600 },
+          "outcome_narrative": "They pushed back, then agreed. Smaller scope but premium terms — fewer customers, yet each is worth more (your brand and pricing power climb), and you're not dependent on them."
         },
         {
           "label": "Decline — not ready to scale yet",
           "effects": { "brand_equity": 3 },
-          "outcome_narrative": "You said no. It hurt. But you know your systems can't handle it yet, and a blown delivery would damage more than a declined offer."
+          "outcome_narrative": "You said no. It stung. But your systems can't handle it yet, and a blown delivery would cost more than a declined offer."
         }
       ],
       "mitigated_by": []
@@ -417,13 +417,13 @@
       "base_probability": 0.05,
       "probability_scales_with": "personal_credit_score",
       "scale_factor": 0.0001,
-      "narrative": "Your banker called with an off-market deal. A duplex in a solid neighborhood, below market value. The seller needs to close fast. It's the kind of deal that doesn't come around often.",
+      "narrative": "Your banker called with an off-market deal — a small duplex in a steady cash-flow market, priced a little under value because the seller needs to close fast. About $75,000 all-in: your cash covers the ~20% down, a mortgage covers the rest.",
       "act": 3,
       "choices": [
         {
           "label": "Make the offer, use available credit",
-          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 1800, "total_debt": 60000, "operating_expenses": 1200 },
-          "outcome_narrative": "Offer accepted. Closing in thirty days. You just bought an asset that pays you every month while it appreciates."
+          "effects": { "cash": -15000, "real_estate_owned": 1, "real_estate_equity": 15000, "other_monthly_revenue": 650, "total_debt": 60000, "_re_depreciation": 180, "_asset_units": 1 },
+          "outcome_narrative": "Offer accepted. The rent (~$650/mo net) barely beats the mortgage — and that's fine. The real prize is the ~$180/mo depreciation write-off sheltering your taxable income, plus tenants paying down your loan and the property appreciating. Real estate's edge is the tax code, not the rent check."
         },
         {
           "label": "Pass — too much capital tied up right now",
