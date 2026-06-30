@@ -300,6 +300,67 @@
       "success_rate": 1,
       "narrative_success": "Velocity banking is on. Your surplus now sweeps straight at your target debt every month — and you can chunk extra whenever cash flow allows, from the ⚡ Velocity panel on your dashboard.",
       "narrative_failure": "You set up the line, but the paperwork hit a snag this month."
+    },
+    {
+      "id": "sba_loan",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "SBA Loan",
+      "description": "Apply for a government-backed SBA loan — the cheapest, longest-term growth capital a small business can get. Harder to qualify for (they scrutinize your cash flow), but the rate and terms beat any credit line.",
+      "lesson": "The SBA guarantees part of the loan, so the bank lends more, longer, and cheaper than it otherwise would. It's the best growth debt a small business can access — if your cash flow can service it. Lenders underwrite hard on debt-to-income, so keep DTI low.",
+      "cash_cost": 0,
+      "energy_cost": 6,
+      "prerequisites": { "needs": ["establish_business"], "monthly_revenue_gte": 12000, "personal_credit_score_gte": 660 },
+      "effects": {},
+      "success_rate": 0.7,
+      "narrative_success": "Approved. The SBA guarantee unlocked a large, low-rate, long-term loan — the best money your business has access to.",
+      "narrative_failure": "The SBA application stalled — underwriting flagged your debt-to-income as too tight to service a loan this size. Pay down debt or grow revenue, then reapply."
+    },
+    {
+      "id": "equipment_financing",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Finance Equipment (Section 179)",
+      "description": "Use the bank's money to buy equipment that lifts your capacity — then write off the whole cost this year with Section 179. Productive debt plus an instant tax deduction.",
+      "lesson": "Good debt working twice: the equipment raises what your business can deliver, and Section 179 lets you deduct the entire purchase the year you buy it — so the tax savings pay for a chunk of it. Far better than paying cash and depreciating slowly.",
+      "cash_cost": 0,
+      "energy_cost": 4,
+      "prerequisites": { "needs": ["establish_business"], "monthly_revenue_gte": 8000 },
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "Equipment financed and in service. Capacity is up — and the Section 179 write-off just cut this year's tax bill.",
+      "narrative_failure": "The equipment financing fell through this month."
+    },
+    {
+      "id": "merchant_cash_advance",
+      "category": "finance",
+      "stage": "foundation",
+      "label": "Merchant Cash Advance ⚠️",
+      "description": "Need cash fast with no credit check? An MCA wires it today — but you repay a fixed amount far larger than you borrowed, skimmed daily from your sales. The most expensive money there is.",
+      "lesson": "An MCA isn't a loan — it buys your future sales at a steep discount. A 1.4 'factor rate' means borrowing $20k costs you $28k, often within a year — an effective APR north of 60%. This is what bad credit forces you into. Build credit so you never need it.",
+      "cash_cost": 0,
+      "energy_cost": 2,
+      "prerequisites": {},
+      "effects": {},
+      "success_rate": 1,
+      "narrative_success": "The cash hit your account within hours — no credit check, no questions. The repayment, skimmed from every day's sales, is about to teach you why this is a last resort.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "living_trust",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Set Up a Living Trust",
+      "description": "Put your assets in a revocable living trust — your estate skips probate, stays private, and passes smoothly to your family. The first step of a real asset-protection and legacy plan.",
+      "lesson": "A living trust doesn't cut income tax, but it keeps your estate out of public probate court (faster, private, cheaper for your heirs) and lays the foundation for the stronger trusts that protect and pass on serious wealth later.",
+      "cash_cost": 2500,
+      "energy_cost": 3,
+      "one_time": true,
+      "prerequisites": { "needs": ["establish_business"] },
+      "effects": { "lifestyle_legacy": 12, "litigation_exposure": -5 },
+      "success_rate": 1,
+      "narrative_success": "Your living trust is in place. Your estate will skip probate — private, smooth, and ready to hold the assets you're building.",
+      "narrative_failure": ""
     }
   ]
 }
