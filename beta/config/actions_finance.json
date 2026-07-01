@@ -304,6 +304,20 @@
       "narrative_failure": "The property closed, but the inspection found issues. Repairs ate into your projections. It'll cash-flow, just not as much."
     },
     {
+      "id": "key_man_policy",
+      "category": "finance",
+      "stage": "wealth",
+      "label": "Insure Your Operators 🛡",
+      "description": "Put a loan-protection policy on the people running your income properties. If an operator is lost, the policy pays the business a lump sum — enough to retire that property's specific mortgage while you place a new operator.",
+      "lesson": "You leveraged on people — the operators whose work services those mortgages. Insure them. For a small monthly premium per operator, an operator loan-protection policy retires the exact loan on the affected property if you lose them, so an unpaid asset can't drag you under. It covers that specific debt, never a windfall. This is what makes leveraging on people safe instead of reckless. Coverage tracks your portfolio automatically — buy another property and the new operator is covered too. (Distinct from the key-person cover in your Business Insurance bundle, which protects a key employee, not a property operator.)",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "prerequisites": { "_asset_units_gte": 1 },
+      "effects": {},
+      "narrative_success": "Policies bound. The people your leverage depends on are insured — if one is lost, the mortgage on their property is retired, not left hanging over you.",
+      "narrative_failure": ""
+    },
+    {
       "id": "velocity_banking",
       "category": "finance",
       "stage": "leverage",
