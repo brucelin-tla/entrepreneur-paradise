@@ -49,8 +49,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.53.1',d:'2026-07-01 21:00',n:[
-'🧪 New Game → “Beta Test” profile: a sandbox god-mode start (Epic Life on, all stages maxed, fat cash & credit, a cash-value policy seeded) for jumping straight into any menu to test. Unranked.',
+{v:'0.53.2',d:'2026-07-01 21:20',n:[
+'🧪 New Game → “Beta Test” profile: a sandbox god-mode start (Epic Life on, all stages maxed, fat cash & credit, a cash-value policy seeded) for jumping straight into any menu to test. Unranked, and skips the tutorial + feature-unlock tips.',
 ]},
 {v:'0.53.0',d:'2026-07-01 18:00',n:[
 '⭐ Epic Life hub redesign: one consolidated roadmap bar at the top (Funding Ready is now a checkpoint on the single bar → ⭐ Epic Life System), a clean services menu, and Enroll moved behind its own button so the pitch no longer clutters the hub.',
@@ -1060,7 +1060,7 @@ case 'achievements': on=((s._milestones_achieved||[]).length>0)||m>=2; break;
 default: on=true;}
 if(on)s._revealed[f]=true;return on;},
 // One-time contextual tip the first time a feature appears, so learning is spread across the run instead of dumped up front.
-_maybeShowUnlockTip(){const s=this.state;if(this._tutActive)return;if(!s._tips_shown)s._tips_shown=[];
+_maybeShowUnlockTip(){const s=this.state;if(this._tutActive||(s&&s._beta_test))return;/* beta sandbox unlocks everything at once — suppress the feature-unlock spotlights */if(!s._tips_shown)s._tips_shown=[];
 const _rec=this.calcEnergyRecovery();
 const tips=[
 {k:'toxic_closer',show:!!s._toxic_closer,sel:'#biz-ops',t:'⚠ Your Closer Is a Liability',b:'His fake guarantees are catching up: churn up, brand eroding, <strong>lawsuit risk rising</strong> every month — and he costs ~$9,000/mo. Fire him in <strong>⚙️ Operations</strong> → <strong>Restructure &amp; Downsize</strong> (red <strong>⚠ FIRE THE CLOSER</strong> tag). He\'ll threaten to sue, but the bleeding stops.'},
