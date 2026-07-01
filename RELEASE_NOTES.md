@@ -1,5 +1,38 @@
 # Release Notes
 
+## v0.47.0 — 2026-06-30 — Finance Realism & the Epic Life Wealth Engine
+Promotion of the accumulated beta work on top of v0.46. The headline: **the finance path is now
+mechanically real** — real amortization, honest tax math, a true IUL — and the advanced wealth
+strategies are consolidated into an Epic Life "wealth engine."
+
+- **Real loan amortization ledger.** Every amortizing loan (mortgage, SBA, equipment, term, MCA) is
+  tracked with a fixed rate + term. Monthly debt service is real amortization; mortgage principal
+  becomes equity (rent-funded). A $500k mortgage genuinely costs ~$1.1M over 30 years.
+- **Velocity Banking shows REAL interest saved.** Replaced the fake flat "12% acceleration" with the
+  actual future interest a chunk removes (rate × remaining term) and the months shaved off. Targets a
+  specific loan; the 3%-fee credit draw is a net-worth-neutral balance transfer.
+- **Real-estate net worth fixed.** `real_estate_equity` already nets the mortgage, so it's no longer
+  double-counted — buying is break-even, paydown is neutral, appreciation + tenant paydown grow net
+  worth. Corrects the finance-path scoring.
+- **Real-world tax season.** Pay the year-end bill in the advisor's order — tax-free policy loan →
+  earmarked reserve → cash, combinable in one "smart" move (no forced payment plan when the combination
+  covers it, no silent negative cash). Shortfalls go on a realistic IRS installment agreement (~8%/yr
+  penalties, lien risk; the plan itself doesn't hit FICO). An extension buys time to *file*, never to *pay*.
+- **Cash-Value Policy is a real IUL.** Costs $10k of capital to open (~$9,800 becomes cash value), and
+  carries a ~$10k surrender charge that phases out over ~10 years — so you fund it well above the charge
+  before you can borrow. Player-set monthly funding rate (10–25%); fixed (~3% wash, lapse-proof) or
+  variable (fed rate + insurer spread, index arbitrage with lapse risk) loans.
+- **⭐ Epic Life = the wealth engine (members-only).** The Cash-Value Policy and Velocity Banking are
+  now Epic Life member plays, consolidated into one ⭐ hub with control panels: set funding %, pick
+  loan type, take a loan, switch on tax-free passive income — all free to manage and applied that month.
+  Non-members see them as locked 👑 teasers. Dashboards are read-only. A "Your Concierge This Month"
+  result card recaps cash value, funding, loans, passive income, and velocity savings.
+- **Polish & fixes.** Month-start notifications no longer mislabel setbacks as "…paid off" (and the
+  random cliffhanger filler is gone); one consolidated "End Here — Lock In & Post My Score" at the year
+  checkpoint; the ⭐ icon becomes 🏝️ when you're financially free; dashboard "Cash flow/mo" → "Net/mo";
+  Freedom now counts personal debt service; and the Sales Manager auto-pick no longer walks into the
+  celebrity-influencer trap (and reads "Sales Manager," not "CRO").
+
 ## v0.46.0 — 2026-06-30 — Finance & Economy Overhaul goes LIVE
 Promotion of the accumulated beta work (v0.43–v0.46) to the live game. The headline:
 **the small business is now the fuel, not the destination — Finance is the wealth engine.**

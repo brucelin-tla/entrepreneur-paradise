@@ -221,6 +221,23 @@
       "narrative_failure": "Set up started but your bookkeeping needs cleanup first. Should be running next month."
     },
     {
+      "id": "retirement_plan",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Open a Solo 401(k) / SEP",
+      "description": "Set up an owner retirement plan. Each month a slice of profit is swept in PRE-TAX — so the real cash cost is only what's left after the deduction — and it compounds tax-deferred until you retire. A simple, legal way to shelter income the IRS would otherwise take now.",
+      "lesson": "A Solo 401(k) or SEP-IRA lets an owner shelter a big chunk of income PRE-TAX — a Solo 401(k) allows ~$23k of employee deferral plus employer contributions up to ~$69k total; a SEP is ~25% of comp. It's a DEFERRAL: you skip the tax now and pay it when you withdraw in retirement (or choose Roth — pay tax now, withdraw tax-free later). Because the contribution is deductible, sheltering $1 only costs you about 75¢ of real cash, and the full dollar compounds tax-deferred. High earners can later stack a cash-balance / defined-benefit plan to shelter $100k+/yr.",
+      "cash_cost": 1500,
+      "energy_cost": 4,
+      "one_time": true,
+      "prerequisites": { "needs": ["establish_business"], "monthly_revenue_gte": 8000 },
+      "effects": {},
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Your Solo 401(k) is open. From here a slice of profit sweeps in pre-tax every month — the deduction covers part of the cost, and the balance compounds tax-deferred into a retirement nest egg you own.",
+      "narrative_failure": ""
+    },
+    {
       "id": "fund_accumulation_policy",
       "category": "finance",
       "stage": "foundation",

@@ -44,6 +44,14 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.47.0',d:'2026-06-30 16:00',n:[
+'Real loans, real interest: every loan (mortgage, SBA, equipment, term) now amortizes like the real thing, and Velocity Banking shows the actual future interest you save and years you shave off — no more fuzzy math.',
+'Net worth fixed: your real-estate equity counts correctly now (the mortgage was being double-counted), so leveraging property finally helps your score the way it should — appreciation and tenant paydown build real wealth.',
+'Smarter tax season: pay your bill the way a real advisor would — stack your tax-free policy loan, your reserve, and cash in one move — with an honest IRS payment plan (real penalties, lien risk) if you come up short. And no, an extension doesn\'t buy you time to pay.',
+'The Cash-Value Policy is a real IUL now: $10k of capital to open, an early surrender charge you fund past before you can borrow, and a slider to set your monthly funding (10–25%). Fixed or variable loans, your call.',
+'New ⭐ Epic Life hub: manage your Cash-Value Policy and Velocity Banking in one place — take a loan, switch on tax-free passive income, tune everything in a couple of taps. The wealth engine is a members-only perk, with a neat monthly recap card of your cash value, funding, loans and passive income.',
+'Polish: cleaner month-start notifications, one clear "End Here" button at the year checkpoint, the ⭐ turns into 🏝️ when you\'re financially free, "Net/mo" on the dashboard, and your Sales Manager no longer walks into the celebrity-influencer trap.',
+]},
 {v:'0.46.0',d:'2026-06-30 10:24',n:[
 'Your business now grows like a real one — no invisible wall. Revenue is bounded by what you can actually DELIVER (your founder + team + systems) and what the market will give you (your brand). A solo founder tops out lean (~$70–90k/mo); to serve more clients you must HIRE — and past a small team, more growth needs a stronger BRAND, not more bodies. The plateau is earned and emergent, never an arbitrary cap.',
 'Over-sell what you can serve and the clients you can\'t support churn back out — delivery capacity is real, so you can\'t just buy your way past the ceiling. The way up from a maxed-out lean business is FINANCE leveraging the cash & credit it throws off. That\'s the whole point.',
