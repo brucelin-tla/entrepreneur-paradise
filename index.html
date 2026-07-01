@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Entrepreneur Paradise</title>
-<link rel="stylesheet" href="css/styles.css">
+<script>window.__q=(new URLSearchParams(location.search).get('u')?('?u='+new URLSearchParams(location.search).get('u')):'');document.write('<link rel="stylesheet" href="css/styles.css'+window.__q+'">');</script>
 </head>
 <body>
 <div id="title-screen" class="screen active">
@@ -27,6 +27,6 @@
 <div id="popup-container" style="display:none;"><div class="popup-overlay" onclick="Game.hidePopup()"></div><div class="popup-box"><div class="popup-title" id="popup-title"></div><div id="popup-body"></div><button class="btn-secondary" onclick="Game.hidePopup()">Got it</button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/game.js"></script>
+<script>document.write('<script src="js/game.js'+(window.__q||'')+'"><\/script>');</script>
 </body>
 </html>

@@ -44,6 +44,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.47.1',d:'2026-06-30 16:30',n:[
+'Fixed the "🔄 Update now" button so it reliably loads the newest version instead of re-serving a cached older build. (If you\'re on an old version, one hard refresh gets you current — after that, updates are one tap.)',
+]},
 {v:'0.47.0',d:'2026-06-30 16:00',n:[
 'Real loans, real interest: every loan (mortgage, SBA, equipment, term) now amortizes like the real thing, and Velocity Banking shows the actual future interest you save and years you shave off — no more fuzzy math.',
 'Net worth fixed: your real-estate equity counts correctly now (the mortgage was being double-counted), so leveraging property finally helps your score the way it should — appreciation and tenant paydown build real wealth.',
@@ -568,7 +571,8 @@ _renderUpdateIcon(){const el=document.getElementById('update-icon');if(!el)retur
 // Update detection: version.json (bumped each release) is fetched cache-busted, so even a cached/old game.js learns a newer build is live and offers a one-tap refresh. (version.json must be bumped on every deploy alongside PATCH_NOTES.)
 _checkForUpdate(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.v&&this._verLt(this._curVersion(),j.v)){this._updateAvailable=true;this._showUpdateBanner(j.v);this._renderUpdateIcon();}}).catch(()=>{});}catch(e){}},
 _showUpdateBanner(v){if(document.getElementById('ep-update-banner'))return;const b=document.createElement('div');b.id='ep-update-banner';b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99999;background:linear-gradient(135deg,#f0b429,#b8932f);color:#1a1205;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:0.82rem;font-weight:700;box-shadow:0 -3px 14px rgba(0,0,0,0.45);';b.innerHTML='<span>🔄 A new version (v'+v+') is available.</span><button onclick="Game._applyUpdate()" style="background:#1a1205;color:#f0b429;border:none;border-radius:999px;padding:7px 16px;font-weight:700;cursor:pointer;white-space:nowrap;">Update now</button>';document.body.appendChild(b);},
-_applyUpdate(){try{location.reload();}catch(e){location.href=location.pathname+'?u='+Date.now();}},
+// Reload with a cache-busting query so the browser re-fetches index.html AND (via the loader in index.html) game.js/css — a plain reload just re-serves the cached old build, which is why the button used to loop on the same version.
+_applyUpdate(){const u=location.pathname+'?u='+Date.now();try{location.replace(u);}catch(e){location.href=u;}},
 _ngpFmt(id,val){val=+val;if(id==='ngp-score'||id==='ngp-energy'||id==='ngp-neg')return Math.round(val);return this.fmtMoney(Math.round(val));},
 _ngPlusCardHtml(){if(!this.isNgPlusUnlocked())return '';return '<div style="max-width:420px;margin:0 auto 14px;text-align:left;"><div onclick="Game.showNewGamePlus()" style="cursor:pointer;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(59,130,246,0.1));border:1px solid var(--gold);border-radius:var(--radius-sm);padding:12px 14px;"><div style="font-size:0.86rem;font-weight:700;color:var(--gold);">🔁 New Game+ <span style="font-size:0.58rem;background:var(--gold);color:#1a1205;border-radius:999px;padding:1px 7px;vertical-align:middle;">UNLOCKED</span></div><div style="font-size:0.72rem;color:var(--text2);margin-top:3px;line-height:1.45;">Customize your starting position — cash, credit, business, even a head start with Epic Life. Sandbox mode (unranked), no tutorial.</div><div style="margin-top:8px;text-align:right;font-size:0.74rem;color:var(--gold);font-weight:700;">Customize &amp; Start →</div></div></div>';},
 showNewGamePlus(){
