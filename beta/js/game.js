@@ -49,6 +49,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.53.1',d:'2026-07-01 21:00',n:[
+'🧪 New Game → “Beta Test” profile: a sandbox god-mode start (Epic Life on, all stages maxed, fat cash & credit, a cash-value policy seeded) for jumping straight into any menu to test. Unranked.',
+]},
 {v:'0.53.0',d:'2026-07-01 18:00',n:[
 '⭐ Epic Life hub redesign: one consolidated roadmap bar at the top (Funding Ready is now a checkpoint on the single bar → ⭐ Epic Life System), a clean services menu, and Enroll moved behind its own button so the pitch no longer clutters the hub.',
 'Cash Services reworked: pick an amount and see the full before → after projection (cash, debt, credit) + the 6% fee, and nothing happens until you hit ✓ Confirm. Every sub-panel now has one clean “← Epic Life” button (top-left) and returns you to the hub after you confirm.',
@@ -533,6 +536,8 @@ established:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true">
 stuck:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="rgba(239,68,68,0.13)" stroke="var(--red)" stroke-width="2"/><path d="M40 17l4 6 4-3 5 9" stroke="var(--red)" stroke-width="2" fill="none" opacity="0.55" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 58c0-9 7-14 16-14s16 5 16 14z" fill="#7a3b3b"/><path d="M27 42h10v6H27z" fill="#eab98f"/><circle cx="32" cy="34" r="9" fill="#f2c8a0"/><path d="M22.5 33c0-6 5-10 9.5-10s9.5 4 9.5 10c-2-3-4.2-4-6.2-3-1-2-3.2-2-4.4 0-2.2-1-5.4 0-8.4 3z" fill="#3b2f2a"/><path d="M26.5 31.5l3.2 1.2M37.5 31.5l-3.2 1.2" stroke="#3b2f2a" stroke-width="1.3" stroke-linecap="round"/><circle cx="29" cy="34.5" r="1.2" fill="#2a2018"/><circle cx="35" cy="34.5" r="1.2" fill="#2a2018"/><path d="M29 39.5c1.6-1.6 4.4-1.6 6 0" stroke="#a14b4b" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M40.5 31c0 1.6-1 2.6-2 2.6s-2-1-2-2.6 2-3.6 2-3.6 2 2 2 3.6z" fill="#3b82f6"/></svg>'
 };return A[id]||'';},
 renderArchetypes(){const l=document.getElementById('archetype-list');l.innerHTML='';
+// 🧪 Beta test profile — sandbox god-mode with every menu unlocked (Epic Life on, all stages maxed, fat cash & credit, policy seeded). Unranked; for testing only.
+{const bc=document.createElement('div');bc.className='archetype-card fade-in';bc.style.cssText='border-color:var(--gold);background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));';bc.innerHTML='<div class="arch-top"><div class="arch-av">🧪</div><div class="arch-head"><div class="arch-title-row"><h3>Beta Test</h3><span class="arch-diff" style="color:var(--gold);border-color:var(--gold);">DEV</span></div><div class="tagline">Everything unlocked</div></div></div><p class="arch-desc">Sandbox god-mode for testing: Epic Life on, all stages maxed, fat cash &amp; credit, a cash-value policy seeded. Unranked — jump straight into any menu.</p>';bc.onclick=()=>this.startBetaProfile();l.appendChild(bc);}
 const DIFF={Easy:{r:0,c:'var(--accent)'},Medium:{r:1,c:'var(--gold)'},Hard:{r:2,c:'var(--red)'}};
 // compact money for the at-a-glance stat row ($7k, $4.2k, $40k)
 const kfmt=v=>{v=+v||0;if(v>=1000){const n=v/1000;return '$'+(n>=10?Math.round(n):Math.round(n*10)/10)+'k';}return '$'+Math.round(v);};
@@ -641,6 +646,16 @@ const _neg=num('ngp-neg'),_hist=+v('ngp-history')||0.55,_inq=num('ngp-inq'),_lim
 is.credit_negatives=_neg;is._credit_history_base=_hist;is.credit_inquiries=_inq;is.personal_credit_score=this._estimateScore(_util,_neg,_hist,_inq);
 this.selectArchetype(p,true);const s=this.state;s._tutorial_seen=true;s._ngplus=true;
 if(chk('ngp-epic')){s._epic_life=true;s._epic_plan='monthly';s.operating_expenses=(s.operating_expenses||0)+300;}
+this.hidePopup();this.showScreen('game-screen');this.startGame();},
+// 🧪 Beta test profile — instant sandbox with everything unlocked so the owner can jump straight into any menu. Unranked (_ngplus), no tutorial.
+startBetaProfile(){const base=CONFIG.starting_positions.positions.find(x=>x.id==='new');const p=JSON.parse(JSON.stringify(base));p.id='beta';p.label='Beta Test';p.difficulty=null;
+this.selectArchetype(p,true);const s=this.state;s._tutorial_seen=true;s._ngplus=true;s._beta_test=true;
+// Fat resources so every funded action is affordable
+s.cash=250000;s.available_credit=100000;s.total_debt=0;s.debt_breakdown={};s.personal_guarantee_exposure=0;s.business_credit_limit=100000;s.business_credit_used=0;s.personal_credit_score=800;s.business_credit_profile='established';s.monthly_revenue=40000;s.customer_base=400;s.brand_equity=60;s.entity_structure='llc';
+// Epic Life on + every category at the top stage → all menus & actions available
+s._epic_life=true;s._epic_plan='monthly';s.operating_expenses=(s.operating_expenses||0)+300;for(const c of CATS)s._stages[c]='wealth';
+// Seed a cash-value policy so the 🛡️ panel opens with live controls (borrowable ≈ $35k, passive income unlocked)
+s.insurance_cash_value=50000;s._policy_open_month=1;if(!s._completed_actions.includes('fund_accumulation_policy'))s._completed_actions.push('fund_accumulation_policy');
 this.hidePopup();this.showScreen('game-screen');this.startGame();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='';document.getElementById('popup-container').style.display='block';this._lockScroll();},
