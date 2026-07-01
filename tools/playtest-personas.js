@@ -31,7 +31,7 @@
   }
   const bestId=cat=>{const b=Game.bestAction(cat);return b?b.id:null;};
   const personas={
-    operator:{desc:'Skilled — intended path (finance ladder, runway discipline, no traps)',
+    operator:{desc:'Skilled — intended path (finance ladder, runway discipline, no traps; enrolls Epic to unlock the now-members-only wealth engine)', epic:true,
       pick:bestId, ev:'prudent', tax(){return 0;}},
     hustler:{desc:'Revenue grinder — maxes marketing/ops, neglects finance/leverage',
       pick(cat){if(cat==='finance'){const b=Game.bestAction('finance');if(b&&(b.id==='establish_business'||(Game.actionCashCost(b)||0)===0))return b.id;return null;}return bestId(cat);}, ev:'prudent', tax(){return 0;}},
@@ -50,6 +50,8 @@
     const scrId=()=>{const e=document.querySelector('.screen.active');return e?e.id:null;};
     while(g++<4000){const sc=scrId(); if(sc==='end-screen')break;
       if(sc==='game-screen'){const s=Game.state; if(Game.month>=18){sumR+=s.monthly_revenue||0;nR++;} maxTeam=Math.max(maxTeam,s.team_size||0);peakRev=Math.max(peakRev,s.monthly_revenue||0);peakCust=Math.max(peakCust,s.customer_base||0);
+        // Epic-path personas enroll once they're an LLC with a little cushion — the wealth engine (policy/velocity) is now members-only.
+        if(P.epic&&!Game.state._epic_life&&!Game.state._epic_enroll_pending&&Game.isSeparated()&&(Game.state.cash||0)>4000)Game.enrollEpicLife('monthly');
         const cats=Game._activeCats||['marketing','operations','finance'];
         for(const c of cats){if(Game.selectedActions[c])continue;const id=P.pick(c);if(id){const a=Game.getAvailableActions(c).find(x=>x.id===id);if(a&&!Game.isActionLocked(a)){
           // Panel-routed finance actions (policy loan/passive, velocity banking) open a control panel for a human; a bot completes them by queuing the action directly.
