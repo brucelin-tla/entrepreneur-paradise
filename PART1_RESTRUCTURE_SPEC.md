@@ -1,6 +1,6 @@
 # Part 1 Restructure Spec — Entrepreneur Paradise (episodic, 18-month Part 1)
 
-**Date:** 2026-07-01 · **Status:** PROPOSAL — nothing implemented. Owner approval required before code.
+**Date:** 2026-07-01 · **Status:** BUILT & VERIFIED on beta (unpushed as of this note) — §2 spine (m12 screen removed → tax/save/continue; m18 finale + carry-state), §3 early passive drip (+$340/mo at policy open), §4 mid-game milestones, §5 Q4 dip → guaranteed decision event, §6 Part-1 composite (build pillars, no lifestyle gate) + rank tier, plus full congruence pass (leaderboard 18 & 36 only, m24 re-hook, reframed beats/tutorial/subtitle, NG+ moved to finale). All verified in the harness, no console errors.
 **Decisions locked by owner:** (1) Episodic, **carry-state** handoff. (2) Spec Part 1 first, ship it as the first deliverable.
 
 Built on `RETENTION_AND_DIFFICULTY_FINDINGS.md` (v0.50.0 research). Respects `DESIGN.md`
