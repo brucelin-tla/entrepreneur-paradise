@@ -44,6 +44,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.51.0',d:'2026-07-01 14:00',n:[
+'The ⭐ Epic Life icon is now a concierge hub — tap it for a menu of services: 📊 Financial Health, 🛡️ Cash-Value Policy, ⚡ Velocity Banking, 💵 Cash Services, and 🎛️ Concierge settings.',
+'New 📊 Financial Health snapshot: your concierge’s read on your whole picture — net worth, accessible capital, passive income, burn, cash flow, runway, utilization, lifestyle cost, and how much of your life your passive income covers — with a verdict (Fragile → Stabilizing → Healthy → Financially Free) and one piece of tailored advice.',
+'New 🎛️ Concierge settings: steer the monthly auto-move — set its focus (Balanced / Pay down debt / Build passive income / Protection first) or pause it to take the wheel yourself.',
+'Members save 20% on lifestyle upgrades (upfront and monthly) — the concierge’s buying power makes the good life a little cheaper to maintain.',
+]},
 {v:'0.50.0',d:'2026-07-01 12:00',n:[
 'New lifestyle “standard of living” actions: hire a house cleaner, personal assistant, private chef, or full household staff; join a country club; put the kids in private school; own a yacht — each a real recurring monthly cost, so your lifestyle expenses climb as you upgrade. Free habits (meditation, hikes, morning routine) stay free.',
 'Lifestyle creep is real now: big one-time splurges (luxury vacations, superyacht weeks, world sabbaticals) quietly raise your baseline monthly lifestyle expense a little — the good life gets more expensive to maintain. Your passive income has to outrun it.',
@@ -949,6 +955,48 @@ openCreditLiquidity(done){const s=this.state,fm=v=>this.fmtMoney(v);
  if((s._credit_liquidated_total||0)>0)h+='<div style="margin-top:10px;font-size:0.66rem;color:var(--text2);">Lifetime liquidated '+fm(s._credit_liquidated_total)+' · fees paid '+fm(s._credit_liquidate_fees||0)+'.</div>';
  h+='<div style="margin-top:10px;padding:8px 11px;background:rgba(245,200,66,0.08);border-radius:8px;font-size:0.68rem;color:var(--text2);line-height:1.5;">⚠️ This is a cash advance — it raises your debt and utilization (business credit drawn first to protect your personal score). Great for liquidity to seize an opportunity; not free money.</div>';
  this.showPopup('💵 Credit → Cash',h);},
+// ===== Concierge service — 📊 Financial Health: a plain-English snapshot + verdict on the member's whole financial picture =====
+openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSeparated();
+ const cash=(s.cash||0)+(s.personal_cash||0),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),accessible=cash+(s.available_credit||0)+bizAvail;
+ const nw=this.calcNetWorth();
+ const policyPassive=s._passive_income_active?Math.round((s.insurance_cash_value||0)*0.06/12):0,passive=(s.other_monthly_revenue||0)+policyPassive+Math.round((s.private_bank_balance||0)*0.004);
+ const dsvc=this.calcDebtInterest()+this.calcDebtPrincipal(),persExp=(s.living_expenses||0)+(s.lifestyle_expenses||0)+(sep?0:dsvc),cover=persExp>0?Math.round(passive/persExp*100):(passive>0?100:0);
+ const burn=this.calcMonthlyBurn(),netFlow=(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-dsvc-(s.living_expenses||0)-(s.lifestyle_expenses||0)+passive;
+ const pu=this.calcPersUtil(),bu=this.calcBizUtil(),runway=netFlow>=0?-1:accessible/Math.max(1,-netFlow);
+ let sc=0;sc+=cover>=100?40:Math.round(cover*0.4);sc+=pu<=30?25:(pu<=50?15:(pu<=80?6:0));sc+=netFlow>=0?20:(runway>=6?12:(runway>=3?6:0));sc+=nw>0?15:0;
+ let label,color;if(cover>=100){label='🏝️ Financially Free';color='var(--accent)';}else if(sc>=70){label='🟢 Healthy';color='var(--accent)';}else if(sc>=45){label='🟡 Stabilizing';color='var(--gold)';}else{label='🔴 Fragile';color='var(--red)';}
+ let advice;if(pu>80)advice='Your personal utilization is very high ('+pu+'%) and crushing your score — restructure or pay it down first.';else if(netFlow<0&&runway<3)advice='Short runway (~'+Math.round(runway)+' mo) while burning cash — cut burn or lift revenue before it bites.';else if(passive<=0)advice='No passive income yet. Fund your cash-value policy and switch it on — that\'s the engine that buys your freedom.';else if(cover<100)advice='Passive income covers '+cover+'% of your personal expenses. Keep building it (and watch lifestyle creep) until it hits 100% — that\'s Paradise.';else advice='Your passive income covers your life. Protect it, keep utilization low, and enjoy the paradise you built.';
+ let h='<div style="text-align:center;margin-bottom:10px;"><div style="font-size:1.25rem;font-weight:800;color:'+color+';">'+label+'</div><div style="font-size:0.66rem;color:var(--text2);">your concierge\'s read on your finances</div></div>';
+ const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span style="color:'+(c||'var(--text)')+';font-weight:700;">'+v+'</span></div>';
+ h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
+ h+=row('Net worth',fm(nw),nw>=0?'var(--accent)':'var(--red)');
+ h+=row('Accessible capital',fm(accessible));
+ h+=row('Passive income',fm(passive)+'/mo',passive>0?'var(--accent)':'var(--text2)');
+ h+=row('Monthly burn',fm(burn)+'/mo');
+ h+=row('Cash flow',(netFlow>=0?'+':'')+fm(netFlow)+'/mo',netFlow>=0?'var(--accent)':'var(--red)');
+ h+=row('Runway',netFlow>=0?'∞ · cash-flow positive':(Math.round(runway)+' mo'),netFlow>=0?'var(--accent)':(runway<3?'var(--red)':'var(--gold)'));
+ h+=row('Personal utilization',pu+'%',pu<=30?'var(--accent)':(pu<=50?'var(--gold)':'var(--red)'));
+ h+=row('Business utilization',bu+'%',bu<=50?'var(--accent)':'var(--red)');
+ h+=row('Lifestyle cost',fm(s.lifestyle_expenses||0)+'/mo');
+ h+=row('Passive covers your life',cover+'%',cover>=100?'var(--accent)':(cover>=50?'var(--gold)':'var(--red)'));
+ h+='</div>';
+ h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(245,200,66,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">💡 '+advice+'</div>';
+ this.showPopup('📊 Financial Health',h);},
+// ===== Concierge service — 🎛️ Settings: steer the monthly auto-move (focus) or pause it to take the wheel =====
+openConciergeSettings(){const s=this.state;
+ if(!s._epic_life){this.showPopup('🎛️ Concierge Settings','<div style="font-size:0.85rem;line-height:1.6;">👑 Members-only. Steer your concierge — set what it prioritizes each month, or pause it to take the wheel yourself.</div>');return;}
+ const focus=s._concierge_focus||'balanced',paused=!!s._concierge_paused;
+ const FOCI=[['balanced','⚖️ Balanced','Follow the full playbook in order'],['debt','💳 Pay down debt','Attack utilization & debt first'],['passive','🌴 Build passive income','Fund the policy & switch on income'],['protection','🛡️ Protection first','Insurance, entity & banking early']];
+ let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Your concierge runs one high-priority money move each month. Steer what it reaches for — or pause it and take the wheel yourself.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Focus</div>';
+ FOCI.forEach(f=>{const on=focus===f[0]&&!paused;h+='<button onclick="Game.setConciergeFocus(\''+f[0]+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:9px 11px;cursor:pointer;"><span style="font-weight:700;font-size:0.8rem;">'+f[1]+(on?' ✓':'')+'</span><br><span style="font-size:0.66rem;color:var(--text2);">'+f[2]+'</span></button>';});
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">This month</div>';
+ h+='<button onclick="Game.toggleConciergePause()" style="width:100%;border:1px solid '+(paused?'var(--gold)':'var(--border)')+';background:'+(paused?'rgba(245,200,66,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;">'+(paused?'▶ Resume concierge (currently PAUSED)':'⏸ Pause concierge for now')+'</button>';
+ const pk=paused?null:this._epicLifePick();
+ h+='<div style="margin-top:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:0.76rem;line-height:1.5;">'+(paused?'⏸ <strong>Paused</strong> — your concierge sits out this month; you make the moves.':('▶ Next move: <strong style="color:var(--accent);">'+(pk?pk.label:'nothing pressing — it\'ll hold and let your money compound')+'</strong>'))+'</div>';
+ this.showPopup('🎛️ Concierge Settings',h);},
+setConciergeFocus(f){this.state._concierge_focus=f;this.state._concierge_paused=false;this.openConciergeSettings();},
+toggleConciergePause(){this.state._concierge_paused=!this.state._concierge_paused;this.openConciergeSettings();},
 // Progressive disclosure: hide advanced UI until it's relevant, so the early game isn't overwhelming. Reveals are STICKY (once shown, stay shown) and adapt to archetype (relevant state reveals early).
 _reveal(f){const s=this.state;if(!s._revealed)s._revealed={};if(s._revealed[f])return true;const m=this.month,sep=this.isSeparated();let on=false;
 switch(f){
@@ -1024,7 +1072,7 @@ return out;},
 // Late-game cost scaling: repeatable marketing/ops actions cost more as the company grows, so they stay a real decision instead of pocket change (effects scale too, via scaleActionEffects).
 // A second attempt after a partial costs half — you've already done most of the legwork, just need to finish the job.
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
-actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
+actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */if(a.category==='lifestyle'&&this.state._epic_life){const _lb=a.cash_cost||0;return _lb?Math.round(_lb*0.8):0;}/* Epic members: 20% off lifestyle upgrade upfront cost */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
 actionEnergyCost(a){let e=a.energy_cost||0;if(e<=0)return e;if(this.isRetry(a))e*=0.5;
 // Operational systems pay an energy DIVIDEND: documented SOPs, project management and automation mean your hands-on moves drain less energy as systems_maturity rises (up to ~40% off at full maturity). You spend energy building systems now to spend less on everything later.
 const disc=Math.min(0.4,(this.state.systems_maturity||0)/250);e*=(1-disc);
@@ -1472,10 +1520,14 @@ h+='<div style="font-size:0.75rem;line-height:1.5;color:var(--gold);margin-top:8
 h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:var(--radius-sm);font-size:0.78rem;line-height:1.5;"><strong>⚠️ Very powerful.</strong> If this is your first game, try a full run without it so you learn how the money moves yourself first.</div>';
 // Wealth-tools hub: the two advanced money controls live here. Policy is open to everyone; velocity is a members-only perk (shows the upsell in its own panel).
 {const _hasPol=(s.insurance_cash_value||0)>0||(s._completed_actions||[]).includes('fund_accumulation_policy');
- h+='<div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 5px;">Your wealth tools</div><div style="display:flex;gap:8px;">';
- h+='<div onclick="Game.openPolicyControl()" style="cursor:pointer;flex:1;border:1px solid '+(member?'var(--gold)':'var(--border)')+';background:'+(member?'rgba(245,200,66,0.1)':'var(--surface)')+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">🛡️</div><div style="font-size:0.72rem;font-weight:700;color:'+(member?'var(--gold)':'var(--text2)')+';">Cash-Value Policy</div><div style="font-size:0.56rem;color:var(--text2);">'+(member?(_hasPol?'Fund · loan · passive':'Open one to start'):'👑 Members only')+'</div></div>';
- h+='<div onclick="Game.openVelocityControl()" style="cursor:pointer;flex:1;border:1px solid '+(member?'var(--accent)':'var(--border)')+';background:'+(member?'rgba(16,185,129,0.1)':'var(--surface)')+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">⚡</div><div style="font-size:0.72rem;font-weight:700;color:'+(member?'var(--accent)':'var(--text2)')+';">Velocity Banking</div><div style="font-size:0.56rem;color:var(--text2);">'+(member?(s._velocity_active?'Active · tune':'Sweep debt faster'):'👑 Members only')+'</div></div>';
- h+='<div onclick="Game.openCreditLiquidity()" style="cursor:pointer;flex:1;border:1px solid '+(member?'var(--gold)':'var(--border)')+';background:'+(member?'rgba(245,200,66,0.1)':'var(--surface)')+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">💵</div><div style="font-size:0.72rem;font-weight:700;color:'+(member?'var(--gold)':'var(--text2)')+';">Credit → Cash</div><div style="font-size:0.56rem;color:var(--text2);">'+(member?'Liquidate at 6%':'👑 Members only')+'</div></div>';
+ // Concierge services — the ⭐ hub opens a MENU of category panels (financial health, policy, velocity, cash services, concierge settings).
+ const tile=(fn,icon,label,sub,accent)=>{const on=member,col=on?(accent||'var(--gold)'):'var(--text2)',bd=on?(accent||'var(--gold)'):'var(--border)',bg=on?('rgba('+(accent==='var(--accent)'?'16,185,129':'245,200,66')+',0.1)'):'var(--surface)';return '<div onclick="Game.'+fn+'" style="cursor:pointer;flex:1 1 30%;min-width:96px;border:1px solid '+bd+';background:'+bg+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">'+icon+'</div><div style="font-size:0.72rem;font-weight:700;color:'+col+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);">'+(on?sub:'👑 Members only')+'</div></div>';};
+ h+='<div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 5px;">Concierge services</div><div style="display:flex;flex-wrap:wrap;gap:8px;">';
+ h+=tile('openFinancialHealth()','📊','Financial Health','Your snapshot','var(--accent)');
+ h+=tile('openPolicyControl()','🛡️','Cash-Value Policy',(_hasPol?'Fund · loan · passive':'Open one to start'),'var(--gold)');
+ h+=tile('openVelocityControl()','⚡','Velocity Banking',(s._velocity_active?'Active · tune':'Sweep debt faster'),'var(--accent)');
+ h+=tile('openCreditLiquidity()','💵','Cash Services','Credit → cash · 6%','var(--gold)');
+ h+=tile('openConciergeSettings()','🎛️','Concierge',((s._concierge_paused)?'Paused':'Focus · pause'),'var(--accent)');
  h+='</div>';}
 if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
 else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action or any energy — your team handles it).</div>';
@@ -1754,9 +1806,14 @@ const specs=[
  {id:'fund_accumulation_policy',need:()=>profit()>3000},
  {id:'activate_passive_income',need:()=>(s.insurance_cash_value||0)>5000&&!s._passive_income_active},
 ];
+// Concierge Settings (members steer the auto-move): paused → the concierge sits out; a focus bubbles that category's moves to the top (still gated by need/prereqs, so it never forces an unavailable one). Credit repair always stays first.
+if(s._concierge_paused)return null;
+const FOCUS={debt:['debt_restructure','pay_down_debt'],passive:['fund_accumulation_policy','activate_passive_income'],protection:['combined_insurance','wyoming_holding_llc','banking_relationship']};
+const _pf=FOCUS[s._concierge_focus];
+const ordered=_pf?specs.map((sp,i)=>[sp,i]).sort((a,b)=>{const ka=a[0].id==='build_personal_credit'?-1:(_pf.indexOf(a[0].id)<0?99+a[1]:_pf.indexOf(a[0].id)),kb=b[0].id==='build_personal_credit'?-1:(_pf.indexOf(b[0].id)<0?99+b[1]:_pf.indexOf(b[0].id));return ka-kb;}).map(x=>x[0]):specs;
 // Cash-reserve guardrail: Epic spends only from CASH (never credit) and never below ~1 month of core expenses — so it can't drain you or quietly add debt.
 const reserve=Math.round((s.operating_expenses||0)+(s.cogs||0)+(s.living_expenses||0)+(s.lifestyle_expenses||0));
-for(const spec of specs){const a=fin(spec.id);if(!a)continue;
+for(const spec of ordered){const a=fin(spec.id);if(!a)continue;
  if((a.one_time||spec.once)&&(s._completed_actions||[]).includes(a.id))continue;
  if(!this.meetsReq(a.prerequisites||{}))continue;
  if(!spec.need())continue;
@@ -2120,7 +2177,7 @@ if(action.id==='combined_insurance'&&success){const annRev=(this.state.monthly_r
 // Key-Man Leverage: cover the operators running your income properties up to the current portfolio size; the monthly premium scales with how many you cover (managed as a recurring cost, reconciled by delta so re-taking just tops it up).
 if(action.id==='key_man_policy'&&success){const s=this.state;s._keyman_active=true;s._keyman_units=s._asset_units||0;this._keymanReconcile();const targetPrem=s._keyman_premium||0;s._dyn_narrative='Loan-protection policies are in force on the operators running your income properties — <strong>'+(s._keyman_units||0)+' operator'+((s._keyman_units===1)?'':'s')+' covered</strong>, ~'+this.fmtMoney(targetPrem)+'/mo in premiums. Coverage tracks your portfolio — buy another property and its operator is covered too. If one is lost, the policy retires that property\'s specific mortgage so the leverage can\'t bury you. A backstop, not a windfall.';}
 // Lifestyle action handling
-if(cat==='lifestyle'){if(action.recurring_cost&&!this.state._active_lifestyle_costs[action.id]){this.state._active_lifestyle_costs[action.id]=action.recurring_cost;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+action.recurring_cost;}
+if(cat==='lifestyle'){const _rc=Math.round((action.recurring_cost||0)*(this.state._epic_life?0.8:1));/* Epic members get 20% off the recurring cost of lifestyle upgrades — a concierge perk */if(_rc&&!this.state._active_lifestyle_costs[action.id]){this.state._active_lifestyle_costs[action.id]=_rc;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+_rc;}
 // Hedonic adaptation: a one-time peak experience quietly raises your baseline standard of living — a small PERMANENT bump to monthly lifestyle expense (once per experience, never stacks on repeats). Life gets better; the nut gets bigger.
 else if(action.lifestyle_creep&&!this.state._active_lifestyle_costs[action.id]){this.state._active_lifestyle_costs[action.id]=action.lifestyle_creep;this.state.lifestyle_expenses=(this.state.lifestyle_expenses||0)+action.lifestyle_creep;}
 const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_revenue:500},narrative:"Your mentee referred a client to you."},volunteer_time:{delay:2,effects:{brand_equity:8,leads:3},narrative:"Someone from the volunteer site reached out — they need what you offer."},faith_community:{delay:4,effects:{leads:4,brand_equity:3,lifestyle_relationships:5},narrative:"A fellow member mentioned your business to their network."},family_trip:{delay:1,effects:{energy:10,lifestyle_relationships:5},narrative:"You came back recharged. The clarity is showing up in your work."},therapy_coaching:{delay:2,effects:{energy:8,lifestyle_health:3},narrative:"The patterns your therapist helped you see — you're catching them now."},learn_new_skill:{delay:3,effects:{brand_equity:5,leads:3},narrative:"The class led to an unexpected client connection."},charity_donation:{delay:2,effects:{brand_equity:8},narrative:"The charity featured your business in their donor spotlight."}};
@@ -2857,7 +2914,7 @@ _curVersion(){return (PATCH_NOTES[0]||{}).v||'';},
 _verLt(a,b){if(!a)return true;/* no recorded version = pre-versioning save = older */const pa=String(a).split('.').map(Number),pb=String(b).split('.').map(Number);for(let i=0;i<3;i++){const x=pa[i]||0,y=pb[i]||0;if(x!==y)return x<y;}return false;},
 _saveVerNote(gv){const cur=this._curVersion();if(!cur||!this._verLt(gv,cur))return '';return '<div style="font-size:0.68rem;color:var(--gold);background:rgba(212,175,55,0.1);border:1px solid var(--gold);border-radius:var(--radius-sm);padding:6px 9px;margin-bottom:9px;line-height:1.45;">⚠ This save is from an <strong>older version</strong>'+(gv?' (v'+gv+')':'')+'. Update it to <strong>v'+cur+'</strong> to apply the latest mechanics and balance — your progress is kept.</div>';},
 // Migrate a save snapshot to the current build: fill in fields newer mechanics expect (only when missing — never overwrite progress) and stamp the version. Most patches "retro-activate" on their own because the engine computes from state each tick; this makes the state shape current and clears the older-version flag.
-_saveDefaults(){return {_asset_units:0,_asset_income:0,_keyman_active:false,_keyman_units:0,_keyman_premium:0,_keyman_claims_total:0,_credit_liquidated_total:0,_credit_liquidate_fees:0,_holding_company:false,_naics_ok:false,_rehire:{},_epic_savings_total:0,company_culture:45,credit_inquiries:0};},
+_saveDefaults(){return {_asset_units:0,_asset_income:0,_keyman_active:false,_keyman_units:0,_keyman_premium:0,_keyman_claims_total:0,_credit_liquidated_total:0,_credit_liquidate_fees:0,_concierge_focus:'balanced',_concierge_paused:false,_holding_company:false,_naics_ok:false,_rehire:{},_epic_savings_total:0,company_culture:45,credit_inquiries:0};},
 // Key-Man Leverage — keep the recurring premium in lockstep with how many operators are covered ($180/operator/mo), reconciled by delta so it never double-charges.
 _keymanReconcile(){const s=this.state;const tp=Math.round((s._keyman_units||0)*180),cur=s._keyman_premium||0;if(tp!==cur){s.operating_expenses=Math.max(0,(s.operating_expenses||0)+(tp-cur));s._keyman_premium=tp;if(!s._active_recurring_costs)s._active_recurring_costs={};s._active_recurring_costs['key_man_policy']=tp;}},
 _migrateSave(snap){if(!snap)return snap;if(snap.state){const d=this._saveDefaults();for(const k in d){if(snap.state[k]===undefined)snap.state[k]=d[k];}}snap.gv=this._curVersion();return snap;},
