@@ -51,7 +51,11 @@
     while(g++<4000){const sc=scrId(); if(sc==='end-screen')break;
       if(sc==='game-screen'){const s=Game.state; if(Game.month>=18){sumR+=s.monthly_revenue||0;nR++;} maxTeam=Math.max(maxTeam,s.team_size||0);peakRev=Math.max(peakRev,s.monthly_revenue||0);peakCust=Math.max(peakCust,s.customer_base||0);
         const cats=Game._activeCats||['marketing','operations','finance'];
-        for(const c of cats){if(Game.selectedActions[c])continue;const id=P.pick(c);if(id){const a=Game.getAvailableActions(c).find(x=>x.id===id);if(a&&!Game.isActionLocked(a))Game.selectActionPayment(c,id);}}
+        for(const c of cats){if(Game.selectedActions[c])continue;const id=P.pick(c);if(id){const a=Game.getAvailableActions(c).find(x=>x.id===id);if(a&&!Game.isActionLocked(a)){
+          // Panel-routed finance actions (policy loan/passive, velocity banking) open a control panel for a human; a bot completes them by queuing the action directly.
+          if(c==='finance'&&(id==='policy_loan'||id==='activate_passive_income'||id==='velocity_banking'))Game.selectAction(c,id);
+          else Game.selectActionPayment(c,id);
+        }}}
         Game.resolveMonth();
         const s2=Game.state; for(const k of ['cash','monthly_revenue','customer_base','total_debt']){const v=s2[k];if(v!==undefined&&(typeof v!=='number'||isNaN(v)||!isFinite(v)))bugs.push('NaN '+k+' '+key+'/'+archId+'@m'+Game.month);}
       } else if(sc==='event-screen'){if(Game.currentEvent){const ch=Game.currentEvent.choices||[1];let i=evChoice(Game.currentEvent,P.ev);Game.resolveEvent(Math.max(0,Math.min(i,ch.length-1)));}else{const cards=document.querySelectorAll('#event-choices .choice-card');if(cards.length){let i=P.tax(cards.length);cards[Math.max(0,Math.min(i,cards.length-1))].click();}else Game.nextMonth();}}
