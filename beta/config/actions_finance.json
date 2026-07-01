@@ -264,7 +264,7 @@
       "cash_cost": 10000,
       "energy_cost": 4,
       "one_time": true,
-      "prerequisites": { "cash_gte": 50000 },
+      "prerequisites": { "cash_gte": 20000 },
       "effects": { "insurance_cash_value": 9800 },
       "success_rate": 0.95,
       "failure_effects": {},
@@ -337,7 +337,7 @@
     {
       "id": "velocity_banking",
       "category": "finance",
-      "stage": "leverage",
+      "stage": "foundation",
       "label": "Velocity Banking 👑",
       "description": "Epic Life perk. Run your household through a line of credit and sweep every surplus dollar at your debt — paying down a mortgage or revolving balance years faster. You set the aggressiveness; chunk extra anytime from the ⚡ panel, no turn needed.",
       "lesson": "The real engine here is your SURPLUS cash flow, not the line itself — velocity banking just forces every spare dollar at principal, so an amortizing debt pays down years faster and equity builds quicker. With no surplus it does nothing, and a higher-rate line can cost more than it saves. You could lump-sum that surplus straight at the loan and get the same result; the line mainly adds discipline (and risk if you lean on it). Powerful while cash-flow positive; it bites if you go negative or the line gets frozen in a downturn.",
