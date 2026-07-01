@@ -238,6 +238,23 @@
       "narrative_failure": ""
     },
     {
+      "id": "hire_your_kids",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Put Your Kids on Payroll",
+      "description": "Pay your children a reasonable wage for real work in the business. The wages are fully deductible to you, and because they fall under each child's standard deduction the kids owe about $0 — so you shift income out of your high bracket at almost no tax cost. The savings stay in the family.",
+      "lesson": "Paying your kids a REASONABLE wage for REAL, documented work shifts income from your high tax bracket to their ~0% bracket: under the standard deduction (~$14k) a child owes little or no federal income tax, while your business deducts every dollar of the wage. The earned income also lets them fund a Roth IRA decades early. The rules are strict — the work must be legitimate, age-appropriate, paid at a fair market rate, and documented — but done right it's one of the cleanest small-business tax moves there is.",
+      "cash_cost": 0,
+      "energy_cost": 3,
+      "one_time": true,
+      "prerequisites": { "needs": ["establish_business"], "monthly_revenue_gte": 8000 },
+      "effects": {},
+      "success_rate": 1,
+      "failure_effects": {},
+      "narrative_success": "Your kids are on the books doing real work — filing, packing orders, running the socials — at a fair wage. The business deducts every dollar, they owe next to nothing on it, and the tax you used to pay on that income now stays in the family.",
+      "narrative_failure": ""
+    },
+    {
       "id": "fund_accumulation_policy",
       "category": "finance",
       "stage": "foundation",
