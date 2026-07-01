@@ -1111,6 +1111,8 @@ STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'busines
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
+// Player-set policy funding rate (10–25% of revenue/mo) — driven by the slider on the Policy info screen. Higher = faster cash value (clears the surrender charge sooner) but less cash in pocket.
+setPolicyFundRate(v){const pct=Math.max(10,Math.min(25,Math.round(+v||15)));this.state._policy_fund_rate=pct/100;if(this.autoSave)this.autoSave();this._refreshDashboards();},
 _statsUnviewed(){const vs=this.state._statsViewed||{};return Object.keys(this.STAT_INFO).filter(k=>!vs[k]).length;},
 markAllStatsViewed(){if(!this.state._statsViewed)this.state._statsViewed={};Object.keys(this.STAT_INFO).forEach(k=>this.state._statsViewed[k]=true);this._refreshDashboards();this.hidePopup();},
 _scopeChip(scope){return scope?('<div><span class="scope-chip '+scope+'">'+(scope==='business'?'Business':'Personal')+'</span></div>'):'';},
@@ -1131,6 +1133,12 @@ h+='<div class="breakdown-row"><span>'+this.term('Utilization')+'</span><span st
 if(pers&&icv>0){h+='<div style="font-weight:700;color:var(--gold);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:2px solid var(--gold);padding-bottom:3px;margin:14px 0 6px;">Policy</div>';
 h+='<div class="breakdown-row"><span>Cash Value</span><span>'+this.fmtMoney(icv)+'</span></div>';
 h+='<div class="breakdown-detail">Grows ~7%/yr, tax-free — compounds even while borrowed against.</div>';
+{const _fr=Math.round((s._policy_fund_rate||0.15)*100),_rev=Math.round(s.monthly_revenue||0);
+ h+='<div style="margin:8px 0 4px;padding:8px 10px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.3);border-radius:var(--radius-sm);">'
+ +'<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.72rem;font-weight:700;color:var(--gold);">Monthly funding</span><span id="pfr-val" style="font-size:0.72rem;font-weight:700;color:var(--gold);">'+_fr+'% · ≈ $'+Math.round(_rev*_fr/100).toLocaleString()+'/mo</span></div>'
+ +'<input type="range" min="10" max="25" step="1" value="'+_fr+'" style="width:100%;margin-top:6px;accent-color:var(--gold);" oninput="var e=document.getElementById(\'pfr-val\');if(e)e.textContent=this.value+\'% · ≈ $\'+Math.round('+_rev+'*this.value/100).toLocaleString()+\'/mo\'" onchange="Game.setPolicyFundRate(this.value)">'
+ +'<div style="display:flex;justify-content:space-between;font-size:0.58rem;color:var(--text2);margin-top:1px;"><span>10%</span><span>25%</span></div>'
+ +'<div style="font-size:0.62rem;color:var(--text2);margin-top:4px;line-height:1.35;">How aggressively you fund the policy each month, 10–25% of revenue. More builds cash value faster — clearing the surrender charge and opening your borrowing sooner — but leaves less cash in your pocket.</div></div>';}
 h+='<div class="breakdown-row"><span>Loan Available (90%)</span><span>'+this.fmtMoney(pla)+'</span></div>';
 if(ilb>0){h+='<div class="breakdown-row"><span>Loan Outstanding</span><span style="color:var(--gold)">'+this.fmtMoney(ilb)+'</span></div>';h+='<div class="breakdown-detail">Accrues ~5%/yr. The cumulative loan is netted from your death benefit when you die — never repaid from your pocket.</div>';}
 if(s._passive_income_active){const moP=Math.round(icv*0.06/12);h+='<div class="breakdown-row"><span>Monthly Passive Income</span><span style="color:var(--accent)">'+this.fmtMoney(moP)+'/mo</span></div>';h+='<div class="breakdown-row"><span>Cumulative Policy Loans</span><span style="color:var(--text2)">'+this.fmtMoney(s.insurance_passive_loan_total||0)+'</span></div>';h+='<div class="breakdown-detail" style="font-style:italic;">Tax-free income from insurer. Cash value grows ~7%/yr; the loan accrues ~5%/yr and is netted from the death benefit only.</div>';}
@@ -2111,7 +2119,7 @@ const interest=this.calcDebtInterest();const principal=this._amortizeMonth();s.c
 const _taxableInc=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)-(s.operating_expenses||0)-(s._re_depreciation||0));/* real-estate depreciation is a non-cash deduction that shelters taxable income */
 const monthlyReserve=(sep&&s._completed_actions.includes('monthly_tax_reserve'))?Math.round(_taxableInc*(s.tax_rate||0.25)):0;
 if(monthlyReserve)s.tax_reserve=(s.tax_reserve||0)+monthlyReserve;
-const insFunding=(s._completed_actions&&s._completed_actions.includes('fund_accumulation_policy')&&s._auto_fund_insurance)?Math.round(Math.min((s.monthly_revenue||0)*0.15,this.calcBusinessLevel()*5000)):0; // accumulation IUL funding (aggressive, scales with revenue) is a personal expense, covered by the owner draw
+const insFunding=(s._completed_actions&&s._completed_actions.includes('fund_accumulation_policy')&&s._auto_fund_insurance)?Math.round(Math.min((s.monthly_revenue||0)*(s._policy_fund_rate||0.15),this.calcBusinessLevel()*5000)):0; // accumulation IUL funding — the player sets the rate (10–25% of revenue) via the slider on the Policy info screen; personal expense covered by the owner draw
 const personalExp=(s.living_expenses||0)+(s.lifestyle_expenses||0)+monthlyReserve+(sep?insFunding:0);
 if(sep){const salary=Math.min(s.owner_pay||0,Math.max(0,s.cash));s.cash-=salary;s.personal_cash=(s.personal_cash||0)+salary; // salary (W-2) is personal income → personal cash
 s.personal_cash-=personalExp; // personal pays its own living/lifestyle (+ sets aside tax reserve if active)
