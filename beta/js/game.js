@@ -49,8 +49,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.53.2',d:'2026-07-01 21:20',n:[
-'🧪 New Game → “Beta Test” profile: a sandbox god-mode start (Epic Life on, all stages maxed, fat cash & credit, a cash-value policy seeded) for jumping straight into any menu to test. Unranked, and skips the tutorial + feature-unlock tips.',
+{v:'0.53.3',d:'2026-07-01 21:40',n:[
+'🧪 New Game → “Beta Test” profile: a sandbox god-mode start for jumping straight into any menu to test. Epic Life on, all stages maxed, fat cash & credit — plus the wealth engine pre-wired: a rental (equity + mortgage) and a business loan, Velocity Banking already ON (HELOC attacking the mortgage; switch to the line in-panel for the draw flow), and a cash-value policy with ~$35k borrowable and tax-free passive income switched on. Unranked; skips the tutorial + unlock tips.',
 ]},
 {v:'0.53.0',d:'2026-07-01 18:00',n:[
 '⭐ Epic Life hub redesign: one consolidated roadmap bar at the top (Funding Ready is now a checkpoint on the single bar → ⭐ Epic Life System), a clean services menu, and Enroll moved behind its own button so the pitch no longer clutters the hub.',
@@ -651,11 +651,17 @@ this.hidePopup();this.showScreen('game-screen');this.startGame();},
 startBetaProfile(){const base=CONFIG.starting_positions.positions.find(x=>x.id==='new');const p=JSON.parse(JSON.stringify(base));p.id='beta';p.label='Beta Test';p.difficulty=null;
 this.selectArchetype(p,true);const s=this.state;s._tutorial_seen=true;s._ngplus=true;s._beta_test=true;
 // Fat resources so every funded action is affordable
-s.cash=250000;s.available_credit=100000;s.total_debt=0;s.debt_breakdown={};s.personal_guarantee_exposure=0;s.business_credit_limit=100000;s.business_credit_used=0;s.personal_credit_score=800;s.business_credit_profile='established';s.monthly_revenue=40000;s.customer_base=400;s.brand_equity=60;s.entity_structure='llc';
+s.cash=250000;s.available_credit=100000;s.business_credit_limit=100000;s.business_credit_used=0;s.personal_credit_score=800;s.business_credit_profile='established';s.monthly_revenue=40000;s.customer_base=400;s.brand_equity=60;s.entity_structure='llc';
+// Real assets + real debt so the wealth engine has something to run on:
+//  • a rental (equity + mortgage) → HELOC velocity target + equity to build
+//  • a business term loan → credit-line velocity target + the "draw → attack a loan" flow
+s.real_estate_owned=1;s.real_estate_equity=150000;s.real_estate_debt=350000;s.business_installment_debt=40000;s.total_debt=390000;s.debt_breakdown={mortgage:350000,business_term:40000};s.personal_guarantee_exposure=40000;
 // Epic Life on + every category at the top stage → all menus & actions available
 s._epic_life=true;s._epic_plan='monthly';s.operating_expenses=(s.operating_expenses||0)+300;for(const c of CATS)s._stages[c]='wealth';
-// Seed a cash-value policy so the 🛡️ panel opens with live controls (borrowable ≈ $35k, passive income unlocked)
-s.insurance_cash_value=50000;s._policy_open_month=1;if(!s._completed_actions.includes('fund_accumulation_policy'))s._completed_actions.push('fund_accumulation_policy');
+// 🛡️ Cash-value policy — funded & running: borrowable ≈ $35k, and tax-free passive income already switched on
+s.insurance_cash_value=50000;s._policy_open_month=1;s._policy_fund_rate=0.15;s._iul_loan_type='wash';s._passive_income_active=true;if(!s._completed_actions.includes('fund_accumulation_policy'))s._completed_actions.push('fund_accumulation_policy');
+// ⚡ Velocity banking — already ON: HELOC vehicle attacking the mortgage on the Balanced sweep (switch to the credit line in-panel to test the draw flow)
+this._ensureLoans();s._velocity_active=true;s._velocity_vehicle='heloc';s._velocity_mode='balanced';
 this.hidePopup();this.showScreen('game-screen');this.startGame();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='';document.getElementById('popup-container').style.display='block';this._lockScroll();},
