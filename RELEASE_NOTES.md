@@ -1,5 +1,14 @@
 # Release Notes
 
+## v0.59.3 — 2026-07-02 — Hotfix: hide the god-mode dev card on the public build
+- **Security/integrity.** The 🧪 Beta Test sandbox (god-mode: all stages maxed, fat cash & credit,
+  jump into any menu) was gated on `isNgPlusUnlocked()` — but that flag is auto-set once a public
+  player reaches month 12 (and by the `epiclife` code), so the dev card surfaced on the **live**
+  archetype-select screen after one partial playthrough. Re-gated the card to the **beta build only**
+  (`location.pathname` contains `/beta/`). The earned **New Game+** reward (separate card, same flag)
+  is unchanged for the public. No-op on the beta build (its path gate already always shows god-mode);
+  beta reconciled so the next promotion can't reintroduce the leak.
+
 ## v0.60.0 — 2026-07-02 — (beta) The Leverage Pack: PAL, Airbnb, BRRRR + the Portfolio view
 Beta-only release (`beta/`); the live root is untouched. Three new late-game finance actions that
 boost the **Leverage** pillar and add real variety, plus a portfolio-ownership UX overhaul.
