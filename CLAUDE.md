@@ -76,7 +76,11 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 
 ## Pending work
 
-- _(none currently)_
+- **Beta v0.61.0 awaiting owner playtest** (deal panels: term sliders on the 4 leverage
+  investments, seeded deal-of-the-month, 🟢🟡🔴 rating, first-open primers). Watch for:
+  honest down payments making big-tier deals feel like a cash wall late game. After a
+  green playtest → `/promote` to live. Detail: RELEASE_NOTES.md v0.61.0 + memory
+  `ep-leverage-pack-beta`.
 
 ### Done
 - **v0.24.1 result-screen + balance + immersion pass** (shipped). Result Cash & Credit panel redesign (icon single-line rows: credit score / cash / credit / debt swings, accessible-capital MoM swing vs `_prevAccessible`, expenses with funding source); tap-anywhere-on-card to expand details; merged two-tap "Check Cash & Credit"/"Next Month" button; established start rebalanced (60k cash / 25k credit / 14k opex) to fix inverted difficulty; early-game (m1-9) negative-event ~30% softening in `scaleEventEffects`; native confirms → in-game styled popups; energy warning on its own row; Net Worth tip gated on live `calcNetWorth()>0`; decoupled credit-limit/utilization result rows; "Next: Marketing →" first button; `_lost`/`gameOver` reset on new game. Full detail in RELEASE_NOTES.md v0.24.1.
