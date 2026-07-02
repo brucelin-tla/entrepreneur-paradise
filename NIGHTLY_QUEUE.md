@@ -1,71 +1,98 @@
-# Nightly Build Queue — Entrepreneur Paradise beta
+# Part 2 Design Backlog — Entrepreneur Paradise
 
-The nightly routine (`ep-finance-overhaul-nightly`) builds the TOPMOST item under
-"## APPROVED — build" (one per run), verifies in the harness, rebuilds `beta/game.html`,
-commits to `main` (beta/ only — NO push, NO version bump), then moves the item to "## DONE".
-It never builds from "## IDEAS" or "## NEEDS OWNER INPUT". Reports land at
-`.claude/scheduled-tasks/ep-finance-overhaul-nightly/last-report.md`.
+**Routines are now PREPARE-ONLY.** The night routines (`part2-lab`, `part2-research`) research,
+playtest, and write proposals + reports — they do NOT build game code, commit, or change balance
+numbers overnight. This file is a **design backlog the owner + Claude build in-session**, top-down
+by priority. The owner approves; Claude builds and verifies during a working session.
 
-Every item must serve DESIGN.md (leverage/credit/insurance/passive is the OPTIMAL path;
-brute-force revenue hits a ceiling; passive tax-free income is the crown jewel) and be
-LEGIBLE — surface WHY to the player. Follow existing patterns (config action + resolveMonth
-handler + ADIR group + accurate `lesson`). Numbers below are starting points — tune later.
-
----
-
-## APPROVED — build (topmost first; one per run)
-
-### 1. Retirement plan — Solo 401(k) / SEP (→ cash-balance upgrade)
-- **id** `retirement_plan` · finance · stage `leverage` · ADIR group "Protect & Optimize Taxes" · `one_time` setup.
-- **prereq** `needs:["establish_business"]`, `monthly_revenue_gte: 8000`. **cash_cost** ~1500 (setup). 
-- **Handler** sets `_retirement_active=true`. **monthlyTick block** (mirror the captive_insurance loop): contribution = `min(round(monthly_revenue*0.08), 1900)` (≈ the ~$23k/yr employee elective limit, scaled small); it's PRE-TAX/deductible, so the real cash cost is `contribution*(1-tax_rate)` — subtract that from cash; add the FULL contribution to a new `_retirement_balance` that compounds tax-deferred (`*1.005/mo`, ~6%/yr).
-- **Net worth + assets:** add `_retirement_balance` to `calcNetWorth` and a row in `showAssets` ("Retirement account — grows tax-deferred; pre-tax now, taxed at withdrawal").
-- **Lesson (accurate):** a Solo 401(k)/SEP lets an owner shelter a big chunk of income pre-tax (Solo 401k ~$23k employee + employer up to ~$69k total; SEP ~25% of comp) — it's a DEFERRAL (taxed when you withdraw in retirement), or pick Roth to pay tax now and withdraw tax-free. High earners can later add a cash-balance/defined-benefit plan to shelter $100k+/yr.
-- **Legibility:** narrative shows "$X/mo sheltered pre-tax (real cost only $Y after the deduction), compounding tax-deferred."
-
-### 2. Hire your kids / family
-- **id** `hire_your_kids` · finance · stage `leverage` · ADIR group "Protect & Optimize Taxes" · `one_time` toggle.
-- **prereq** `needs:["establish_business"]`, `monthly_revenue_gte: 8000`. **cash_cost** 0.
-- **Handler** sets `_family_payroll=true`. **monthlyTick:** a modest deductible wage (e.g., `round(min(monthly_revenue*0.02, 1200))`) is paid to family — model the tax benefit by reducing the tax drag / crediting back `wage*tax_rate` (you deduct it; the child owes ~$0 under their standard deduction). Small `lifestyle_legacy` and `lifestyle_relationships` bump (family + legacy). Keep the net effect modest — it's a smart efficiency, not a windfall.
-- **Lesson (accurate):** paying your kids a REASONABLE wage for REAL work moves income from your high bracket to their ~0% bracket (under the standard deduction), the business deducts the wages, and they can fund a Roth IRA early. Must be legitimate, documented work at a fair rate.
-
-### 3. Deepen `elect_s_corp` (salary vs. distribution lesson)
-- **Modify the existing `elect_s_corp` handler** (don't add a new action). On/after election, model the real mechanic: a "reasonable salary" (~45% of profit as W-2) plus distributions; only the DISTRIBUTION portion escapes the ~15.3% self-employment/payroll tax. Apply that SE-tax saving (reduce the tax drag) scaled to profit, and **add `audit_risk`** if the implied salary is too low (lowballing is the top S-corp audit trigger).
-- **Legibility:** narrative spells it out — "you took $Z as a reasonable salary and $Y as distributions, saving ~$ in self-employment tax; keep the salary defensible or you raise audit risk." Keep the existing liability-shield benefit.
-
-### 4. Augusta Rule (§280A(g))
-- **id** `augusta_rule` · finance · stage `leverage` · ADIR group "Protect & Optimize Taxes" · `one_time` toggle (recurs annually).
-- **prereq** `needs:["establish_business"]`, `monthly_revenue_gte: 8000`. **cash_cost** 0.
-- **Handler** sets `_augusta_active=true`. **monthlyTick:** once a year (`month%12===0`) the business pays the owner fair-market rent for ≤14 days of legitimate business use of the home — `amount ≈ round(min(monthly_revenue*0.5, 18000))`. Add `amount` to `personal_cash` TAX-FREE, and let the business deduct it (reduce tax drag / it's a deductible expense). 
-- **Lesson (accurate):** §280A(g) lets you rent your home to your business up to 14 days/yr — tax-free income to you, deductible to the business — IF it's genuine business use (e.g., board/strategy meetings), documented, at a fair market rate.
-
-### 5. Wealth-stage trusts — irrevocable / dynasty (asset protection)
-- **id** `asset_protection_trust` · finance · stage `wealth` · ADIR group "Build Wealth & Passive Income" (or Protect) · `one_time`.
-- **prereq** `needs:["wyoming_holding_llc"]` (or elect_s_corp), `net_worth_gte` ~300000. **cash_cost** scales (~15000 legal).
-- **Handler** sets `trust_structure='dynasty'` (this makes the existing `showAssets` "protected from lawsuits and estate tax" note + the tax-drag reduction at the tax-inefficiency block fire CORRECTLY — they already key off trust_structure). Big `litigation_exposure` reduction; mark assets shielded so a downturn margin-call deficiency can't reach personal cash; flavor of estate-tax removal.
-- **Lesson (accurate + the trade-off):** an IRREVOCABLE trust protects assets from lawsuits and removes them from your taxable estate (dynasty = passes to heirs across generations, skipping estate tax) — but the price is CONTROL: you legally give up direct ownership. That's the real trade revocable living trusts don't make.
-
-### 6. Player feedback UI + behavioral telemetry — CLIENT-SIDE ONLY (no-op hook)
-- Build ONLY the client side, mirroring the leaderboard "build UI now, wire backend later" pattern (`LB_BACKEND` hook). **Do NOT attempt to provision/​wire Supabase** — that needs the owner's credentials (see NEEDS OWNER INPUT).
-- **Feedback:** on the end-of-run / loss results screen, an unobtrusive prompt — "Help improve the game: what would you change?" with category chips (Too hard / Confusing lesson / Bug / Idea / Other) + optional short text. Plus a tiny "💡 Suggest" link in the title-screen footer (next to What's New). On submit → `submitFeedback(obj)` which stores to `localStorage` AND posts to a `FEEDBACK_ENDPOINT` IF defined (guarded no-op until wired). Confirmation toast. Keep it skippable and out of the way — must not clutter.
-- **Telemetry (anonymous, no PII):** accumulate a per-run telemetry object — month reached at end/quit, final composite/score, action counts by id, which lessons/info popups were opened, milestones hit, win/lose. Flush via `flushTelemetry()` → `localStorage` + a `TELEMETRY_ENDPOINT` no-op hook. No names, no personal data.
-- **Verify** no console errors and that nothing clutters the normal flow. Leave the Supabase wiring + the nightly suggestion-triage for after the owner sets up the backend.
+**Part 2 north star:** the small-business owner has their machine built — now it's about **capital
+allocation under uncertainty.** Read economic trends & company drama; make big risky bets or play
+it safe; the right call in the middle of chaos. Every item must serve DESIGN.md (leverage / credit /
+insurance / passive-tax-free income is the OPTIMAL path; brute-force revenue hits a ceiling) and be
+LEGIBLE — surface WHY to the player. Prefer ELEVATING existing systems (the macro cycle, buy-the-dip,
+margin calls, survival runway) over net-new systems.
 
 ---
 
-## NEEDS OWNER INPUT (do NOT auto-build)
+## ▶ NOW — build next in-session (Part 2)
 
-- **Balance-tuning pass** — APPROVED in concept, but picking the actual numbers (velocity 12% edge, RE 3%/yr appreciation, captive premium, §179 capacity, MCA factor, arc severities) is a DESIGN decision per `verify-design-decisions-first`. Flow: the nightly QA report proposes specific tuning numbers from playtest data → owner approves → THEN it's promoted here with the exact numbers to apply. (Don't let the routine pick balance numbers on its own.)
-- **Feedback/telemetry backend** — provision Supabase tables (`suggestions`, `telemetry`) + wire the `FEEDBACK_ENDPOINT`/`TELEMETRY_ENDPOINT` hooks. Needs owner credentials; do WITH the owner, then enable the nightly suggestion-triage (cluster + rank submissions through the DESIGN.md lens).
+### 1. The Cycle-Reading Spine  ⭐ SPEC — owner review before build
+**The core Part-2 loop.** Turns the (currently invisible) macro cycle into the main event: each
+quarter the player *reads* fuzzy signals and *picks a stance*, then lives with the reckoning. This is
+the spine everything else (Big Bets, Drama) plugs into. Build this FIRST.
+
+**Grounds on what already exists** (do not reinvent): `_CYCLE_PHASES` (expansion→boom→downturn→
+recovery, jittered `_downturn_start`/`_downturn_len`/`_downturn_depth`), `_asset_discount`,
+`_credit_tight`, `_market_rate`, `_index_return`, the buy-the-dip payoff, and the RE + PAL margin
+calls. Today these run in the background; the spine promotes them to a decision.
+
+**A) The Signals Panel (READ) — fuzzy, not a readout.** Each Part-2 quarter (month ≥19, every 3
+months → ~6 decision points) surface **2–3 noisy leading indicators** hinting at the phase without
+confirming it. Derive from live state + a noise layer so they can mislead:
+- credit loosening/tightening (`_credit_tight` + `_market_rate` trend)
+- assets frothy/cheap (`_asset_discount`)
+- "rivals are levering up / getting cautious" (flavor hint at a top / capitulation)
+- the index ran hot / just printed 0% (`_index_return`)
+Noise is the point — experts weigh signals, they don't get a crystal ball; the jitter keeps it unsolved.
+
+**B) The Stance Decision (ACT) — one legible choice.** Each quarter pick a capital-allocation stance
+(stored `_capital_stance`), which tunes how existing systems behave for the next quarter:
+- **Risk-On / Aggressive** — deploy dry powder, lever toward a higher LTV target. Wins entering
+  recovery/expansion (cheap assets + credit); punished at the top (overpay, margin-call exposure).
+- **Risk-Off / Defensive** — hold dry powder, deleverage, build reserves. Wins into a downturn (you
+  become the buyer when others are forced sellers); costs upside if the boom keeps running.
+- **Balanced / Hedge** — split. Lower variance, lower ceiling.
+Stance feeds: buy-the-dip deploy size, the leverage target that nudges the margin-call thresholds,
+and the reserve target that feeds survival runway.
+
+**C) The Reckoning (PAYOFF).** When the cycle phase flips, resolve the read: stance-matched-phase →
+reward (bought the dip / dodged the top); misread (aggressive into a bust, defensive through a boom)
+→ the existing margin-call / missed-gains consequence fires. The margin-call & buy-the-dip systems
+BECOME the scoring of the read.
+
+**Legibility:** after each cycle turn, one plain-English line — "You held dry powder as credit tightened,
+then bought distressed assets at a discount — textbook," or "You levered up at the top; the downturn
+forced a sale." **Why it stays fun for experts:** jittered timing + noisy signals mean no dominant
+"always-aggressive / always-defensive" line; each run's cycle differs; stakes ratchet with net worth.
+
+**Implementation sketch (in-session):** a quarterly Capital-Allocation decision (reuse the event/
+decision UI), gated `month≥19 && month%3===0`; signals computed from the cycle state + noise;
+`_capital_stance` read by the buy-the-dip deploy, the margin-call thresholds, and the reserve target;
+reckoning narrative emitted from `monthlyTick` on phase flip. **Open questions for the owner:** exact
+stance effects/magnitudes, how loud the signals are (how readable vs punishing), and whether stance is
+locked for the quarter or re-choosable.
+
+### 2. Big Bets — concentrated high-conviction plays (SPEC pending)
+Periodic distressed-acquisition / development / private-lending-tranche opportunities with a
+**sizing × timing × funding** decision (own cash vs leverage). Can 3× or crater. Plugs into the spine
+(right stance/phase = the window). Full spec after #1 lands.
+
+### 3. Drama events — chaos where Protection pays off (SPEC pending)
+Branching crisis events (partner cash-out, key-operator defection, lawsuit, aggressive-tax audit,
+rival's move, health/liquidity crunch) whose menu + outcome are set by earlier Protection choices
+(trust / insurance / entity / reserves). Reuses the event system. Full spec after #1.
 
 ---
 
-## IDEAS — need owner sign-off before building
+## ⏸ PART 1 BACKLOG — deprioritized (not the current focus)
 
-_(empty — all current ideas have been promoted above)_
+Older Part-1 tax tactics. Fine to build opportunistically, but Part 2 comes first.
+- **Deepen `elect_s_corp`** (salary-vs-distribution SE-tax lesson + audit-risk if salary too low). *Possibly partially present — verify before building.*
+- **Augusta Rule** (`augusta_rule`, §280A(g)) — not built.
+- **Wealth-stage irrevocable / dynasty trust** (`asset_protection_trust`, sets `trust_structure='dynasty'`) — not built. Note: `living_trust` now sets `basic_llc`; this is the wealth-stage upgrade.
+- **Player feedback UI + anonymous telemetry** (client-side only, no-op endpoint hooks) — not built.
 
 ---
 
-## DONE (awaiting owner review)
+## 🔒 NEEDS OWNER INPUT (do NOT auto-build)
+- **Balance-tuning numbers** — the routines PROPOSE tuning from playtest data; the owner picks the
+  actual numbers (per `verify-design-decisions-first`).
+- **Feedback/telemetry backend** — Supabase tables + endpoint wiring; needs owner credentials.
 
-_(nightly moves built items here after committing)_
+---
+
+## ✅ DONE (shipped to beta — awaiting nothing)
+- **`retirement_plan`** — Solo 401(k)/SEP, pre-tax monthly sweep into `_retirement_balance`. *(built)*
+- **`hire_your_kids`** — family payroll tax-shift, monthly `wage*tax_rate` credit. *(built)*
+- **The Leverage Pack (v0.60.0)** — Pledged Asset Line, Short-Term Rental, Cash-Out Refi, ×N-owned
+  shuffled menu, Portfolio dashboard view, `living_trust` Protection fix. *(shipped to beta)*
