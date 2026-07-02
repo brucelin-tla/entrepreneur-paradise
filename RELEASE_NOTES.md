@@ -1,5 +1,36 @@
 # Release Notes
 
+## v0.59.0 — 2026-07-02 — Two Parts, the Epic Life Hub, Epic Tools & Real-World Resilience
+A large promotion of the accumulated beta work on top of v0.47. The run is now **two episodes**,
+the Epic Life wealth engine got a full UX overhaul, and the same engine is now available on your
+**real** numbers.
+
+- **The run is now TWO PARTS.** Part 1 (months 1–18) — you build the machine (leverage, credit,
+  protection, a policy that pays you whether you work or not) — ending in a themed **month-18 finale**
+  ("Your Wealth Machine Is Built") with its own Part-1 rank. Part 2 (months 19–36) — it compounds into
+  freedom, lifestyle and legacy. Month 12 is no longer an off-ramp; it's just tax season.
+- **Epic Life hub overhaul.** One consolidated roadmap bar (**Funding Ready → Epic Life System →
+  🏝️ Paradise**), and every service panel now works the same way: set your options, see a **current →
+  after** projection, then **Confirm**. Covers the Cash-Value Policy, Velocity Banking (pick the loan
+  to attack, chunk/draw with a monthly debt-service read), Cash Services, and a Financial Health
+  snapshot with a "passive income → freedom" progress bar. Concierge steering folds into Financial Health.
+- **Passive income is now honest about loans.** Borrow against your policy and your passive income
+  shrinks in step (you draw from *value − outstanding loan*) — shown consistently everywhere.
+- **Survival runway.** A new resilience read — how many months your reserves + tax-free passive income
+  would cover your fixed costs **if business revenue stopped**. It shows on the result screen (so
+  "Profitable" no longer reads as invincible) and in Financial Health, and the **downturn now rewards
+  the prepared and squeezes the over-leveraged**.
+- **💼 Epic Tools (members) — plan with your REAL numbers.** Redeem the Epic-tools code and a real-world
+  planner appears on the main menu: a Financial Health snapshot + Paradise ladder, a debt/velocity
+  payoff planner (Avalanche/Snowball → debt-free date + interest saved), a credit→cash calculator, and a
+  cash-value-policy illustration with a funding-growth projector. Slider-driven, today's common APRs,
+  everything stays on the device. Educational illustration — not financial advice.
+- **Leaderboard** now has two boards — **Part 1 · 18mo** and **Paradise · 36mo** — so runs are ranked
+  against others at the same milestone.
+- **Fixes:** "Accelerate paydown" could borrow on credit and raise your debt (now pays only what cash
+  covers, 1:1); the debt-restructure result card showed stale utilization; an insured operator loss on a
+  mortgage-free property mis-read as retiring a loan; plus assorted clarity and balance polish.
+
 ## v0.47.0 — 2026-06-30 — Finance Realism & the Epic Life Wealth Engine
 Promotion of the accumulated beta work on top of v0.46. The headline: **the finance path is now
 mechanically real** — real amortization, honest tax math, a true IUL — and the advanced wealth
