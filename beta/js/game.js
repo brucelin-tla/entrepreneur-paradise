@@ -49,8 +49,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
-{v:'0.56.0',d:'2026-07-02 02:00',n:[
-'💼 New “My Real Finances” mode (unlock with an access code from the main menu): enter your real numbers and run them through the Epic Life engine — a Financial Health snapshot + Paradise ladder, a debt/velocity payoff planner, a credit→cash calculator, and a cash-value policy illustration. 🔒 Everything stays on your device; nothing is sent anywhere. Educational only — not financial advice.',
+{v:'0.56.1',d:'2026-07-02 02:40',n:[
+'💼 New “My Real Finances” mode: redeem the Epic tools code (from Redeem Code) and it appears on the main menu. Slide to roughly match your situation (no typing — and APRs use today’s common rates), then explore it through the Epic Life engine: a Financial Health snapshot + Paradise ladder, a debt/velocity payoff planner, a credit→cash calculator, and a cash-value policy illustration (with an adjustable surrender charge). 🔒 Stays on your device. Educational only — not financial advice.',
 ]},
 {v:'0.55.0',d:'2026-07-02 00:30',n:[
 '🛡️ Policy loans now reduce your passive income — you draw from <strong>policy value − outstanding loan</strong>. Every screen now shows the true, loan-adjusted number.',
@@ -591,8 +591,7 @@ isNgPlusUnlocked(){try{return localStorage.getItem('ep_ngplus')==='1';}catch(e){
 // ---- Redeem codes (unlock content via a code, e.g. "epiclife" → New Game+) ----
 // To add a code: give it a normalized key (lowercase, alphanumeric only) + an apply() that flips the unlock.
 REDEEM_CODES:{
-epiclife:{label:'New Game+',msg:'New Game+ unlocked! Customize your starting hand from the main menu.',apply(){try{localStorage.setItem('ep_ngplus','1');}catch(e){}}},
-realmoney:{label:'My Real Finances',msg:'“My Real Finances” unlocked — open it from the main menu to plan with your real numbers.',apply(){try{localStorage.setItem('ep_realmoney_unlock','1');}catch(e){}}}
+epiclife:{label:'Epic tools',msg:'Unlocked! New Game+ and 💼 My Real Finances are now on the main menu.',apply(){try{localStorage.setItem('ep_ngplus','1');}catch(e){}}}
 },
 _normCode(c){return (c||'').toLowerCase().replace(/[^a-z0-9]/g,'');},
 _redeemedCodes(){try{return JSON.parse(localStorage.getItem('ep_codes')||'[]');}catch(e){return [];}},
@@ -602,8 +601,9 @@ enterCode(){const el=document.getElementById('code-input'),msg=document.getEleme
 if(code===this.BETA_CODE){if(inBeta){msg.style.color='var(--gold)';msg.textContent='You’re already on the beta build.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);return;}
 const def=this.REDEEM_CODES[code];if(!def){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}const done=this._redeemedCodes();if(done.includes(code)){msg.style.color='var(--gold)';msg.textContent='Already redeemed — '+def.label+' is unlocked.';return;}try{def.apply();}catch(e){}done.push(code);try{localStorage.setItem('ep_codes',JSON.stringify(done));}catch(e){}msg.style.color='var(--accent)';msg.innerHTML='✓ '+def.msg;if(el){el.value='';el.disabled=true;}this.renderMainMenu();},
 // ===== "My Real Finances" — gated real-world planning mode. Separate localStorage model; reuses the Epic Life math + panel look; read-only / what-if only (never touches Game.state, turns or scoring). 100% client-side — nothing is transmitted. =====
-RM_CODE:'realmoney',RM_BOOK_URL:'https://calendly.com/',/* TODO: swap in the real EPIC advisor booking link */
-_rmUnlocked(){try{return localStorage.getItem('ep_realmoney_unlock')==='1';}catch(e){return false;}},
+RM_BOOK_URL:'https://calendly.com/',/* TODO: swap in the real EPIC advisor booking link */
+RM_APR:{cards:0.24,mortgage:0.07,auto:0.08,student:0.065,other:0.12},RM_TERM:{mortgage:360,auto:60,student:120,other:60},/* today's common APRs + standard amortization terms — demo/education, not exact */
+_rmUnlocked(){return this.isNgPlusUnlocked();},/* gated by the existing redeem code (epiclife) — no separate code */
 _rmLoad(){try{return JSON.parse(localStorage.getItem('ep_realmoney')||'null');}catch(e){return null;}},
 _rmSave(d){try{localStorage.setItem('ep_realmoney',JSON.stringify(d));}catch(e){}},
 _rmData(){return this._rmLoad();},
@@ -623,24 +623,23 @@ rmHome(){if(!this._rmUnlocked())return this.showCode();this._rmVel=null;this._rm
  this._rmPanel('💼 My Real Finances',h,true);},
 // Intake form — plain number inputs; blank = skip. Common debt types get balance/APR/payment rows.
 rmIntake(){if(!this._rmUnlocked())return this.showCode();const d=this._rmData()||{},pol=d.policy||{},re=d.re||{};
- const g=(id,v,ph)=>'<input id="'+id+'" type="number" inputmode="decimal" value="'+(v!=null&&v!==''?v:'')+'" placeholder="'+(ph||'0')+'" style="width:100%;padding:7px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:0.85rem;">';
- const fld=(id,label,v,ph)=>'<div style="margin:7px 0;"><div style="font-size:0.72rem;color:var(--text2);margin-bottom:3px;">'+label+'</div>'+g(id,v,ph)+'</div>';
+ const sld=(id,label,min,max,val,step)=>{val=(val==null||val==='')?min:Math.max(min,Math.min(max,+val));return '<div style="margin:9px 0;"><div style="display:flex;justify-content:space-between;font-size:0.74rem;"><span style="color:var(--text2);">'+label+'</span><span id="'+id+'-v" style="font-weight:700;color:var(--gold);">$'+Math.round(val).toLocaleString()+'</span></div><input id="'+id+'" type="range" min="'+min+'" max="'+max+'" value="'+val+'" step="'+step+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\''+id+'-v\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()"></div>';};
  const hdr=t=>'<div style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 4px;border-top:1px solid var(--border);padding-top:10px;">'+t+'</div>';
- const DTYPES=[['cards','Credit cards'],['mortgage','Mortgage'],['auto','Auto loan'],['student','Student loans'],['other','Other loan']];
+ const DT=[['cards','Credit cards',50000,500],['mortgage','Mortgage',1000000,5000],['auto','Auto loan',80000,1000],['student','Student loans',200000,2000],['other','Other loan',60000,1000]];
  const dget=id=>(d.debts||[]).find(y=>y.id===id)||{};
- let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:4px;">Enter what you can — leave the rest blank. 🔒 Saved only on this device; nothing is sent anywhere.</div>';
- h+=hdr('Income & cash')+fld('rm-cash','💵 Cash / savings',d.cash)+fld('rm-income','Monthly take-home income',d.incomeMonthly)+fld('rm-passive','Passive income / mo (if any)',d.passiveMonthly);
- h+=hdr('Monthly expenses')+fld('rm-living','Living essentials / mo',d.expLiving)+fld('rm-other','Other spending / mo',d.expOther);
- h+=hdr('Credit')+fld('rm-climit','Total credit limit',d.creditLimit)+fld('rm-cused','Credit balance used',d.creditUsed);
- h+=hdr('Debts — balance · APR% · monthly payment');
- DTYPES.forEach(t=>{const x=dget(t[0]);h+='<div style="font-size:0.72rem;color:var(--text2);margin:7px 0 3px;">'+t[1]+'</div><div style="display:flex;gap:6px;">'+g('rm-d-'+t[0]+'-bal',x.balance,'balance')+g('rm-d-'+t[0]+'-rate',x.rate!=null?Math.round(x.rate*1000)/10:'','APR%')+g('rm-d-'+t[0]+'-pay',x.payment,'pay/mo')+'</div>';});
- h+=hdr('Assets & policy (optional)')+fld('rm-re','Real estate value',re.value)+fld('rm-pcv','Cash-value policy — value',pol.cashValue)+fld('rm-ploan','Policy loan outstanding',pol.loan);
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:4px;">Slide to roughly match your situation — this is for demo &amp; learning, it doesn\'t have to be exact. APRs use today\'s common rates. 🔒 Stays on this device.</div>';
+ h+=hdr('Income & cash')+sld('rm-cash','💵 Cash / savings',0,200000,d.cash,1000)+sld('rm-income','Monthly take-home income',0,30000,d.incomeMonthly,250)+sld('rm-passive','Passive income / mo (if any)',0,20000,d.passiveMonthly,100);
+ h+=hdr('Monthly expenses')+sld('rm-living','Living essentials / mo',0,15000,d.expLiving,100)+sld('rm-other','Other spending / mo',0,10000,d.expOther,100);
+ h+=hdr('Credit')+sld('rm-climit','Total credit limit',0,100000,d.creditLimit,1000)+sld('rm-cused','Credit balance used',0,100000,d.creditUsed,1000);
+ h+=hdr('Debts — set the balance (APR is today\'s common rate)');
+ DT.forEach(t=>{const apr=Math.round(this.RM_APR[t[0]]*100);h+=sld('rm-d-'+t[0],t[1]+' <span style="opacity:0.7;">· '+apr+'% APR</span>',0,t[2],dget(t[0]).balance,t[3]);});
+ h+=hdr('Assets & policy (optional)')+sld('rm-re','Real estate value',0,2000000,re.value,10000)+sld('rm-pcv','Cash-value policy — value',0,500000,pol.cashValue,5000)+sld('rm-surr','Policy surrender charge',0,25000,pol.surrender,500)+sld('rm-ploan','Policy loan outstanding',0,500000,pol.loan,5000);
  h+='<button class="btn-primary" style="margin-top:14px;" onclick="Game.rmSaveIntake()">Save my numbers →</button>';
  this._rmPanel('✏️ My Numbers',h,true);},
 rmSaveIntake(){const n=id=>{const e=document.getElementById(id);const v=e?parseFloat(e.value):NaN;return isFinite(v)?Math.max(0,v):0;};
- const DTYPES=[['cards','Credit cards'],['mortgage','Mortgage'],['auto','Auto loan'],['student','Student loans'],['other','Other loan']];
- const debts=[];DTYPES.forEach(t=>{const bal=n('rm-d-'+t[0]+'-bal'),rate=n('rm-d-'+t[0]+'-rate')/100,pay=n('rm-d-'+t[0]+'-pay');if(bal>0)debts.push({id:t[0],name:t[1],type:t[0],balance:bal,rate:rate,payment:pay});});
- const d={v:1,cash:n('rm-cash'),incomeMonthly:n('rm-income'),passiveMonthly:n('rm-passive'),expLiving:n('rm-living'),expOther:n('rm-other'),creditLimit:n('rm-climit'),creditUsed:n('rm-cused'),debts:debts,re:{value:n('rm-re')},policy:{cashValue:n('rm-pcv'),loan:n('rm-ploan')}};
+ const DT=[['cards','Credit cards'],['mortgage','Mortgage'],['auto','Auto loan'],['student','Student loans'],['other','Other loan']];
+ const debts=[];DT.forEach(t=>{const bal=n('rm-d-'+t[0]);if(bal>0){const apr=this.RM_APR[t[0]];const pay=t[0]==='cards'?Math.max(25,Math.round(bal*0.025)):Math.max(1,Math.round(this._amortPayment(bal,apr,this.RM_TERM[t[0]])));debts.push({id:t[0],name:t[1],type:t[0],balance:bal,rate:apr,payment:pay});}});
+ const cv=n('rm-pcv');const d={v:1,cash:n('rm-cash'),incomeMonthly:n('rm-income'),passiveMonthly:n('rm-passive'),expLiving:n('rm-living'),expOther:n('rm-other'),creditLimit:n('rm-climit'),creditUsed:n('rm-cused'),debts:debts,re:{value:n('rm-re')},policy:{cashValue:cv,loan:Math.min(n('rm-ploan'),cv),surrender:n('rm-surr')}};
  this._rmSave(d);this.rmHome();},
 // Financial Health — snapshot + Paradise ladder from the real model.
 rmHealth(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);
@@ -698,15 +697,19 @@ rmCashAmt(v){if(this._rmCash)this._rmCash.amt=Math.max(0,Math.round(+v||0));this
 rmCashFee(v){if(this._rmCash)this._rmCash.fee=Math.max(0,+v||0);this.rmCashSvc();},
 // Policy / IUL — educational illustration only (adjustable sliders), with a strong disclaimer + advisor CTA.
 rmPolicy(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const pol=d.policy||{};
- if(!this._rmPol)this._rmPol={cv:Math.round(+pol.cashValue||0),loan:Math.round(+pol.loan||0)};const st=this._rmPol;st.cv=Math.max(0,Math.round(st.cv||0));st.loan=Math.max(0,Math.min(Math.round(st.loan||0),st.cv));
- const cv=st.cv,loan=st.loan,base=Math.max(0,cv-loan),borrowable=Math.max(0,Math.round(cv*0.9)-loan),passive=Math.round(base*0.06/12);
+ if(!this._rmPol)this._rmPol={cv:Math.round(+pol.cashValue||0),loan:Math.round(+pol.loan||0),surr:Math.round(+pol.surrender||0)};const st=this._rmPol;st.cv=Math.max(0,Math.round(st.cv||0));st.surr=Math.max(0,Math.min(Math.round(st.surr||0),st.cv));st.loan=Math.max(0,Math.min(Math.round(st.loan||0),st.cv));
+ const cv=st.cv,loan=st.loan,surr=st.surr,base=Math.max(0,cv-loan),borrowable=Math.max(0,Math.round(cv*0.9)-surr-loan),headroom=Math.max(0,Math.round(cv*0.85)-surr-loan),passive=Math.max(0,Math.min(Math.round(base*0.06/12),headroom));
+ const slider=(id,label,max,val,step,acc,fn)=>'<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">'+label+'</div><input type="range" min="0" max="'+max+'" step="'+step+'" value="'+val+'" style="width:100%;accent-color:'+acc+';" oninput="var e=document.getElementById(\''+id+'\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.'+fn+'(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:'+acc+';"><span id="'+id+'">$'+val.toLocaleString()+'</span></div>';
  let h='<div style="padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.74rem;line-height:1.5;margin-bottom:10px;">⚠️ <strong>Educational illustration only.</strong> A real cash-value / IUL policy depends on your age, health, the product, and market performance — these are simplified round numbers, <strong>not a quote or advice</strong>. Your EPIC advisor designs the real thing.</div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Policy cash value</div><input type="range" min="0" max="500000" step="1000" value="'+cv+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'rmp-cv\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmPolCv(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--gold);"><span id="rmp-cv">$'+cv.toLocaleString()+'</span></div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Outstanding policy loan</div><input type="range" min="0" max="'+Math.max(1000,cv)+'" step="1000" value="'+loan+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmp-l\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmPolLoan(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--accent);"><span id="rmp-l">$'+loan.toLocaleString()+'</span></div>';
- h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;"><div class="breakdown-row"><span>Borrowable (≈90% of value − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(borrowable)+'</span></div><div class="breakdown-row"><span>Illustrative passive (6%/yr on value − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(passive)+'/mo</span></div></div>';
- h+='<button class="btn-primary" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;" onclick="Game.rmBookCall()">📞 Design my real policy with an advisor →</button>';
+ h+=slider('rmp-cv','Policy cash value',500000,cv,1000,'var(--gold)','rmPolCv');
+ h+=slider('rmp-surr','Surrender charge (early-years fee)',25000,surr,500,'var(--red)','rmPolSurr');
+ h+=slider('rmp-l','Outstanding policy loan',Math.max(1000,cv),loan,1000,'var(--accent)','rmPolLoan');
+ h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;"><div class="breakdown-row"><span>Borrowable (≈90% − surrender − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(borrowable)+'</span></div><div class="breakdown-row"><span>Illustrative passive (6%/yr on value − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(passive)+'/mo</span></div></div>';
+ h+='<div style="font-size:0.64rem;color:var(--text2);line-height:1.4;margin-top:6px;">The surrender charge (a fee in the early years) and any outstanding loan both eat into what you can borrow and draw — slide them to see how.</div>';
+ h+='<button class="btn-primary" style="margin-top:10px;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;" onclick="Game.rmBookCall()">📞 Design my real policy with an advisor →</button>';
  this._rmPanel('🛡️ Policy (IUL) — Illustration',h);},
 rmPolCv(v){if(this._rmPol)this._rmPol.cv=Math.max(0,Math.round(+v||0));this.rmPolicy();},
+rmPolSurr(v){if(this._rmPol)this._rmPol.surr=Math.max(0,Math.round(+v||0));this.rmPolicy();},
 rmPolLoan(v){if(this._rmPol)this._rmPol.loan=Math.max(0,Math.round(+v||0));this.rmPolicy();},
 // ---- Company name (set when forming the LLC; shown on the dashboard + leaderboard; groundwork for player-vs-player) ----
 _esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));},
@@ -727,7 +730,7 @@ if(ngp)h+=item('🔁','New Game+','Sandbox — customize your start','Game.showN
 if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this._archLabel(auto.archetype),'Game.confirmResumeAuto()');
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
-{const rmU=this._rmUnlocked();h+=item('💼','My Real Finances',rmU?'Plan with your real numbers':'Enter access code to unlock',rmU?'Game.rmHome()':'Game.showCode()');}
+if(this._rmUnlocked())h+=item('💼','My Real Finances','Plan with your real numbers','Game.rmHome()');
 // One combined code entry (beta access + redeem/unlock codes) to cut menu clutter. Same game.js on both builds; the label adapts — on the beta build there's nowhere to "go to beta," so it reads as Redeem.
 {const _inBeta=location.pathname.indexOf('/beta/')>=0;h+=item(_inBeta?'🎟':'🧪',_inBeta?'Redeem Code':'Beta &amp; Codes',_inBeta?'Unlock content with a code':'Beta access or an unlock code','Game.showCode()');}
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
