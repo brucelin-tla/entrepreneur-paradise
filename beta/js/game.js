@@ -49,6 +49,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.57.1',d:'2026-07-02 05:40',n:[
+'UI consistency: before you join Epic Life, the Velocity Banking and Cash Services preview panels now use the same “← Epic Life / 👑 Membership” header as the other member panels (they used to look different).',
+]},
 {v:'0.57.0',d:'2026-07-02 05:00',n:[
 '📊 Financial Health (in-game & Epic Tools): the “passive income beating…” list is now a clean <strong>progress bar</strong> — passive income fills toward 🏝️ Paradise past two checkpoints (debt payments, then + living). Concierge focus buttons are now a tidy 2×2 grid.',
 '🎯 Epic Tools → Debt/Velocity: new whole-picture <strong>payoff plan</strong> — pick Avalanche or Snowball, sweep an extra amount each month, and see your <strong>debt-free date</strong> move up plus the interest saved (on top of the single-loan cash/HELOC/credit attack).',
@@ -1145,7 +1148,7 @@ _velocityReadout(){const s=this.state;this._ensureLoans();const modeKey=s._veloc
  return{mode:'revolving',modeKey,modeLabel,targetLabel:'Revolving cards',ratePct:22,targetBal:Math.round(persRev),interestAhead:0,payoffText:'—',interestSaved:Math.round(s._velocity_interest_saved||0),monthsSaved:0,equityBuilt:Math.round(s._velocity_equity_built||0),totalChunked:Math.round(s._velocity_total_chunked||0)};},
 // The Velocity Banking control panel — reached from the Finance action card (turn-on consumes the finance move) OR the ⚡ dashboard chip (ongoing tuning & manual chunks are free, no turn).
 openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
- if(!s._epic_life){this.showPopup('👑 Velocity Banking — Epic Life perk','<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Velocity banking is an <strong>Epic Life membership</strong> play. Your concierge sets up the line, and you get the ⚡ control to sweep surplus cash at your debt — paying a mortgage or revolving balance down years faster and building equity quicker.</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-top:10px;">Join Epic Life from the Finance menu to unlock it (along with the rest of the concierge wealth engine).</div>');return;}
+ if(!s._epic_life){this._epicPanel('⚡ Velocity Banking','<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">👑 <strong>Members-only perk.</strong> Velocity banking is an <strong>Epic Life membership</strong> play — your concierge sets up the line, and you get the ⚡ control to sweep surplus cash at your debt, paying a mortgage or revolving balance down years faster and building equity quicker.</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-top:10px;">Enroll in Epic Life to unlock it (along with the rest of the concierge wealth engine).</div>');return;}
  this._ensureLoans();
  const active=!!s._velocity_active,setup=!!(s._velocity_setup||s._velocity_active);/* treat an already-running sweep (older saves) as set up */
  const reDebt=(s.real_estate_debt||0),reEq=(s.real_estate_equity||0),hasRE=reDebt>0&&reEq>0;
@@ -1294,7 +1297,7 @@ liqStage(amt){this.state._liqStaged=Math.max(0,Math.round(amt||0));this.openCred
 liqClear(){this.state._liqStaged=0;this.openCreditLiquidity();},
 liqConfirm(){const a=Math.max(0,Math.round(this.state._liqStaged||0));if(a<1000)return;this.liquidateCredit(a);this.state._liqStaged=0;this._refreshDashboards();this.showEpicLife();},
 openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
- if(!s._epic_life){this.showPopup('💵 Cash Services','<div style="font-size:0.85rem;line-height:1.6;">👑 <strong>Members-only perk.</strong> Epic Life lets your concierge liquidate your available credit into cash on demand — for a flat 6% fee, no turn used.</div>');return;}
+ if(!s._epic_life){this._epicPanel('💵 Cash Services','<div style="font-size:0.85rem;line-height:1.6;">👑 <strong>Members-only perk.</strong> Epic Life lets your concierge liquidate your available credit into cash on demand — for a flat 6% fee, no turn used.</div>');return;}
  const head=this._creditHeadroom(),pa=s.available_credit||0,ba=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
  const staged=Math.min(Math.max(0,Math.round(s._liqStaged||0)),Math.floor(head));
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
