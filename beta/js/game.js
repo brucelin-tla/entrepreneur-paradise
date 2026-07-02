@@ -49,6 +49,14 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.54.0',d:'2026-07-01 23:30',n:[
+'⭐ Epic Life hub overhaul: every panel now works the same way — set your options, see a clear <strong>current → after</strong> projection, then <strong>Confirm</strong> to lock it in. No more mis-taps.',
+'🛡️ Cash-Value Policy: stage your funding %, loan type, loan amount and passive income together — one Confirm applies it all.',
+'⚡ Velocity Banking: pick your vehicle AND the exact loan to attack, slide your chunk/draw, preview the interest removed, then Confirm. The monthly sweep is now a free Activate/Pause toggle you can flip anytime after setup.',
+'💵 Cash Services: added a slider to dial in the exact amount.',
+'📊 Financial Health now folds in your Concierge controls, and adds a “Is passive income beating…” ladder — debt service → living → operating → 🏝️ Paradise.',
+'🗺️ Roadmap now shows the full journey with three checkpoints: Funding Ready → Epic Life System → 🏝️ Paradise.',
+]},
 {v:'0.53.3',d:'2026-07-01 21:40',n:[
 '🧪 New Game → “Beta Test” profile: a sandbox god-mode start for jumping straight into any menu to test. Epic Life on, all stages maxed, fat cash & credit — plus the wealth engine pre-wired: a rental (equity + mortgage) and a business loan, Velocity Banking already ON (HELOC attacking the mortgage; switch to the line in-panel for the draw flow), and a cash-value policy with ~$35k borrowable and tax-free passive income switched on. Unranked; skips the tutorial + unlock tips.',
 ]},
@@ -661,7 +669,7 @@ s._epic_life=true;s._epic_plan='monthly';s.operating_expenses=(s.operating_expen
 // 🛡️ Cash-value policy — funded & running: borrowable ≈ $35k, and tax-free passive income already switched on
 s.insurance_cash_value=50000;s._policy_open_month=1;s._policy_fund_rate=0.15;s._iul_loan_type='wash';s._passive_income_active=true;if(!s._completed_actions.includes('fund_accumulation_policy'))s._completed_actions.push('fund_accumulation_policy');
 // ⚡ Velocity banking — already ON: HELOC vehicle attacking the mortgage on the Balanced sweep (switch to the credit line in-panel to test the draw flow)
-this._ensureLoans();s._velocity_active=true;s._velocity_vehicle='heloc';s._velocity_mode='balanced';
+this._ensureLoans();s._velocity_active=true;s._velocity_setup=true;s._velocity_vehicle='heloc';s._velocity_mode='balanced';
 this.hidePopup();this.showScreen('game-screen');this.startGame();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='';document.getElementById('popup-container').style.display='block';this._lockScroll();},
@@ -827,7 +835,9 @@ _persRevolving(){const s=this.state;return Math.max(0,(s.total_debt||0)-(s._inst
 // Pay extra principal at a specific loan — returns the REAL interest & months removed by shortening its schedule.
 _loanPayExtra(loan,amount){const s=this.state;if(!loan||amount<=0)return{paid:0,interestSaved:0,monthsSaved:0};amount=Math.min(Math.round(amount),Math.round(loan.balance));if(amount<=0)return{paid:0,interestSaved:0,monthsSaved:0};const iB=this._interestRemaining(loan.balance,loan.rate,loan.payment),mB=this._monthsRemaining(loan.balance,loan.rate,loan.payment);loan.balance-=amount;s.total_debt=Math.max(0,(s.total_debt||0)-amount);const iA=this._interestRemaining(loan.balance,loan.rate,loan.payment),mA=this._monthsRemaining(loan.balance,loan.rate,loan.payment);this._syncLoanBuckets();return{paid:amount,interestSaved:Math.max(0,Math.round((isFinite(iB)?iB:0)-(isFinite(iA)?iA:0))),monthsSaved:Math.max(0,(isFinite(mB)?mB:0)-(isFinite(mA)?mA:0))};},
 // Which loan velocity attacks: HELOC → the mortgage; credit line → the highest-rate amortizing loan (avalanche).
-_velocityTargetLoan(){const s=this.state;this._ensureLoans();const L=(s.loans||[]).filter(x=>x.balance>0.5);if(!L.length)return null;const heloc=s._velocity_vehicle==='heloc'&&(s.real_estate_debt||0)>0;if(heloc)return L.filter(x=>x.type==='mortgage').sort((a,b)=>b.balance-a.balance)[0]||null;const nonMort=L.filter(x=>x.type!=='mortgage'),pool=nonMort.length?nonMort:L;return pool.sort((a,b)=>b.rate-a.rate||b.balance-a.balance)[0];},
+_velocityTargetLoan(){const s=this.state;this._ensureLoans();const L=(s.loans||[]).filter(x=>x.balance>0.5);if(!L.length)return null;
+ if(s._velocity_target_id){const pick=L.find(x=>x.id===s._velocity_target_id);if(pick)return pick;}/* player-chosen target (from the ⚡ panel) wins when it still exists */
+ const heloc=s._velocity_vehicle==='heloc'&&(s.real_estate_debt||0)>0;if(heloc)return L.filter(x=>x.type==='mortgage').sort((a,b)=>b.balance-a.balance)[0]||null;const nonMort=L.filter(x=>x.type!=='mortgage'),pool=nonMort.length?nonMort:L;return pool.sort((a,b)=>b.rate-a.rate||b.balance-a.balance)[0];},
 // Advance every loan one month: pay scheduled principal (mortgage principal → EQUITY, funded by rent; other loans → from cash). Returns the CASH principal (excludes rent-funded mortgage principal). Interest is charged separately via calcDebtInterest (pre-paydown balances).
 _amortizeMonth(){const s=this.state;this._ensureLoans();let cashPrin=0;for(const ln of s.loans){const i=ln.rate>0?ln.balance*ln.rate/12:0;let pr=ln.rate>0?(ln.payment-i):Math.min(ln.balance,ln.payment);if(pr<0)pr=0;if(pr>ln.balance)pr=ln.balance;ln.balance-=pr;ln.interestPaid=(ln.interestPaid||0)+i;ln.monthsPaid=(ln.monthsPaid||0)+1;s.total_debt=Math.max(0,(s.total_debt||0)-pr);if(ln.type==='mortgage'){if(pr>0){s.real_estate_equity=(s.real_estate_equity||0)+pr;s._re_amort_ytd=(s._re_amort_ytd||0)+pr;}}else cashPrin+=pr;}
 const revMin=Math.round((this._persRevolving()+(s.business_credit_used||0))*0.01);if(revMin>0){s.total_debt=Math.max(0,(s.total_debt||0)-revMin);cashPrin+=revMin;}this._syncLoanBuckets();this._lastAmortPrincipal=Math.round(cashPrin);return this._lastAmortPrincipal;},
@@ -899,86 +909,136 @@ _velocityReadout(){const s=this.state;this._ensureLoans();const modeKey=s._veloc
  const persRev=this._persRevolving()+(s.business_credit_used||0);
  return{mode:'revolving',modeKey,modeLabel,targetLabel:'Revolving cards',ratePct:22,targetBal:Math.round(persRev),interestAhead:0,payoffText:'—',interestSaved:Math.round(s._velocity_interest_saved||0),monthsSaved:0,equityBuilt:Math.round(s._velocity_equity_built||0),totalChunked:Math.round(s._velocity_total_chunked||0)};},
 // The Velocity Banking control panel — reached from the Finance action card (turn-on consumes the finance move) OR the ⚡ dashboard chip (ongoing tuning & manual chunks are free, no turn).
-openVelocityControl(){const s=this.state;
+openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  if(!s._epic_life){this.showPopup('👑 Velocity Banking — Epic Life perk','<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Velocity banking is an <strong>Epic Life membership</strong> play. Your concierge sets up the line, and you get the ⚡ control to sweep surplus cash at your debt — paying a mortgage or revolving balance down years faster and building equity quicker.</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-top:10px;">Join Epic Life from the Finance menu to unlock it (along with the rest of the concierge wealth engine).</div>');return;}
- const active=!!s._velocity_active;
+ this._ensureLoans();
+ const active=!!s._velocity_active,setup=!!(s._velocity_setup||s._velocity_active);/* treat an already-running sweep (older saves) as set up */
  const reDebt=(s.real_estate_debt||0),reEq=(s.real_estate_equity||0),hasRE=reDebt>0&&reEq>0;
  const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-reDebt),hasLine=lineCap>0||revDebt>0;
- if(!s._velocity_vehicle)s._velocity_vehicle=hasRE?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';if(s._velocity_vehicle==='heloc'&&!hasRE)s._velocity_vehicle='line';
  const cash=Math.max(0,Math.floor(s.cash||0));
- let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:10px;">Park your income on a line of credit and <strong>sweep every surplus dollar at your debt</strong>. Each extra dollar of principal <strong>removes the future interest</strong> that dollar would have cost over the life of the loan, so the balance clears years sooner — and on a mortgage, that paid-down principal also becomes <strong>equity</strong>.</div>';
- const vBtn=(key,label,sub,enabled)=>{const on=s._velocity_vehicle===key;return '<div '+(enabled?'onclick="Game.velSetVehicle(\''+key+'\')" style="cursor:pointer;':'style="opacity:0.45;')+'flex:1;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on&&enabled?'rgba(34,197,94,0.12)':'var(--surface)')+';border-radius:6px;padding:8px;text-align:center;"><div style="font-size:0.74rem;font-weight:700;color:'+(on&&enabled?'var(--accent)':'var(--text)')+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Vehicle</div><div style="display:flex;gap:8px;margin-bottom:12px;">'+vBtn('heloc','🏠 HELOC',hasRE?'Home equity → attack the mortgage':'Buy a rental first',hasRE)+vBtn('line','💳 Credit line',hasLine?'A line → attack your highest-rate loan':'Open a line first',hasLine)+'</div>';
- const mBtn=(key,label,sub)=>{const on=(s._velocity_mode||'balanced')===key;return '<div onclick="Game.velSetMode(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:0.7rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.54rem;color:var(--text2);margin-top:2px;">'+sub+'</div></div>';};
+ // Stage everything (vehicle + mode + target loan + chunk + draw); Confirm finalizes it all. Seed from current on first open.
+ if(!s._velStaged)s._velStaged={vehicle:s._velocity_vehicle||(hasRE?'heloc':'line'),mode:s._velocity_mode||'balanced',target:s._velocity_target_id||null,chunk:0,draw:0};
+ const st=s._velStaged;if(st.vehicle==='heloc'&&!hasRE)st.vehicle='line';
+ // Resolve the staged target from the staged vehicle's loan pool (HELOC → mortgages; line → installment loans).
+ const L=(s.loans||[]).filter(x=>x.balance>0.5);let pool=st.vehicle==='heloc'?L.filter(x=>x.type==='mortgage'):L.filter(x=>x.type!=='mortgage');if(!pool.length)pool=L;
+ let tgtLoan=pool.find(x=>x.id===st.target)||pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance)[0]||null;st.target=tgtLoan?tgtLoan.id:null;
+ st.chunk=Math.max(0,Math.min(Math.round(st.chunk||0),cash,tgtLoan?Math.round(tgtLoan.balance):cash));
+ const drawHead=Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0))),drawTgtBal=(s._installment_debt||0)+(s.business_installment_debt||0),drawCap=Math.min(Math.floor(drawHead),Math.floor(drawTgtBal));
+ st.draw=Math.max(0,Math.min(Math.round(st.draw||0),st.vehicle==='line'?drawCap:0));
+ let h='';
+ h+='<div style="text-align:right;margin-bottom:6px;"><span onclick="Game.velToggleInfo()" style="cursor:pointer;font-size:0.66rem;color:var(--text2);">ℹ️ How velocity banking works</span></div>';
+ if(this._velInfo)h+='<div style="font-size:0.76rem;color:var(--text2);line-height:1.5;margin-bottom:10px;padding:8px 11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;">Park your income on a line of credit and <strong>sweep every surplus dollar at your debt</strong>. Each extra dollar of principal <strong>removes the future interest</strong> that dollar would have cost over the life of the loan, so the balance clears years sooner — and on a mortgage, that paid-down principal also becomes <strong>equity</strong>.</div>';
+ // Setup (one-time, uses finance move) OR the free anytime Active/Pause sweep toggle.
+ if(!setup){const canOn=(st.vehicle==='heloc'&&hasRE)||(st.vehicle==='line'&&hasLine);
+  h+=canOn?'<button onclick="Game.velTurnOn()" style="width:100%;background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:11px;font-weight:700;font-size:0.82rem;cursor:pointer;margin-bottom:4px;">⚡ Set up Velocity Banking</button><div style="font-size:0.58rem;color:var(--text2);text-align:center;margin-bottom:10px;">Uses this month\'s finance move to set up the line. After that, sweeping &amp; chunks are free.</div>':'<div style="font-size:0.74rem;color:var(--gold);text-align:center;padding:8px;line-height:1.5;margin-bottom:10px;">You need a line to run your cash flow through. Open a business/personal credit line, or buy a rental to borrow against, then come back.</div>';
+ } else h+='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;background:'+(active?'rgba(16,185,129,0.1)':'var(--surface)')+';border:1px solid '+(active?'var(--accent)':'var(--border)')+';border-radius:8px;margin-bottom:12px;"><span style="font-size:0.78rem;font-weight:700;color:'+(active?'var(--accent)':'var(--text2)')+';">Monthly sweep: '+(active?'ON':'PAUSED')+'</span><button onclick="Game.velToggleSweep()" style="background:'+(active?'var(--surface)':'var(--accent)')+';color:'+(active?'var(--text2)':'#04210f')+';border:1px solid '+(active?'var(--border)':'var(--accent)')+';border-radius:999px;padding:6px 14px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+(active?'⏸ Pause':'▶ Activate')+'</button></div>';
+ // Vehicle (staged)
+ const vBtn=(key,label,sub,enabled)=>{const on=st.vehicle===key;return '<div '+(enabled?'onclick="Game.velStageVehicle(\''+key+'\')" style="cursor:pointer;':'style="opacity:0.45;')+'flex:1;border:1px solid '+(on&&enabled?'var(--accent)':'var(--border)')+';background:'+(on&&enabled?'rgba(34,197,94,0.12)':'var(--surface)')+';border-radius:6px;padding:8px;text-align:center;"><div style="font-size:0.74rem;font-weight:700;color:'+(on&&enabled?'var(--accent)':'var(--text)')+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Vehicle</div><div style="display:flex;gap:8px;margin-bottom:12px;">'+vBtn('heloc','🏠 HELOC',hasRE?'Home equity → the mortgage':'Buy a rental first',hasRE)+vBtn('line','💳 Credit line',hasLine?'A line → an installment loan':'Open a line first',hasLine)+'</div>';
+ // Target loan picker (staged)
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan to attack</div>';
+ if(pool.length){h+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">';pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance).forEach(ln=>{const on=st.target===ln.id;h+='<div onclick="Game.velStageTarget(\''+ln.id+'\')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:8px 11px;"><span style="font-size:0.74rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+(on?'✓ ':'')+ln.label+'</span><span style="font-size:0.66rem;color:var(--text2);">'+(Math.round(ln.rate*1000)/10)+'% · '+fm(ln.balance)+'</span></div>';});h+='</div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:12px;">No '+(st.vehicle==='heloc'?'mortgage':'installment loan')+' to attack right now.</div>';
+ // Aggressiveness (staged)
+ const mBtn=(key,label,sub)=>{const on=st.mode===key;return '<div onclick="Game.velStageMode(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:0.7rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.54rem;color:var(--text2);margin-top:2px;">'+sub+'</div></div>';};
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Aggressiveness — surplus swept each month</div><div style="display:flex;gap:6px;margin-bottom:12px;">'+mBtn('conservative','Conservative','50%')+mBtn('balanced','Balanced','75%')+mBtn('aggressive','Aggressive','100%')+'</div>';
- if(active){const vd=this._velocityReadout();
-  h+='<div style="border-top:1px solid var(--border);margin:10px 0;padding-top:8px;">';
-  h+='<div class="breakdown-row"><span>Attacking</span><span>'+vd.targetLabel+(vd.mode==='loan'?' · '+vd.ratePct+'%':'')+' · '+this.fmtMoney(vd.targetBal)+'</span></div>';
-  if(vd.mode==='loan'){h+='<div class="breakdown-row"><span>Interest still ahead</span><span style="color:var(--text2)">'+this.fmtMoney(vd.interestAhead)+'</span></div>';h+='<div class="breakdown-row"><span>Payoff at current pace</span><span style="color:var(--text2)">'+vd.payoffText+'</span></div>';}
-  h+='<div class="breakdown-row"><span>Interest saved to date</span><span style="color:var(--accent)">'+this.fmtMoney(vd.interestSaved)+'</span></div>';
-  if(vd.monthsSaved>0)h+='<div class="breakdown-row"><span>Time shaved off payoff</span><span style="color:var(--accent)">'+(vd.monthsSaved>=24?(Math.round(vd.monthsSaved/12*10)/10)+' yrs':vd.monthsSaved+' mo')+'</span></div>';
-  if(vd.equityBuilt>0)h+='<div class="breakdown-row"><span>Extra equity built</span><span style="color:var(--accent)">'+this.fmtMoney(vd.equityBuilt)+'</span></div>';
-  if((s._velocity_drawn_total||0)>0)h+='<div class="breakdown-row"><span>Drawn onto line · fees '+this.fmtMoney(s._velocity_draw_fees||0)+'</span><span style="color:var(--gold)">'+this.fmtMoney(s._velocity_drawn_total)+'</span></div>';
+ // Chunk slider (staged, from cash)
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Chunk extra now — from your '+fm(cash)+' cash</div>';
+ if(cash>0&&tgtLoan){const cmax=Math.min(cash,Math.round(tgtLoan.balance));h+='<input type="range" min="0" max="'+cmax+'" step="'+Math.max(1,Math.round(cmax/100))+'" value="'+st.chunk+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'vel-chunk\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.velStageChunk(this.value)">';
+  h+='<div style="margin-bottom:10px;font-size:0.78rem;font-weight:700;color:var(--accent);">Chunk <span id="vel-chunk">$'+st.chunk.toLocaleString()+'</span></div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:10px;">'+(tgtLoan?'No spare cash to chunk right now — build surplus first.':'Pick a loan to attack above.')+'</div>';
+ // Draw slider (staged, line vehicle only)
+ if(st.vehicle==='line'&&drawCap>0){h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">💳 Draw from credit → attack the loan · 3% fee</div>';
+  h+='<div style="font-size:0.62rem;color:var(--text2);line-height:1.4;margin-bottom:5px;">No cash needed — pulls from your line to knock down the loan (up to '+fm(drawCap)+'). A balance transfer onto your line; keep sweeping to pay it back down.</div>';
+  h+='<input type="range" min="0" max="'+drawCap+'" step="'+Math.max(1,Math.round(drawCap/100))+'" value="'+st.draw+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'vel-draw\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.velStageDraw(this.value)">';
+  h+='<div style="margin-bottom:10px;font-size:0.78rem;font-weight:700;color:var(--gold);">Draw <span id="vel-draw">$'+st.draw.toLocaleString()+'</span></div>';}
+ // Projection (current → after) + Confirm
+ if(tgtLoan){const iB=this._interestRemaining(tgtLoan.balance,tgtLoan.rate,tgtLoan.payment);const afterBal=Math.max(0,tgtLoan.balance-st.chunk-st.draw);const iA=this._interestRemaining(afterBal,tgtLoan.rate,tgtLoan.payment);
+  const iSave=Math.max(0,Math.round((isFinite(iB)?iB:0)-(isFinite(iA)?iA:0))),drawFee=Math.round(st.draw*0.03);
+  const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you confirm</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
+  h+=proj(tgtLoan.label,fm(tgtLoan.balance),fm(afterBal),(st.chunk+st.draw)>0?'var(--accent)':'var(--text)');
+  h+=proj('Interest still ahead',fm(isFinite(iB)?iB:0),fm(isFinite(iA)?iA:0),'var(--accent)');
+  h+=proj('Cash',fm(cash),fm(Math.max(0,cash-st.chunk-drawFee)),'var(--text)');
+  if(iSave>0)h+='<div class="breakdown-row"><span>Interest removed now</span><span style="color:var(--accent);font-weight:700;">'+fm(iSave)+'</span></div>';
   h+='</div>';
-  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:4px 0;">Chunk extra now — from your '+this.fmtMoney(cash)+' cash · no turn</div>';
-  if(cash>0){const presets=[2000,5000,10000].filter(a=>a<=cash);const cBtn=(amt,lbl)=>'<button onclick="Game.velChunk('+amt+')" style="flex:1;background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+lbl+'</button>';let chunks='';presets.forEach(a=>chunks+=cBtn(a,'💥 '+this.fmtMoney(a)));chunks+=cBtn(cash,'💥 Max');h+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'+chunks+'</div>';}
-  else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:10px;">No spare cash to chunk right now — build surplus first.</div>';
-  // Draw & chunk — balance-transfer from a credit line onto an amortizing installment loan (credit-line vehicle only).
-  {const drawHead=Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0))),drawTgt=(s._installment_debt||0)+(s.business_installment_debt||0);
-   if(s._velocity_vehicle==='line'&&drawHead>0&&drawTgt>0){const dcap=Math.min(Math.floor(drawHead),Math.floor(drawTgt));
-    h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:6px 0 3px;">💳 Draw from credit → attack a loan · 3% fee · no turn</div>';
-    h+='<div style="font-size:0.62rem;color:var(--text2);line-height:1.4;margin-bottom:6px;">No cash needed — pulls from your line to knock down your highest-rate loan (up to '+this.fmtMoney(dcap)+'). It\'s a balance transfer onto your line, so keep the surplus sweeping to pay it back down and the interest savings build over time. Let it sit and it\'s just debt plus the fee.</div>';
-    const dBtn=(amt,lbl)=>'<button onclick="Game.velDraw('+amt+')" style="flex:1;background:var(--gold);color:#1a1205;border:none;border-radius:6px;padding:8px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+lbl+'</button>';
-    const dpre=[5000,10000,25000].filter(a=>a<=dcap);let draws='';dpre.forEach(a=>draws+=dBtn(a,'💳 '+this.fmtMoney(a)));draws+=dBtn(dcap,'💳 Max');
-    h+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">'+draws+'</div>';}}
-  h+='<button onclick="Game.velPause()" style="width:100%;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:0.74rem;cursor:pointer;">⏸ Pause velocity banking</button>';
- } else {const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);
-  h+=canOn?'<button onclick="Game.velTurnOn()" style="width:100%;background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:11px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Turn on Velocity Banking</button><div style="font-size:0.58rem;color:var(--text2);text-align:center;margin-top:6px;">Uses this month\'s finance move to set up the line. Tuning &amp; extra chunks after that are free.</div>':'<div style="font-size:0.74rem;color:var(--gold);text-align:center;padding:8px;line-height:1.5;">You need a line to run your cash flow through. Open a business/personal credit line, or buy a rental property to borrow against, then come back.</div>';}
+  h+='<button onclick="Game.velConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">✓ Confirm</button>';
+  if(!active&&(st.chunk>0||st.draw>0))h+='<div style="font-size:0.6rem;color:var(--gold);text-align:center;margin-top:6px;">Activate the monthly sweep above to chunk/draw.</div>';
+ }
+ if(active){const vd=this._velocityReadout();h+='<div style="border-top:1px solid var(--border);margin:12px 0 0;padding-top:8px;font-size:0.66rem;color:var(--text2);">Lifetime: interest saved <strong style="color:var(--accent);">'+fm(vd.interestSaved)+'</strong>'+(vd.equityBuilt>0?' · equity built '+fm(vd.equityBuilt):'')+(vd.totalChunked>0?' · chunked '+fm(vd.totalChunked):'')+'.</div>';}
  this._epicPanel('⚡ Velocity Banking',h);},
-velSetVehicle(v){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;if(v==='heloc'&&!hasRE)return;s._velocity_vehicle=v;this.openVelocityControl();if(s._velocity_active)this._refreshDashboards();},
-velSetMode(m){this.state._velocity_mode=m;this.openVelocityControl();if(this.state._velocity_active)this._refreshDashboards();},
-velChunk(amt){const s=this.state;if(!s._velocity_active)return;const res=this._velocityApply(amt);if(res.total>0)s._velocity_chunk=(s._velocity_chunk||0)+res.total;this._refreshDashboards();this.openVelocityControl();},
-velDraw(amt){const s=this.state;if(!s._velocity_active)return;const res=this._velocityDraw(amt);this._refreshDashboards();this.openVelocityControl();},
-velPause(){this.state._velocity_active=false;this.hidePopup();this._refreshDashboards();this.showPopup('⚡ Velocity Banking paused','Velocity banking is off. Your surplus stays in cash and your debt amortizes at the normal pace. Turn it back on anytime from the Finance menu → Debt &amp; Credit.');},
-velTurnOn(){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0)),hasLine=lineCap>0||revDebt>0;if(s._velocity_vehicle==='heloc'&&!hasRE)s._velocity_vehicle='line';const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);if(!canOn){this.openVelocityControl();return;}this.hidePopup();this.selectAction('finance','velocity_banking');},
+velToggleInfo(){this._velInfo=!this._velInfo;this.openVelocityControl();},
+// Stagers — write to _velStaged and re-render; nothing touches real state until velConfirm.
+velStageVehicle(v){const s=this.state,st=s._velStaged;if(!st)return;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;if(v==='heloc'&&!hasRE)return;st.vehicle=v;st.target=null;st.draw=0;this.openVelocityControl();},
+velStageMode(m){const s=this.state;if(s._velStaged)s._velStaged.mode=m;this.openVelocityControl();},
+velStageTarget(id){const s=this.state;if(s._velStaged)s._velStaged.target=id;this.openVelocityControl();},
+velStageChunk(v){const s=this.state;if(s._velStaged)s._velStaged.chunk=Math.max(0,Math.round(+v||0));this.openVelocityControl();},
+velStageDraw(v){const s=this.state;if(s._velStaged)s._velStaged.draw=Math.max(0,Math.round(+v||0));this.openVelocityControl();},
+// Free anytime toggle of the monthly auto-sweep (once velocity has been set up via the finance action).
+velToggleSweep(){const s=this.state;if(!(s._velocity_setup||s._velocity_active))return;s._velocity_setup=true;s._velocity_active=!s._velocity_active;this._refreshDashboards();this.openVelocityControl();},
+// Confirm locks in the staged settings and executes the staged chunk/draw (free, no turn), then returns to the hub.
+velConfirm(){const s=this.state,st=s._velStaged;if(!st){this.showEpicLife();return;}
+ s._velocity_vehicle=st.vehicle;s._velocity_mode=st.mode;s._velocity_target_id=st.target||null;
+ if(s._velocity_active){if(st.chunk>0){const res=this._velocityApply(st.chunk);if(res.total>0)s._velocity_chunk=(s._velocity_chunk||0)+res.total;}if(st.draw>0)this._velocityDraw(st.draw);}
+ s._velStaged=null;this._refreshDashboards();this.showEpicLife();},
+velTurnOn(){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0)),hasLine=lineCap>0||revDebt>0;const veh=(s._velStaged&&s._velStaged.vehicle)||s._velocity_vehicle;if(veh==='heloc'&&!hasRE)s._velocity_vehicle='line';else if(veh)s._velocity_vehicle=veh;const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);if(!canOn){this.openVelocityControl();return;}this.hidePopup();this.selectAction('finance','velocity_banking');},
 // ---- CASH-VALUE POLICY control panel (reached from the ⭐ Epic Life hub; open to everyone with a policy) ----
 // Funding % and loan type are free ongoing settings; taking a loan or switching on passive income spends your ONE finance move that turn (queued through the normal action system, like velocity's turn-on). The dashboards just DISPLAY these — all adjustment happens here.
-openPolicyControl(){const s=this.state;
+openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  let h='';
  if(!s._epic_life){h+='<div style="font-size:0.82rem;color:var(--text2);line-height:1.6;">The <strong>cash-value policy engine</strong> — a tax-free money vault you fund monthly, borrow against with no bank, and draw <strong>tax-free passive income</strong> from — is an <strong style="color:var(--gold);">Epic Life member</strong> play. Your concierge sets it up and manages the funding, loans, and payout for you.</div><div style="font-size:0.78rem;color:var(--gold);margin-top:10px;line-height:1.5;">👑 Join Epic Life (from the Epic Life card) to unlock it, along with Velocity Banking and the rest of the wealth engine.</div>';this._epicPanel('🛡️ Cash-Value Policy',h);return;}
  const hasPolicy=(s.insurance_cash_value||0)>0||(s._completed_actions||[]).includes('fund_accumulation_policy');
  if(!hasPolicy){h+='<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">No cash-value policy yet. Open one from <strong>Finance → Build Wealth → Fund a Cash-Value Policy</strong> ($10k — about $9,800 lands as cash value). Once it\'s in force you\'ll manage funding, loans, and passive income right here.</div>';this._epicPanel('🛡️ Cash-Value Policy',h);return;}
  const cv=Math.round(s.insurance_cash_value||0),loan=Math.round(s.insurance_loan_balance||0),charge=this._policySurrenderCharge(),borrow=this._policyBorrowable();
- const fr=Math.round((s._policy_fund_rate||0.15)*100),rev=Math.round(s.monthly_revenue||0);
- const isVar=s._iul_loan_type==='variable',baseRate=Math.round(((s._market_rate!=null?s._market_rate:0.05)+0.01)*1000)/10,active=!!s._passive_income_active;
- const qF=this.selectedActions&&this.selectedActions.finance,queued=qF&&(qF.id==='policy_loan'||qF.id==='activate_passive_income');
- h+='<div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:10px;">';
- h+='<div class="breakdown-row"><span>Cash value</span><span style="color:var(--gold)">'+this.fmtMoney(cv)+'</span></div>';
- h+='<div class="breakdown-row"><span>Surrender charge</span><span style="color:'+(charge>0?'var(--red)':'var(--text2)')+'">'+(charge>0?'−'+this.fmtMoney(charge):'—')+'</span></div>';
- h+='<div class="breakdown-row"><span>Borrowable now</span><span style="color:var(--accent)">'+this.fmtMoney(borrow)+'</span></div>';
- if(loan>0)h+='<div class="breakdown-row"><span>Loan outstanding</span><span style="color:var(--gold)">'+this.fmtMoney(loan)+'</span></div>';
- h+='</div>';
- if(charge>0&&borrow<=0)h+='<div style="font-size:0.7rem;color:var(--gold);margin-bottom:10px;line-height:1.4;">⏳ The '+this.fmtMoney(charge)+' surrender charge still exceeds your borrowable value — keep funding it below and your borrowing opens as the cash value grows and the charge phases out.</div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Monthly funding</div>';
- h+='<input type="range" min="10" max="25" step="1" value="'+fr+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'ppc-fr\');if(e)e.textContent=this.value+\'% · ≈ $\'+Math.round('+rev+'*this.value/100).toLocaleString()+\'/mo\'" onchange="Game.setPolicyFundRate(this.value)">';
- h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;"><span id="ppc-fr" style="font-weight:700;color:var(--gold);">'+fr+'% · ≈ $'+Math.round(rev*fr/100).toLocaleString()+'/mo</span> — more builds cash value faster (opens borrowing sooner), less cash in pocket.</div>';
- const tBtn=(key,label,sub)=>{const on=(isVar?'variable':'wash')===key;return '<div onclick="Game.setPolicyLoanType(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 6px;text-align:center;"><div style="font-size:0.72rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.55rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
+ const rev=Math.round(s.monthly_revenue||0),baseRate=Math.round(((s._market_rate!=null?s._market_rate:0.05)+0.01)*1000)/10,sep=this.isSeparated(),curVar=s._iul_loan_type==='variable',curActive=!!s._passive_income_active;
+ // Stage everything (loan type + funding % + loan amount + passive on); nothing moves until Confirm. Seed from current on first open.
+ if(!s._polStaged)s._polStaged={loanType:(curVar?'variable':'wash'),loanAmt:0,fundRate:Math.round((s._policy_fund_rate||0.15)*100),passiveOn:curActive};
+ const st=s._polStaged;st.loanAmt=Math.max(0,Math.min(Math.round(st.loanAmt||0),borrow));const isVar=st.loanType==='variable';
+ const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
+ const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
+ h+='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Your tax-free money vault. Set funding &amp; loan type, borrow against it, switch on passive income — <strong>review the projection, then Confirm</strong>. Nothing moves until you confirm.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:4px 0 5px;">Now</div><div style="padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">';
+ h+=row('Cash value',fm(cv),'var(--gold)')+row('Surrender charge',charge>0?'−'+fm(charge):'—',charge>0?'var(--red)':'var(--text2)')+row('Borrowable now',fm(borrow),'var(--accent)')+(loan>0?row('Loan outstanding',fm(loan),'var(--gold)'):'')+'</div>';
+ if(charge>0&&borrow<=0)h+='<div style="font-size:0.7rem;color:var(--gold);margin:10px 0;line-height:1.4;">⏳ The '+fm(charge)+' surrender charge still exceeds your borrowable value — keep funding it and your borrowing opens as the cash value grows and the charge phases out.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 3px;">Monthly funding</div>';
+ h+='<input type="range" min="10" max="25" step="1" value="'+st.fundRate+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'ppc-fr\');if(e)e.textContent=this.value+\'% · ≈ $\'+Math.round('+rev+'*this.value/100).toLocaleString()+\'/mo\'" onchange="Game.polStageFund(this.value)">';
+ h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;"><span id="ppc-fr" style="font-weight:700;color:var(--gold);">'+st.fundRate+'% · ≈ $'+Math.round(rev*st.fundRate/100).toLocaleString()+'/mo</span> — more builds cash value faster (opens borrowing sooner), less cash in pocket.</div>';
+ const tBtn=(key,label,sub)=>{const on=st.loanType===key;return '<div onclick="Game.polStageType(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 6px;text-align:center;"><div style="font-size:0.72rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.55rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan type</div><div style="display:flex;gap:8px;margin-bottom:6px;">'+tBtn('wash','Fixed · 3%','borrowed slice ~washes — lapse-proof')+tBtn('variable','Variable · '+baseRate+'%','fed rate + spread; full cash value keeps earning the index — higher income, lapse risk')+'</div>';
  h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;line-height:1.35;">'+(isVar?'⚠️ Variable bets the index beats the '+baseRate+'% loan rate — great in good years, but a downturn can compound the loan past your cash value and lapse the policy (gains become taxable).':'Fixed keeps it safe — the loan and the borrowed slice roughly wash, so the policy can\'t lapse on you.')+'</div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Take a loan — tax-free, no credit check · uses your Finance move</div>';
- if(borrow>0){const half=Math.round(borrow/2),step=Math.max(1,Math.round(borrow/100));
-  h+='<input type="range" min="0" max="'+borrow+'" step="'+step+'" value="'+half+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'ppc-loan\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();var b=document.getElementById(\'ppc-loanbtn\');if(b)b.setAttribute(\'data-amt\',Math.round(+this.value));">';
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;"><span id="ppc-loan" style="font-size:0.78rem;font-weight:700;color:var(--accent);">$'+half.toLocaleString()+'</span><button id="ppc-loanbtn" data-amt="'+half+'" onclick="Game.polTakeLoan(+this.getAttribute(\'data-amt\'))" style="background:var(--accent);color:#04210f;border:none;border-radius:6px;padding:8px 14px;font-weight:700;font-size:0.74rem;cursor:pointer;">💸 Take loan</button></div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Take a loan — tax-free, no credit check</div>';
+ if(borrow>0){const step=Math.max(1,Math.round(borrow/100));
+  h+='<input type="range" min="0" max="'+borrow+'" step="'+step+'" value="'+st.loanAmt+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'ppc-loan\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.polStageLoan(this.value)">';
+  h+='<div style="margin-bottom:12px;font-size:0.78rem;font-weight:700;color:var(--accent);">Borrow <span id="ppc-loan">$'+st.loanAmt.toLocaleString()+'</span></div>';
  } else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:12px;">No borrowing room yet — fund the policy above the surrender charge first.</div>';
- if(active){const moP=Math.round(cv*(isVar?0.08:0.06)/12);h+='<div style="padding:8px 10px;background:rgba(16,185,129,0.1);border-left:3px solid var(--accent);border-radius:var(--radius-sm);font-size:0.74rem;color:var(--accent);font-weight:600;">✓ Passive income ON — ≈ '+this.fmtMoney(moP)+'/mo tax-free, drawn against the policy automatically each month.</div>';}
- else if(cv>=5000)h+='<button onclick="Game.polActivatePassive()" style="width:100%;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;border:none;border-radius:6px;padding:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">👑 Activate tax-free passive income · uses your Finance move</button>';
- else h+='<div style="font-size:0.7rem;color:var(--text2);">Passive income unlocks once your cash value passes '+this.fmtMoney(5000)+'.</div>';
- if(queued)h+='<div style="font-size:0.66rem;color:var(--accent);text-align:center;margin-top:8px;">✓ Queued for this turn — applies when you End Turn.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Tax-free passive income</div>';
+ if(curActive){const moP=Math.round(cv*(curVar?0.08:0.06)/12);h+='<div style="padding:8px 10px;background:rgba(16,185,129,0.1);border-left:3px solid var(--accent);border-radius:var(--radius-sm);font-size:0.74rem;color:var(--accent);font-weight:600;margin-bottom:6px;">✓ Passive income ON — ≈ '+fm(moP)+'/mo tax-free, drawn automatically each month.</div>';}
+ else if(cv>=5000)h+='<button onclick="Game.polStagePassive()" style="width:100%;border:1px solid '+(st.passiveOn?'var(--accent)':'var(--border)')+';background:'+(st.passiveOn?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;margin-bottom:6px;">'+(st.passiveOn?'✓ Passive income — ON (staged)':'🌴 Switch on tax-free passive income')+'</button>';
+ else h+='<div style="font-size:0.7rem;color:var(--text2);margin-bottom:6px;">Passive income unlocks once your cash value passes '+fm(5000)+'.</div>';
+ const afterCash=(sep?(s.personal_cash||0):(s.cash||0))+st.loanAmt,curFundMo=Math.round(rev*(s._policy_fund_rate||0.15)),newFundMo=Math.round(rev*st.fundRate/100);
+ const curPassive=curActive?Math.round(cv*(curVar?0.08:0.06)/12):0,newPassive=st.passiveOn&&cv>=5000?Math.round(cv*(isVar?0.08:0.06)/12):0;
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">If you confirm</div><div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
+ h+=proj((sep?'Cash — personal':'Cash'),fm(sep?(s.personal_cash||0):(s.cash||0)),fm(afterCash),st.loanAmt>0?'var(--accent)':'var(--text)');
+ h+=proj('Policy loan',fm(loan),fm(loan+st.loanAmt),st.loanAmt>0?'var(--gold)':'var(--text)');
+ h+=proj('Loan type',curVar?'Variable':'Fixed',isVar?'Variable':'Fixed');
+ h+=proj('Funding /mo',fm(curFundMo),fm(newFundMo));
+ h+=proj('Passive income',fm(curPassive)+'/mo',fm(newPassive)+'/mo',newPassive>0?'var(--accent)':'var(--text)');
+ h+='</div>';
+ h+='<button onclick="Game.polConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">✓ Confirm — lock it in</button>';
+ h+='<div style="font-size:0.6rem;color:var(--text2);text-align:center;margin-top:6px;">Managed by your concierge — free, applies this month. No finance move used.</div>';
  this._epicPanel('🛡️ Cash-Value Policy',h);},
-setPolicyLoanType(t){this.state._iul_loan_type=(t==='variable'?'variable':'wash');this._refreshDashboards();this.openPolicyControl();},
-// Epic perk: managing the policy is FREE (no finance move) and applies immediately — the loan/passive execute this month and surface on the result card. The concierge runs the engine, so you just steer it.
-polTakeLoan(amt){const s=this.state;amt=Math.max(0,Math.min(Math.round(amt||0),this._policyBorrowable()));if(amt<=0)return;const sep=this.isSeparated();s.insurance_loan_balance=(s.insurance_loan_balance||0)+amt;if(sep)s.personal_cash=(s.personal_cash||0)+amt;else s.cash=(s.cash||0)+amt;s._policy_act=s._policy_act||{};s._policy_act.loan=(s._policy_act.loan||0)+amt;this._refreshDashboards();this.showEpicLife();},
-polActivatePassive(){const s=this.state;if(s._passive_income_active||(s.insurance_cash_value||0)<5000)return;s._passive_income_active=true;if(!s._iul_loan_type)s._iul_loan_type='wash';s._policy_act=s._policy_act||{};s._policy_act.passiveOn=true;this._refreshDashboards();this.showEpicLife();},
+// Stagers — write to _polStaged and re-render; nothing touches real state until polConfirm.
+polStageType(t){const s=this.state;if(s._polStaged)s._polStaged.loanType=(t==='variable'?'variable':'wash');this.openPolicyControl();},
+polStageFund(v){const s=this.state;if(s._polStaged)s._polStaged.fundRate=Math.max(10,Math.min(25,Math.round(+v||15)));this.openPolicyControl();},
+polStageLoan(v){const s=this.state;if(s._polStaged)s._polStaged.loanAmt=Math.max(0,Math.round(+v||0));this.openPolicyControl();},
+polStagePassive(){const s=this.state;if(s._polStaged)s._polStaged.passiveOn=!s._polStaged.passiveOn;this.openPolicyControl();},
+// Epic perk: managing the policy is FREE (no finance move) and applies immediately. Confirm locks in the whole staged set at once, then returns to the hub.
+polConfirm(){const s=this.state,st=s._polStaged;if(!st){this.showEpicLife();return;}
+ s._iul_loan_type=(st.loanType==='variable'?'variable':'wash');s._policy_fund_rate=Math.max(0.10,Math.min(0.25,(st.fundRate||15)/100));
+ const amt=Math.max(0,Math.min(Math.round(st.loanAmt||0),this._policyBorrowable()));
+ if(amt>0){const sep=this.isSeparated();s.insurance_loan_balance=(s.insurance_loan_balance||0)+amt;if(sep)s.personal_cash=(s.personal_cash||0)+amt;else s.cash=(s.cash||0)+amt;s._policy_act=s._policy_act||{};s._policy_act.loan=(s._policy_act.loan||0)+amt;}
+ if(st.passiveOn&&(s.insurance_cash_value||0)>=5000&&!s._passive_income_active){s._passive_income_active=true;s._policy_act=s._policy_act||{};s._policy_act.passiveOn=true;}
+ s._polStaged=null;this._refreshDashboards();this.showEpicLife();},
 // ===== Epic Life perk — Credit → Cash: liquidate available credit into spendable cash for a flat 6% fee, no turn used =====
 _creditHeadroom(){const s=this.state;return Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)));},
 // Draw business-available FIRST (protects personal utilization/score), then personal. Debt rises by the full amount drawn; you net that amount minus the 6% fee. A priced cash advance, not free money.
@@ -1000,7 +1060,9 @@ openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+=row('Cash — business',fm(s.cash||0))+row('Cash — personal',fm(s.personal_cash||0))+'</div>';
  // AMOUNT
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Amount to liquidate</div>';
- if(head>=1000){const presets=[5000,10000,25000].filter(a=>a<=head).concat([Math.floor(head)]);const seen={};const btn=a=>{if(seen[a])return '';seen[a]=1;const on=staged===a;return '<button onclick="Game.liqStage('+a+')" style="flex:1;min-width:70px;background:'+(on?'var(--gold)':'var(--surface)')+';color:'+(on?'#1a1205':'var(--text)')+';border:1px solid '+(on?'var(--gold)':'var(--border)')+';border-radius:6px;padding:9px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+(a===Math.floor(head)&&a!==5000&&a!==10000&&a!==25000?'💵 Max ':'💵 ')+fm(a)+'</button>';};let b='';presets.forEach(a=>b+=btn(a));h+='<div style="display:flex;gap:6px;flex-wrap:wrap;">'+b+'</div>';}
+ if(head>=1000){const presets=[5000,10000,25000].filter(a=>a<=head).concat([Math.floor(head)]);const seen={};const btn=a=>{if(seen[a])return '';seen[a]=1;const on=staged===a;return '<button onclick="Game.liqStage('+a+')" style="flex:1;min-width:70px;background:'+(on?'var(--gold)':'var(--surface)')+';color:'+(on?'#1a1205':'var(--text)')+';border:1px solid '+(on?'var(--gold)':'var(--border)')+';border-radius:6px;padding:9px;font-weight:700;font-size:0.72rem;cursor:pointer;">'+(a===Math.floor(head)&&a!==5000&&a!==10000&&a!==25000?'💵 Max ':'💵 ')+fm(a)+'</button>';};let b='';presets.forEach(a=>b+=btn(a));h+='<div style="display:flex;gap:6px;flex-wrap:wrap;">'+b+'</div>';
+  const hmax=Math.floor(head);h+='<input type="range" min="0" max="'+hmax+'" step="'+Math.max(1,Math.round(hmax/100))+'" value="'+staged+'" style="width:100%;accent-color:var(--gold);margin-top:8px;" oninput="var e=document.getElementById(\'liq-amt\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.liqStage(this.value)">';
+  h+='<div style="font-size:0.78rem;font-weight:700;color:var(--gold);">Liquidate <span id="liq-amt">$'+staged.toLocaleString()+'</span></div>';}
  else h+='<div style="font-size:0.72rem;color:var(--text2);">No available credit to liquidate right now — open a line or lower utilization first.</div>';
  // PROJECTED + CONFIRM
  if(staged>=1000){const fee=Math.round(staged*0.06),net=staged-fee,bd=Math.min(staged,ba),pdraw=staged-bd;
@@ -1037,25 +1099,30 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
  h+=row('Personal utilization',pu+'%',pu<=30?'var(--accent)':(pu<=50?'var(--gold)':'var(--red)'));
  h+=row('Business utilization',bu+'%',bu<=50?'var(--accent)':'var(--red)');
  h+=row('Lifestyle cost',fm(s.lifestyle_expenses||0)+'/mo');
- h+=row('Passive covers your life',cover+'%',cover>=100?'var(--accent)':(cover>=50?'var(--gold)':'var(--red)'));
  h+='</div>';
+ // Paradise ladder — is passive income beating each cumulative obligation, all the way to full freedom?
+ {const living=Math.round(s.living_expenses||0),operating=Math.round(s.operating_expenses||0),lifestyle=Math.round(s.lifestyle_expenses||0);
+  const rungs=[['Debt service',dsvc],['+ Living',dsvc+living],['+ Operating',dsvc+living+operating],['🏝️ Paradise (all)',dsvc+living+operating+lifestyle]];
+  h+='<div style="margin-top:12px;font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Is passive income (<span style="color:var(--accent);">'+fm(passive)+'/mo</span>) beating…</div>';
+  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
+  rungs.forEach(r=>{const t=Math.round(r[1]),beat=passive>=t;h+='<div class="breakdown-row"><span>'+(beat?'✅ ':'⬜ ')+r[0]+'</span><span style="color:'+(beat?'var(--accent)':'var(--text2)')+';font-weight:700;">'+fm(t)+'/mo</span></div>';});
+  h+='</div>';}
  h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(245,200,66,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">💡 '+advice+'</div>';
+ // Concierge controls — merged into Financial Health (members only): steer the monthly auto-move, or pause it.
+ if(s._epic_life){const focus=s._concierge_focus||'balanced',paused=!!s._concierge_paused;
+  const FOCI=[['balanced','⚖️ Balanced','Follow the full playbook in order'],['debt','💳 Pay down debt','Attack utilization & debt first'],['passive','🌴 Build passive income','Fund the policy & switch on income'],['protection','🛡️ Protection first','Insurance, entity & banking early']];
+  h+='<div style="border-top:1px solid var(--border);margin-top:14px;padding-top:10px;"><div style="font-size:0.82rem;font-weight:700;color:var(--accent);">🎛️ Concierge</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.5;margin:2px 0 8px;">Runs one high-priority money move each month. Steer what it reaches for — or pause and take the wheel.</div>';
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Focus</div>';
+  FOCI.forEach(f=>{const on=focus===f[0]&&!paused;h+='<button onclick="Game.setConciergeFocus(\''+f[0]+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:9px 11px;cursor:pointer;"><span style="font-weight:700;font-size:0.8rem;">'+f[1]+(on?' ✓':'')+'</span><br><span style="font-size:0.66rem;color:var(--text2);">'+f[2]+'</span></button>';});
+  h+='<button onclick="Game.toggleConciergePause()" style="width:100%;margin-top:2px;border:1px solid '+(paused?'var(--gold)':'var(--border)')+';background:'+(paused?'rgba(245,200,66,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;">'+(paused?'▶ Resume concierge (currently PAUSED)':'⏸ Pause concierge for now')+'</button>';
+  const pk=paused?null:this._epicLifePick();
+  h+='<div style="margin-top:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:0.76rem;line-height:1.5;">'+(paused?'⏸ <strong>Paused</strong> — your concierge sits out this month; you make the moves.':('▶ Next move: <strong style="color:var(--accent);">'+(pk?pk.label:'nothing pressing — it\'ll hold and let your money compound')+'</strong>'))+'</div>';
+  h+='</div>';}
  this._epicPanel('📊 Financial Health',h);},
-// ===== Concierge service — 🎛️ Settings: steer the monthly auto-move (focus) or pause it to take the wheel =====
-openConciergeSettings(){const s=this.state;
- if(!s._epic_life){this._epicPanel('🎛️ Concierge Settings','<div style="font-size:0.85rem;line-height:1.6;">👑 Members-only. Steer your concierge — set what it prioritizes each month, or pause it to take the wheel yourself.</div>');return;}
- const focus=s._concierge_focus||'balanced',paused=!!s._concierge_paused;
- const FOCI=[['balanced','⚖️ Balanced','Follow the full playbook in order'],['debt','💳 Pay down debt','Attack utilization & debt first'],['passive','🌴 Build passive income','Fund the policy & switch on income'],['protection','🛡️ Protection first','Insurance, entity & banking early']];
- let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Your concierge runs one high-priority money move each month. Steer what it reaches for — or pause it and take the wheel yourself.</div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Focus</div>';
- FOCI.forEach(f=>{const on=focus===f[0]&&!paused;h+='<button onclick="Game.setConciergeFocus(\''+f[0]+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:9px 11px;cursor:pointer;"><span style="font-weight:700;font-size:0.8rem;">'+f[1]+(on?' ✓':'')+'</span><br><span style="font-size:0.66rem;color:var(--text2);">'+f[2]+'</span></button>';});
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">This month</div>';
- h+='<button onclick="Game.toggleConciergePause()" style="width:100%;border:1px solid '+(paused?'var(--gold)':'var(--border)')+';background:'+(paused?'rgba(245,200,66,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;">'+(paused?'▶ Resume concierge (currently PAUSED)':'⏸ Pause concierge for now')+'</button>';
- const pk=paused?null:this._epicLifePick();
- h+='<div style="margin-top:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:0.76rem;line-height:1.5;">'+(paused?'⏸ <strong>Paused</strong> — your concierge sits out this month; you make the moves.':('▶ Next move: <strong style="color:var(--accent);">'+(pk?pk.label:'nothing pressing — it\'ll hold and let your money compound')+'</strong>'))+'</div>';
- this._epicPanel('🎛️ Concierge Settings',h);},
-setConciergeFocus(f){this.state._concierge_focus=f;this.state._concierge_paused=false;this.openConciergeSettings();},
-toggleConciergePause(){this.state._concierge_paused=!this.state._concierge_paused;this.openConciergeSettings();},
+// Concierge controls now live inside Financial Health; keep this as an alias for any stray callers.
+openConciergeSettings(){return this.openFinancialHealth();},
+setConciergeFocus(f){this.state._concierge_focus=f;this.state._concierge_paused=false;this.openFinancialHealth();},
+toggleConciergePause(){this.state._concierge_paused=!this.state._concierge_paused;this.openFinancialHealth();},
 // Progressive disclosure: hide advanced UI until it's relevant, so the early game isn't overwhelming. Reveals are STICKY (once shown, stay shown) and adapt to archetype (relevant state reveals early).
 _reveal(f){const s=this.state;if(!s._revealed)s._revealed={};if(s._revealed[f])return true;const m=this.month,sep=this.isSeparated();let on=false;
 switch(f){
@@ -1571,6 +1638,7 @@ const _paradise=this._epicRoadmapData().freedomPct>=100;/* financially free: pas
 const epic=(!this._tutActive&&(this._reveal('epic')||member||pendingEpic))?'<div id="epic-btn" class="cat-tab cat-icon" title="'+(_paradise?'🏝️ Paradise — you\'re financially free':'Epic Life Membership')+'" style="background:linear-gradient(135deg,'+(_paradise?'var(--accent),#0e9f6e':'var(--gold),#b8932f')+');color:#1a1205;border-color:'+(_paradise?'var(--accent)':'var(--gold)')+';font-weight:700;" onclick="Game.showEpicLife()">'+(_paradise?'🏝️':'⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':''))+'</div>':'';
 document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
+s._polStaged=null;s._velStaged=null;/* returning to the hub discards any un-confirmed staging so each panel opens fresh from current state */
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
 let h=member
@@ -1582,32 +1650,33 @@ h+=this._epicRoadmapBar(!member);
  // Concierge services — the ⭐ hub opens a MENU of category panels (financial health, policy, velocity, cash services, concierge settings).
  const tile=(fn,icon,label,sub,accent)=>{const on=member,col=on?(accent||'var(--gold)'):'var(--text2)',bd=on?(accent||'var(--gold)'):'var(--border)',bg=on?('rgba('+(accent==='var(--accent)'?'16,185,129':'245,200,66')+',0.1)'):'var(--surface)';return '<div onclick="Game.'+fn+'" style="cursor:pointer;flex:1 1 30%;min-width:96px;border:1px solid '+bd+';background:'+bg+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">'+icon+'</div><div style="font-size:0.72rem;font-weight:700;color:'+col+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);">'+(on?sub:'👑 Members only')+'</div></div>';};
  h+='<div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 5px;">Concierge services</div><div style="display:flex;flex-wrap:wrap;gap:8px;">';
- h+=tile('openFinancialHealth()','📊','Financial Health','Your snapshot','var(--accent)');
+ h+=tile('openFinancialHealth()','📊','Financial Health',((s._concierge_paused)?'Snapshot · concierge paused':'Snapshot · concierge'),'var(--accent)');
  h+=tile('openPolicyControl()','🛡️','Cash-Value Policy',(_hasPol?'Fund · loan · passive':'Open one to start'),'var(--gold)');
- h+=tile('openVelocityControl()','⚡','Velocity Banking',(s._velocity_active?'Active · tune':'Sweep debt faster'),'var(--accent)');
+ h+=tile('openVelocityControl()','⚡','Velocity Banking',(s._velocity_active?'Active · tune':(s._velocity_setup?'Paused · tune':'Sweep debt faster')),'var(--accent)');
  h+=tile('openCreditLiquidity()','💵','Cash Services','Credit → cash · 6%','var(--gold)');
- h+=tile('openConciergeSettings()','🎛️','Concierge',((s._concierge_paused)?'Paused':'Focus · pause'),'var(--accent)');
  h+='</div>';}
 if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
 else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action or any energy — your team handles it).</div>';
 h+='<button class="btn-secondary" style="margin-top:8px;" onclick="Game.cancelEpicLife()">Cancel enrollment</button>';}
 else{h+='<button class="btn-primary" style="margin-top:12px;" onclick="Game.openEpicEnroll()">⭐ Enroll in Epic Life →</button>';}
 this.showPopup('⭐ Epic Life Membership',h);},
-// Single consolidated roadmap bar (top of the Epic Life menu): one bar from start → Epic Life System, with FUNDING READY as a checkpoint marker part-way along.
+// Consolidated roadmap bar (top of the Epic Life menu): one bar across THREE checkpoints — Funding Ready → Epic Life System → 🏝️ Paradise — each leg an equal third, filled by that leg's completion.
 _epicRoadmapBar(locked){const D=this._epicRoadmapData();
- const total=D.fundingReady.length+D.protect.length+D.wealth.length,done=D.fundingReady.filter(n=>n.done).length+D.protect.filter(n=>n.done).length+D.wealth.filter(n=>n.done).length;
- const pct=total>0?Math.round(done/total*100):0,cp=total>0?Math.round(D.fundingReady.length/total*100):25,frDone=D.frPct>=100,para=D.freedomPct>=100;
- const nextTxt=para?'🏝️ Paradise — your passive income covers your life':(pct>=100?'⭐ Epic Life System complete — grow passive income to reach Paradise':'Next: '+(D.nextNode||'—'));
+ const frDone=D.frPct>=100,sysDone=D.systemPct>=100,para=D.freedomPct>=100,seg=100/3;
+ const fillPct=Math.min(100,Math.round((D.frPct/100)*seg+(D.systemPct/100)*seg+(D.freedomPct/100)*seg));
+ const cp1=Math.round(seg),cp2=Math.round(seg*2);
+ const nextTxt=para?'🏝️ Paradise — your passive income covers your life':(sysDone?'⭐ Epic Life System complete — grow passive income to reach Paradise':'Next: '+(D.nextNode||'—'));
  let h='<div style="border:1px solid var(--gold);background:rgba(245,200,66,0.06);border-radius:var(--radius-sm);padding:10px 12px;margin:4px 0 12px;'+(locked?'opacity:0.9;':'')+'">';
- h+='<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;">'+(locked?'🔒 Roadmap — Preview':'⭐ Your Roadmap')+'</span><span style="font-size:0.82rem;font-weight:800;color:var(--gold);">'+pct+'%</span></div>';
- h+='<div style="position:relative;height:10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;margin:14px 0 3px;">';
- h+='<div style="position:absolute;left:0;top:0;bottom:0;width:'+Math.max(0,Math.min(100,pct))+'%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:999px;"></div>';
- h+='<div style="position:absolute;left:'+cp+'%;top:-4px;bottom:-4px;width:2px;background:'+(frDone?'var(--accent)':'var(--text2)')+';"></div>';
- h+='<div style="position:absolute;left:'+cp+'%;top:-16px;transform:translateX(-50%);font-size:0.72rem;">'+(frDone?'🏁':'🚩')+'</div>';
+ h+='<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;">'+(locked?'🔒 Roadmap — Preview':'⭐ Your Roadmap')+'</span><span style="font-size:0.82rem;font-weight:800;color:var(--gold);">'+fillPct+'%</span></div>';
+ h+='<div style="position:relative;height:10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;margin:20px 0 3px;">';
+ h+='<div style="position:absolute;left:0;top:0;bottom:0;width:'+Math.max(0,Math.min(100,fillPct))+'%;background:linear-gradient(90deg,var(--blue),var(--gold),var(--accent));border-radius:999px;"></div>';
+ [[cp1,frDone],[cp2,sysDone]].forEach(c=>{h+='<div style="position:absolute;left:'+c[0]+'%;top:-4px;bottom:-4px;width:2px;background:'+(c[1]?'var(--accent)':'var(--text2)')+';"></div><div style="position:absolute;left:'+c[0]+'%;top:-17px;transform:translateX(-50%);font-size:0.72rem;">'+(c[1]?'🏁':'🚩')+'</div>';});
+ h+='<div style="position:absolute;right:-3px;top:-18px;font-size:0.76rem;">'+(para?'🏝️':'🌴')+'</div>';
  h+='</div>';
  h+='<div style="position:relative;height:12px;">';
- h+='<span style="position:absolute;left:'+cp+'%;transform:translateX(-50%);font-size:0.55rem;color:'+(frDone?'var(--accent)':'var(--text2)')+';white-space:nowrap;">'+(frDone?'✓ ':'')+'Funding Ready</span>';
- h+='<span style="position:absolute;right:0;font-size:0.55rem;color:var(--gold);white-space:nowrap;">⭐ Epic Life System</span>';
+ h+='<span style="position:absolute;left:'+cp1+'%;transform:translateX(-50%);font-size:0.52rem;color:'+(frDone?'var(--accent)':'var(--text2)')+';white-space:nowrap;">'+(frDone?'✓':'')+'Funding</span>';
+ h+='<span style="position:absolute;left:'+cp2+'%;transform:translateX(-50%);font-size:0.52rem;color:'+(sysDone?'var(--accent)':'var(--text2)')+';white-space:nowrap;">'+(sysDone?'✓':'')+'Epic Life</span>';
+ h+='<span style="position:absolute;right:0;font-size:0.52rem;color:'+(para?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(para?'✓':'')+'🏝️ Paradise</span>';
  h+='</div>';
  h+='<div style="font-size:0.68rem;color:var(--text2);margin-top:5px;line-height:1.4;">'+nextTxt+'</div>';
  h+='</div>';return h;},
@@ -2180,7 +2249,7 @@ this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_wor
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='policy_loan'&&success){const sep=this.isSeparated(),cv=this.state.insurance_cash_value||0,headroom=this._policyBorrowable(),loanAmt=Math.min(headroom,(this.state._pending_policy_loan_amt||headroom)),before=sep?(this.state.personal_cash||0):(this.state.cash||0);this.state._pending_policy_loan_amt=0;if(loanAmt<=0){this.state._dyn_narrative='You\'ve already borrowed up to 90% of your '+this.fmtMoney(cv)+' cash value — there\'s no loan room left right now. Keep funding the policy (or let it compound) to open more borrowing capacity.';}else{if(sep)this.state.personal_cash=before+loanAmt;else this.state.cash=before+loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;effects.cash=(effects.cash||0)+loanAmt;this.state._dyn_narrative='Policy loan approved instantly — no credit check, no taxes. '+this.fmtMoney(loanAmt)+' (your remaining room up to 90% of the '+this.fmtMoney(cv)+' cash value) went straight into your personal cash: '+this.fmtMoney(before)+' → '+this.fmtMoney(before+loanAmt)+'. The cash value keeps compounding at ~7%/yr as if you never touched it; the loan accrues ~5%/yr and is netted from your death benefit — never repaid from your pocket.';}}
 if(action.id==='activate_passive_income'&&success){this.state._passive_income_active=true;if(!this.state._iul_loan_type)this.state._iul_loan_type='wash';/* safe default: net ~0%, lapse-proof */}
-if(action.id==='velocity_banking'&&success){const s=this.state;s._velocity_active=true;s._velocity_spiral_streak=0;if(!s._velocity_vehicle)s._velocity_vehicle=((s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0)?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';const vd=this._velocityReadout(),pct=({conservative:'50%',balanced:'75%',aggressive:'100%'})[s._velocity_mode];s._dyn_narrative='Velocity banking is ON — running through your '+vd.vehicleLabel+', sweeping '+pct+' of each month\'s surplus at your '+vd.targetLabel.toLowerCase()+' ('+this.fmtMoney(vd.targetBal)+'). The interest you\'d have paid now knocks extra principal off, so it pays down years faster'+(vd.target==='mortgage'?' and your equity builds quicker':'')+'. Chunk extra or retune anytime from the ⚡ Velocity chip on your dashboard — no turn needed.';}
+if(action.id==='velocity_banking'&&success){const s=this.state;s._velocity_active=true;s._velocity_setup=true;s._velocity_spiral_streak=0;if(!s._velocity_vehicle)s._velocity_vehicle=((s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0)?'heloc':'line';if(!s._velocity_mode)s._velocity_mode='balanced';const vd=this._velocityReadout(),pct=({conservative:'50%',balanced:'75%',aggressive:'100%'})[s._velocity_mode];s._dyn_narrative='Velocity banking is ON — running through your '+vd.vehicleLabel+', sweeping '+pct+' of each month\'s surplus at your '+vd.targetLabel.toLowerCase()+' ('+this.fmtMoney(vd.targetBal)+'). The interest you\'d have paid now knocks extra principal off, so it pays down years faster'+(vd.target==='mortgage'?' and your equity builds quicker':'')+'. Chunk extra or retune anytime from the ⚡ Velocity chip on your dashboard — no turn needed.';}
 if(action.id==='iul_variable_loan'&&success){this.state._iul_loan_type='variable';/* opt into the index-arbitrage loan — higher income, real lapse risk */}
 if(action.id==='open_db_plan_pretax'&&success){this.state._iul_funding_type='pre_tax';/* fund the policy through a qualified DB plan with deductible business dollars — requires the corporate structure */}
 if(action.id==='hire_fractional_cfo'&&success)this.state._dyn_narrative='Your fractional CFO is on board — and the first thing she did was build you a real financial picture. Tap the new 📊 CFO Briefing on your dashboard any time: company value, net worth, runway, a 6-month projection, and exactly where she’d focus your marketing, operations, and finance.';
