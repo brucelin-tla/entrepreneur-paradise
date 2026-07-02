@@ -49,6 +49,11 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.57.0',d:'2026-07-02 05:00',n:[
+'📊 Financial Health (in-game & Epic Tools): the “passive income beating…” list is now a clean <strong>progress bar</strong> — passive income fills toward 🏝️ Paradise past two checkpoints (debt payments, then + living). Concierge focus buttons are now a tidy 2×2 grid.',
+'🎯 Epic Tools → Debt/Velocity: new whole-picture <strong>payoff plan</strong> — pick Avalanche or Snowball, sweep an extra amount each month, and see your <strong>debt-free date</strong> move up plus the interest saved (on top of the single-loan cash/HELOC/credit attack).',
+'📈 Epic Tools → Policy: a <strong>funding growth</strong> projector — set a monthly funding amount and years, and watch the cash value compound and the passive income it would throw off.',
+]},
 {v:'0.56.3',d:'2026-07-02 04:00',n:[
 '💼 Renamed to “Epic Tools”; the advisor CTA is now your “Epic Life Strategist”. Added an SBA / business loan (10.5%) — and every loan you enter now shows up in the Debt/Velocity planner. Policy loan type is now Wash (3%, nets ~0% — safe) vs Index (6%, current market — higher/riskier), and you can fund the policy from a line of credit to see the passive-income boost and whether it beats the line’s cost (debt service).',
 ]},
@@ -617,9 +622,42 @@ _rmFmt(v){return this.fmtMoney(Math.round(+v||0));},
 rmBookCall(){try{window.open(this.RM_BOOK_URL,'_blank');}catch(e){location.href=this.RM_BOOK_URL;}},
 _rmNetWorth(d){d=d||{};const debts=(d.debts||[]).reduce((a,x)=>a+(+x.balance||0),0);return Math.round((+d.cash||0)+(+((d.policy||{}).cashValue)||0)+(+((d.re||{}).value)||0)-debts-(+d.creditUsed||0));},
 _rmDebtService(d){return Math.round((d.debts||[]).reduce((a,x)=>a+(+x.payment||0),0));},
+// SHARED (in-game + Epic Tools): "passive income → freedom" progress bar. Fills toward Paradise (t3 = all obligations), with checkpoints at debt service (t1) and +living (t2).
+_freedomBar(passive,t1,t2,t3,l1,l2,l3){const fm=v=>this.fmtMoney(Math.round(v));
+ passive=Math.max(0,Math.round(passive));t1=Math.max(0,Math.round(t1));t2=Math.max(0,Math.round(t2));t3=Math.max(0,Math.round(t3));
+ const pct=t3>0?Math.min(100,Math.round(passive/t3*100)):(passive>0?100:0);
+ const p1=t3>0?Math.max(6,Math.min(92,Math.round(t1/t3*100))):33,p2=t3>0?Math.max(p1+4,Math.min(95,Math.round(t2/t3*100))):66;
+ const b1=passive>=t1,b2=passive>=t2,b3=t3>0&&passive>=t3;
+ let h='<div style="border:1px solid var(--gold);background:rgba(245,200,66,0.06);border-radius:var(--radius-sm);padding:10px 12px;margin:4px 0 6px;">';
+ h+='<div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-size:0.6rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;">'+fm(passive)+'/mo passive → freedom</span><span style="font-size:0.82rem;font-weight:800;color:var(--gold);">'+pct+'%</span></div>';
+ h+='<div style="position:relative;height:10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;margin:16px 0 3px;">';
+ h+='<div style="position:absolute;left:0;top:0;bottom:0;width:'+pct+'%;background:linear-gradient(90deg,var(--blue),var(--gold),var(--accent));border-radius:999px;"></div>';
+ [[p1,b1],[p2,b2]].forEach(c=>{h+='<div style="position:absolute;left:'+c[0]+'%;top:-4px;bottom:-4px;width:2px;background:'+(c[1]?'var(--accent)':'var(--text2)')+';"></div><div style="position:absolute;left:'+c[0]+'%;top:-16px;transform:translateX(-50%);font-size:0.68rem;">'+(c[1]?'🏁':'🚩')+'</div>';});
+ h+='<div style="position:absolute;right:-3px;top:-17px;font-size:0.72rem;">'+(b3?'🏝️':'🌴')+'</div>';
+ h+='</div>';
+ h+='<div style="position:relative;height:12px;font-size:0.52rem;">';
+ h+='<span style="position:absolute;left:'+p1+'%;transform:translateX(-50%);color:'+(b1?'var(--accent)':'var(--text2)')+';white-space:nowrap;">'+(b1?'✓':'')+l1+'</span>';
+ h+='<span style="position:absolute;left:'+p2+'%;transform:translateX(-50%);color:'+(b2?'var(--accent)':'var(--text2)')+';white-space:nowrap;">'+(b2?'✓':'')+l2+'</span>';
+ h+='<span style="position:absolute;right:0;color:'+(b3?'var(--accent)':'var(--gold)')+';white-space:nowrap;">'+(b3?'✓':'')+l3+'</span>';
+ h+='</div>';
+ h+='<div style="font-size:0.6rem;color:var(--text2);margin-top:4px;line-height:1.4;">Covers debt '+fm(t1)+' → +living '+fm(t2)+' → 🏝️ everything '+fm(t3)+'/mo</div>';
+ h+='</div>';return h;},
+// Debt-payoff simulator: accrue interest, pay minimums, then throw `extra`/mo (plus freed minimums) at the avalanche (highest rate) or snowball (smallest balance) target. Returns {months (Infinity if it can't clear), totalInterest}.
+_rmPayoffSim(debts,extra,strategy){let ds=(debts||[]).map(x=>({bal:Math.max(0,+x.balance||0),r:(+x.rate||0)/12,pay:Math.max(0,+x.payment||0)})).filter(x=>x.bal>0.5);
+ if(!ds.length)return{months:0,totalInterest:0};
+ const totalMin=ds.reduce((a,x)=>a+x.pay,0);let months=0,totalInt=0,guard=0;
+ while(ds.some(x=>x.bal>0.5)&&guard++<1200){months++;
+  let pool=totalMin+Math.max(0,extra);
+  for(const x of ds){if(x.bal>0.5){const i=x.bal*x.r;x.bal+=i;totalInt+=i;}}
+  for(const x of ds){if(x.bal>0.5){const m=Math.min(x.pay,x.bal);x.bal-=m;pool-=m;}}
+  if(pool<0)pool=0;
+  const act=ds.filter(x=>x.bal>0.5).sort((a,b)=>strategy==='snowball'?(a.bal-b.bal):(b.r-a.r));
+  for(const x of act){if(pool<=0)break;const p=Math.min(pool,x.bal);x.bal-=p;pool-=p;}
+ }
+ return{months:guard>=1200?Infinity:months,totalInterest:Math.round(totalInt)};},
 // Panel chrome for real-money tools (mirrors _epicPanel): back + advisor CTA + persistent disclaimer.
 _rmPanel(title,body,isHome){const back=isHome?'<button class="back-chip" style="margin:0;" onclick="Game.hidePopup()">✕ Close</button>':'<button class="back-chip" style="margin:0;" onclick="Game.rmHome()">← Epic Tools</button>';const cta='<button class="back-chip" style="margin:0;border-color:var(--gold);color:var(--gold);" onclick="Game.rmBookCall()">📞 Strategist</button>';const disc='<div style="font-size:0.6rem;color:var(--text2);line-height:1.4;margin-top:12px;padding-top:8px;border-top:1px solid var(--border);">Educational illustration only — not financial, tax, or investment advice. Figures are simplified. Talk to your Epic Life Strategist about your actual plan.</div>';this.showPopup(title,'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;">'+back+cta+'</div>'+body+disc);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
-rmHome(){if(!this._rmUnlocked())return this.showCode();this._rmVel=null;this._rmCash=null;this._rmPol=null;this._rmHP=null;const d=this._rmData();if(!d)return this.rmIntake();const fm=v=>this._rmFmt(v);
+rmHome(){if(!this._rmUnlocked())return this.showCode();this._rmVel=null;this._rmCash=null;this._rmPol=null;this._rmHP=null;this._rmPlan=null;const d=this._rmData();if(!d)return this.rmIntake();const fm=v=>this._rmFmt(v);
  const nw=this._rmNetWorth(d),passive=+d.passiveMonthly||0;
  let h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:2px;">Your real numbers, run through the Epic Life engine. 🔒 Everything stays on this device.</div>';
  h+='<div style="display:flex;gap:8px;margin:10px 0;"><div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;"><div style="font-size:0.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Net worth</div><div style="font-weight:800;color:'+(nw>=0?'var(--accent)':'var(--red)')+';">'+fm(nw)+'</div></div><div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;"><div style="font-size:0.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Passive / mo</div><div style="font-weight:800;color:var(--accent);">'+fm(passive)+'</div></div></div>';
@@ -657,9 +695,7 @@ rmHealth(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);
  h+=row('Net worth',fm(nw),nw>=0?'var(--accent)':'var(--red)')+row('Monthly income',fm(income))+row('Passive income',fm(passive)+'/mo',passive>0?'var(--accent)':'var(--text2)')+row('Debt payments',fm(dsvc)+'/mo')+row('Living essentials',fm(living)+'/mo')+row('Other spending',fm(other)+'/mo')+row('Monthly cash flow',(flow>=0?'+':'')+fm(flow)+'/mo',flow>=0?'var(--accent)':'var(--red)')+row('Credit utilization',util+'%',util<=30?'var(--accent)':(util<=50?'var(--gold)':'var(--red)'))+'</div>';
  const pMax=Math.max(2000,Math.round((dsvc+living+other)*1.25));
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 3px;">🎚️ What-if — drag your passive income</div><input type="range" min="0" max="'+pMax+'" step="50" value="'+Math.min(passive,pMax)+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmh-p\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmHealthPassive(this.value)"><div style="margin-bottom:6px;font-size:0.78rem;font-weight:700;color:var(--accent);"><span id="rmh-p">$'+passive.toLocaleString()+'</span>/mo</div>';
- const rungs=[['Cover debt payments',dsvc],['+ Living essentials',dsvc+living],['🏝️ + All spending = Paradise',dsvc+living+other]];
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Is your passive income ('+fm(passive)+'/mo) beating…</div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
- rungs.forEach(r=>{const t=Math.round(r[1]),beat=passive>=t;h+='<div class="breakdown-row"><span>'+(beat?'✅ ':'⬜ ')+r[0]+'</span><span style="color:'+(beat?'var(--accent)':'var(--text2)')+';font-weight:700;">'+fm(t)+'/mo</span></div>';});h+='</div>';
+ h+=this._freedomBar(passive,dsvc,dsvc+living,dsvc+living+other,'Debt','+Living','🏝️ Paradise');
  let advice;if(passive>=dsvc+living+other&&(dsvc+living+other)>0)advice='🏝️ Your passive income covers everything — that\'s Paradise. Protect it.';else if(flow<0)advice='You\'re spending more than you bring in. Trim expenses or lift income before taking on debt.';else if(util>50)advice='Credit utilization is high ('+util+'%) — paying it down lifts your score and frees cash flow.';else if(passive<=0)advice='No passive income yet — that\'s the engine that buys freedom. Ask your advisor how to start building it.';else advice='Passive income covers part of your life. Grow it toward covering all your spending — that\'s Paradise.';
  h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(245,200,66,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">💡 '+advice+'</div>';
  h+='<div style="font-size:0.6rem;color:var(--text2);margin-top:6px;text-align:center;">Drag to see how much passive income each rung needs. (Doesn\'t change your saved numbers.)</div>';
@@ -682,7 +718,28 @@ rmVelocity(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);
  const iB=intRem(bal,pay),mB=monRem(bal,pay),newBal=Math.max(0,bal-eff),iA=intRem(newBal,pay),mA=monRem(newBal,pay);
  const iSave=(isFinite(iB)&&isFinite(iA))?Math.max(0,Math.round(iB-iA)):0,tSave=(isFinite(mB)&&isFinite(mA))?Math.max(0,Math.round(mB-mA)):0;
  const annAvoid=Math.round(eff*rate),annCost=Math.round(crA*CR+heA*HE),annNet=annAvoid-annCost;
- let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Attack a loan with a mix of <strong>cash</strong>, a <strong>HELOC</strong>, and a <strong>credit line</strong>. Cash is free; borrowed dollars carry their own rate — the win is moving debt to a <em>cheaper</em> rate and sweeping it down.</div>';
+ let h='';
+ // 🎯 Payoff plan — all debts: sweep a monthly extra with avalanche/snowball → debt-free date + interest saved.
+ {const allDebts=(d.debts||[]).filter(x=>(+x.balance||0)>0&&(+x.payment||0)>0);
+  if(allDebts.length){if(!this._rmPlan)this._rmPlan={extra:0,strategy:'avalanche'};const pl=this._rmPlan;if(pl.strategy!=='snowball')pl.strategy='avalanche';
+   const totMin=allDebts.reduce((a,x)=>a+(+x.payment||0),0),surplus=Math.max(0,Math.round((+d.incomeMonthly||0)+(+d.passiveMonthly||0)-(+d.expLiving||0)-(+d.expOther||0)-totMin));
+   const exMax=Math.max(1000,Math.ceil((surplus>0?surplus*1.5:2000)/100)*100);pl.extra=Math.max(0,Math.min(Math.round(pl.extra||0),exMax));
+   const base=this._rmPayoffSim(allDebts,0,pl.strategy),plan=this._rmPayoffSim(allDebts,pl.extra,pl.strategy);
+   const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+   const fmDate=m=>{if(!isFinite(m)||m<=0)return '—';const now=new Date(),tot=now.getMonth()+Math.round(m),y=now.getFullYear()+Math.floor(tot/12),mo=((tot%12)+12)%12,yrs=Math.floor(m/12),rem=Math.round(m%12);return (yrs>0?yrs+'y':'')+(rem>0?rem+'m':(yrs>0?'':'0m'))+' · '+MON[mo]+' '+y;};
+   const iSaved=(isFinite(base.totalInterest)&&isFinite(plan.totalInterest))?Math.max(0,base.totalInterest-plan.totalInterest):0,tSaved=(isFinite(base.months)&&isFinite(plan.months))?Math.max(0,base.months-plan.months):0;
+   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">🎯 Your payoff plan — all debts</div>';
+   const stB=(k,l,sub)=>'<div onclick="Game.rmPlanStrategy(\''+k+'\')" style="cursor:pointer;flex:1;border:1px solid '+(pl.strategy===k?'var(--gold)':'var(--border)')+';background:'+(pl.strategy===k?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 6px;text-align:center;"><div style="font-size:0.72rem;font-weight:700;color:'+(pl.strategy===k?'var(--gold)':'var(--text)')+';">'+l+'</div><div style="font-size:0.53rem;color:var(--text2);margin-top:1px;line-height:1.25;">'+sub+'</div></div>';
+   h+='<div style="display:flex;gap:8px;margin-bottom:8px;">'+stB('avalanche','Avalanche','highest rate first — least interest')+stB('snowball','Snowball','smallest balance first — quick wins')+'</div>';
+   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Extra swept at debt / mo'+(surplus>0?' <span style="text-transform:none;opacity:0.7;">· surplus ≈ '+fm(surplus)+'</span>':'')+'</div>';
+   h+='<input type="range" min="0" max="'+exMax+'" step="50" value="'+pl.extra+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmpl-x\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmPlanExtra(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--accent);">+<span id="rmpl-x">$'+pl.extra.toLocaleString()+'</span>/mo</div>';
+   const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
+   h+='<div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;margin-bottom:14px;">';
+   h+=proj('Debt-free',fmDate(base.months),fmDate(plan.months),tSaved>0?'var(--accent)':'var(--text)');
+   if(tSaved>0)h+='<div class="breakdown-row"><span>Sooner by</span><span style="color:var(--accent);font-weight:700;">'+(tSaved>=24?(Math.round(tSaved/12*10)/10)+' yrs':tSaved+' mo')+'</span></div>';
+   if(iSaved>0)h+='<div class="breakdown-row"><span>Interest saved</span><span style="color:var(--accent);font-weight:700;">'+fm(iSaved)+'</span></div>';
+   h+='</div>';}}
+ h+='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Or knock out <strong>one</strong> loan with a mix of <strong>cash</strong>, a <strong>HELOC</strong>, and a <strong>credit line</strong> — the win is moving debt to a <em>cheaper</em> rate and sweeping it down.</div>';
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Which loan</div><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">';
  loans.forEach(x=>{const on=st.id===x.id;h+='<div onclick="Game.rmVelPick(\''+x.id+'\')" style="cursor:pointer;display:flex;justify-content:space-between;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:8px 11px;"><span style="font-size:0.74rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+(on?'✓ ':'')+x.name+'</span><span style="font-size:0.66rem;color:var(--text2);">'+(Math.round((+x.rate||0)*1000)/10)+'% · '+fm(x.balance)+'</span></div>';});h+='</div>';
  const srcSld=(src,label,max,val,acc,sub)=>max<=0?'<div style="font-size:0.62rem;color:var(--text2);margin:2px 0 8px;opacity:0.65;">'+label+' — none available'+(sub?' · '+sub:'')+'</div>':'<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">'+label+' <span style="text-transform:none;opacity:0.7;">'+sub+'</span></div><input type="range" min="0" max="'+Math.min(max,Math.round(bal))+'" step="'+Math.max(1,Math.round(Math.min(max,bal)/100))+'" value="'+val+'" style="width:100%;accent-color:'+acc+';" oninput="var e=document.getElementById(\'rmv-'+src+'\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmVelSrc(\''+src+'\',this.value)"><div style="margin-bottom:8px;font-size:0.76rem;font-weight:700;color:'+acc+';"><span id="rmv-'+src+'">$'+val.toLocaleString()+'</span></div>';
@@ -700,6 +757,8 @@ rmVelocity(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);
  this._rmPanel('⚡ Debt / Velocity',h);},
 rmVelPick(id){if(!this._rmVel)this._rmVel={id:id,cash:0,credit:0,heloc:0};else{this._rmVel.id=id;this._rmVel.cash=0;this._rmVel.credit=0;this._rmVel.heloc=0;}this.rmVelocity();},
 rmVelSrc(src,v){if(this._rmVel&&(src==='cash'||src==='credit'||src==='heloc'))this._rmVel[src]=Math.max(0,Math.round(+v||0));this.rmVelocity();},
+rmPlanExtra(v){if(!this._rmPlan)this._rmPlan={extra:0,strategy:'avalanche'};this._rmPlan.extra=Math.max(0,Math.round(+v||0));this.rmVelocity();},
+rmPlanStrategy(k){if(!this._rmPlan)this._rmPlan={extra:0,strategy:'avalanche'};this._rmPlan.strategy=(k==='snowball'?'snowball':'avalanche');this.rmVelocity();},
 // Cash Services — credit→cash calculator (fee is illustrative & editable).
 rmCashSvc(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const avail=Math.max(0,(+d.creditLimit||0)-(+d.creditUsed||0));
  if(!this._rmCash)this._rmCash={amt:0,fee:6};const st=this._rmCash;st.amt=Math.max(0,Math.min(Math.round(st.amt||0),Math.floor(avail)));const feePct=Math.max(0,+st.fee||0);
@@ -732,6 +791,13 @@ rmPolicy(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const pol=d.policy||{
  h+=slider('rmp-loc','Fund from a line of credit',200000,st.loc,1000,'var(--gold)','rmPolLoc');
  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:0.62rem;color:var(--text2);">LOC APR %</span><input type="number" inputmode="decimal" value="'+locRate+'" onchange="Game.rmPolLocRate(this.value)" style="width:80px;padding:6px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;"><span style="font-size:0.6rem;color:var(--text2);">HELOC ~8.5% · card ~24%</span></div>';
  if(st.loc>0)h+='<div style="padding:4px 12px;background:'+(netMo>=0?'rgba(16,185,129,0.06)':'rgba(239,68,68,0.06)')+';border:1px solid '+(netMo>=0?'var(--accent)':'var(--red)')+';border-radius:8px;margin-bottom:6px;"><div class="breakdown-row"><span>Extra passive income</span><span style="color:var(--accent);font-weight:700;">+'+fm(extra)+'/mo</span></div><div class="breakdown-row"><span>LOC interest (new debt service)</span><span style="color:var(--red);font-weight:700;">−'+fm(locCost)+'/mo</span></div><div class="breakdown-row"><span>Net</span><span style="color:'+(netMo>=0?'var(--accent)':'var(--red)')+';font-weight:800;">'+(netMo>=0?'+':'')+fm(netMo)+'/mo</span></div><div class="breakdown-detail">'+(netMo>=0?'✅ The policy throws off more than the line costs — the leverage works. Watch the added debt service.':'⚠️ The line costs more than the boost earns — borrowing at '+locRate+'% to earn ~6% loses money. Only works with cheaper credit.')+'</div></div>';
+ // 📈 Fund it monthly → compounding growth of the engine
+ if(st.fund==null)st.fund=0;if(st.years==null)st.years=20;st.fund=Math.max(0,Math.round(st.fund||0));st.years=Math.max(5,Math.min(40,Math.round(st.years||20)));
+ {const rr=CRD/12,nn=st.years*12,grow=Math.pow(1+rr,nn),projCV=Math.round(effCV*grow+(st.fund>0?st.fund*((grow-1)/rr):0)),projPass=Math.round(projCV*CRD/12);
+  h+='<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">📈 Fund it monthly → grow the engine</div>';
+  h+='<input type="range" min="0" max="5000" step="50" value="'+st.fund+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'rmp-fund\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()+\'/mo\'" onchange="Game.rmPolFund(this.value)"><div style="margin-bottom:6px;font-size:0.76rem;font-weight:700;color:var(--gold);"><span id="rmp-fund">$'+st.fund.toLocaleString()+'/mo</span></div>';
+  h+='<input type="range" min="5" max="40" step="1" value="'+st.years+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmp-yr\');if(e)e.textContent=this.value+\' yrs\'" onchange="Game.rmPolYears(this.value)"><div style="margin-bottom:8px;font-size:0.72rem;font-weight:700;color:var(--accent);">grow for <span id="rmp-yr">'+st.years+' yrs</span></div>';
+  h+='<div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;margin-bottom:8px;"><div class="breakdown-row"><span>Cash value in '+st.years+' yrs</span><span style="color:var(--gold);font-weight:800;">'+fm(projCV)+'</span></div><div class="breakdown-row"><span>Passive it would throw off</span><span style="color:var(--accent);font-weight:800;">'+fm(projPass)+'/mo</span></div><div class="breakdown-detail">Tax-free, compounding at ~6%/yr — funding it is what builds the passive engine.</div></div>';}
  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;"><div class="breakdown-row"><span>Borrowable (≈90% − surrender − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(borrowable)+'</span></div><div class="breakdown-row"><span>Illustrative passive — monthly</span><span style="color:var(--accent);font-weight:700;">'+fm(passiveMo)+'/mo</span></div><div class="breakdown-row"><span>Illustrative passive — annual</span><span style="color:var(--accent);font-weight:800;">'+fm(passiveYr)+'/yr</span></div></div>';
  h+='<div style="font-size:0.64rem;color:var(--text2);line-height:1.4;margin-top:6px;">Passive draws at ~6%/yr on your value (a wash loan lets the full value keep earning); the surrender charge and any loan cap how much you can draw.</div>';
  h+='<button class="btn-primary" style="margin-top:10px;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;" onclick="Game.rmBookCall()">📞 Design my real policy with an Epic Life Strategist →</button>';
@@ -742,6 +808,8 @@ rmPolLoan(v){if(this._rmPol)this._rmPol.loan=Math.max(0,Math.round(+v||0));this.
 rmPolType(t){if(this._rmPol)this._rmPol.type=(t==='index'?'index':'wash');this.rmPolicy();},
 rmPolLoc(v){if(this._rmPol)this._rmPol.loc=Math.max(0,Math.round(+v||0));this.rmPolicy();},
 rmPolLocRate(v){if(this._rmPol)this._rmPol.locRate=Math.max(0,+v||0);this.rmPolicy();},
+rmPolFund(v){if(this._rmPol)this._rmPol.fund=Math.max(0,Math.round(+v||0));this.rmPolicy();},
+rmPolYears(v){if(this._rmPol)this._rmPol.years=Math.max(5,Math.min(40,Math.round(+v||20)));this.rmPolicy();},
 // ---- Company name (set when forming the LLC; shown on the dashboard + leaderboard; groundwork for player-vs-player) ----
 _esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));},
 promptCompanyName(isNew){const cur=(this.state&&this.state.company_name)||'';
@@ -1270,7 +1338,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
   const FOCI=[['balanced','⚖️ Balanced','Follow the full playbook in order'],['debt','💳 Pay down debt','Attack utilization & debt first'],['passive','🌴 Build passive income','Fund the policy & switch on income'],['protection','🛡️ Protection first','Insurance, entity & banking early']];
   h+='<div style="font-size:0.82rem;font-weight:700;color:var(--accent);">🎛️ Concierge</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.5;margin:2px 0 8px;">Runs one high-priority money move each month. Steer it — or pause and take the wheel. <strong>Confirm</strong> to lock it in.</div>';
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Focus</div>';
-  FOCI.forEach(f=>{const on=cst.focus===f[0]&&!cst.paused;h+='<button onclick="Game.setConciergeFocus(\''+f[0]+'\')" style="display:block;width:100%;text-align:left;margin-bottom:6px;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:9px 11px;cursor:pointer;"><span style="font-weight:700;font-size:0.8rem;">'+f[1]+(on?' ✓':'')+'</span><br><span style="font-size:0.66rem;color:var(--text2);">'+f[2]+'</span></button>';});
+  h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">';FOCI.forEach(f=>{const on=cst.focus===f[0]&&!cst.paused;h+='<button onclick="Game.setConciergeFocus(\''+f[0]+'\')" style="flex:1 1 45%;min-width:130px;text-align:left;border:1px solid '+(on?'var(--accent)':'var(--border)')+';background:'+(on?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:8px 10px;cursor:pointer;"><span style="font-weight:700;font-size:0.75rem;">'+f[1]+(on?' ✓':'')+'</span><br><span style="font-size:0.6rem;color:var(--text2);">'+f[2]+'</span></button>';});h+='</div>';
   h+='<button onclick="Game.toggleConciergePause()" style="width:100%;margin-top:2px;border:1px solid '+(cst.paused?'var(--gold)':'var(--border)')+';background:'+(cst.paused?'rgba(245,200,66,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;">'+(cst.paused?'▶ Resume concierge (staged PAUSED)':'⏸ Pause concierge')+'</button>';
   const _f=s._concierge_focus,_p=s._concierge_paused;s._concierge_focus=cst.focus;s._concierge_paused=cst.paused;const pk=cst.paused?null:this._epicLifePick();s._concierge_focus=_f;s._concierge_paused=_p;
   h+='<div style="margin-top:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:0.76rem;line-height:1.5;">'+(cst.paused?'⏸ <strong>Paused</strong> — your concierge sits out; you make the moves.':('▶ Next move: <strong style="color:var(--accent);">'+(pk?pk.label:'nothing pressing — it\'ll hold and let your money compound')+'</strong>'))+'</div>';
@@ -1289,11 +1357,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
  h+='</div>';
  // Paradise ladder — is passive income beating each cumulative obligation, all the way to full freedom?
  {const living=Math.round(s.living_expenses||0),operating=Math.round(s.operating_expenses||0),lifestyle=Math.round(s.lifestyle_expenses||0);
-  const rungs=[['Debt service',dsvc],['+ Living',dsvc+living],['+ Operating',dsvc+living+operating],['🏝️ Paradise (all)',dsvc+living+operating+lifestyle]];
-  h+='<div style="margin-top:12px;font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Is passive income (<span style="color:var(--accent);">'+fm(passive)+'/mo</span>) beating…</div>';
-  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
-  rungs.forEach(r=>{const t=Math.round(r[1]),beat=passive>=t;h+='<div class="breakdown-row"><span>'+(beat?'✅ ':'⬜ ')+r[0]+'</span><span style="color:'+(beat?'var(--accent)':'var(--text2)')+';font-weight:700;">'+fm(t)+'/mo</span></div>';});
-  h+='</div>';}
+  h+='<div style="margin-top:12px;"></div>'+this._freedomBar(passive,dsvc,dsvc+living,dsvc+living+operating+lifestyle,'Debt','+Living','🏝️ Paradise');}
  h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(245,200,66,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">💡 '+advice+'</div>';
  this._epicPanel('📊 Financial Health',h);},
 // Concierge controls live at the top of Financial Health and are STAGED — setters write to _fhStaged; fhConfirm applies. openConciergeSettings kept as an alias for stray callers.
