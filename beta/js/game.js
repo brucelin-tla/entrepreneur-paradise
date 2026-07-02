@@ -49,6 +49,12 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.59.0',d:'2026-07-02 08:00',n:[
+'🐛 Fixed “Accelerate paydown” (rate-hike event) — it could borrow on credit to fund the paydown and end up RAISING your debt. Now a paydown only spends the cash you actually have and reduces debt by exactly that, dollar-for-dollar. (Applies to any “throw cash at the balance” choice.)',
+'🐛 Restructure Your Debt result card now shows the FINAL utilization & score (it was showing an intermediate number that contradicted the narrative). Business utilization at the healthy 50% target no longer flashes red.',
+'🐛 Insured operator loss on a mortgage-free property no longer reads “policy paid out $0, retiring the mortgage” — it now correctly says the property was owned free and clear.',
+'⚡ Velocity Banking projection now shows your <strong>monthly debt-service swing</strong> — so drawing from a high-rate line to attack a cheaper loan honestly shows when it RAISES your monthly payment, not just the headline interest saved.',
+]},
 {v:'0.58.2',d:'2026-07-02 07:20',n:[
 'Housekeeping: the 🧪 Beta Test sandbox (god-mode) is now hidden on the public build — it only appears on the testing build or after you redeem a code.',
 ]},
@@ -1212,6 +1218,8 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
   // CHUNK effectiveness (cash paydown only — draw is a transfer, not a net saving): lifetime interest removed per dollar, plus the marginal first-vs-last $1k to show diminishing returns.
   const chunkAfter=Math.max(0,bal-st.chunk),chunkInt=Math.max(0,intRem(bal)-intRem(chunkAfter)),effPct=st.chunk>0?Math.round(chunkInt/st.chunk*100):0;
   const f1=st.chunk>0?Math.max(0,intRem(bal)-intRem(bal-Math.min(1000,st.chunk))):0,l1=st.chunk>=2000?Math.max(0,intRem(chunkAfter+1000)-intRem(chunkAfter)):f1;
+  // Monthly debt-service swing: simulate the staged chunk+draw on a throwaway clone. Killing a loan removes its payment; a DRAW moves the balance onto your line (its own interest) — so this exposes when a high-rate draw actually RAISES your monthly payment.
+  const _dsBefore=this.calcDebtInterest()+this.calcDebtPrincipal();let _dsAfter=_dsBefore;{const _sv=this.state;try{this.state=JSON.parse(JSON.stringify(this.state));this.state._velocity_target_id=st.target;this.state._velocity_vehicle=st.vehicle;if(st.chunk>0)this._velocityApply(st.chunk);if(st.draw>0)this._velocityDraw(st.draw);_dsAfter=this.calcDebtInterest()+this.calcDebtPrincipal();}catch(e){}this.state=_sv;}
   const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you confirm</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
   h+=proj(tgtLoan.label,fm(bal),fm(afterBal),(st.chunk+st.draw)>0?'var(--accent)':'var(--text)');
@@ -1219,7 +1227,9 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
   h+=proj('Payoff',fmMo(mB),fmMo(mA),(mB-mA)>0?'var(--accent)':'var(--text)');
   if((mB-mA)>0)h+='<div class="breakdown-row"><span>Time saved</span><span style="color:var(--accent);font-weight:700;">'+((mB-mA)>=24?(Math.round((mB-mA)/12*10)/10)+' yrs':(mB-mA)+' mo')+'</span></div>';
   h+=proj('Cash',fm(cash),fm(Math.max(0,cash-st.chunk-drawFee)),'var(--text)');
+  if(Math.round(_dsAfter)!==Math.round(_dsBefore))h+=proj('Monthly debt service',fm(_dsBefore)+'/mo',fm(_dsAfter)+'/mo',_dsAfter<=_dsBefore?'var(--accent)':'var(--red)');
   if(iSave>0)h+='<div class="breakdown-row"><span>Interest removed now</span><span style="color:var(--accent);font-weight:700;">'+fm(iSave)+'</span></div>';
+  if(_dsAfter>_dsBefore+5&&st.draw>0)h+='<div class="breakdown-detail" style="color:var(--gold);">⚠ Drawing onto your line RAISES your monthly payment — you\'re moving debt to a higher rate. Lean on cash chunks or a cheaper line, and sweep the balance back down fast.</div>';
   h+='</div>';
   // Chunk effectiveness — shows diminishing returns as they slide the chunk higher.
   if(st.chunk>0){h+='<div style="margin-top:8px;padding:8px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
@@ -2626,7 +2636,7 @@ if(Math.round(af.cash)!==Math.round(_cb.cash)){rows.push([sep?'Business cash':'C
 if(sep&&Math.round(af.pcash)!==Math.round(_cb.pcash)){rows.push(['Personal cash',this.fmtMoney(_cb.pcash),this.fmtMoney(af.pcash),af.pcash<_cb.pcash?RED:GRN]);_ro._baKeys.push('personal_cash');}
 if(af.persScore!==_cb.persScore)rows.push(['Personal credit score',''+_cb.persScore,''+af.persScore,af.persScore>=_cb.persScore?GRN:RED]);
 if(af.bizLim!==_cb.bizLim)rows.push(['Business credit limit',this.fmtMoney(_cb.bizLim),this.fmtMoney(af.bizLim),af.bizLim>=_cb.bizLim?GRN:RED]);
-if(af.bizLim>0&&af.bizUtil!==_cb.bizUtil)rows.push(['Business utilization',_cb.bizUtil+'%',af.bizUtil+'%',af.bizUtil<=_cb.bizUtil?GRN:RED]);
+if(af.bizLim>0&&af.bizUtil!==_cb.bizUtil)rows.push(['Business utilization',_cb.bizUtil+'%',af.bizUtil+'%',af.bizUtil>50?RED:(af.bizUtil<=_cb.bizUtil?GRN:'var(--gold)')]);/* color by health level: ≤50% is the healthy target (gold if it rose to there, green if it fell), only >50% is red */
 if(af.persUtil!==_cb.persUtil)rows.push(['Personal utilization',_cb.persUtil+'%',af.persUtil+'%',af.persUtil<=_cb.persUtil?GRN:RED]);
 if(af.avail!==_cb.avail&&af.bizLim===_cb.bizLim)rows.push(['Personal credit available',this.fmtMoney(_cb.avail),this.fmtMoney(af.avail),af.avail>=_cb.avail?GRN:RED]);
 // Total debt this action moved (e.g. a loan adds debt without touching the credit limit)
@@ -2638,7 +2648,12 @@ if(rows.length)_ro.beforeAfter=rows;}
 results.push(_ro);if(cat==='epic'||cat==='epicbuy')this._epicLastMove={label:action.label,narrative:_ro.narrative,success:success};if(action._waivedFee){this._epicSavings=(this._epicSavings||0)+action._waivedFee;this.state._epic_savings_total=(this.state._epic_savings_total||0)+action._waivedFee;}if(action.id==='debt_restructure'&&this._deferRestructure)this._deferRestructure.ro=_ro;}
 delete this.selectedActions['epic'];delete this.selectedActions['epicbuy'];
 for(const b of _execBonuses){results.push({action:{label:b.role+' Performance Bonus'},success:true,effects:{cash:-b.bonus},narrative:'Your '+b.role+' hit their targets executing “'+b.label+'” — you paid a '+this.fmtMoney(b.bonus)+' performance bonus. Great executives earn their keep.'});}
-this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro)dr.ro.narrative=n;}}this._syncRecurring();this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
+this.monthlyTick();if(this._deferRestructure){const dr=this._deferRestructure;this._deferRestructure=null;if(dr.success){const n=this.applyDebtRestructure(dr);if(dr.ro){dr.ro.narrative=n;
+ // The installment swap is deferred to AFTER the tick, so the result card's utilization/score rows (snapshotted during the action loop) are stale — re-patch them to the final post-swap state so the card matches the narrative.
+ if(dr.ro.beforeAfter){const _pu=this.calcPersUtil(),_ps=this.state.personal_credit_score||0;let _puRow=null,_psRow=null;for(const r of dr.ro.beforeAfter){if(r[0]==='Personal utilization')_puRow=r;else if(r[0]==='Personal credit score')_psRow=r;}
+  if(_puRow){_puRow[2]=_pu+'%';_puRow[3]=(_pu<=parseInt(_puRow[1]))?'var(--accent)':'var(--red)';}
+  if(_psRow){_psRow[2]=''+_ps;_psRow[3]=(_ps>=parseInt(_psRow[1]))?'var(--accent)':'var(--red)';}}
+}}}this._syncRecurring();this.updateRelationships();this.monthlySnapshots.push(JSON.parse(JSON.stringify(this.state)));
 this._monthCashSummary={start:_msStart,spend:_spend};
 const evt=this.checkEvents();this.showResults(results,evt);},
 
@@ -3148,7 +3163,9 @@ if(evt.id==='partner_offer'){const cashAmt=effects.cash||0;if(ci===0){this.state
 if(evt.id==='key_operator_loss'){const s=this.state;const units=Math.max(1,s._asset_units||1);const perDebt=Math.round((s.real_estate_debt||0)/units),perInc=Math.round((s._asset_income||s.other_monthly_revenue||0)/units),covered=(s._keyman_units||0)>0;
  s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)-perInc);s._asset_income=Math.max(0,(s._asset_income||0)-perInc);s._asset_units=Math.max(0,(s._asset_units||0)-1);
  if(covered){const claim=Math.min(perDebt,s.real_estate_debt||0);s.real_estate_debt=Math.max(0,(s.real_estate_debt||0)-claim);s.total_debt=Math.max(0,(s.total_debt||0)-claim);s._keyman_units=Math.max(0,(s._keyman_units||0)-1);s._keyman_claims_total=(s._keyman_claims_total||0)+claim;this._keymanReconcile();
-  c.outcome_narrative='Tragic — but you had insured them. The <strong>operator loan-protection policy paid out '+this.fmtMoney(claim)+'</strong>, retiring the mortgage on that property outright. You have lost its '+this.fmtMoney(perInc)+'/mo income while you place a new operator, but the debt is gone — the loss is contained, not catastrophic. This is exactly what the policy is for: it covers that specific loan, never a windfall.';}
+  c.outcome_narrative=claim>0
+   ?'Tragic — but you had insured them. The <strong>operator loan-protection policy paid out '+this.fmtMoney(claim)+'</strong>, retiring the mortgage on that property outright. You have lost its '+this.fmtMoney(perInc)+'/mo income while you place a new operator, but the debt is gone — the loss is contained, not catastrophic. This is exactly what the policy is for: it covers that specific loan, never a windfall.'
+   :'Tragic — but this property was already <strong>owned free and clear</strong>, so there was no mortgage for the loan-protection policy to retire. You have lost its '+this.fmtMoney(perInc)+'/mo income while you place a new operator, but with no debt weighing on it, the loss is contained — no scramble, no windfall.';}
  else{const hit=Math.max(0,Math.round(perInc*2));if(hit>0){s.cash=(s.cash||0)-hit;if(s.cash<0){const u=this.coverShortfall(-s.cash);s.cash=0;if(u>0)s.cash=-u;}}c.outcome_narrative='You had no loan-protection coverage on that operator. That property still owes <strong>'+this.fmtMoney(perDebt)+'</strong> on its mortgage, but the '+this.fmtMoney(perInc)+'/mo income that serviced it just stopped — and you are out '+this.fmtMoney(hit)+' scrambling to cover the gap and re-staff. This is the danger of leveraging on people you have not insured.';}}
 if(evt.protection){let shielded=false;if(evt.protection.shielded_when)shielded=this.meetsReq(evt.protection.shielded_when);if(!shielded&&evt.protection.shielded_by)shielded=(this.state._completed_actions||[]).includes(evt.protection.shielded_by);
 const safeguard=this._safeguardName(evt.protection.shielded_by||evt.protection.shielded_when);
@@ -3161,6 +3178,8 @@ if(evt.protection.critical_illness){const months=evt.protection.recovery_months|
 if(evt.protection.payout){const pb=Math.round(evt.protection.payout);effects.cash=(typeof effects.cash==='number'?effects.cash:0)+pb;claimNote+='<br><span style="color:var(--accent);font-size:0.8rem;">Key-person policy paid out: +'+this.fmtMoney(pb)+' to fund the transition.</span>';}
 protNote='<div class="narrative-box fade-in" style="border-left-color:var(--accent);margin-top:12px;"><strong>Protected — '+safeguard+'.</strong> '+evt.protection.protected_note+savedNote+claimNote+'</div>';if(evt.protection.shielded_multiplier!=null)for(const k in effects){if(typeof effects[k]==='number')effects[k]=Math.round(effects[k]*evt.protection.shielded_multiplier);}}
 else{protNote='<div class="narrative-box fade-in" style="border-left-color:var(--red);margin-top:12px;"><strong>Unprotected.</strong> '+evt.protection.unprotected_note+'<br><span style="color:var(--gold);font-size:0.8rem;">How to prepare next time: '+safeguard+'.</span></div>';if(evt.protection.unprotected_extra)for(const k in evt.protection.unprotected_extra){const v=evt.protection.unprotected_extra[k];effects[k]=(typeof effects[k]==='number'?effects[k]:0)+v;}}}
+// Paydown normalization: a choice that spends cash AND reduces debt (a "throw cash at the balance" move) must pay down ONLY what your cash actually covers — never borrow to "pay down". Keeps cash-out == debt-reduced (1:1), capped by cash on hand and the debt itself. (Fixes asymmetric event scaling that made a "paydown" borrow on credit and raise total debt.)
+if(typeof effects.cash==='number'&&effects.cash<0&&typeof effects.total_debt==='number'&&effects.total_debt<0){const _s=this.state,_availCash=Math.max(0,_s.cash||0)+(this.isSeparated()?Math.max(0,_s.personal_cash||0):0),_pay=Math.max(0,Math.min(-effects.cash,_availCash,_s.total_debt||0));effects.cash=-_pay;effects.total_debt=-_pay;}
 this.applyEffects(effects);
 // A voluntary departure (team_size dropped) removes THAT person's actual cost line — not a generic flat amount — so the breakdown stays exact. Replaces the choice's generic opex cut with the real salary removed.
 if(evt.category==='people'&&(effects.team_size||0)<0){this._lastDeparted=null;let _removed=0;for(let i=0;i<(-(effects.team_size||0));i++)_removed+=this._removeDepartedRole();if(_removed>0&&typeof effects.operating_expenses==='number'&&effects.operating_expenses<0)this.state.operating_expenses-=effects.operating_expenses;if(_removed>0&&this._lastDeparted)c.outcome_narrative=(c.outcome_narrative||'')+' <span style="color:var(--accent);">That role is now open — you can <strong>re-hire</strong> it from the menu (look for the ↻ Rehire tag).</span>';}
