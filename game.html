@@ -2561,6 +2561,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.59.1',d:'2026-07-02 09:00',n:[
+'💼 Epic Tools: the “Talk to an Epic Life Strategist” button now books a real call.',
+]},
 {v:'0.59.0',d:'2026-07-02 08:00',n:[
 '🐛 Fixed “Accelerate paydown” (rate-hike event) — it could borrow on credit to fund the paydown and end up RAISING your debt. Now a paydown only spends the cash you actually have and reduces debt by exactly that, dollar-for-dollar. (Applies to any “throw cash at the balance” choice.)',
 '🐛 Restructure Your Debt result card now shows the FINAL utilization & score (it was showing an intermediate number that contradicted the narrative). Business utilization at the healthy 50% target no longer flashes red.',
@@ -3143,7 +3146,7 @@ enterCode(){const el=document.getElementById('code-input'),msg=document.getEleme
 if(code===this.BETA_CODE){if(inBeta){msg.style.color='var(--gold)';msg.textContent='You’re already on the beta build.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);return;}
 const def=this.REDEEM_CODES[code];if(!def){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}const done=this._redeemedCodes();if(done.includes(code)){msg.style.color='var(--gold)';msg.textContent='Already redeemed — '+def.label+' is unlocked.';return;}try{def.apply();}catch(e){}done.push(code);try{localStorage.setItem('ep_codes',JSON.stringify(done));}catch(e){}msg.style.color='var(--accent)';msg.innerHTML='✓ '+def.msg;if(el){el.value='';el.disabled=true;}this.renderMainMenu();},
 // ===== "My Real Finances" — gated real-world planning mode. Separate localStorage model; reuses the Epic Life math + panel look; read-only / what-if only (never touches Game.state, turns or scoring). 100% client-side — nothing is transmitted. =====
-RM_BOOK_URL:'https://calendly.com/',/* TODO: swap in the real EPIC advisor booking link */
+RM_BOOK_URL:'https://calendly.com/brucelife/biz',/* real Epic Life Strategist booking link */
 RM_APR:{cards:0.24,mortgage:0.07,personal:0.12,auto:0.08,student:0.065,sba:0.105},RM_TERM:{mortgage:360,personal:60,auto:60,student:120,sba:120},/* today's common APRs + standard amortization terms — demo/education, not exact */
 _rmUnlocked(){return this.isNgPlusUnlocked();},/* gated by the existing redeem code (epiclife) — no separate code */
 _rmLoad(){try{return JSON.parse(localStorage.getItem('ep_realmoney')||'null');}catch(e){return null;}},
