@@ -1,5 +1,11 @@
 # Release Notes
 
+## v0.59.2 — 2026-07-02 — Hotfix: leaderboard + Strategist link
+- **Leaderboard cleanup.** The global boards now rank only runs at the current two-part milestones
+  (Part 1 · ~month 18 and the finish · month 36), so stale pre-restructure 12- and 24-month runs no
+  longer appear.
+- **(v0.59.1)** The Epic Tools "Talk to an Epic Life Strategist" button now books a real call.
+
 ## v0.59.0 — 2026-07-02 — Two Parts, the Epic Life Hub, Epic Tools & Real-World Resilience
 A large promotion of the accumulated beta work on top of v0.47. The run is now **two episodes**,
 the Epic Life wealth engine got a full UX overhaul, and the same engine is now available on your

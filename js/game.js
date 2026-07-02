@@ -49,6 +49,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.59.2',d:'2026-07-02 09:40',n:[
+'🏆 Leaderboard cleanup: the global boards now only rank runs at the current milestones (Part 1 · ~month 18 and the finish · month 36), so stale pre-restructure 12- and 24-month runs no longer show.',
+]},
 {v:'0.59.1',d:'2026-07-02 09:00',n:[
 '💼 Epic Tools: the “Talk to an Epic Life Strategist” button now books a real call.',
 ]},
@@ -3526,7 +3529,7 @@ async signOutGoogle(){if(!this._sb)return;try{await this._sb.auth.signOut();}cat
 _afterAuth(){this._flushPendingGlobal();const lb=document.getElementById('leaderboard-screen');if(lb&&lb.classList.contains('active'))this.showLeaderboard(this._lbFrom);},
 // Map a DB row → the entry shape the leaderboard UI expects.
 _sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,scores:r.scores||null,mastery:r.mastery||0,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
-async _sbFetchTop(arch,ms){let q=this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch);if(+ms===18)q=q.lte('months',18);else if(+ms===36)q=q.gt('months',18);const {data,error}=await q.order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
+async _sbFetchTop(arch,ms){let q=this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch);if(+ms===18)q=q.gte('months',16).lte('months',21);else if(+ms===36)q=q.gte('months',34);const {data,error}=await q.order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
 async _sbSubmit(entry){const u=this._authUser;if(!u)return;const row={user_id:u.id,name:entry.name,company:entry.company||'',archetype:entry.archetype,months:entry.months,composite:entry.composite,scores:entry.scores||null,badges:entry.badges||[],mastery:entry.mastery||0,traps:entry.traps||[],scams:entry.scams||0,stats:entry.stats||null,play_log:entry.playLog||[]};const {error}=await this._sb.from('runs').insert(row);if(error)throw error;},
 // Posting requires sign-in, which redirects away (losing the run). So stash the entry, sign in, and auto-post it on return.
 _queuePendingGlobal(entry){try{localStorage.setItem('ep_pending_global',JSON.stringify(entry));}catch(e){}},
@@ -3553,7 +3556,7 @@ document.getElementById('lb-content').innerHTML=html;this.renderLBList();},
 
 setLBScope(scope){this._lbScope=scope;document.querySelectorAll('#lb-scope-tabs .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');if(scope==='global')this.showLeaderboard(this._lbFrom);else this.renderLBList();},
 // Ranked milestones: Part 1 (m18) and the final Paradise score (m36) use DIFFERENT composite scales, so they get separate boards. A run buckets by month: ≤18 → the 18mo board, else → the 36mo board.
-_lbBucket(m){return (m||0)<=18?18:36;},
+_lbBucket(m){m=+m||0;if(m>=34)return 36;if(m>=16&&m<=21)return 18;return 0;/* rank ONLY the current two-part milestones (Part-1 finale ~m18, finish ~m36); pre-restructure 12/24-month runs no longer rank */},
 setLBMilestone(m){this._lbMilestone=m;document.querySelectorAll('#lb-mile-tabs .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 filterLB(arch){this._lbArch=arch;document.querySelectorAll('#lb-arch-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 
