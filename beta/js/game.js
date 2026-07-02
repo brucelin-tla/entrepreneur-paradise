@@ -49,6 +49,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.58.1',d:'2026-07-02 07:00',n:[
+'🏆 Leaderboard now has two boards — <strong>🏗️ Part 1 · 18mo</strong> and <strong>🏝️ Paradise · 36mo</strong> — so runs are ranked against others at the same milestone (the two use different scoring, so mixing them was unfair). Toggle between them up top.',
+]},
 {v:'0.58.0',d:'2026-07-02 06:30',n:[
 '🛡️ New “Survival runway” — how many months your reserves + tax-free passive income could cover your fixed costs <strong>if business revenue stopped</strong> (a shutdown/recession). It shows on the result screen (so “Profitable” no longer reads as invincible) and in Financial Health. Passive income counts — it keeps flowing when the doors close.',
 '📉 The downturn now has teeth tied to it: when the bust lands, if you built a cushion (reserves + passive, low leverage) you weather it and can go bargain-hunting; if you ran lean and revenue-dependent, you get squeezed (a credit-score dip from scrambling to cover payroll). Preparation is the lesson — and now the mechanic.',
@@ -3498,7 +3501,7 @@ async signOutGoogle(){if(!this._sb)return;try{await this._sb.auth.signOut();}cat
 _afterAuth(){this._flushPendingGlobal();const lb=document.getElementById('leaderboard-screen');if(lb&&lb.classList.contains('active'))this.showLeaderboard(this._lbFrom);},
 // Map a DB row → the entry shape the leaderboard UI expects.
 _sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,scores:r.scores||null,mastery:r.mastery||0,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
-async _sbFetchTop(arch){const {data,error}=await this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch).order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
+async _sbFetchTop(arch,ms){let q=this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch);if(+ms===18)q=q.lte('months',18);else if(+ms===36)q=q.gt('months',18);const {data,error}=await q.order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
 async _sbSubmit(entry){const u=this._authUser;if(!u)return;const row={user_id:u.id,name:entry.name,company:entry.company||'',archetype:entry.archetype,months:entry.months,composite:entry.composite,scores:entry.scores||null,badges:entry.badges||[],mastery:entry.mastery||0,traps:entry.traps||[],scams:entry.scams||0,stats:entry.stats||null,play_log:entry.playLog||[]};const {error}=await this._sb.from('runs').insert(row);if(error)throw error;},
 // Posting requires sign-in, which redirects away (losing the run). So stash the entry, sign in, and auto-post it on return.
 _queuePendingGlobal(entry){try{localStorage.setItem('ep_pending_global',JSON.stringify(entry));}catch(e){}},
@@ -3513,31 +3516,35 @@ this._lbFrom=from||'title';this.showScreen('leaderboard-screen');
 const archetypes=['new','established','stuck'];
 const archLabels={new:'New',established:'Established',stuck:'Stuck'};
 const selArch=this.archetype?this.archetype.id:(this._lbArch||'new');
-this._lbArch=selArch;this._lbScope=this._lbScope||'global';
+this._lbArch=selArch;this._lbScope=this._lbScope||'global';this._lbMilestone=this._lbMilestone||'36';
 const backTo=from==='end'?'Game.showScreen(\'end-screen\')':'Game.showMainMenu()';
 let html='<div class="page-head"><button class="back-chip" onclick="'+backTo+'">← Back</button><span class="page-title gold">🏆 Leaderboard</span></div>';
-html+='<div class="lb-scope"><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div></div>';
+html+='<div class="lb-scope" id="lb-scope-tabs"><div class="lb-seg '+(this._lbScope==='global'?'active':'')+'" onclick="Game.setLBScope(\'global\')">🌐 Global</div><div class="lb-seg '+(this._lbScope==='local'?'active':'')+'" onclick="Game.setLBScope(\'local\')">📱 This Device</div></div>';
 if(this._lbScope==='global')html+=this._authBarHtml();
+html+='<div class="lb-scope" id="lb-mile-tabs"><div class="lb-seg '+(this._lbMilestone==='18'?'active':'')+'" onclick="Game.setLBMilestone(\'18\')">🏗️ Part 1 · 18mo</div><div class="lb-seg '+(this._lbMilestone==='36'?'active':'')+'" onclick="Game.setLBMilestone(\'36\')">🏝️ Paradise · 36mo</div></div>';
 html+='<div class="lb-tabs" id="lb-arch-tabs">'+archetypes.map(a=>'<div class="lb-tab '+(a===selArch?'active':'')+'" onclick="Game.filterLB(\''+a+'\')">'+archLabels[a]+'</div>').join('')+'</div>';
 html+='<div id="lb-list"></div>';
 document.getElementById('lb-content').innerHTML=html;this.renderLBList();},
 
-setLBScope(scope){this._lbScope=scope;document.querySelectorAll('.lb-scope .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');if(scope==='global')this.showLeaderboard(this._lbFrom);else this.renderLBList();},
+setLBScope(scope){this._lbScope=scope;document.querySelectorAll('#lb-scope-tabs .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');if(scope==='global')this.showLeaderboard(this._lbFrom);else this.renderLBList();},
+// Ranked milestones: Part 1 (m18) and the final Paradise score (m36) use DIFFERENT composite scales, so they get separate boards. A run buckets by month: ≤18 → the 18mo board, else → the 36mo board.
+_lbBucket(m){return (m||0)<=18?18:36;},
+setLBMilestone(m){this._lbMilestone=m;document.querySelectorAll('#lb-mile-tabs .lb-seg').forEach(s=>s.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 filterLB(arch){this._lbArch=arch;document.querySelectorAll('#lb-arch-tabs .lb-tab').forEach(t=>t.classList.remove('active'));if(typeof event!=='undefined'&&event&&event.target)event.target.classList.add('active');this.renderLBList();},
 
 async renderLBList(){const el=document.getElementById('lb-list');if(!el)return;
 if(this._lbScope==='global'){
 if(!this.LB_BACKEND){el.innerHTML='<div class="lb-note">🌐 <strong>Global leaderboard — coming soon.</strong><br>Compete with founders everywhere. Once the global board is connected, the runs you submit will show up here.</div>';this._lbFiltered=[];return;}
 el.innerHTML='<div class="lb-note">Loading global runs…</div>';
-let rows=[];try{rows=await this.LB_BACKEND.fetchTop(this._lbArch)||[];}catch(e){el.innerHTML='<div class="lb-note">⚠ Couldn’t reach the global leaderboard.<br>Check your connection and try again.</div>';this._lbFiltered=[];return;}
+let rows=[];try{rows=await this.LB_BACKEND.fetchTop(this._lbArch,this._lbMilestone)||[];}catch(e){el.innerHTML='<div class="lb-note">⚠ Couldn’t reach the global leaderboard.<br>Check your connection and try again.</div>';this._lbFiltered=[];return;}
 this._lbFiltered=rows;this._paintLB(rows,el);return;}
 const lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');
-const filtered=lb.filter(e=>e.archetype===this._lbArch).sort((a,b)=>b.composite-a.composite).slice(0,10);
+const filtered=lb.filter(e=>e.archetype===this._lbArch&&this._lbBucket(e.months)===+this._lbMilestone).sort((a,b)=>b.composite-a.composite).slice(0,10);
 this._lbFiltered=filtered;this._paintLB(filtered,el);},
 
 _paintLB(filtered,el){const MEDAL=['🥇','🥈','🥉'];const me=(this._myLBName||'').toLowerCase();
 el.innerHTML=filtered.length?filtered.map((e,i)=>{const rank=i<3?'<span class="lb-rank lb-medal">'+MEDAL[i]+'</span>':'<span class="lb-rank">#'+(i+1)+'</span>';const mine=me&&(e.name||'').toLowerCase()===me;const durTag=e.months?'<span style="font-size:0.58rem;font-weight:700;color:var(--text2);background:rgba(127,127,127,0.16);border-radius:6px;padding:1px 5px;margin-left:5px;vertical-align:middle;">'+e.months+'mo</span>':'';
-return '<div class="lb-entry fade-in'+(mine?' me':'')+'" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')">'+rank+'<span class="lb-name">'+e.name+durTag+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+(e.company?'<span style="display:block;font-size:0.66rem;color:var(--text2);font-weight:400;">🏢 '+this._esc(e.company)+'</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>';}).join(''):'<div class="lb-note">No runs here yet — finish a 12, 24, or 36-month run to claim the top spot.</div>';},
+return '<div class="lb-entry fade-in'+(mine?' me':'')+'" style="cursor:pointer;" onclick="Game.showRunDetail('+i+')">'+rank+'<span class="lb-name">'+e.name+durTag+(e.badges&&e.badges.length?' <span style="font-size:0.78rem;" title="badges of honor">'+e.badges.slice(0,5).map(b=>b.i).join('')+'</span>':'')+(e.playLog&&e.playLog.length?' <span style="color:var(--text2);font-size:0.68rem;">▸</span>':'')+(e.company?'<span style="display:block;font-size:0.66rem;color:var(--text2);font-weight:400;">🏢 '+this._esc(e.company)+'</span>':'')+'</span><span class="lb-score">'+e.composite+'pts</span><span class="lb-date">'+e.date+'</span></div>';}).join(''):'<div class="lb-note">No runs on the '+(this._lbMilestone==='18'?'Part 1 · 18mo':'Paradise · 36mo')+' board yet — finish '+(this._lbMilestone==='18'?'the month-18 Part 1 finale':'a full 36-month run')+' to claim the top spot.</div>';},
 
 // v2 scoring — see DESIGN.md. Capital efficiency wins, not raw revenue.
 // The six scored pillars, in display order (radar + breakdown). Definitions live in config/scoring_weights.json (player_description) — no weights/formulas shown.
