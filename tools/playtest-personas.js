@@ -31,14 +31,22 @@
   }
   const bestId=cat=>{const b=Game.bestAction(cat);return b?b.id:null;};
   const personas={
-    operator:{desc:'Skilled — intended path (finance ladder, runway discipline, no traps; enrolls Epic to unlock the now-members-only wealth engine)', epic:true,
-      pick:bestId, ev:'prudent', tax(){return 0;}},
+    operator:{desc:'Skilled — intended path (finance ladder, runway discipline, no traps; enrolls Epic to unlock the now-members-only wealth engine). Late game he DIVERSIFIES the leverage plays: PAL when cash-rich, an STR after the first rental, a conservative cash-out refi when LTV is low.', epic:true,
+      pick(cat){if(cat==='finance'){const s=Game.state,own=id=>((s._action_counts||{})[id]||0);
+        const av={};Game.getAvailableActions('finance').forEach(a=>{if(!Game.isActionLocked(a)&&Game.canAfford(a))av[a.id]=1;});
+        if(av.private_banking&&own('private_banking')===0&&(s.cash||0)>80000)return 'private_banking';           // cash-rich → assets working twice
+        if(av.buy_str&&own('buy_str')===0&&own('buy_real_estate')>=1)return 'buy_str';                          // diversify after the first rental
+        const _v=(s.real_estate_equity||0)+(s.real_estate_debt||0),_ltv=_v>0?(s.real_estate_debt||0)/_v:1;
+        if(av.cash_out_refi&&(s.real_estate_equity||0)>=80000&&_ltv<0.6)return 'cash_out_refi';                 // recycle equity only when leverage is conservative
+      }return bestId(cat);}, ev:'prudent', tax(){return 0;}},
     hustler:{desc:'Revenue grinder — maxes marketing/ops, neglects finance/leverage',
       pick(cat){if(cat==='finance'){const b=Game.bestAction('finance');if(b&&(b.id==='establish_business'||(Game.actionCashCost(b)||0)===0))return b.id;return null;}return bestId(cat);}, ev:'prudent', tax(){return 0;}},
-    gambler:{desc:'Reckless over-leverager — most expensive action, debt-funded, grabs every deal',
-      pick(cat){let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a));if(!av.length)return null;const aff=av.filter(a=>Game.canAfford(a));return (aff.length?aff:av).slice().sort((x,y)=>(Game.actionCashCost(y)||0)-(Game.actionCashCost(x)||0))[0].id;}, ev:'aggressive', tax(n){return n-1;}},
+    gambler:{desc:'Reckless over-leverager — most expensive action, debt-funded, grabs every deal. Pulls equity out (cash-out refi) the moment it exists — max LTV, no cushion — exactly the profile the margin call punishes.',
+      pick(cat){let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a));if(!av.length)return null;
+        if(cat==='finance'&&av.some(a=>a.id==='cash_out_refi'&&Game.canAfford(a)))return 'cash_out_refi'; // free money?? pull it ALL, every time
+        const aff=av.filter(a=>Game.canAfford(a));return (aff.length?aff:av).slice().sort((x,y)=>(Game.actionCashCost(y)||0)-(Game.actionCashCost(x)||0))[0].id;}, ev:'aggressive', tax(n){return n-1;}},
     pincher:{desc:'Timid bootstrapper — only cheap/free actions, hoards cash, no debt, never hires',
-      pick(cat){const s=Game.state,budget=Math.max(0,(s.cash||0))*0.15,bad=/loan|credit_line|credit_card|mca|financing|restructure|velocity|hire|premium|real_estate|private_|acquire|captive/i;let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a)&&!bad.test(a.id)&&(Game.actionCashCost(a)||0)<=budget);if(!av.length)return null;av.sort((x,y)=>(Game.actionCashCost(x)||0)-(Game.actionCashCost(y)||0));return av[0].id;}, ev:'thrifty', tax(){return 0;}},
+      pick(cat){const s=Game.state,budget=Math.max(0,(s.cash||0))*0.15,bad=/loan|credit_line|credit_card|mca|financing|restructure|velocity|hire|premium|real_estate|private_|acquire|captive|buy_str|cash_out|refi/i;let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a)&&!bad.test(a.id)&&(Game.actionCashCost(a)||0)<=budget);if(!av.length)return null;av.sort((x,y)=>(Game.actionCashCost(x)||0)-(Game.actionCashCost(y)||0));return av[0].id;}, ev:'thrifty', tax(){return 0;}},
     tourist:{desc:'Inattentive casual — random affordable action, ~30% skip, random choices',
       pick(cat){if(Math.random()<0.3)return null;const av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a)&&Game.canAfford(a));if(!av.length)return null;return av[Math.floor(Math.random()*av.length)].id;}, ev:'random', tax(n){return Math.floor(Math.random()*n);}}
   };

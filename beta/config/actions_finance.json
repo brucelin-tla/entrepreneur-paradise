@@ -405,7 +405,7 @@
       "energy_cost": 3,
       "one_time": true,
       "prerequisites": { "needs": ["establish_business"] },
-      "effects": { "lifestyle_legacy": 12, "litigation_exposure": -5 },
+      "effects": { "lifestyle_legacy": 12, "litigation_exposure": -5, "trust_structure": "basic_llc" },
       "success_rate": 1,
       "narrative_success": "Your living trust is in place. Your estate will skip probate — private, smooth, and ready to hold the assets you're building.",
       "narrative_failure": ""
@@ -424,6 +424,54 @@
       "effects": {},
       "success_rate": 1,
       "narrative_success": "Your captive is licensed and bound. Each month your business pays it deductible premiums that build tax-advantaged reserves you own — sheltering income, protecting assets, and quietly compounding into real wealth.",
+      "narrative_failure": ""
+    },
+    {
+      "id": "private_banking",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Open a Pledged Asset Line 📊",
+      "description": "Pledge your investment portfolio to a private bank and borrow ~70% against it — cheap cash on demand while your assets stay invested and keep compounding. Your money working in two places at once.",
+      "lesson": "This is how the wealthy stay liquid without selling: a Pledged Asset Line (SBLOC) lets you keep your portfolio invested — still growing, still deferring capital-gains tax — while you borrow against it at a low rate (about SOFR + 2%). The line itself is roughly carry-neutral; the real win is the cheap dry powder to deploy into cash-flowing assets. The catch a real SBLOC has too: if the market drops and your line is stretched, you get a MARGIN CALL and are forced to sell into the dip — so keep a cushion and never draw to the max.",
+      "cash_cost": 200,
+      "energy_cost": 6,
+      "prerequisites": { "personal_credit_score_gte": 680, "cash_gte": 40000 },
+      "effects": {},
+      "success_rate": 0.9,
+      "failure_effects": {},
+      "narrative_success": "",
+      "narrative_failure": "The private bank likes your profile but wants a cleaner portfolio statement before they'll bind the line. Tidy it up and reapply next month."
+    },
+    {
+      "id": "buy_str",
+      "category": "finance",
+      "stage": "leverage",
+      "label": "Buy a Short-Term Rental (Airbnb) 🏖",
+      "description": "Buy and furnish a short-term rental with the bank's money. Roughly double the cash flow of a long-term rental — plus a tax move a normal rental can't touch — but it's a hands-on hospitality operation exposed to local regulation.",
+      "lesson": "Short-term rentals throw off far more cash than a long-term lease — and unlock the 'STR loophole': because the average stay is under 7 days and you materially participate, the IRS treats it as an active business, so cost-segregation + bonus depreciation can offset your ACTIVE income (your W-2 or business profit), not just passive rents. The trade-offs are real: it's a hospitality business that eats your time (the opposite of passive), and a single city ordinance can gut the income overnight. Higher return, higher hustle, higher risk.",
+      "cash_cost": 20000,
+      "energy_cost": 9,
+      "prerequisites": { "personal_credit_score_gte": 660, "cash_gte": 20000 },
+      "effects": {},
+      "success_rate": 0.6,
+      "failure_effects": {},
+      "narrative_success": "",
+      "narrative_failure": ""
+    },
+    {
+      "id": "cash_out_refi",
+      "category": "finance",
+      "stage": "wealth",
+      "label": "Cash-Out Refinance (BRRRR) ♻️",
+      "description": "Refinance a property you already own and pull the trapped equity back out as tax-free cash — capital to recycle into your next deal. Your mortgage (and your loan-to-value) go up.",
+      "lesson": "This is the BRRRR engine — Buy, Rehab, Rent, Refinance, Repeat — and the closest thing to an 'infinite return': you pull your own capital back out of a property and redeploy it, controlling more assets with the same dollars. The cash is TAX-FREE because it's a loan, not a sale — no capital gains. A DSCR refinance qualifies on the property's rent, not your W-2, up to ~75% LTV. The catch: a bigger mortgage and a higher loan-to-value is exactly what triggers a margin call if values fall — recycle capital, but never lever past your cushion.",
+      "cash_cost": 3000,
+      "energy_cost": 6,
+      "prerequisites": { "personal_credit_score_gte": 680, "real_estate_equity_gte": 30000 },
+      "effects": {},
+      "success_rate": 0.8,
+      "failure_effects": {},
+      "narrative_success": "",
       "narrative_failure": ""
     }
   ]

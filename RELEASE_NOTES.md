@@ -1,5 +1,39 @@
 # Release Notes
 
+## v0.60.0 — 2026-07-02 — (beta) The Leverage Pack: PAL, Airbnb, BRRRR + the Portfolio view
+Beta-only release (`beta/`); the live root is untouched. Three new late-game finance actions that
+boost the **Leverage** pillar and add real variety, plus a portfolio-ownership UX overhaul.
+
+- **📊 Pledged Asset Line** (`private_banking`, reworked from the old ghost handler). Pledge ~85% of
+  cash into a portfolio that stays invested (~5%/yr) and draw ~70% against it at a realistic
+  ~SOFR+2% (~6.5%/yr) — the old fantasy 5%-earn/1%-borrow spread is gone; the line is roughly
+  carry-neutral (`_pbCarry`) and the win is the cheap dry powder + leverage. Stretch it past ~85%
+  of the marked portfolio in a downturn and it **margin-calls** (forced sell-down, credit hit,
+  leverage-score safety gate ×0.6).
+- **🏖 Short-Term Rental (Airbnb)** (`buy_str`). ~2× a rental's cash flow + the real STR loophole
+  (material participation → accelerated cost-seg/bonus depreciation shields ACTIVE income), but
+  +8 key-person dependency (it's a hospitality operation) and a new **city crackdown event**
+  (`str_regulation_crackdown`: comply for fees/caps or ignore and get fined).
+- **♻️ Cash-Out Refinance (BRRRR)** (`cash_out_refi`). Pull equity back out tax-free (loan, not
+  income) up to the **75% LTV ceiling**, recycle it into the next deal. Higher LTV feeds the
+  existing downturn margin-call — aggression is self-punishing.
+- **Investments are owned, not "done."** New `INVEST_OWN` set: rentals/STRs/PAL/refi show a gold
+  **×N owned** badge, never dim or sink as completed chores, and stay in the fresh pool. The
+  fresh pool **reshuffles each month** (seeded per month — stable within a turn); just-unlocked
+  actions pin to the top for their debut month only; other already-run repeatables still sink.
+  When every fresh move is taken, a **"🔁 Grow the portfolio"** banner reframes the menu as the
+  scaling phase.
+- **🏠 Portfolio view.** Dashboard strip (doors · $/mo · colored LTV · PAL drawn) → tap for the
+  empire popup: per-class value/debt/equity, rent, depreciation shield, **LTV bar with a 75%
+  tick**, refi headroom, PAL draw gauge + cushion verdict, margin-call history. Owned action cards
+  show live "your numbers" lines; the refi card carries an always-on LTV meter.
+- **Fix: Living Trust now counts.** It sets `trust_structure: basic_llc`, so the Protection
+  pillar's trust points are finally reachable from the finance menu (was score-invisible).
+- **Playtest personas updated** (`tools/playtest-personas.js`): operator diversifies (PAL when
+  cash-rich, STR after first rental, refi only under 60% LTV), gambler always refis (usually
+  failing the 680 credit gate — realistically), pincher refuses all three. Full sweeps: zero bugs,
+  design hierarchy intact (operator > hustler ~2×; gambler still dies on weak starts).
+
 ## v0.59.2 — 2026-07-02 — Hotfix: leaderboard + Strategist link
 - **Leaderboard cleanup.** The global boards now rank only runs at the current two-part milestones
   (Part 1 · ~month 18 and the finish · month 36), so stale pre-restructure 12- and 24-month runs no
