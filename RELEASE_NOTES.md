@@ -1,5 +1,35 @@
 # Release Notes
 
+## v0.61.0 — 2026-07-02 — (beta) Deal panels: adjustable terms, the deal of the month, and deal literacy
+Beta-only release (`beta/`); the live root is untouched. The four leverage investments stop being
+fixed-terms buttons and become real deals you evaluate and structure.
+
+- **🎛 Deal control panels.** Tapping `buy_real_estate`, `buy_str`, `private_banking`, or
+  `cash_out_refi` now opens a staged control panel (velocity-banking pattern: stagers → live
+  projection → Confirm queues the finance move). Sliders: property **down payment 10–50%**
+  (default 20), PAL **draw 20–70%** (default 50 — the old hardcoded 70 is now the max, not the
+  default), refi **target LTV 50–75%** (default 70). Terms persist run-long (`_dealTerms`) as
+  "your usual terms" and are read by the resolveMonth handlers, `actionCashCost`, and previews —
+  the panel projection IS the purchase.
+- **🏠 Deal of the month.** One seeded roll per action per month (`dealRoll`: month+id hash, no
+  refresh-rerolling): a size tier (rentals: starter condo 0.55× → small 4-plex 2.2×; STRs: beach
+  condo 0.6× → mountain chalet 1.8×) and a yield-quality roll (0.80–1.25×), composed with the
+  existing revenue multiplier and macro-cycle `_asset_discount`. Scarcity of the *deal*, not the
+  action: pass and next month rolls fresh. Card previews show the actual offer.
+- **🟢🟡🔴 Deal rating + primers.** Quality tag = yield vs. price paid, normalized (strong ≥1.12,
+  thin <0.92) — rates the deal, never affordability (that judgment stays the player's). Each panel
+  type carries a first-time auto-opened primer (ℹ️ reopenable): "How to read a deal" (price vs.
+  worth, yield as THE comparison number, cushion, tax shield, you-don't-have-to-buy), "How to size
+  your draw" (margin-call bands: ≤55% crash-proof / >68% called in any downturn — mirrors the
+  `_pal_squeeze_cycle` math), "How to read LTV headroom".
+- **💵 Honest down payments.** `actionCashCost` for property buys = chosen % × this month's actual
+  price (was flat $25k/$20k regardless of a $400k property). More down also means more net cash
+  flow (±price×(down−0.20)×0.0065/mo — the smaller mortgage payment is yours) and more cushion;
+  less down = the 10%-down gambler special the RE margin call exists for.
+- **Personas updated.** The 4 deal actions are panel-routed for humans, queued directly by bots;
+  operator carries disciplined standing terms (25% down / 50% draw / 60% LTV), gambler maxes every
+  slider (10/10/70/75).
+
 ## v0.59.3 — 2026-07-02 — Hotfix: hide the god-mode dev card on the public build
 - **Security/integrity.** The 🧪 Beta Test sandbox (god-mode: all stages maxed, fat cash & credit,
   jump into any menu) was gated on `isNgPlusUnlocked()` — but that flag is auto-set once a public

@@ -38,13 +38,15 @@
         if(av.buy_str&&own('buy_str')===0&&own('buy_real_estate')>=1)return 'buy_str';                          // diversify after the first rental
         const _v=(s.real_estate_equity||0)+(s.real_estate_debt||0),_ltv=_v>0?(s.real_estate_debt||0)/_v:1;
         if(av.cash_out_refi&&(s.real_estate_equity||0)>=80000&&_ltv<0.6)return 'cash_out_refi';                 // recycle equity only when leverage is conservative
-      }return bestId(cat);}, ev:'prudent', tax(){return 0;}},
+      }return bestId(cat);}, ev:'prudent', tax(){return 0;},
+      terms:{buy_real_estate:{downPct:25},buy_str:{downPct:25},private_banking:{drawPct:50},cash_out_refi:{ltvPct:60}}},/* disciplined: cushion on every lever */
     hustler:{desc:'Revenue grinder — maxes marketing/ops, neglects finance/leverage',
       pick(cat){if(cat==='finance'){const b=Game.bestAction('finance');if(b&&(b.id==='establish_business'||(Game.actionCashCost(b)||0)===0))return b.id;return null;}return bestId(cat);}, ev:'prudent', tax(){return 0;}},
     gambler:{desc:'Reckless over-leverager — most expensive action, debt-funded, grabs every deal. Pulls equity out (cash-out refi) the moment it exists — max LTV, no cushion — exactly the profile the margin call punishes.',
       pick(cat){let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a));if(!av.length)return null;
         if(cat==='finance'&&av.some(a=>a.id==='cash_out_refi'&&Game.canAfford(a)))return 'cash_out_refi'; // free money?? pull it ALL, every time
-        const aff=av.filter(a=>Game.canAfford(a));return (aff.length?aff:av).slice().sort((x,y)=>(Game.actionCashCost(y)||0)-(Game.actionCashCost(x)||0))[0].id;}, ev:'aggressive', tax(n){return n-1;}},
+        const aff=av.filter(a=>Game.canAfford(a));return (aff.length?aff:av).slice().sort((x,y)=>(Game.actionCashCost(y)||0)-(Game.actionCashCost(x)||0))[0].id;}, ev:'aggressive', tax(n){return n-1;},
+      terms:{buy_real_estate:{downPct:10},buy_str:{downPct:10},private_banking:{drawPct:70},cash_out_refi:{ltvPct:75}}},/* max leverage on every slider — the profile the margin call exists to punish */
     pincher:{desc:'Timid bootstrapper — only cheap/free actions, hoards cash, no debt, never hires',
       pick(cat){const s=Game.state,budget=Math.max(0,(s.cash||0))*0.15,bad=/loan|credit_line|credit_card|mca|financing|restructure|velocity|hire|premium|real_estate|private_|acquire|captive|buy_str|cash_out|refi/i;let av=Game.getAvailableActions(cat).filter(a=>!Game.isActionLocked(a)&&!bad.test(a.id)&&(Game.actionCashCost(a)||0)<=budget);if(!av.length)return null;av.sort((x,y)=>(Game.actionCashCost(x)||0)-(Game.actionCashCost(y)||0));return av[0].id;}, ev:'thrifty', tax(){return 0;}},
     tourist:{desc:'Inattentive casual — random affordable action, ~30% skip, random choices',
@@ -54,6 +56,7 @@
   function runBot(archId,key){
     const P=personas[key], startUrl=location.href;
     Game.selectArchetype(CONFIG.starting_positions.positions.find(p=>p.id===archId));
+    if(P.terms&&Game.state)Game.state._dealTerms=JSON.parse(JSON.stringify(P.terms));/* persona's standing deal terms (panel defaults otherwise) */
     let g=0,sumR=0,nR=0,maxTeam=0,peakRev=0,peakCust=0; const bugs=[];
     const scrId=()=>{const e=document.querySelector('.screen.active');return e?e.id:null;};
     while(g++<4000){const sc=scrId(); if(sc==='end-screen')break;
@@ -62,8 +65,8 @@
         if(P.epic&&!Game.state._epic_life&&!Game.state._epic_enroll_pending&&Game.isSeparated()&&(Game.state.cash||0)>4000)Game.enrollEpicLife('monthly');
         const cats=Game._activeCats||['marketing','operations','finance'];
         for(const c of cats){if(Game.selectedActions[c])continue;const id=P.pick(c);if(id){const a=Game.getAvailableActions(c).find(x=>x.id===id);if(a&&!Game.isActionLocked(a)){
-          // Panel-routed finance actions (policy loan/passive, velocity banking) open a control panel for a human; a bot completes them by queuing the action directly.
-          if(c==='finance'&&(id==='policy_loan'||id==='activate_passive_income'||id==='velocity_banking'))Game.selectAction(c,id);
+          // Panel-routed finance actions (policy loan/passive, velocity banking, the deal-panel investments) open a control panel for a human; a bot completes them by queuing the action directly (deal terms come from P.terms, set at run start).
+          if(c==='finance'&&(id==='policy_loan'||id==='activate_passive_income'||id==='velocity_banking'||id==='buy_real_estate'||id==='buy_str'||id==='private_banking'||id==='cash_out_refi'))Game.selectAction(c,id);
           else Game.selectActionPayment(c,id);
         }}}
         Game.resolveMonth();
