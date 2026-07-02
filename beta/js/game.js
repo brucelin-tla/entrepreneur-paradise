@@ -49,6 +49,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.56.0',d:'2026-07-02 02:00',n:[
+'💼 New “My Real Finances” mode (unlock with an access code from the main menu): enter your real numbers and run them through the Epic Life engine — a Financial Health snapshot + Paradise ladder, a debt/velocity payoff planner, a credit→cash calculator, and a cash-value policy illustration. 🔒 Everything stays on your device; nothing is sent anywhere. Educational only — not financial advice.',
+]},
 {v:'0.55.0',d:'2026-07-02 00:30',n:[
 '🛡️ Policy loans now reduce your passive income — you draw from <strong>policy value − outstanding loan</strong>. Every screen now shows the true, loan-adjusted number.',
 '⚡ Velocity: pick the exact loan to attack, sweep intensity moved to the top, and the “if you confirm” preview now shows <strong>payoff time before→after</strong>, the <strong>effective % return</strong> of your chunk, and the diminishing first-vs-last-$1k so you can see when you’re over-chunking. Draw-from-credit fee is now 6%.',
@@ -588,7 +591,8 @@ isNgPlusUnlocked(){try{return localStorage.getItem('ep_ngplus')==='1';}catch(e){
 // ---- Redeem codes (unlock content via a code, e.g. "epiclife" → New Game+) ----
 // To add a code: give it a normalized key (lowercase, alphanumeric only) + an apply() that flips the unlock.
 REDEEM_CODES:{
-epiclife:{label:'New Game+',msg:'New Game+ unlocked! Customize your starting hand from the main menu.',apply(){try{localStorage.setItem('ep_ngplus','1');}catch(e){}}}
+epiclife:{label:'New Game+',msg:'New Game+ unlocked! Customize your starting hand from the main menu.',apply(){try{localStorage.setItem('ep_ngplus','1');}catch(e){}}},
+realmoney:{label:'My Real Finances',msg:'“My Real Finances” unlocked — open it from the main menu to plan with your real numbers.',apply(){try{localStorage.setItem('ep_realmoney_unlock','1');}catch(e){}}}
 },
 _normCode(c){return (c||'').toLowerCase().replace(/[^a-z0-9]/g,'');},
 _redeemedCodes(){try{return JSON.parse(localStorage.getItem('ep_codes')||'[]');}catch(e){return [];}},
@@ -597,6 +601,113 @@ showCode(){const inBeta=location.pathname.indexOf('/beta/')>=0;const intro=inBet
 enterCode(){const el=document.getElementById('code-input'),msg=document.getElementById('code-msg');if(!msg)return;const code=this._normCode(el&&el.value);if(!code){msg.style.color='var(--text2)';msg.textContent='Enter a code first.';return;}const inBeta=location.pathname.indexOf('/beta/')>=0;
 if(code===this.BETA_CODE){if(inBeta){msg.style.color='var(--gold)';msg.textContent='You’re already on the beta build.';return;}msg.style.color='var(--accent)';msg.innerHTML='✓ Code accepted — loading the beta…';try{localStorage.setItem('ep_beta','1');}catch(e){}setTimeout(()=>{window.location.href=this.BETA_URL;},500);return;}
 const def=this.REDEEM_CODES[code];if(!def){msg.style.color='var(--red)';msg.textContent='✕ That code isn’t valid.';return;}const done=this._redeemedCodes();if(done.includes(code)){msg.style.color='var(--gold)';msg.textContent='Already redeemed — '+def.label+' is unlocked.';return;}try{def.apply();}catch(e){}done.push(code);try{localStorage.setItem('ep_codes',JSON.stringify(done));}catch(e){}msg.style.color='var(--accent)';msg.innerHTML='✓ '+def.msg;if(el){el.value='';el.disabled=true;}this.renderMainMenu();},
+// ===== "My Real Finances" — gated real-world planning mode. Separate localStorage model; reuses the Epic Life math + panel look; read-only / what-if only (never touches Game.state, turns or scoring). 100% client-side — nothing is transmitted. =====
+RM_CODE:'realmoney',RM_BOOK_URL:'https://calendly.com/',/* TODO: swap in the real EPIC advisor booking link */
+_rmUnlocked(){try{return localStorage.getItem('ep_realmoney_unlock')==='1';}catch(e){return false;}},
+_rmLoad(){try{return JSON.parse(localStorage.getItem('ep_realmoney')||'null');}catch(e){return null;}},
+_rmSave(d){try{localStorage.setItem('ep_realmoney',JSON.stringify(d));}catch(e){}},
+_rmData(){return this._rmLoad();},
+_rmFmt(v){return this.fmtMoney(Math.round(+v||0));},
+rmBookCall(){try{window.open(this.RM_BOOK_URL,'_blank');}catch(e){location.href=this.RM_BOOK_URL;}},
+_rmNetWorth(d){d=d||{};const debts=(d.debts||[]).reduce((a,x)=>a+(+x.balance||0),0);return Math.round((+d.cash||0)+(+((d.policy||{}).cashValue)||0)+(+((d.re||{}).value)||0)-debts-(+d.creditUsed||0));},
+_rmDebtService(d){return Math.round((d.debts||[]).reduce((a,x)=>a+(+x.payment||0),0));},
+// Panel chrome for real-money tools (mirrors _epicPanel): back + advisor CTA + persistent disclaimer.
+_rmPanel(title,body,isHome){const back=isHome?'<button class="back-chip" style="margin:0;" onclick="Game.hidePopup()">✕ Close</button>':'<button class="back-chip" style="margin:0;" onclick="Game.rmHome()">← My Money</button>';const cta='<button class="back-chip" style="margin:0;border-color:var(--gold);color:var(--gold);" onclick="Game.rmBookCall()">📞 Advisor</button>';const disc='<div style="font-size:0.6rem;color:var(--text2);line-height:1.4;margin-top:12px;padding-top:8px;border-top:1px solid var(--border);">Educational illustration only — not financial, tax, or investment advice. Figures are simplified. Talk to your EPIC advisor about your actual plan.</div>';this.showPopup(title,'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;">'+back+cta+'</div>'+body+disc);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
+rmHome(){if(!this._rmUnlocked())return this.showCode();this._rmVel=null;this._rmCash=null;this._rmPol=null;const d=this._rmData();if(!d)return this.rmIntake();const fm=v=>this._rmFmt(v);
+ const nw=this._rmNetWorth(d),passive=+d.passiveMonthly||0;
+ let h='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:2px;">Your real numbers, run through the Epic Life engine. 🔒 Everything stays on this device.</div>';
+ h+='<div style="display:flex;gap:8px;margin:10px 0;"><div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;"><div style="font-size:0.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Net worth</div><div style="font-weight:800;color:'+(nw>=0?'var(--accent)':'var(--red)')+';">'+fm(nw)+'</div></div><div style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px;"><div style="font-size:0.55rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;">Passive / mo</div><div style="font-weight:800;color:var(--accent);">'+fm(passive)+'</div></div></div>';
+ const tile=(fn,icon,label,sub,accent)=>'<div onclick="Game.'+fn+'" style="cursor:pointer;flex:1 1 44%;min-width:120px;border:1px solid '+accent+';background:rgba(245,200,66,0.06);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">'+icon+'</div><div style="font-size:0.72rem;font-weight:700;color:'+accent+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);">'+sub+'</div></div>';
+ h+='<div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:6px 0;">Tools</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+tile('rmHealth()','📊','Financial Health','Snapshot · Paradise','var(--accent)')+tile('rmVelocity()','⚡','Debt / Velocity','Pay off faster','var(--accent)')+tile('rmCashSvc()','💵','Cash Services','Credit → cash','var(--gold)')+tile('rmPolicy()','🛡️','Policy (IUL)','Illustration','var(--gold)')+'</div>';
+ h+='<button class="btn-secondary" style="margin-top:12px;" onclick="Game.rmIntake()">✏️ Edit my numbers</button>';
+ this._rmPanel('💼 My Real Finances',h,true);},
+// Intake form — plain number inputs; blank = skip. Common debt types get balance/APR/payment rows.
+rmIntake(){if(!this._rmUnlocked())return this.showCode();const d=this._rmData()||{},pol=d.policy||{},re=d.re||{};
+ const g=(id,v,ph)=>'<input id="'+id+'" type="number" inputmode="decimal" value="'+(v!=null&&v!==''?v:'')+'" placeholder="'+(ph||'0')+'" style="width:100%;padding:7px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;font-size:0.85rem;">';
+ const fld=(id,label,v,ph)=>'<div style="margin:7px 0;"><div style="font-size:0.72rem;color:var(--text2);margin-bottom:3px;">'+label+'</div>'+g(id,v,ph)+'</div>';
+ const hdr=t=>'<div style="font-size:0.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 4px;border-top:1px solid var(--border);padding-top:10px;">'+t+'</div>';
+ const DTYPES=[['cards','Credit cards'],['mortgage','Mortgage'],['auto','Auto loan'],['student','Student loans'],['other','Other loan']];
+ const dget=id=>(d.debts||[]).find(y=>y.id===id)||{};
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:4px;">Enter what you can — leave the rest blank. 🔒 Saved only on this device; nothing is sent anywhere.</div>';
+ h+=hdr('Income & cash')+fld('rm-cash','💵 Cash / savings',d.cash)+fld('rm-income','Monthly take-home income',d.incomeMonthly)+fld('rm-passive','Passive income / mo (if any)',d.passiveMonthly);
+ h+=hdr('Monthly expenses')+fld('rm-living','Living essentials / mo',d.expLiving)+fld('rm-other','Other spending / mo',d.expOther);
+ h+=hdr('Credit')+fld('rm-climit','Total credit limit',d.creditLimit)+fld('rm-cused','Credit balance used',d.creditUsed);
+ h+=hdr('Debts — balance · APR% · monthly payment');
+ DTYPES.forEach(t=>{const x=dget(t[0]);h+='<div style="font-size:0.72rem;color:var(--text2);margin:7px 0 3px;">'+t[1]+'</div><div style="display:flex;gap:6px;">'+g('rm-d-'+t[0]+'-bal',x.balance,'balance')+g('rm-d-'+t[0]+'-rate',x.rate!=null?Math.round(x.rate*1000)/10:'','APR%')+g('rm-d-'+t[0]+'-pay',x.payment,'pay/mo')+'</div>';});
+ h+=hdr('Assets & policy (optional)')+fld('rm-re','Real estate value',re.value)+fld('rm-pcv','Cash-value policy — value',pol.cashValue)+fld('rm-ploan','Policy loan outstanding',pol.loan);
+ h+='<button class="btn-primary" style="margin-top:14px;" onclick="Game.rmSaveIntake()">Save my numbers →</button>';
+ this._rmPanel('✏️ My Numbers',h,true);},
+rmSaveIntake(){const n=id=>{const e=document.getElementById(id);const v=e?parseFloat(e.value):NaN;return isFinite(v)?Math.max(0,v):0;};
+ const DTYPES=[['cards','Credit cards'],['mortgage','Mortgage'],['auto','Auto loan'],['student','Student loans'],['other','Other loan']];
+ const debts=[];DTYPES.forEach(t=>{const bal=n('rm-d-'+t[0]+'-bal'),rate=n('rm-d-'+t[0]+'-rate')/100,pay=n('rm-d-'+t[0]+'-pay');if(bal>0)debts.push({id:t[0],name:t[1],type:t[0],balance:bal,rate:rate,payment:pay});});
+ const d={v:1,cash:n('rm-cash'),incomeMonthly:n('rm-income'),passiveMonthly:n('rm-passive'),expLiving:n('rm-living'),expOther:n('rm-other'),creditLimit:n('rm-climit'),creditUsed:n('rm-cused'),debts:debts,re:{value:n('rm-re')},policy:{cashValue:n('rm-pcv'),loan:n('rm-ploan')}};
+ this._rmSave(d);this.rmHome();},
+// Financial Health — snapshot + Paradise ladder from the real model.
+rmHealth(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);
+ const nw=this._rmNetWorth(d),dsvc=this._rmDebtService(d),living=+d.expLiving||0,other=+d.expOther||0,passive=+d.passiveMonthly||0,income=+d.incomeMonthly||0;
+ const flow=Math.round(income+passive-dsvc-living-other),climit=+d.creditLimit||0,cused=+d.creditUsed||0,util=climit>0?Math.round(cused/climit*100):0;
+ const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span style="color:'+(c||'var(--text)')+';font-weight:700;">'+v+'</span></div>';
+ let h='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
+ h+=row('Net worth',fm(nw),nw>=0?'var(--accent)':'var(--red)')+row('Monthly income',fm(income))+row('Passive income',fm(passive)+'/mo',passive>0?'var(--accent)':'var(--text2)')+row('Debt payments',fm(dsvc)+'/mo')+row('Living essentials',fm(living)+'/mo')+row('Other spending',fm(other)+'/mo')+row('Monthly cash flow',(flow>=0?'+':'')+fm(flow)+'/mo',flow>=0?'var(--accent)':'var(--red)')+row('Credit utilization',util+'%',util<=30?'var(--accent)':(util<=50?'var(--gold)':'var(--red)'))+'</div>';
+ const rungs=[['Cover debt payments',dsvc],['+ Living essentials',dsvc+living],['🏝️ + All spending = Paradise',dsvc+living+other]];
+ h+='<div style="margin-top:12px;font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Is your passive income ('+fm(passive)+'/mo) beating…</div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
+ rungs.forEach(r=>{const t=Math.round(r[1]),beat=passive>=t;h+='<div class="breakdown-row"><span>'+(beat?'✅ ':'⬜ ')+r[0]+'</span><span style="color:'+(beat?'var(--accent)':'var(--text2)')+';font-weight:700;">'+fm(t)+'/mo</span></div>';});h+='</div>';
+ let advice;if(passive>=dsvc+living+other&&(dsvc+living+other)>0)advice='🏝️ Your passive income covers everything — that\'s Paradise. Protect it.';else if(flow<0)advice='You\'re spending more than you bring in. Trim expenses or lift income before taking on debt.';else if(util>50)advice='Credit utilization is high ('+util+'%) — paying it down lifts your score and frees cash flow.';else if(passive<=0)advice='No passive income yet — that\'s the engine that buys freedom. Ask your advisor how to start building it.';else advice='Passive income covers part of your life. Grow it toward covering all your spending — that\'s Paradise.';
+ h+='<div style="margin-top:10px;padding:9px 12px;background:rgba(245,200,66,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.76rem;line-height:1.5;">💡 '+advice+'</div>';
+ this._rmPanel('📊 Financial Health',h);},
+// Debt / Velocity planner — extra-monthly + one-time chunk what-if on a chosen debt.
+rmVelocity(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const debts=(d.debts||[]).filter(x=>(+x.balance||0)>0&&(+x.payment||0)>0);
+ if(!debts.length){this._rmPanel('⚡ Debt / Velocity','<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">Add at least one debt (with a balance and monthly payment) in <strong>✏️ Edit my numbers</strong> to plan a payoff.</div>');return;}
+ if(!this._rmVel)this._rmVel={id:debts[0].id,extra:0,chunk:0};const st=this._rmVel;if(!debts.find(x=>x.id===st.id))st.id=debts[0].id;
+ const dt=debts.find(x=>x.id===st.id),bal=+dt.balance,rate=+dt.rate||0,pay=+dt.payment,cashMax=Math.max(0,Math.round(+d.cash||0));
+ st.chunk=Math.max(0,Math.min(Math.round(st.chunk||0),cashMax,Math.round(bal)));st.extra=Math.max(0,Math.min(Math.round(st.extra||0),Math.round(bal)));
+ const intRem=(b,p)=>this._interestRemaining(Math.max(0,b),rate,p),monRem=(b,p)=>this._monthsRemaining(Math.max(0,b),rate,p);
+ const fmMo=m=>(!isFinite(m)||m<=0)?'—':m>=24?(Math.round(m/12*10)/10)+' yrs':Math.round(m)+' mo',fmI=v=>isFinite(v)?fm(Math.round(v)):'—';
+ const iB=intRem(bal,pay),mB=monRem(bal,pay),newBal=Math.max(0,bal-st.chunk),newPay=pay+st.extra,iA=intRem(newBal,newPay),mA=monRem(newBal,newPay);
+ const iSave=(isFinite(iB)&&isFinite(iA))?Math.max(0,Math.round(iB-iA)):0,tSave=(isFinite(mB)&&isFinite(mA))?Math.max(0,Math.round(mB-mA)):0;
+ const chunkAfter=Math.max(0,bal-st.chunk),cI0=intRem(bal,pay),cI1=intRem(chunkAfter,pay),chunkInt=(isFinite(cI0)&&isFinite(cI1))?Math.max(0,cI0-cI1):0,effPct=st.chunk>0&&chunkInt>0?Math.round(chunkInt/st.chunk*100):0;
+ const f1=st.chunk>0&&isFinite(cI0)?Math.max(0,cI0-intRem(bal-Math.min(1000,st.chunk),pay)):0,l1=st.chunk>=2000?Math.max(0,intRem(chunkAfter+1000,pay)-cI1):f1;
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">See how extra payments crush a debt faster — each extra dollar of principal removes the future interest it would have cost.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Which debt</div><div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">';
+ debts.forEach(x=>{const on=st.id===x.id;h+='<div onclick="Game.rmVelPick(\''+x.id+'\')" style="cursor:pointer;display:flex;justify-content:space-between;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:8px 11px;"><span style="font-size:0.74rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+(on?'✓ ':'')+x.name+'</span><span style="font-size:0.66rem;color:var(--text2);">'+(Math.round((+x.rate||0)*1000)/10)+'% · '+fm(x.balance)+'</span></div>';});h+='</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Extra payment / mo</div><input type="range" min="0" max="'+Math.max(100,Math.round(pay*3))+'" step="10" value="'+st.extra+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmv-x\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmVelExtra(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--accent);">+<span id="rmv-x">$'+st.extra.toLocaleString()+'</span>/mo</div>';
+ if(cashMax>0){h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">One-time chunk (from '+fm(cashMax)+' cash)</div><input type="range" min="0" max="'+Math.min(cashMax,Math.round(bal))+'" step="'+Math.max(1,Math.round(Math.min(cashMax,bal)/100))+'" value="'+st.chunk+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'rmv-c\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmVelChunk(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--gold);"><span id="rmv-c">$'+st.chunk.toLocaleString()+'</span></div>';}
+ const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">Your plan</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
+ h+=proj('Balance',fm(bal),fm(newBal),st.chunk>0?'var(--accent)':'var(--text)')+proj('Payoff',fmMo(mB),fmMo(mA),tSave>0?'var(--accent)':'var(--text)')+proj('Interest ahead',fmI(iB),fmI(iA),'var(--accent)');
+ if(tSave>0)h+='<div class="breakdown-row"><span>Time saved</span><span style="color:var(--accent);font-weight:700;">'+(tSave>=24?(Math.round(tSave/12*10)/10)+' yrs':tSave+' mo')+'</span></div>';
+ if(iSave>0)h+='<div class="breakdown-row"><span>Interest saved</span><span style="color:var(--accent);font-weight:700;">'+fm(iSave)+'</span></div>';
+ h+='</div>';
+ if(st.chunk>0&&effPct>0){h+='<div style="margin-top:8px;padding:8px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;"><div class="breakdown-row"><span>Chunk effectiveness</span><span style="color:var(--gold);font-weight:800;">'+effPct+'% <span style="font-weight:400;color:var(--text2);">lifetime return</span></span></div>'+(st.chunk>=2000?'<div class="breakdown-detail">First $1k removes '+fm(f1)+' · last $1k removes '+fm(l1)+' — each extra dollar buys less (diminishing returns).</div>':'')+'</div>';}
+ this._rmPanel('⚡ Debt / Velocity',h);},
+rmVelPick(id){if(!this._rmVel)this._rmVel={id:id,extra:0,chunk:0};else{this._rmVel.id=id;this._rmVel.chunk=0;this._rmVel.extra=0;}this.rmVelocity();},
+rmVelExtra(v){if(this._rmVel)this._rmVel.extra=Math.max(0,Math.round(+v||0));this.rmVelocity();},
+rmVelChunk(v){if(this._rmVel)this._rmVel.chunk=Math.max(0,Math.round(+v||0));this.rmVelocity();},
+// Cash Services — credit→cash calculator (fee is illustrative & editable).
+rmCashSvc(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const avail=Math.max(0,(+d.creditLimit||0)-(+d.creditUsed||0));
+ if(!this._rmCash)this._rmCash={amt:0,fee:6};const st=this._rmCash;st.amt=Math.max(0,Math.min(Math.round(st.amt||0),Math.floor(avail)));const feePct=Math.max(0,+st.fee||0);
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Turning available credit into cash costs a fee and raises your utilization — see the trade-off first.</div>';
+ h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;"><div class="breakdown-row"><span>Available credit</span><span style="color:var(--accent);font-weight:700;">'+fm(avail)+'</span></div></div>';
+ if(avail<1){h+='<div style="font-size:0.72rem;color:var(--text2);margin-top:10px;">No available credit to draw right now.</div>';this._rmPanel('💵 Cash Services',h);return;}
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 3px;">Amount to draw</div><input type="range" min="0" max="'+Math.floor(avail)+'" step="'+Math.max(1,Math.round(avail/100))+'" value="'+st.amt+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'rmc-a\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmCashAmt(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--gold);"><span id="rmc-a">$'+st.amt.toLocaleString()+'</span></div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Fee % <span style="text-transform:none;">— illustrative, set your own</span></div><input type="number" inputmode="decimal" value="'+feePct+'" onchange="Game.rmCashFee(this.value)" style="width:90px;padding:6px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;">';
+ const fee=Math.round(st.amt*feePct/100),net=st.amt-fee,newUsed=(+d.creditUsed||0)+st.amt,newUtil=(+d.creditLimit||0)>0?Math.round(newUsed/(+d.creditLimit)*100):0;
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Result</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;"><div class="breakdown-row"><span>Cash you receive</span><span style="color:var(--accent);font-weight:700;">'+fm(net)+'</span></div><div class="breakdown-row"><span>Fee ('+feePct+'%)</span><span style="color:var(--red);">'+fm(fee)+'</span></div><div class="breakdown-row"><span>New utilization</span><span style="color:'+(newUtil<=30?'var(--accent)':(newUtil<=50?'var(--gold)':'var(--red)'))+';font-weight:700;">'+newUtil+'%</span></div></div>';
+ this._rmPanel('💵 Cash Services',h);},
+rmCashAmt(v){if(this._rmCash)this._rmCash.amt=Math.max(0,Math.round(+v||0));this.rmCashSvc();},
+rmCashFee(v){if(this._rmCash)this._rmCash.fee=Math.max(0,+v||0);this.rmCashSvc();},
+// Policy / IUL — educational illustration only (adjustable sliders), with a strong disclaimer + advisor CTA.
+rmPolicy(){const d=this._rmData()||{},fm=v=>this._rmFmt(v);const pol=d.policy||{};
+ if(!this._rmPol)this._rmPol={cv:Math.round(+pol.cashValue||0),loan:Math.round(+pol.loan||0)};const st=this._rmPol;st.cv=Math.max(0,Math.round(st.cv||0));st.loan=Math.max(0,Math.min(Math.round(st.loan||0),st.cv));
+ const cv=st.cv,loan=st.loan,base=Math.max(0,cv-loan),borrowable=Math.max(0,Math.round(cv*0.9)-loan),passive=Math.round(base*0.06/12);
+ let h='<div style="padding:9px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--gold);border-radius:6px;font-size:0.74rem;line-height:1.5;margin-bottom:10px;">⚠️ <strong>Educational illustration only.</strong> A real cash-value / IUL policy depends on your age, health, the product, and market performance — these are simplified round numbers, <strong>not a quote or advice</strong>. Your EPIC advisor designs the real thing.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Policy cash value</div><input type="range" min="0" max="500000" step="1000" value="'+cv+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'rmp-cv\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmPolCv(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--gold);"><span id="rmp-cv">$'+cv.toLocaleString()+'</span></div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Outstanding policy loan</div><input type="range" min="0" max="'+Math.max(1000,cv)+'" step="1000" value="'+loan+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'rmp-l\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString()" onchange="Game.rmPolLoan(this.value)"><div style="margin-bottom:8px;font-size:0.78rem;font-weight:700;color:var(--accent);"><span id="rmp-l">$'+loan.toLocaleString()+'</span></div>';
+ h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;"><div class="breakdown-row"><span>Borrowable (≈90% of value − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(borrowable)+'</span></div><div class="breakdown-row"><span>Illustrative passive (6%/yr on value − loan)</span><span style="color:var(--accent);font-weight:700;">'+fm(passive)+'/mo</span></div></div>';
+ h+='<button class="btn-primary" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),#b8932f);color:#1a1205;" onclick="Game.rmBookCall()">📞 Design my real policy with an advisor →</button>';
+ this._rmPanel('🛡️ Policy (IUL) — Illustration',h);},
+rmPolCv(v){if(this._rmPol)this._rmPol.cv=Math.max(0,Math.round(+v||0));this.rmPolicy();},
+rmPolLoan(v){if(this._rmPol)this._rmPol.loan=Math.max(0,Math.round(+v||0));this.rmPolicy();},
 // ---- Company name (set when forming the LLC; shown on the dashboard + leaderboard; groundwork for player-vs-player) ----
 _esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));},
 promptCompanyName(isNew){const cur=(this.state&&this.state.company_name)||'';
@@ -616,6 +727,7 @@ if(ngp)h+=item('🔁','New Game+','Sandbox — customize your start','Game.showN
 if(auto&&auto.month<=36)h+=item('↩','Continue','Month '+auto.month+' · '+this._archLabel(auto.archetype),'Game.confirmResumeAuto()');
 if(saves&&saves.length)h+=item('💾','Load Game',saves.length+' saved run'+(saves.length>1?'s':''),'Game.showLoadGame()');
 h+=item('🏆','Leaderboard','See the top runs','Game.showLeaderboard(\'title\')');
+{const rmU=this._rmUnlocked();h+=item('💼','My Real Finances',rmU?'Plan with your real numbers':'Enter access code to unlock',rmU?'Game.rmHome()':'Game.showCode()');}
 // One combined code entry (beta access + redeem/unlock codes) to cut menu clutter. Same game.js on both builds; the label adapts — on the beta build there's nowhere to "go to beta," so it reads as Redeem.
 {const _inBeta=location.pathname.indexOf('/beta/')>=0;h+=item(_inBeta?'🎟':'🧪',_inBeta?'Redeem Code':'Beta &amp; Codes',_inBeta?'Unlock content with a code':'Beta access or an unlock code','Game.showCode()');}
 h+=item('📋','What\'s New','v'+this._curVersion(),'Game.showWhatsNew()');
