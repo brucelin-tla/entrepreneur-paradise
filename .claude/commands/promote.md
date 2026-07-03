@@ -27,7 +27,9 @@ Only with BOTH keys turned do you proceed.
 4. **RELEASE_NOTES.md** — add ONE consolidated live-release entry at the top summarizing the batch
    being promoted (synthesize from the beta `PATCH_NOTES` entries that are newer than the last live
    release). RELEASE_NOTES tracks LIVE releases only; the in-game "What's New" already rode along in
-   game.js's `PATCH_NOTES`.
+   game.js's `PATCH_NOTES`. Also run the **doc-truth check**: update DESIGN.md §8 and CLAUDE.md
+   "Pending work" to reflect what this promote ships — an owner-approved promote resets the
+   ship-gate playtest-debt count to 0 (note it).
 
 ## Verify (preview) — BEFORE committing
 5. `preview_start` name `game`, load **root** `http://localhost:3000/?cb=<ts>` (NOT /beta/). Confirm:

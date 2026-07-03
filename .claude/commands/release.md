@@ -20,8 +20,13 @@ Steps:
    accumulates). Notes should be short, player-facing, and plain-language.
 3. **Update `RELEASE_NOTES.md`** — add a matching entry at the top (version, date,
    bold title, bullets) for the fuller developer-facing changelog.
-4. **Rebuild the offline file** — run `build.ps1` to regenerate `game.html`.
-5. **Commit** with the project's timestamp format:
+4. **Doc-truth check** — diff the standing docs against what this release actually
+   changed: DESIGN.md §8 (alignment-gap status) and CLAUDE.md "Pending work"
+   (including the ship-gate playtest-debt count). Update or delete stale entries in
+   the SAME commit. This project boots fresh sessions from these docs, not chat
+   history — a stale doc is a live bug, not cosmetic.
+5. **Rebuild the offline file** — run `build.ps1` to regenerate `game.html`.
+6. **Commit** with the project's timestamp format:
    ```
    <type>: <summary> — YYYY-MM-DD HH:MM
 
@@ -29,5 +34,5 @@ Steps:
 
    Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
    ```
-6. **Push** to `origin main` (GitHub Pages auto-deploys index.html + css + js + config).
-7. Report the deployed version and remind the user GitHub Pages may take ~1 min.
+7. **Push** to `origin main` (GitHub Pages auto-deploys index.html + css + js + config).
+8. Report the deployed version and remind the user GitHub Pages may take ~1 min.

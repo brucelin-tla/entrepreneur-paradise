@@ -72,6 +72,22 @@ Headless click-path tests verify the code runs — they do NOT verify the model 
 required. When a change touches valuation, tax, credit, or debt math: spend the extra ten minutes
 playing skeptical CFO against your own build before it ships.
 
+## Ship gate — scope & validation self-check (owner mandate 2026-07-03)
+
+The fidelity check guards *correctness*; this gate guards *scope*. The project's failure mode is
+abundance, not sloppiness — building outpaces validating (past cost: the 69-action bloat that
+forced a 58% cut per SIMPLIFICATION_NOTES.md; v0.63–v0.68 stacking on beta ahead of the
+v0.61/v0.62 playtest). Two standing rules, enforced like the fidelity check:
+
+1. **Playtest-debt cap.** No new feature rev ships to beta while **more than 3 feature revs are
+   stacked unplaytested** (count = minor/feature version bumps since the owner's last mobile
+   playtest; an owner-approved `/promote` resets it to 0). At the cap, session work switches to:
+   playtest support, polish/fixes to what's already queued, docs, or backlog specs — NOT new
+   systems. Record the current count in "Pending work" whenever it changes.
+2. **Elevate-first rule.** Before building any net-new system, answer in the commit message:
+   *"which existing system, elevated, could do this instead — and why isn't that enough?"*
+   (The Part 2 backlog already states this as a preference; this makes it a gate.)
+
 ## Content / balance
 
 - Full action sets (`config/actions_*.json`): Marketing 16, Operations 20, Finance 30. One archetype enabled ("new"); the others have `"enabled": false` in `starting_positions.json`.
@@ -102,6 +118,22 @@ playing skeptical CFO against your own build before it ships.
 
 ## Pending work
 
+- **Process-remedy queue — morning session 2026-07-03** (from the work-style review; ship gate +
+  release doc-truth step already landed on branch `claude/work-style-analysis-b7trhj`):
+  1. **Novice playtesters** — recruit 3–5 genuinely finance-novice testers (Team Life Academy
+     clients/prospects who haven't been through coaching yet). Protocol: play the beta, and after
+     each month say out loud *why* they think their move worked. Where they can't answer, the
+     DESIGN.md legibility guardrail is failing — the owner can't test this himself (can't un-know
+     finance).
+  2. **"My Real Finances" adversarial premise pass** — one focused session: educational/not-advice
+     disclaimer, plus an honest-assumptions display where the mode projects the policy path
+     (surrender costs, funding discipline required, time horizon) — the same skeptical-CFO
+     treatment the fidelity check gives APRs. Protects the education/advice line AND persuades
+     sophisticated prospects.
+  3. **Standing weekly playtest block** — schedule a recurring block (owner playtest + novice-
+     feedback review) so the ship-gate queue actually drains instead of waiting for a free evening.
+  4. **Doc-truth sweep of this section** — the two entries below predate the v0.68.5 promote
+     (2026-07-02 21:06, owner-approved); verify what's shipped vs still open and clean them up.
 - **Beta v0.62.0 awaiting owner playtest** — two releases stacked: v0.61.0 deal panels
   (term sliders on the 4 leverage investments, seeded deal-of-the-month, 🟢🟡🔴 rating,
   first-open primers — watch for honest down payments making big-tier deals a cash wall

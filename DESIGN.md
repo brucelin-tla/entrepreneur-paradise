@@ -71,22 +71,34 @@ lifestyle, net worth is high, and the founder is free.
 - **Every mechanic should be legible.** If a player can't tell *why* something worked,
   the "aha" is lost. Surface the cause (e.g. "tax-free because it's a policy loan").
 
-## 8. Known alignment gaps (blocking the golden path — fix first)
+## 8. Alignment gaps — status (updated 2026-07-03; originally "fix first" blockers)
 
-- Scoring reads `life_insurance_cv` / `real_estate_owned` / `investment_positions`,
-  but the engine maintains `insurance_cash_value` (and others). Key mismatches mean the
-  intended path scores ~0. (See `js/game.js` `calculateFinalScores`.)
-- Net worth penalizes all debt equally — good debt is not distinguished from bad.
-- `business_revenue` is over-weighted and uncapped → grinding is the dominant strategy.
-- Passive-income and tax-efficiency systems are rarely reached in play (gating + costs).
+The four original blockers are addressed in code (`scoring_weights.json` v3 +
+`calculateFinalScores`); verified against source 2026-07-03:
+
+- ✅ **Scoring key mismatch** — fixed. Scoring reads the engine's real keys
+  (`insurance_cash_value`, `real_estate_equity`/`real_estate_debt`, `investment_positions`,
+  `private_bank_balance`); the intended path scores.
+- ✅ **Good vs bad debt** — fixed. Net worth subtracts bad debt (cards/collections) fully,
+  other debt at half, and asset-backed/productive debt not at all; leverage efficiency is a
+  first-class score (OPM multiple, safety-gated against margin calls / reckless LTV).
+- ✅ **Revenue over-weighting** — fixed. `business_revenue` carries ZERO composite weight
+  (fuel, not the goal); revenue saturates via `revenue_capacity` in `monthlyTick`.
+- 🔶 **Passive/tax path reachability** — heavily built out (Epic Life hub, roadmap, ALIS,
+  policy funding flow) but reachability-for-a-novice is validated only by owner + bot
+  playtests so far. Open until external novice playtesters confirm the "aha" lands
+  (see CLAUDE.md "Pending work" → process-remedy queue).
+
+New gaps found later get logged here first. Keep this section truthful — the `/release`
+and `/promote` doc-truth step checks it every ship.
 
 ## 9. Build order (working backwards from the goal)
 
-1. **Win condition / scoring** — encode "efficiency creates wealth." (in progress)
+1. **Win condition / scoring** — encode "efficiency creates wealth." (done — scoring v3)
 2. **Make the golden path dominant & reachable** — rewards + unlock flow + legibility.
 3. **Cap brute-force grinding** — revenue saturation.
 4. **Balance numbers** — energy, archetype starts, costs — toward the defined target.
 
 ---
-*Proposed scoring weights live in `config/scoring_weights.json`; treat current values
-as legacy until the win-condition redesign (step 1) lands.*
+*Scoring weights live in `config/scoring_weights.json` (v3) — six end-game pillars per this
+document; passive income carries the top weight, `business_revenue` carries none.*
