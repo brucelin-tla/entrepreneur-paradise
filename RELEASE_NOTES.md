@@ -1,5 +1,28 @@
 # Release Notes
 
+## v0.63.0 — 2026-07-02 — (beta) Owner playtest batch 1: deal-panel UX, real index loan, results decluttered
+Beta-only. Direct response to the owner's live playtest of v0.62.x:
+- **Deal panels**: ← Back chip top-left; slider moved to sit directly above Confirm on all three
+  panel types (property / PAL / refi); default "Got it" hidden and "✕ Remove" link dropped —
+  Back exits, Confirm queues/updates, picking another finance action replaces a queued deal.
+- **Index loan @5% flat** (was market+1%, drifting 6–7% tight-cycle): modeled on John Hancock
+  Accumulation IUL's fixed index loan (5% guaranteed charge). Renamed Variable → Index in UI;
+  internal `_iul_loan_type='variable'` key kept for save compat. Lapse mechanic unchanged.
+- **Results screen**: per-card "tap for details" toggles replaced by ONE combined "📚 Details &
+  lessons" card (chips + before→after + lessons per action inside); exec performance bonuses now
+  render as rows next to the expense breakdown instead of their own result cards; passive-income
+  banner folded into the member concierge card (standalone banner only for non-members);
+  achievements entry moved here from the game screen.
+- **Game screen**: Epic Life System bar removed (redundant — lives in ⭐ hub); Achievements button
+  removed; velocity banking hidden from the finance menu once active (⚡ chip manages it).
+- **Sim recap**: failed moves marked ✗ (engine never counted them as completed; now the display
+  matches).
+- Verified: headless click-path run plays 12 months through the edited result screens, 0 errors.
+- **Queued next (owner asks, batch 2)**: dashboard restructure (income/expense under net-cash-flow,
+  collapsible capacity+funnel with leads/customers/brand inside, mastery folded under energy,
+  staff/culture under freedom, freedom moved to the business side); action cards title-only with
+  tap-to-expand description; velocity/policy panel re-layout to the deal-panel pattern.
+
 ## v0.62.1 — 2026-07-02 — (beta) Sim-start recap + loud failure
 Beta-only. Owner playtested v0.62.0 and reported the sim profiles "enter at month 1" and read as
 an artificial/pre-built start. Could NOT reproduce (headless click-path test on both the site and
