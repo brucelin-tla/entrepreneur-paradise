@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.62.0',d:'2026-07-02 12:10',n:[
+'🤖 <strong>Two simulated head-starts (beta)</strong> — new "Operator — Year 2" and "Average Player — Year 2" profiles on the New Game screen. A bot plays your first 12 months live through the real engine the moment you tap the card — the Operator plays the intended finance-ladder path, the Average Player grinds revenue and neglects finance — then you take over at the start of month 13 with earned stats. Both unranked.']},
 {v:'0.61.0',d:'2026-07-02 10:35',n:[
 '🎛 <strong>Deal panels</strong> — tapping an investment (rental, Airbnb, Pledged Asset Line, cash-out refi) now opens its deal panel: adjust the terms with a slider and see the projected outcome before you commit. Down payment on properties, draw % on the line, target LTV on the refi — you choose the leverage, you own the risk.',
 '🏠 <strong>The deal of the month</strong> — the market now offers ONE specific property per month (starter condo → 4-plex, beach condo → mountain chalet), each with its own price and yield. Pass on a thin deal and a new one rolls next month; keep dry powder ready for the strong ones.',
@@ -607,7 +609,14 @@ stuck:'<svg viewBox="0 0 64 64" width="60" height="60" aria-hidden="true"><circl
 };return A[id]||'';},
 renderArchetypes(){const l=document.getElementById('archetype-list');l.innerHTML='';
 // 🧪 Beta test profile — sandbox god-mode with every menu unlocked (Epic Life on, all stages maxed, fat cash & credit, policy seeded). Unranked; for testing only. GATED to the BETA build ONLY — never on the public/live build (god-mode would trivialize the game, and the earned New Game+ unlock must NOT expose it).
-if(location.pathname.indexOf('/beta/')>=0){const bc=document.createElement('div');bc.className='archetype-card fade-in';bc.style.cssText='border-color:var(--gold);background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));';bc.innerHTML='<div class="arch-top"><div class="arch-av">🧪</div><div class="arch-head"><div class="arch-title-row"><h3>Beta Test</h3><span class="arch-diff" style="color:var(--gold);border-color:var(--gold);">DEV</span></div><div class="tagline">Everything unlocked</div></div></div><p class="arch-desc">Sandbox god-mode for testing: Epic Life on, all stages maxed, fat cash &amp; credit, a cash-value policy seeded. Unranked — jump straight into any menu.</p>';bc.onclick=()=>this.startBetaProfile();l.appendChild(bc);}
+if(location.pathname.indexOf('/beta/')>=0){const bc=document.createElement('div');bc.className='archetype-card fade-in';bc.style.cssText='border-color:var(--gold);background:linear-gradient(135deg,rgba(212,175,55,0.14),rgba(59,130,246,0.08));';bc.innerHTML='<div class="arch-top"><div class="arch-av">🧪</div><div class="arch-head"><div class="arch-title-row"><h3>Beta Test</h3><span class="arch-diff" style="color:var(--gold);border-color:var(--gold);">DEV</span></div><div class="tagline">Everything unlocked</div></div></div><p class="arch-desc">Sandbox god-mode for testing: Epic Life on, all stages maxed, fat cash &amp; credit, a cash-value policy seeded. Unranked — jump straight into any menu.</p>';bc.onclick=()=>this.startBetaProfile();l.appendChild(bc);
+// 🤖 Simulated year-2 starts — a bot plays the first 12 months live at click, you land on the m12 scorecard
+const sims=[
+ ['operator','🤖','Operator — Year 2','Optimal year 1, simulated','A bot just played 12 months on the intended path — finance ladder, Epic Life, disciplined leverage. Land on the year-1 scorecard with EARNED stats and take over. Unranked.'],
+ ['average','🙂','Average Player — Year 2','Typical year 1, simulated','A bot played 12 months like most players do — grinding revenue, neglecting the finance path. Land on the year-1 scorecard, see what it costs, and fix it. Unranked.']];
+for(const[k,av,title,tag,desc]of sims){const sc=document.createElement('div');sc.className='archetype-card fade-in';sc.style.cssText='border-color:var(--gold);background:linear-gradient(135deg,rgba(212,175,55,0.10),rgba(16,185,129,0.06));';
+ sc.innerHTML='<div class="arch-top"><div class="arch-av">'+av+'</div><div class="arch-head"><div class="arch-title-row"><h3>'+title+'</h3><span class="arch-diff" style="color:var(--gold);border-color:var(--gold);">SIM</span></div><div class="tagline">'+tag+'</div></div></div><p class="arch-desc">'+desc+'</p>';
+ sc.onclick=()=>this.startSimProfile(k);l.appendChild(sc);}}
 const DIFF={Easy:{r:0,c:'var(--accent)'},Medium:{r:1,c:'var(--gold)'},Hard:{r:2,c:'var(--red)'}};
 // compact money for the at-a-glance stat row ($7k, $4.2k, $40k)
 const kfmt=v=>{v=+v||0;if(v>=1000){const n=v/1000;return '$'+(n>=10?Math.round(n):Math.round(n*10)/10)+'k';}return '$'+Math.round(v);};
@@ -933,6 +942,53 @@ s.insurance_cash_value=50000;s._policy_open_month=1;s._policy_fund_rate=0.15;s._
 // ⚡ Velocity banking — already ON: HELOC vehicle attacking the mortgage on the Balanced sweep (switch to the credit line in-panel to test the draw flow)
 this._ensureLoans();s._velocity_active=true;s._velocity_setup=true;s._velocity_vehicle='heloc';s._velocity_mode='balanced';
 this.hidePopup();this.showScreen('game-screen');this.startGame();},
+// 🤖 Simulated head-start profiles — a bot plays YEAR 1 through the REAL engine at start, so the month-13
+// stats are EARNED (and stay true as balance changes), never hand-set. Mirrors the proven screen-machine in
+// tools/playtest-personas.js. 'operator' = optimal finance-ladder play (the harness persona that goes 15/15);
+// 'average' = the typical revenue grinder who neglects the finance path (the harness 'hustler', ~63% of an
+// operator's final score). The player takes over at the START of month 13 (m12 is no longer a checkpoint —
+// the Part-1 finale at m18 is the next beat). Unranked (_ngplus), tutorial skipped. Beta-only cards.
+startSimProfile(kind){
+ const base=CONFIG.starting_positions.positions.find(x=>x.id==='new');
+ const scr=()=>{const e=document.querySelector('.screen.active');return e?e.id:null;};
+ const cashOf=c=>(c&&c.effects&&typeof c.effects.cash==='number')?c.effects.cash:0;
+ const bestId=cat=>{const b=this.bestAction(cat);return b?b.id:null;};
+ const pick=cat=>{
+  if(kind==='average'){if(cat==='finance'){const b=this.bestAction('finance');if(b&&(b.id==='establish_business'||(this.actionCashCost(b)||0)===0))return b.id;return null;}return bestId(cat);}
+  if(cat==='finance'){const s=this.state,own=id=>((s._action_counts||{})[id]||0),av={};
+   this.getAvailableActions('finance').forEach(a=>{if(!this.isActionLocked(a)&&this.canAfford(a))av[a.id]=1;});
+   if(av.private_banking&&own('private_banking')===0&&(s.cash||0)>80000)return 'private_banking';
+   if(av.buy_str&&own('buy_str')===0&&own('buy_real_estate')>=1)return 'buy_str';
+   const _v=(s.real_estate_equity||0)+(s.real_estate_debt||0),_ltv=_v>0?(s.real_estate_debt||0)/_v:1;
+   if(av.cash_out_refi&&(s.real_estate_equity||0)>=80000&&_ltv<0.6)return 'cash_out_refi';}
+  return bestId(cat);};
+ const evPick=evt=>{const ch=evt._scaledChoices||evt.choices||[];if(ch.length<=1)return 0;/* prudent: first choice we can actually fund */
+  const s=this.state,liq=(s.cash||0)+(s.personal_cash||0)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
+  const aff=i=>(-cashOf(ch[i]))<=liq*0.9;if(aff(0))return 0;for(let i=0;i<ch.length;i++)if(aff(i))return i;return ch.length-1;};
+ const PANEL_ACTS=['policy_loan','activate_passive_income','velocity_banking','buy_real_estate','buy_str','private_banking','cash_out_refi'];/* panel-routed for humans — a bot queues them directly */
+ for(let attempt=0;attempt<3;attempt++){/* a year-1 death is near-impossible for these personas, but reroll rather than hand the player a corpse */
+  const p=JSON.parse(JSON.stringify(base));p.id='sim_'+kind;p.label=kind==='operator'?'Operator — Year 2':'Average Player — Year 2';p.difficulty=null;
+  this.selectArchetype(p,true);const s=this.state;s._tutorial_seen=true;s._ngplus=true;
+  if(kind==='operator')s._dealTerms={buy_real_estate:{downPct:25},buy_str:{downPct:25},private_banking:{drawPct:50},cash_out_refi:{ltvPct:60}};/* disciplined: cushion on every lever */
+  this.showScreen('game-screen');this.startGame();
+  let guard=0,dead=false;
+  while(guard++<600){const sc=scr();
+   if(sc==='end-screen'){dead=true;break;}
+   if(sc==='checkpoint-screen')break;/* safety only — m12 is not a checkpoint anymore (finale is m18, checkpoint m24) */
+   if(sc==='game-screen'){
+    if(this.month>=13)break;/* the handoff: bot played m1–12, the player starts month 13 */
+    if(kind==='operator'&&!s._epic_life&&!s._epic_enroll_pending&&this.isSeparated()&&(s.cash||0)>4000)this.enrollEpicLife('monthly');
+    const cats=this._activeCats||['marketing','operations','finance'];
+    for(const c of cats){if(this.selectedActions[c])continue;const id=pick(c);if(!id)continue;const a=this.getAvailableActions(c).find(x=>x.id===id);if(a&&!this.isActionLocked(a)){
+     if(c==='finance'&&PANEL_ACTS.includes(id))this.selectAction(c,id);else this.selectActionPayment(c,id);}}
+    this.resolveMonth();continue;}
+   if(sc==='event-screen'){if(this.currentEvent){const ch=this.currentEvent._scaledChoices||this.currentEvent.choices||[1];this.resolveEvent(Math.max(0,Math.min(evPick(this.currentEvent),ch.length-1)));}
+    else{const cards=document.querySelectorAll('#event-choices .choice-card');if(cards.length)cards[0].click();else this.nextMonth();}continue;}
+   if(sc==='result-screen'||sc==='lifestyle-screen'){this.nextMonth();continue;}
+   break;/* unknown screen — stop rather than loop blind */}
+  if(!dead&&!this._lost){this.hidePopup();return;}
+ }
+ this.hidePopup();},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='';document.getElementById('popup-container').style.display='block';this._lockScroll();},
 // Epic sub-panel: one clean "← Epic Life" button at the bottom (returns to the hub) and hide the default "Got it" — no redundant close buttons.

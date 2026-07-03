@@ -1,5 +1,32 @@
 # Release Notes
 
+## v0.62.0 — 2026-07-02 — (beta) Simulated year-2 head-starts: Operator & Average Player
+Beta-only release (`beta/`); the live root is untouched. Owner-requested playtest accelerators —
+jump straight to the mid-game where the deal panels and Part-2 content actually live.
+
+- **🤖 Operator — Year 2 / 🙂 Average Player — Year 2** — two new cards on the New Game screen
+  (beta build only, next to the Beta Test sandbox). Tapping one runs a bot through the player's
+  first 12 months **live through the real engine** (`startSimProfile`): the same synchronous
+  screen-machine as the proven `tools/playtest-personas.js` harness (game-screen → queue actions →
+  `resolveMonth` → events/results → next month). No hand-set stats — the month-13 state is
+  whatever the bot actually earned, so these profiles stay truthful as balance changes.
+- **Operator** = the harness `operator` persona: finance ladder via `bestAction`, enrolls Epic Life
+  once separated with cushion, disciplined standing deal terms (25% down, 50% PAL draw, 60% refi
+  LTV), prudent event choices. **Average Player** = the harness `hustler`: revenue grind, takes
+  only free/LLC finance moves — lands at roughly two-thirds of an operator's composite, which
+  makes the pair a built-in before/after demo of the methodology.
+- **Landing:** the player takes over at the START of month 13 on the game screen (m12 is no longer
+  a checkpoint — the next structural beat is the m18 Part-1 finale). Both profiles are unranked
+  (`_ngplus`), skip the tutorial, and reroll up to 3× in the (near-impossible) case the bot dies
+  in year 1.
+- **Verified headless** (Edge, real engine over HTTP, both profiles, zero JS errors). Sample
+  month-13 states — Operator: $47.6k/mo revenue, 783 FICO, S-corp, $14.5k biz credit, IUL at
+  $15.7k CV, $340/mo passive already dripping, $0 debt, NW $106k. Average: $76k/mo revenue,
+  NW $212k — but 0 passive, no policy, no biz credit, still an LLC. **The grinder LOOKS ahead at
+  month 12** (more cash, more revenue); the operator's engine compounds past him in years 2–3
+  (median composite 303 vs 190). That's the methodology's whole argument, visible in one
+  side-by-side — by design, not an accident.
+
 ## v0.61.0 — 2026-07-02 — (beta) Deal panels: adjustable terms, the deal of the month, and deal literacy
 Beta-only release (`beta/`); the live root is untouched. The four leverage investments stop being
 fixed-terms buttons and become real deals you evaluate and structure.
