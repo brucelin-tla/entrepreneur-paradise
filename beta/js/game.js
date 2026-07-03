@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.2',d:'2026-07-02 23:50',n:[
+'✅ Every Confirm now flashes green "✓ Confirmed" — policy, velocity, cash services and the concierge (Financial Health) join the deal panels and equipment. The Financial Health Confirm also stopped yanking you back to the hub — you stay where you confirmed.']},
 {v:'0.68.1',d:'2026-07-02 23:35',n:[
 '🛒 <strong>Equipment basket</strong> — tap multiple machines and buy them all in ONE finance move (36 turns are too precious for one-at-a-time). The projection totals the whole basket — combined down payment, payments, income, write-off — and affordability caps how much you can carry out. Still one of each.']},
 {v:'0.68.0',d:'2026-07-02 23:15',n:[
@@ -1375,7 +1377,7 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
    h+='<div style="font-size:0.62rem;color:var(--text2);line-height:1.4;margin-bottom:5px;">No cash needed — pulls from your line to knock down the loan (up to '+fm(drawCap)+'). A balance transfer onto your line; keep sweeping to pay it back down.</div>';
    h+='<input type="range" min="0" max="'+drawCap+'" step="'+Math.max(1,Math.round(drawCap/100))+'" value="'+st.draw+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'vel-draw\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.velStageDraw(this.value)">';
    h+='<div style="margin-bottom:6px;font-size:0.78rem;font-weight:700;color:var(--gold);">Draw <span id="vel-draw">$'+st.draw.toLocaleString()+'</span></div>';}
-  h+='<button onclick="Game.velConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+  {const _jc=this._justConfirmed==='vel';this._justConfirmed=null;h+='<button onclick="Game.velConfirm()" style="width:100%;margin-top:10px;background:'+(_jc?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(_jc?'✓ Confirmed':'Confirm')+'</button>';}
   if(!active&&(st.chunk>0||st.draw>0))h+='<div style="font-size:0.6rem;color:var(--gold);text-align:center;margin-top:6px;">Activate the monthly sweep above to chunk/draw.</div>';
   // Chunk effectiveness BELOW Confirm (owner: the box resizing while sliding made the button jump around)
   if(st.chunk>0){h+='<div style="margin-top:8px;padding:8px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
@@ -1399,7 +1401,7 @@ velToggleSweep(){const s=this.state;if(!(s._velocity_setup||s._velocity_active))
 velConfirm(){const s=this.state,st=s._velStaged;if(!st){this.showEpicLife();return;}
  s._velocity_vehicle=st.vehicle;s._velocity_mode=st.mode;s._velocity_target_id=st.target||null;
  if(s._velocity_active){if(st.chunk>0){const res=this._velocityApply(st.chunk);if(res.total>0)s._velocity_chunk=(s._velocity_chunk||0)+res.total;}if(st.draw>0)this._velocityDraw(st.draw);}
- s._velStaged=null;this._refreshDashboards();this.openVelocityControl();/* stay HERE so the player sees what they just confirmed */},
+ s._velStaged=null;this._refreshDashboards();this._justConfirmed='vel';this.openVelocityControl();/* stay HERE so the player sees what they just confirmed */},
 velTurnOn(){const s=this.state;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;const lineCap=(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),revDebt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0)),hasLine=lineCap>0||revDebt>0;const veh=(s._velStaged&&s._velStaged.vehicle)||s._velocity_vehicle;if(veh==='heloc'&&!hasRE)s._velocity_vehicle='line';else if(veh)s._velocity_vehicle=veh;const canOn=(s._velocity_vehicle==='heloc'&&hasRE)||(s._velocity_vehicle==='line'&&hasLine);if(!canOn){this.openVelocityControl();return;}this.hidePopup();this.selectAction('finance','velocity_banking');},
 // ---- CASH-VALUE POLICY control panel (reached from the ⭐ Epic Life hub; open to everyone with a policy) ----
 // Funding % and loan type are free ongoing settings; taking a loan or switching on passive income spends your ONE finance move that turn (queued through the normal action system, like velocity's turn-on). The dashboards just DISPLAY these — all adjustment happens here.
@@ -1443,7 +1445,7 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 3px;">Monthly funding</div>';
  h+='<input type="range" min="10" max="25" step="1" value="'+st.fundRate+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'ppc-fr\');if(e)e.textContent=this.value+\'% · ≈ $\'+Math.round('+rev+'*this.value/100).toLocaleString()+\'/mo\'" onchange="Game.polStageFund(this.value)">';
  h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:4px;"><span id="ppc-fr" style="font-weight:700;color:var(--gold);">'+st.fundRate+'% · ≈ $'+Math.round(rev*st.fundRate/100).toLocaleString()+'/mo</span> — more builds cash value faster (opens borrowing sooner), less cash in pocket.</div>';
- h+='<button onclick="Game.polConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+ {const _jc=this._justConfirmed==='pol';this._justConfirmed=null;h+='<button onclick="Game.polConfirm()" style="width:100%;margin-top:10px;background:'+(_jc?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(_jc?'✓ Confirmed':'Confirm')+'</button>';}
  h+='<div style="font-size:0.6rem;color:var(--text2);text-align:center;margin-top:6px;">Managed by your concierge — free, applies this month. No finance move used.</div>';
  h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('🛡️ Cash-Value Policy',h);},
@@ -1458,7 +1460,7 @@ polConfirm(){const s=this.state,st=s._polStaged;if(!st){this.showEpicLife();retu
  const amt=Math.max(0,Math.min(Math.round(st.loanAmt||0),this._policyBorrowable()));
  if(amt>0){const sep=this.isSeparated();s.insurance_loan_balance=(s.insurance_loan_balance||0)+amt;if(sep)s.personal_cash=(s.personal_cash||0)+amt;else s.cash=(s.cash||0)+amt;s._policy_act=s._policy_act||{};s._policy_act.loan=(s._policy_act.loan||0)+amt;}
  if(st.passiveOn&&(s.insurance_cash_value||0)>=5000&&!s._passive_income_active){s._passive_income_active=true;s._policy_act=s._policy_act||{};s._policy_act.passiveOn=true;}
- s._polStaged=null;this._refreshDashboards();this.openPolicyControl();/* stay HERE so the player sees what they just locked in */},
+ s._polStaged=null;this._refreshDashboards();this._justConfirmed='pol';this.openPolicyControl();/* stay HERE so the player sees what they just locked in */},
 // ===== Epic Life perk — Credit → Cash: liquidate available credit into spendable cash for a flat 6% fee, no turn used =====
 _creditHeadroom(){const s=this.state;return Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)));},
 // Draw business-available FIRST (protects personal utilization/score), then personal. Debt rises by the full amount drawn; you net that amount minus the 6% fee. A priced cash advance, not free money.
@@ -1466,7 +1468,7 @@ liquidateCredit(amount){const s=this.state;if(!s._epic_life)return{drawn:0,fee:0
 // Stage an amount (no money moves yet); Confirm applies it and returns to the Epic Life menu.
 liqStage(amt){this.state._liqStaged=Math.max(0,Math.round(amt||0));this.openCreditLiquidity();},
 liqClear(){this.state._liqStaged=0;this.openCreditLiquidity();},
-liqConfirm(){const a=Math.max(0,Math.round(this.state._liqStaged||0));if(a<1000)return;this.liquidateCredit(a);this.state._liqStaged=0;this._refreshDashboards();this.openCreditLiquidity();/* stay here — the Now box shows the cash landing */},
+liqConfirm(){const a=Math.max(0,Math.round(this.state._liqStaged||0));if(a<1000)return;this.liquidateCredit(a);this.state._liqStaged=0;this._refreshDashboards();this._justConfirmed='liq';this.openCreditLiquidity();/* stay here — the stats box shows the cash landing */},
 openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
  if(!s._epic_life){this._epicPanel('💵 Cash Services','<div style="font-size:0.85rem;line-height:1.6;">👑 <strong>Members-only perk.</strong> Epic Life lets your concierge liquidate your available credit into cash on demand — for a flat 6% fee, no turn used.</div>');return;}
  const head=this._creditHeadroom(),pa=s.available_credit||0,ba=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
@@ -1479,8 +1481,10 @@ openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
  if(head>=1000){const hmax=Math.floor(head);h+='<input type="range" min="0" max="'+hmax+'" step="'+Math.max(1,Math.round(hmax/100))+'" value="'+staged+'" style="width:100%;accent-color:var(--gold);" onchange="Game.liqStage(this.value)">';
   h+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);margin-bottom:4px;">'+fm(staged)+'</div>';}
  else h+='<div style="font-size:0.72rem;color:var(--text2);">No available credit to liquidate right now — open a line or lower utilization first.</div>';
- if(staged>=1000)h+='<button onclick="Game.liqConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
- else if(head>=1000)h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';
+ {const _jc=this._justConfirmed==='liq';this._justConfirmed=null;
+  if(_jc)h+='<button style="width:100%;margin-top:10px;background:var(--accent);color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;">✓ Confirmed — cash landed</button>';
+  else if(staged>=1000)h+='<button onclick="Game.liqConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+  else if(head>=1000)h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';}
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your credit'+(staged>=1000?' · if you confirm':'')+'</div><div style="padding:6px 12px;background:'+(staged>=1000?'rgba(16,185,129,0.06)':'var(--surface)')+';border:1px solid '+(staged>=1000?'var(--accent)':'var(--border)')+';border-radius:8px;">';
  h+=row('Available to liquidate',fm(head),'var(--accent)')+'<div class="breakdown-detail">· Business credit '+fm(ba)+'  · Personal credit '+fm(pa)+'</div>';
  if(staged>=1000){const fee=Math.round(staged*0.06),net=staged-fee,bd=Math.min(staged,ba),pdraw=staged-bd;
@@ -1517,7 +1521,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
   if(cst.paused)cst.paused=false;/* pause removed (owner) — auto-unstick any previously-paused save */
   const _f=s._concierge_focus,_p=s._concierge_paused;s._concierge_focus=cst.focus;s._concierge_paused=cst.paused;const pk=cst.paused?null:this._epicLifePick();s._concierge_focus=_f;s._concierge_paused=_p;
   h+='<div style="margin-top:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:0.76rem;line-height:1.5;">'+(cst.paused?'⏸ <strong>Paused</strong> — your concierge sits out; you make the moves.':('▶ Next move: <strong style="color:var(--accent);">'+(pk?pk.label:'nothing pressing — it\'ll hold and let your money compound')+'</strong>'))+'</div>';
-  h+='<button onclick="Game.fhConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+  {const _jc=this._justConfirmed==='fh';this._justConfirmed=null;h+='<button onclick="Game.fhConfirm()" style="width:100%;margin-top:10px;background:'+(_jc?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(_jc?'✓ Confirmed':'Confirm')+'</button>';}
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:16px 0 5px;">Your snapshot</div>';}
  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
  h+=row('Net worth',fm(nw),nw>=0?'var(--accent)':'var(--red)');
@@ -1538,7 +1542,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
 openConciergeSettings(){return this.openFinancialHealth();},
 setConciergeFocus(f){const s=this.state;if(!s._fhStaged)s._fhStaged={focus:s._concierge_focus||'balanced',paused:!!s._concierge_paused};s._fhStaged.focus=f;s._fhStaged.paused=false;this.openFinancialHealth();},
 toggleConciergePause(){const s=this.state;if(!s._fhStaged)s._fhStaged={focus:s._concierge_focus||'balanced',paused:!!s._concierge_paused};s._fhStaged.paused=!s._fhStaged.paused;this.openFinancialHealth();},
-fhConfirm(){const s=this.state,st=s._fhStaged;if(st){s._concierge_focus=st.focus;s._concierge_paused=st.paused;}s._fhStaged=null;this._refreshDashboards();this.showEpicLife();},
+fhConfirm(){const s=this.state,st=s._fhStaged;if(st){s._concierge_focus=st.focus;s._concierge_paused=st.paused;}s._fhStaged=null;this._refreshDashboards();this._justConfirmed='fh';this.openFinancialHealth();/* stay HERE + flash green */},
 // Progressive disclosure: hide advanced UI until it's relevant, so the early game isn't overwhelming. Reveals are STICKY (once shown, stay shown) and adapt to archetype (relevant state reveals early).
 _reveal(f){const s=this.state;if(!s._revealed)s._revealed={};if(s._revealed[f])return true;const m=this.month,sep=this.isSeparated();let on=false;
 switch(f){
