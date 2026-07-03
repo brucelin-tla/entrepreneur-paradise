@@ -2637,6 +2637,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.65.2',d:'2026-07-02 21:35',n:[
+'💵 Cash Services: one stats box, matching the policy panel — your available credit, cash and the before→after projection all live in a single "Your credit · if you confirm" box below Confirm.']},
 {v:'0.65.1',d:'2026-07-02 21:20',n:[
 '🛡️ Cash-Value Policy panel: one stats box instead of two — cash value, borrowable and surrender charge now live inside the single "Your policy · if you confirm" box with the before→after rows.']},
 {v:'0.65.0',d:'2026-07-02 21:00',n:[
@@ -4039,24 +4041,24 @@ openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
  const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
  let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Turn available credit into spendable cash for a flat <strong style="color:var(--gold);">6% fee</strong>, no turn used. Pick an amount, review the projection, then <strong>Confirm</strong>.</div>';
- // NOW
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Now</div><div style="padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">';
- h+=row('Available to liquidate',fm(head),'var(--accent)')+'<div class="breakdown-detail">· Business credit '+fm(ba)+'  · Personal credit '+fm(pa)+'</div>';
- h+=row('Cash — business',fm(s.cash||0))+row('Cash — personal',fm(s.personal_cash||0))+'</div>';
- // Slider → Confirm → projection BELOW (owner: the resizing projection was pushing the button around)
+ // ONE stats box (below Confirm) — Now + projection merged, same as the policy panel (owner)
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Amount to liquidate — slide to set</div>';
  if(head>=1000){const hmax=Math.floor(head);h+='<input type="range" min="0" max="'+hmax+'" step="'+Math.max(1,Math.round(hmax/100))+'" value="'+staged+'" style="width:100%;accent-color:var(--gold);" onchange="Game.liqStage(this.value)">';
   h+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);margin-bottom:4px;">'+fm(staged)+'</div>';}
  else h+='<div style="font-size:0.72rem;color:var(--text2);">No available credit to liquidate right now — open a line or lower utilization first.</div>';
  if(staged>=1000)h+='<button onclick="Game.liqConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
  else if(head>=1000)h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your credit'+(staged>=1000?' · if you confirm':'')+'</div><div style="padding:6px 12px;background:'+(staged>=1000?'rgba(16,185,129,0.06)':'var(--surface)')+';border:1px solid '+(staged>=1000?'var(--accent)':'var(--border)')+';border-radius:8px;">';
+ h+=row('Available to liquidate',fm(head),'var(--accent)')+'<div class="breakdown-detail">· Business credit '+fm(ba)+'  · Personal credit '+fm(pa)+'</div>';
  if(staged>=1000){const fee=Math.round(staged*0.06),net=staged-fee,bd=Math.min(staged,ba),pdraw=staged-bd;
-  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">If you confirm</div><div style="padding:6px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
   h+=proj('Cash — business',fm(s.cash||0),fm((s.cash||0)+net),'var(--accent)');
+  h+=row('Cash — personal',fm(s.personal_cash||0));
   h+=proj('Total debt',fm(s.total_debt||0),fm((s.total_debt||0)+staged),'var(--red)');
   if(bd>0)h+=proj('Business credit used',fm(s.business_credit_used||0),fm((s.business_credit_used||0)+bd));
   if(pdraw>0)h+=proj('Personal credit available',fm(pa),fm(pa-pdraw),'var(--red)');
-  h+='<div class="breakdown-detail">6% fee '+fm(fee)+' · you receive '+fm(net)+' cash (business credit drawn first to protect your personal score)</div></div>';}
+  h+='<div class="breakdown-detail">6% fee '+fm(fee)+' · you receive '+fm(net)+' cash (business credit drawn first to protect your personal score)</div>';}
+ else h+=row('Cash — business',fm(s.cash||0))+row('Cash — personal',fm(s.personal_cash||0));
+ h+='</div>';
  if((s._credit_liquidated_total||0)>0)h+='<div style="margin-top:10px;font-size:0.64rem;color:var(--text2);">Lifetime liquidated '+fm(s._credit_liquidated_total)+' · fees paid '+fm(s._credit_liquidate_fees||0)+'.</div>';
  this._epicPanel('💵 Cash Services',h);},
 // ===== Concierge service — 📊 Financial Health: a plain-English snapshot + verdict on the member's whole financial picture =====
