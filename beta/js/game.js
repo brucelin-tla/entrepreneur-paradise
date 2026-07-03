@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.3',d:'2026-07-03 00:20',n:[
+'⚡ <strong>ALIS drives Velocity Banking now.</strong> It picks the loan to attack (always your highest rate — that\'s the math, not a preference), picks the vehicle (HELOC when you have equity, credit line otherwise, switching automatically), and pre-sets the chunk &amp; draw to its recommendation (attack with half your spare cash, keep ~3 months of reserves, draw only when the fee beats the loan\'s rate). You see every moving part — the full loan list is one tap away with 🎯 on ALIS\'s pick — but the machine comes pre-tuned. Adjust the sliders only if you must.']},
 {v:'0.68.2',d:'2026-07-02 23:50',n:[
 '✅ Every Confirm now flashes green "✓ Confirmed" — policy, velocity, cash services and the concierge (Financial Health) join the deal panels and equipment. The Financial Health Confirm also stopped yanking you back to the hub — you stay where you confirmed.']},
 {v:'0.68.1',d:'2026-07-02 23:35',n:[
@@ -1326,7 +1328,7 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  const st=s._velStaged;if(st.vehicle==='heloc'&&!hasRE)st.vehicle='line';
  // Resolve the staged target from the staged vehicle's loan pool (HELOC → mortgages; line → installment loans).
  const L=(s.loans||[]).filter(x=>x.balance>0.5);let pool=st.vehicle==='heloc'?L.filter(x=>x.type==='mortgage'):L.filter(x=>x.type!=='mortgage');if(!pool.length)pool=L;
- let tgtLoan=pool.find(x=>x.id===st.target)||pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance)[0]||null;st.target=tgtLoan?tgtLoan.id:null;
+ let tgtLoan=pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance)[0]||null;st.target=tgtLoan?tgtLoan.id:null;/* ALIS picks the target — highest rate first, biggest balance breaks ties. No manual override (owner). */
  st.chunk=Math.max(0,Math.min(Math.round(st.chunk||0),cash,tgtLoan?Math.round(tgtLoan.balance):cash));
  const drawHead=Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0))),drawTgtBal=(s._installment_debt||0)+(s.business_installment_debt||0),drawCap=Math.min(Math.floor(drawHead),Math.floor(drawTgtBal));
  st.draw=Math.max(0,Math.min(Math.round(st.draw||0),st.vehicle==='line'?drawCap:0));
@@ -1340,13 +1342,16 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  // Aggressiveness (staged) — moved to the top: how much of each month's surplus the sweep throws at your debt.
  const mBtn=(key,label,sub)=>{const on=st.mode===key;return '<div onclick="Game.velStageMode(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 4px;text-align:center;"><div style="font-size:0.7rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.54rem;color:var(--text2);margin-top:2px;">'+sub+'</div></div>';};
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Monthly sweep — surplus swept each month</div><div style="display:flex;gap:6px;margin-bottom:12px;">'+mBtn('conservative','Conservative','50%')+mBtn('balanced','Balanced','75%')+mBtn('aggressive','Aggressive','100%')+'</div>';
- // Vehicle (staged)
+ // Vehicle — ALIS runs it: HELOC when there's real-estate equity to work (attacks the mortgage), otherwise your credit line. Shown, not chosen (owner).
+ st.vehicle=hasRE?'heloc':'line';
+ h+='<div style="border:1px solid var(--accent);background:rgba(34,197,94,0.06);border-radius:6px;padding:8px 11px;margin-bottom:12px;"><div style="font-size:0.72rem;font-weight:700;color:var(--accent);">🤖 ALIS runs it through: '+(st.vehicle==='heloc'?'🏠 your HELOC':'💳 your credit line')+'</div><div style="font-size:0.62rem;color:var(--text2);margin-top:2px;">'+(st.vehicle==='heloc'?'Home equity attacks the mortgage — the biggest interest pool you own. If you lose the equity, ALIS switches to your credit line automatically.':'Your line attacks the loan — once you own property with equity, ALIS upgrades to the HELOC automatically.')+'</div></div>';
  const vBtn=(key,label,sub,enabled)=>{const on=st.vehicle===key;return '<div '+(enabled?'onclick="Game.velStageVehicle(\''+key+'\')" style="cursor:pointer;':'style="opacity:0.45;')+'flex:1;border:1px solid '+(on&&enabled?'var(--accent)':'var(--border)')+';background:'+(on&&enabled?'rgba(34,197,94,0.12)':'var(--surface)')+';border-radius:6px;padding:8px;text-align:center;"><div style="font-size:0.74rem;font-weight:700;color:'+(on&&enabled?'var(--accent)':'var(--text)')+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Vehicle</div><div style="display:flex;gap:8px;margin-bottom:12px;">'+vBtn('heloc','🏠 HELOC',hasRE?'Home equity → the mortgage':'Buy a rental first',hasRE)+vBtn('line','💳 Credit line',hasLine?'A line → an installment loan':'Open a line first',hasLine)+'</div>';
- // Target loan picker (staged)
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan to attack</div>';
- if(pool.length){h+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">';pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance).forEach(ln=>{const on=st.target===ln.id;h+='<div onclick="Game.velStageTarget(\''+ln.id+'\')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:8px 11px;"><span style="font-size:0.74rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+(on?'✓ ':'')+ln.label+'</span><span style="font-size:0.66rem;color:var(--text2);">'+(Math.round(ln.rate*1000)/10)+'% · '+fm(ln.balance)+'</span></div>';});h+='</div>';}
+ void vBtn;/* manual vehicle buttons retired — ALIS picks (kept for reference) */
+ // ALIS picks the loan to attack (owner: no manual choosing) — highest rate first is the mathematically right target; the full loan list is viewable, collapsed.
+ if(tgtLoan){h+='<div style="border:1px solid var(--gold);background:rgba(245,200,66,0.08);border-radius:6px;padding:8px 11px;margin-bottom:6px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:0.74rem;font-weight:700;color:var(--gold);">🤖 ALIS\'s pick: '+tgtLoan.label+'</span><span style="font-size:0.66rem;color:var(--text2);">'+(Math.round(tgtLoan.rate*1000)/10)+'% · '+fm(tgtLoan.balance)+'</span></div><div style="font-size:0.62rem;color:var(--text2);margin-top:2px;">Your most expensive money — killing the highest rate first saves the most interest per dollar.</div></div>';}
  else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:12px;">No '+(st.vehicle==='heloc'?'mortgage':'installment loan')+' to attack right now.</div>';
+ if(pool.length>1){h+='<div onclick="Game.velToggleLoans()" style="cursor:pointer;font-size:0.66rem;color:var(--blue);font-weight:600;margin-bottom:6px;">'+(this._velLoansOpen?'▾ Hide':'▸ See all')+' your loans ('+pool.length+')</div>';
+  if(this._velLoansOpen){h+='<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;">';pool.slice().sort((a,b)=>b.rate-a.rate||b.balance-a.balance).forEach(ln=>{const on=tgtLoan&&tgtLoan.id===ln.id;h+='<div style="display:flex;justify-content:space-between;align-items:center;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:var(--surface);border-radius:6px;padding:6px 11px;"><span style="font-size:0.7rem;'+(on?'font-weight:700;color:var(--gold);':'color:var(--text2);')+'">'+(on?'🎯 ':'')+ln.label+'</span><span style="font-size:0.64rem;color:var(--text2);">'+(Math.round(ln.rate*1000)/10)+'% · '+fm(ln.balance)+(ln.payment?' · '+fm(ln.payment)+'/mo':'')+'</span></div>';});h+='</div>';}}
  // Projection (current → after) first — chunk & draw sliders move DOWN next to Confirm (owner: all moving parts in thumb reach)
  if(tgtLoan){const R=tgtLoan.rate,P=tgtLoan.payment,intRem=b=>{const v=this._interestRemaining(Math.max(0,b),R,P);return isFinite(v)?Math.round(v):0;},monRem=b=>{const v=this._monthsRemaining(Math.max(0,b),R,P);return isFinite(v)?Math.round(v):0;},fmMo=m=>(!m||m<=0)?'—':m>=24?(Math.round(m/12*10)/10)+' yrs':m+' mo';
   const bal=tgtLoan.balance,afterBal=Math.max(0,bal-st.chunk-st.draw);
@@ -1367,8 +1372,13 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
   if(iSave>0)h+='<div class="breakdown-row"><span>Interest removed now</span><span style="color:var(--accent);font-weight:700;">'+fm(iSave)+'</span></div>';
   if(_dsAfter>_dsBefore+5&&st.draw>0)h+='<div class="breakdown-detail" style="color:var(--gold);">⚠ Drawing onto your line RAISES your monthly payment — you\'re moving debt to a higher rate. Lean on cash chunks or a cheaper line, and sweep the balance back down fast.</div>';
   h+='</div>';
-  // Chunk slider (staged, from cash) — right above Confirm
-  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 3px;">Chunk extra now — from your '+fm(cash)+' cash</div>';
+  // ALIS's chunk/draw recommendation — seeded into the sliders once per session; the player can adjust, but ALIS already did the math (owner).
+  if(!st._rec){const _burn=this.calcMonthlyBurn(),_reserve=_burn*3;
+   const _cRec=Math.max(0,Math.min(Math.round(Math.max(0,cash-_reserve)*0.5/100)*100,Math.round(tgtLoan.balance)));
+   const _dRec=(st.vehicle==='line'&&drawCap>0&&tgtLoan.rate>=0.15)?Math.min(Math.round(drawCap*0.5/100)*100,Math.round(tgtLoan.balance*0.5)):0;
+   st._rec={chunk:_cRec,draw:_dRec};if(!st.chunk)st.chunk=_cRec;if(!st.draw)st.draw=_dRec;}
+  h+='<div style="border:1px solid var(--accent);background:rgba(34,197,94,0.06);border-radius:6px;padding:8px 11px;margin:10px 0 6px;"><div style="font-size:0.72rem;font-weight:700;color:var(--accent);">🤖 ALIS recommends: chunk '+fm(st._rec.chunk)+(st._rec.draw>0?' · draw '+fm(st._rec.draw):'')+'</div><div style="font-size:0.62rem;color:var(--text2);margin-top:2px;">'+(st._rec.chunk>0?'Half your spare cash after keeping ~3 months of expenses in reserve — attack hard, never naked.':'Cash is thin — keep your reserve; the monthly sweep does the work.')+(st._rec.draw>0?' A draw pencils here: the 6% fee beats '+(Math.round(tgtLoan.rate*1000)/10)+'% compounding on this loan.':(st.vehicle==='line'?' No draw — this loan isn\'t expensive enough to justify the 6% fee.':''))+' Sliders are preset — adjust if you must.</div></div>';
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:6px 0 3px;">Chunk extra now — from your '+fm(cash)+' cash</div>';
   if(cash>0){const cmax=Math.min(cash,Math.round(tgtLoan.balance));h+='<input type="range" min="0" max="'+cmax+'" step="'+Math.max(1,Math.round(cmax/100))+'" value="'+st.chunk+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'vel-chunk\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.velStageChunk(this.value)">';
    h+='<div style="margin-bottom:6px;font-size:0.78rem;font-weight:700;color:var(--accent);">Chunk <span id="vel-chunk">$'+st.chunk.toLocaleString()+'</span></div>';}
   else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:6px;">No spare cash to chunk right now — build surplus first.</div>';
@@ -1389,6 +1399,7 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('⚡ Velocity Banking',h);},
 velToggleInfo(){this._velInfo=!this._velInfo;this.openVelocityControl();},
+velToggleLoans(){this._velLoansOpen=!this._velLoansOpen;this.openVelocityControl();},
 // Stagers — write to _velStaged and re-render; nothing touches real state until velConfirm.
 velStageVehicle(v){const s=this.state,st=s._velStaged;if(!st)return;const hasRE=(s.real_estate_debt||0)>0&&(s.real_estate_equity||0)>0;if(v==='heloc'&&!hasRE)return;st.vehicle=v;st.target=null;st.draw=0;this.openVelocityControl();},
 velStageMode(m){const s=this.state;if(s._velStaged)s._velStaged.mode=m;this.openVelocityControl();},
