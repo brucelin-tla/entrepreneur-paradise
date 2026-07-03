@@ -2638,6 +2638,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.1',d:'2026-07-02 23:35',n:[
+'🛒 <strong>Equipment basket</strong> — tap multiple machines and buy them all in ONE finance move (36 turns are too precious for one-at-a-time). The projection totals the whole basket — combined down payment, payments, income, write-off — and affordability caps how much you can carry out. Still one of each.']},
 {v:'0.68.0',d:'2026-07-02 23:15',n:[
 '🧰 <strong>Equipment is a collection now — one of each.</strong> Owned machines show ✓ in the catalog with a Collection counter; when you own them all, the action retires. Teaching pieces, not a spam farm.',
 '🔧 <strong>Machines throw real-world headaches.</strong> Vandalized vending machines, a dead laundromat water heater, a skimmer on your ATM, a grounded plane — each owned machine can fire a monthly hassle (repair bill + energy, the story lands on your results screen), and ops-heavy machines add key-person dependency when you buy them. <strong>Systems maturity cuts hassle frequency up to half</strong> — build the systems and "passive" becomes actually passive. That\'s the lesson.']},
@@ -4199,7 +4201,7 @@ return out;},
 // Late-game cost scaling: repeatable marketing/ops actions cost more as the company grows, so they stay a real decision instead of pocket change (effects scale too, via scaleActionEffects).
 // A second attempt after a partial costs half — you've already done most of the legwork, just need to finish the job.
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
-actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */if(a.id==='buy_real_estate'||a.id==='buy_str'){const r=this.dealRoll(a.id),t=this._dealTerm(a.id);return Math.round(r.price*Math.max(0.1,Math.min(0.5,(t.downPct||20)/100)));}if(a.id==='equipment_financing'){const _it=this.state._equip_choice&&(a.catalog||[]).find(x=>x.id===this.state._equip_choice);return _it?Math.round(_it.price*0.10):0;}/* equipment down payment runs through the normal funding waterfall (biz credit → biz cash → personal LAST), same as property deals *//* property buys cost the HONEST down payment on this month's deal at the player's chosen % */if(a.category==='lifestyle'&&this.state._epic_life){const _lb=a.cash_cost||0;return _lb?Math.round(_lb*0.8):0;}/* Epic members: 20% off lifestyle upgrade upfront cost */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
+actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */if(a.id==='buy_real_estate'||a.id==='buy_str'){const r=this.dealRoll(a.id),t=this._dealTerm(a.id);return Math.round(r.price*Math.max(0.1,Math.min(0.5,(t.downPct||20)/100)));}if(a.id==='equipment_financing'){const _s=this.state,_ch=typeof _s._equip_choice==='string'?[_s._equip_choice]:(_s._equip_choice||[]);const _sum=_ch.reduce((t,cid)=>{const _it=(a.catalog||[]).find(x=>x.id===cid&&!(_s._equip_owned||[]).includes(x.id));return t+(_it?_it.price:0);},0);return Math.round(_sum*0.10);}/* the whole basket's down payment runs through the normal funding waterfall (biz credit → biz cash → personal LAST) *//* property buys cost the HONEST down payment on this month's deal at the player's chosen % */if(a.category==='lifestyle'&&this.state._epic_life){const _lb=a.cash_cost||0;return _lb?Math.round(_lb*0.8):0;}/* Epic members: 20% off lifestyle upgrade upfront cost */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
 actionEnergyCost(a){let e=a.energy_cost||0;if(e<=0)return e;if(this.isRetry(a))e*=0.5;
 // Operational systems pay an energy DIVIDEND: documented SOPs, project management and automation mean your hands-on moves drain less energy as systems_maturity rises (up to ~40% off at full maturity). You spend energy building systems now to spend less on everything later.
 const disc=Math.min(0.4,(this.state.systems_maturity||0)/250);e*=(1-disc);
@@ -5188,10 +5190,11 @@ _equipBenefit(it){return (it.income||0)+(it.cap||0)*0.30+(-(it.opex||0))-(it.upk
 openEquipControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));this._equipCat=cat;
  const a=this.getAvailableActions(cat).find(x=>x.id===id);if(!a)return;
  const catalog=a.catalog||[],rev=s.monthly_revenue||0,sel=!!(this.selectedActions[cat]&&this.selectedActions[cat].id===id),owned=s._equip_owned||[];
- const pick=s._equip_choice&&catalog.find(x=>x.id===s._equip_choice&&!owned.includes(x.id));
+ if(typeof s._equip_choice==='string')s._equip_choice=[s._equip_choice];/* migrate old single pick → cart */
+ const cart=(s._equip_choice||[]).map(cid=>catalog.find(x=>x.id===cid&&!owned.includes(x.id)&&rev>=(x.min_rev||0))).filter(Boolean);
  let h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;"><button class="back-chip" style="margin:0;" onclick="Game.dealBack()">← Back</button><span style="font-size:0.62rem;color:var(--text2);">10% down · ~9% APR · 5 yrs · Sec. 179</span></div>';
  h+='<div style="font-size:0.74rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">The bank funds the asset, the asset funds the payment — pick equipment your cash flow can carry. <strong>One of each</strong> — this is a collection, not a farm. Every machine is a small operating business: real income, real headaches (systems tame them).'+(owned.length?' <span style="color:var(--gold);font-weight:700;">Collection: '+owned.length+'/'+catalog.length+'</span>':'')+'</div>';
- const renderItem=it=>{const locked=rev<(it.min_rev||0),on=pick&&pick.id===it.id,isOwned=owned.includes(it.id);
+ const renderItem=it=>{const locked=rev<(it.min_rev||0),on=cart.some(c=>c.id===it.id),isOwned=owned.includes(it.id);
   if(isOwned){h+='<div style="border:1px solid var(--accent);background:rgba(16,185,129,0.05);border-radius:8px;padding:7px 10px;margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:0.74rem;"><span>'+it.icon+' '+it.label+'</span><span style="color:var(--accent);font-weight:700;white-space:nowrap;">✓ owned</span></div></div>';return;}
   const pmt=this._equipPmt(Math.round(it.price*0.9)),ben=this._equipBenefit(it),dscr=pmt>0?ben/pmt:0;
   const tag=it.luxury?'<span style="color:var(--gold);font-weight:700;">🏝️ flex — costs monthly</span>':(dscr>=1.3?'<span style="color:var(--accent);font-weight:700;">🟢 '+(it.income?'cash-flows':'pays for itself')+'</span>':(dscr>=1.0?'<span style="color:var(--gold);font-weight:700;">🟡 tight</span>':'<span style="color:var(--red);font-weight:700;">🔴 costs you monthly</span>'));
@@ -5204,24 +5207,31 @@ openEquipControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));t
  for(const it of catalog.filter(x=>!x.luxury))renderItem(it);
  const lux=catalog.filter(x=>x.luxury);
  if(lux.length){h+='<div style="font-size:0.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 5px;">🏝️ Luxury &amp; flex — lifestyle plays, eyes open</div>';for(const it of lux)renderItem(it);}
- if(pick){const down=Math.round(pick.price*0.10),financed=pick.price-down,pmt=this._equipPmt(Math.round(pick.price*0.9)),deduct=Math.round(pick.price*(pick.taxmult!=null?pick.taxmult:1)),ytd=Math.round(s._ytd_taxable_income||0),taxBack=Math.round(deduct*(s.tax_rate||0.25));
+ if(cart.length){const sum=f=>cart.reduce((t,x)=>t+(f(x)||0),0);
+  const price=sum(x=>x.price),down=Math.round(price*0.10),financed=price-down,pmt=cart.reduce((t,x)=>t+this._equipPmt(Math.round(x.price*0.9)),0);
+  const income=sum(x=>x.income),cap=sum(x=>x.cap),opex=sum(x=>x.opex),upkeep=sum(x=>x.upkeep),exp=sum(x=>x.exp),rel=sum(x=>x.rel),brand=sum(x=>x.brand),audit=sum(x=>x.audit);
+  const deduct=Math.round(sum(x=>x.price*(x.taxmult!=null?x.taxmult:1))),ytd=Math.round(s._ytd_taxable_income||0),taxBack=Math.round(deduct*(s.tax_rate||0.25));
   const _bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),canGo=(s.cash||0)+(s.available_credit||0)+_bizAvail>=down;/* same funds test as the engine's canAfford — the down runs through the business-first waterfall */
-  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you buy the '+pick.label+'</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you buy '+(cart.length===1?('the '+cart[0].label):(cart.length+' machines'))+' — one finance move</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
+  if(cart.length>1)h+='<div class="breakdown-detail">'+cart.map(x=>x.icon+' '+x.label).join(' · ')+'</div>';
   h+='<div class="breakdown-row"><span>Down (10%)</span><span style="font-weight:700;">'+fm(down)+'</span></div><div class="breakdown-detail">funded business-first: business credit → business cash → personal last</div>';
   h+='<div class="breakdown-row"><span>Financed</span><span style="font-weight:700;">'+fm(financed)+' · −'+fm(pmt)+'/mo</span></div>';
-  h+=(pick.income?'<div class="breakdown-row"><span>Income</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.income)+'/mo</span></div>':'')+(pick.cap?'<div class="breakdown-row"><span>Revenue capacity</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.cap)+'/mo</span></div>':'')+(pick.opex?'<div class="breakdown-row"><span>Operating expenses</span><span style="font-weight:700;color:var(--accent);">'+fm(pick.opex)+'/mo</span></div>':'');
-  h+=(pick.upkeep?'<div class="breakdown-row"><span>Upkeep</span><span style="font-weight:700;color:var(--red);">−'+fm(pick.upkeep)+'/mo</span></div>':'')+(pick.exp?'<div class="breakdown-row"><span>Lifestyle — experiences</span><span style="font-weight:700;color:var(--accent);">+'+pick.exp+'</span></div>':'')+(pick.rel?'<div class="breakdown-row"><span>Lifestyle — relationships</span><span style="font-weight:700;color:var(--accent);">+'+pick.rel+'</span></div>':'')+(pick.brand?'<div class="breakdown-row"><span>Brand / flex</span><span style="font-weight:700;color:var(--accent);">+'+pick.brand+'</span></div>':'');
-  h+='<div class="breakdown-row"><span>Sec. 179 write-off'+(pick.taxmult!=null&&pick.taxmult<1?' · partial biz use':'')+'</span><span style="font-weight:700;color:var(--gold);">−'+fm(deduct)+' taxable income</span></div>';
+  h+=(income?'<div class="breakdown-row"><span>Income</span><span style="font-weight:700;color:var(--accent);">+'+fm(income)+'/mo</span></div>':'')+(cap?'<div class="breakdown-row"><span>Revenue capacity</span><span style="font-weight:700;color:var(--accent);">+'+fm(cap)+'/mo</span></div>':'')+(opex?'<div class="breakdown-row"><span>Operating expenses</span><span style="font-weight:700;color:var(--accent);">'+fm(opex)+'/mo</span></div>':'');
+  h+=(upkeep?'<div class="breakdown-row"><span>Upkeep</span><span style="font-weight:700;color:var(--red);">−'+fm(upkeep)+'/mo</span></div>':'')+(exp?'<div class="breakdown-row"><span>Lifestyle — experiences</span><span style="font-weight:700;color:var(--accent);">+'+exp+'</span></div>':'')+(rel?'<div class="breakdown-row"><span>Lifestyle — relationships</span><span style="font-weight:700;color:var(--accent);">+'+rel+'</span></div>':'')+(brand?'<div class="breakdown-row"><span>Brand / flex</span><span style="font-weight:700;color:var(--accent);">+'+brand+'</span></div>':'');
+  h+='<div class="breakdown-row"><span>Sec. 179 write-off</span><span style="font-weight:700;color:var(--gold);">−'+fm(deduct)+' taxable income</span></div>';
   h+='<div class="breakdown-row"><span>Taxable income this year</span><span style="font-weight:700;">'+fm(ytd)+' → '+fm(Math.max(0,ytd-deduct))+'</span></div>';
   h+='<div class="breakdown-row"><span>Est. saved at tax season</span><span style="font-weight:700;color:var(--gold);">~'+fm(taxBack)+'</span></div><div class="breakdown-detail">The write-off offsets business profit as it accrues — it can\'t create a loss. You feel it as a smaller bill at tax season, not a check today.</div>';
-  h+=(pick.audit?'<div class="breakdown-row"><span>Audit risk</span><span style="font-weight:700;color:var(--red);">+'+pick.audit+'</span></div><div class="breakdown-detail">Luxury write-offs are legal with documented business use — and they\'re what auditors look for first. The flex is real; so is the flag.</div>':'')+'</div>';
-  if(!canGo)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--red);font-weight:600;text-align:center;">Not enough cash for the '+fm(down)+' down payment.</div>';
-  else{h+='<button onclick="Game.equipConfirm()" style="width:100%;margin-top:10px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm')+'</button>';
-   h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move.':'Uses this month\'s finance move.')+'</div>';}}
- else h+='<div style="font-size:0.68rem;color:var(--text2);text-align:center;margin-top:4px;">Tap a machine to see the deal.</div>';
+  h+=(audit?'<div class="breakdown-row"><span>Audit risk</span><span style="font-weight:700;color:var(--red);">+'+audit+'</span></div><div class="breakdown-detail">Luxury write-offs are legal with documented business use — and they\'re what auditors look for first. The flex is real; so is the flag.</div>':'')+'</div>';
+  if(!canGo)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--red);font-weight:600;text-align:center;">Not enough cash or credit for the '+fm(down)+' down payment — drop a machine or two.</div>';
+  else{h+='<button onclick="Game.equipConfirm()" style="width:100%;margin-top:10px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm '+(cart.length>1?cart.length+' machines':''))+'</button>';
+   h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move.':'One finance move buys the whole basket.')+'</div>';}}
+ else h+='<div style="font-size:0.68rem;color:var(--text2);text-align:center;margin-top:4px;">Tap machines to build your basket — one finance move buys them all.</div>';
  h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.dealBack()">Close</button>';
  this.showPopup(a.label,h);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
-equipPick(itemId){if((this.state._equip_owned||[]).includes(itemId))return;/* one each — it's a collection */this.state._equip_choice=itemId;this.openEquipControl(this._equipCat||'finance','equipment_financing');},
+equipPick(itemId){const s=this.state;if((s._equip_owned||[]).includes(itemId))return;/* one each — it's a collection */
+ if(typeof s._equip_choice==='string')s._equip_choice=[s._equip_choice];let c=s._equip_choice||[];
+ c=c.includes(itemId)?c.filter(x=>x!==itemId):c.concat([itemId]);/* tap toggles in/out of the basket */
+ s._equip_choice=c;this.openEquipControl(this._equipCat||'finance','equipment_financing');},
 equipConfirm(){const cat=this._equipCat||'finance';this._paymentMethod='cash';this.selectAction(cat,'equipment_financing');this.openEquipControl(cat,'equipment_financing');},
 _DEAL_PRIMERS:{
 property:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW TO READ A DEAL</div><ol style="margin:0;padding-left:18px;font-size:0.72rem;color:var(--text2);line-height:1.55;"><li><strong style="color:var(--text);">Price vs. worth</strong> — are you paying under fair value? Downturns are when discounts appear; in a boom you overpay for the same building.</li><li><strong style="color:var(--text);">Yield — THE number to compare deals</strong> — monthly net cash flow per dollar of price. The 🟢/🟡/🔴 tag rates this deal against an average market deal. It rates the DEAL, not whether you can afford it — that judgment stays yours.</li><li><strong style="color:var(--text);">Your cushion</strong> — less down payment = higher loan-to-value. Past ~75% LTV a downturn can force a sale; under ~65% you ride the crash out.</li><li><strong style="color:var(--text);">The hidden line: the tax shield</strong> — depreciation isn\'t on the price tag, but it\'s real return. An STR\'s shield is bigger and hits your ACTIVE income — at the cost of your time.</li><li><strong style="color:var(--text);">You don\'t have to buy</strong> — a new deal rolls every month. Passing on a thin deal is a skill; having dry powder ready for a strong one is the other skill.</li></ol>',
@@ -5519,28 +5529,31 @@ if(action.id==='bank_personal_loan'&&success){const s=this.state,_sep=this.isSep
 if(action.id==='sba_loan'&&success){const s=this.state,cf=this.calcCreditCapacity();const loan=Math.round(50000*cf);s.cash+=loan;s.total_debt+=loan;this._addLoan('sba',loan);s._sba_loan=(s._sba_loan||0)+loan;s._dyn_narrative='SBA loan approved — '+this.fmtMoney(loan)+' in working capital at a low fixed rate over a long term. This is the cheapest growth money a small business can get; deploy it into things that earn more than it costs.';}
 // SECTION 179 equipment — finance a productive asset (good debt), lift capacity, and deduct the full cost this year (immediate tax saving credited to cash). Repeatable.
 if(action.id==='equipment_financing'&&success){const s=this.state;
- const it=s._equip_choice&&(action.catalog||[]).find(x=>x.id===s._equip_choice&&(s.monthly_revenue||0)>=(x.min_rev||0)&&!(s._equip_owned||[]).includes(x.id));
- if(it){/* catalog pick: the 10% down was already charged via actionCashCost → payCost (biz credit → biz cash → personal LAST); here we finance the rest against the asset. Sec. 179 writes off the price. */
-  const down=Math.round(it.price*0.10),financed=it.price-down;
-  s.total_debt=(s.total_debt||0)+financed;this._addLoan('equipment',financed);
-  if(it.cap)s.revenue_capacity=(s.revenue_capacity||0)+it.cap;
-  if(it.income)s.other_monthly_revenue=(s.other_monthly_revenue||0)+it.income;
-  if(it.opex)s.operating_expenses=Math.max(0,(s.operating_expenses||0)+it.opex);
-  if(it.brand)s.brand_equity=Math.min(100,(s.brand_equity||0)+it.brand);
-  if(it.sys)s.systems_maturity=Math.min(100,(s.systems_maturity||0)+it.sys);
-  if(it.exp)s.lifestyle_experiences=Math.min(100,(s.lifestyle_experiences||0)+it.exp);
-  if(it.rel)s.lifestyle_relationships=Math.min(100,(s.lifestyle_relationships||0)+it.rel);
-  if(it.upkeep)s.lifestyle_expenses=(s.lifestyle_expenses||0)+it.upkeep;
-  if(it.audit)s.audit_risk=Math.min(100,(s.audit_risk||0)+it.audit);
-  if(it.kpd)s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+it.kpd);/* management debt — every machine leans on YOU until systems/people carry it */
-  (s._equip_owned=s._equip_owned||[]).push(it.id);s._equip_choice=null;/* one each — collection, not a farm */
-  // Section 179 the REAL way: the write-off reduces this year's TAXABLE INCOME (absorbed against profit as it accrues — it can't create a loss), and the saving shows up as a smaller bill at tax season. No more instant cash rebate.
-  const deductWant=Math.round(it.price*(it.taxmult!=null?it.taxmult:1)),estSave=Math.round(deductWant*(s.tax_rate||0.25));
-  s._sec179_carry=(s._sec179_carry||0)+deductWant;
+ const _ch=typeof s._equip_choice==='string'?[s._equip_choice]:(s._equip_choice||[]);
+ const basket=_ch.map(cid=>(action.catalog||[]).find(x=>x.id===cid&&(s.monthly_revenue||0)>=(x.min_rev||0)&&!(s._equip_owned||[]).includes(x.id))).filter(Boolean);
+ if(basket.length){/* the whole basket in ONE finance move: downs were charged via actionCashCost → payCost; each machine finances the rest against itself. */
+  let totDeduct=0,totFin=0,totDown=0;const names=[];
+  for(const it of basket){
+   const down=Math.round(it.price*0.10),financed=it.price-down;totDown+=down;totFin+=financed;names.push(it.icon+' '+it.label);
+   s.total_debt=(s.total_debt||0)+financed;this._addLoan('equipment',financed);
+   if(it.cap)s.revenue_capacity=(s.revenue_capacity||0)+it.cap;
+   if(it.income)s.other_monthly_revenue=(s.other_monthly_revenue||0)+it.income;
+   if(it.opex)s.operating_expenses=Math.max(0,(s.operating_expenses||0)+it.opex);
+   if(it.brand)s.brand_equity=Math.min(100,(s.brand_equity||0)+it.brand);
+   if(it.sys)s.systems_maturity=Math.min(100,(s.systems_maturity||0)+it.sys);
+   if(it.exp)s.lifestyle_experiences=Math.min(100,(s.lifestyle_experiences||0)+it.exp);
+   if(it.rel)s.lifestyle_relationships=Math.min(100,(s.lifestyle_relationships||0)+it.rel);
+   if(it.upkeep)s.lifestyle_expenses=(s.lifestyle_expenses||0)+it.upkeep;
+   if(it.audit)s.audit_risk=Math.min(100,(s.audit_risk||0)+it.audit);
+   if(it.kpd)s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+it.kpd);/* management debt — every machine leans on YOU until systems/people carry it */
+   (s._equip_owned=s._equip_owned||[]).push(it.id);
+   totDeduct+=Math.round(it.price*(it.taxmult!=null?it.taxmult:1));s._equip_units=(s._equip_units||0)+1;}
+  s._equip_choice=[];
+  // Section 179 the REAL way: the write-off reduces this year's TAXABLE INCOME (absorbed against profit as it accrues — it can't create a loss), and the saving shows up as a smaller bill at tax season.
+  const estSave=Math.round(totDeduct*(s.tax_rate||0.25));
+  s._sec179_carry=(s._sec179_carry||0)+totDeduct;
   {const ab=Math.min(s._sec179_carry,s._ytd_taxable_income||0);if(ab>0){s._ytd_taxable_income-=ab;s._sec179_carry-=ab;s._sec179_ytd=(s._sec179_ytd||0)+ab;}}
-  s._equip_units=(s._equip_units||0)+1;
-  const ben=it.income?('it\'s throwing off '+this.fmtMoney(it.income)+'/mo'):(it.cap?('capacity is up '+this.fmtMoney(it.cap)+'/mo'):('expenses just dropped '+this.fmtMoney(-(it.opex||0))+'/mo'));
-  s._dyn_narrative=it.icon+' '+it.label+' financed and in service — '+this.fmtMoney(down)+' down, the bank funded the other '+this.fmtMoney(financed)+', and '+ben+'. '+(it.taxmult!=null&&it.taxmult<1?'Sec. 179 write-off limited to your documented business use: ':'Section 179 writes off the full price: ')+this.fmtMoney(deductWant)+' off this year\'s taxable income — worth ~'+this.fmtMoney(estSave)+' at tax season.'+(it.luxury?' The flex is real — and so is the audit flag. Keep the logs clean.':'');
+  s._dyn_narrative=names.join(', ')+' financed and in service — '+this.fmtMoney(totDown)+' down, the bank funded the other '+this.fmtMoney(totFin)+'. Sec. 179 writes off '+this.fmtMoney(totDeduct)+' of this year\'s taxable income — worth ~'+this.fmtMoney(estSave)+' at tax season.'+(basket.some(x=>x.luxury)?' The flex is real — and so is the audit flag. Keep the logs clean.':'')+(basket.length>1?' '+basket.length+' machines, one move — that\'s what leverage on your TIME looks like.':'');
  }else{/* no pick (exec/bot auto-play) — legacy generic equipment, same real-179 treatment */
   const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));const cost=Math.round(15000*mult);s.total_debt+=cost;this._addLoan('equipment',cost);const capBump=Math.round(cost*0.5);s.revenue_capacity=(s.revenue_capacity||0)+capBump;s.systems_maturity=Math.min(100,(s.systems_maturity||0)+4);
   const estSave=Math.round(cost*(s.tax_rate||0.25));s._sec179_carry=(s._sec179_carry||0)+cost;{const ab=Math.min(s._sec179_carry,s._ytd_taxable_income||0);if(ab>0){s._ytd_taxable_income-=ab;s._sec179_carry-=ab;s._sec179_ytd=(s._sec179_ytd||0)+ab;}}
