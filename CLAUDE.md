@@ -46,6 +46,32 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 - `build.ps1` regenerates `game.html` (offline single-file). It is idempotent.
   (It previously had a bug that stacked duplicate config blobs — fixed; keep it idempotent.)
 
+## Financial-fidelity self-check — run BEFORE shipping any money mechanic (owner mandate)
+
+The owner is a financial-infrastructure professional and this game teaches real finance — fidelity
+IS the product. He should never be the one catching these. Before pushing ANY finance mechanic,
+adversarially answer all five (write the answers into the commit message if nontrivial):
+
+1. **Reality check** — is every rate/number/behavior sourced from the real world? (Research it —
+   don't guess. Past catches: index loan was market+1%, real JH is flat 5%; FICO drifted −4/mo,
+   real utilization reprices in 1–2 cycles.)
+2. **Interaction check** — what are the second-order couplings? (Borrowed slice does NOT earn the
+   index under a wash loan; Sec. 179 offsets profit, never creates a loss; a freed loan payment
+   compounds the velocity sweep; upkeep feeds the freedom denominator.)
+3. **Canonical-path check** — does money flow through the shared spines, not ad-hoc math?
+   (payCost funding waterfall biz-credit→biz-cash→personal-last; `_ytd_taxable_income` tax spine;
+   passive = other_monthly_revenue + policy passive + _pbCarry; the loan ledger via _addLoan.)
+4. **Optimality check** — if ALIS/copy claims "best/optimal," is it optimal over the FULL decision
+   space? (Past catch: "best loan" was scored inside a pre-picked vehicle; amortization duration
+   beats raw APR.) State the objective function explicitly.
+5. **Display-truth check** — does every label/number the player sees match the mechanics exactly?
+   (Past catches: "Fixed · 3%" read as a cost on a net-0% wash; failed retries LOOKED completed;
+   lock reasons blamed the wrong prerequisite.)
+
+Headless click-path tests verify the code runs — they do NOT verify the model is right. Both are
+required. When a change touches valuation, tax, credit, or debt math: spend the extra ten minutes
+playing skeptical CFO against your own build before it ships.
+
 ## Content / balance
 
 - Full action sets (`config/actions_*.json`): Marketing 16, Operations 20, Finance 30. One archetype enabled ("new"); the others have `"enabled": false` in `starting_positions.json`.
