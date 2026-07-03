@@ -1,5 +1,24 @@
 # Release Notes
 
+## v0.64.0 — 2026-07-02 — (beta) Owner playtest batch 2: confirm-in-place, sliders-by-confirm, honest freedom
+- **Confirm stays in the panel** (deal/policy/velocity/liquidity all re-render in place; captions
+  flip to "✓ Queued/Confirmed"); every action button label unified to "Confirm".
+- **Sliders next to Confirm everywhere**: policy monthly-funding, liquidity amount, velocity
+  chunk+draw moved directly above their Confirm buttons (matches deal panels).
+- **Policy projection reacts to staged loan TYPE** (`_policyPassiveMonthly(loan, varOverride)`) —
+  Wash↔Index toggle moves the passive number pre-confirm.
+- **Freedom = living expenses + debt service** (both `_epicRoadmapData` and Financial Health) —
+  separation no longer exempts debt service. **Paradise ladder moved from Financial Health into
+  the Epic hub roadmap bar**; roadmap checkpoint tick-lines removed (fill = progress).
+- **Results**: achievements at the very top; **reverted** to per-card tap-for-details (owner
+  playtested the combined card, preferred the original); duplicate concierge passive line removed;
+  CFO briefing button retired.
+- **Lock-reason bug fixed**: `getLockedReason` returned the first-listed prerequisite whether or
+  not it was the failing one (PAL blamed "680 credit" at a 800-score player; real blocker $40k).
+  Now checks each requirement and names the one actually unmet.
+- Verified headless: 12-month sim + every edited panel opened clean (deal/policy/velocity/
+  liquidity/roadmap/financial-health), PAL lock-reason correct, 0 JS errors.
+
 ## v0.63.0 — 2026-07-02 — (beta) Owner playtest batch 1: deal-panel UX, real index loan, results decluttered
 Beta-only. Direct response to the owner's live playtest of v0.62.x:
 - **Deal panels**: ← Back chip top-left; slider moved to sit directly above Confirm on all three
