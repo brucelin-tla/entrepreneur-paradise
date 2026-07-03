@@ -2625,6 +2625,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.64.2',d:'2026-07-02 20:20',n:[
+'🛡 Insure Your Operators now leaves the menu once it\'s active — coverage automatically extends to every new operator you bring on (the premium adjusts itself), so re-taking it would just burn a move.']},
 {v:'0.64.1',d:'2026-07-02 20:05',n:[
 '📊 <strong>Maxing your cards now actually hurts</strong> — your credit score reprices utilization within ~2 months like real myFICO (it used to bleed just 4 pts/mo, so a 100%-utilization hit never really landed). It recovers just as fast when you pay the balances down — utilization has no memory. Slow steady climbs from history-building are unchanged.']},
 {v:'0.64.0',d:'2026-07-02 19:40',n:[
@@ -3749,7 +3751,7 @@ const reps=[];cats.forEach(c=>{const cheapest=byCat[c].slice().sort((a,b)=>(a.ca
 const repIds=new Set(reps.map(a=>a.id));
 const rest=all.filter(a=>!repIds.has(a.id)).sort((a,b)=>(a.cash_cost||0)-(b.cash_cost||0));
 return[...reps,...rest].slice(0,CAP);}
-const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(a.id==='velocity_banking'&&this.state._velocity_active)return false;/* once ON it's managed from the ⚡ dashboard chip — no need to clutter the menu */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
+const stages=['foundation','leverage','wealth'],idx=stages.indexOf(this.getStage(cat));const drA=cat==='finance'?pool.find(a=>a.id==='debt_restructure'):null,restructAvail=drA&&stages.indexOf(drA.stage)<=idx&&this.meetsReq(drA.prerequisites||{})&&this.canAfford(drA),HIDE_AFTER=['bank_personal_loan','business_credit_line'];return pool.filter(a=>{if(a.enabled===false)return false;/* curated-off actions (lean test set) — hidden from the menu but kept in config, reversible */if(a.id==='velocity_banking'&&this.state._velocity_active)return false;/* once ON it's managed from the ⚡ dashboard chip — no need to clutter the menu */if(a.id==='key_man_policy'&&this.state._keyman_active)return false;/* one-shot: coverage auto-extends to every new operator (premium reconciles) — re-taking would just burn a move */if(stages.indexOf(a.stage)>idx)return false;if(restructAvail&&HIDE_AFTER.includes(a.id))return false;return true;});},
 isActionCompleted(a){return a.one_time&&this.state._completed_actions.includes(a.id);},
 isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_closer);/* a toxic closer must be fireable even with a small team */return this._epicHandled(a)||this._epicOnlyLocked(a)||this.isActionCompleted(a)||(!forceOpen&&!this.meetsReq(a.prerequisites||{}))||!this.canAfford(a);},
 
