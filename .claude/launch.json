@@ -7,6 +7,20 @@
       "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "serve.ps1"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "whiteboard-scratch",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\xiaol\\AppData\\Local\\Temp\\claude\\C--Users-xiaol-OneDrive-Desktop-Entrepenur-Paradise-Game\\d6645875-37a8-423f-93f2-ea8d5323156f\\scratchpad\\serve.ps1"],
+      "port": 3400,
+      "autoPort": true
+    },
+    {
+      "name": "epic-suite",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\xiaol\\OneDrive\\Desktop\\epic-suite\\serve.ps1"],
+      "port": 3200,
+      "autoPort": true
     }
   ]
 }

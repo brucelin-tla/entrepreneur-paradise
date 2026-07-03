@@ -16,7 +16,10 @@ $files = @(
 )
 
 # 1. Build the embedded config object from the JSON source of truth.
-$embedded = "window.EMBEDDED_CONFIG = {`n"
+#    Offline builds carry a beta marker: building inside beta/ stamps __EP_BETA=1 (dev/SIM cards show
+#    from file://); the promoted root build stamps 0 so the public offline file never shows beta chrome.
+$isBeta = (Split-Path -Leaf (Get-Location)) -eq 'beta'
+$embedded = "window.__EP_BETA=" + $(if ($isBeta) { "1" } else { "0" }) + ";`nwindow.EMBEDDED_CONFIG = {`n"
 foreach ($f in $files) {
     $json = Get-Content "$configDir\$f.json" -Raw -Encoding UTF8
     $embedded += "  `"$f`": $json,`n"

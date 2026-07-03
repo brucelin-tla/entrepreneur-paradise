@@ -15,6 +15,20 @@
       ]
     },
     {
+      "id": "str_regulation_crackdown",
+      "category": "regulatory",
+      "requires": { "_str_units_gte": 1 },
+      "base_probability": 0.06,
+      "probability_scales_with": "_str_units",
+      "scale_factor": 0.03,
+      "narrative": "Your city council just passed a short-term-rental ordinance — new permits, a nightly cap, and lodging-tax registration. Your Airbnb income is suddenly on the line while you scramble to comply.",
+      "act": 3,
+      "choices": [
+        { "label": "Get compliant — permits, caps & lodging tax", "effects": { "cash": -4000, "energy": -8, "other_monthly_revenue": -400 }, "outcome_narrative": "You comply — permits pulled, lodging tax registered, the calendar trimmed to the new night caps. The fees and lost nights shave the income a little, but the listing stays live and fully legal." },
+        { "label": "Ignore it and keep booking", "effects": { "cash": -9000, "brand_equity": -4, "other_monthly_revenue": -1000 }, "outcome_narrative": "You keep renting under the radar — until a neighbor complaint brings code enforcement and a fine. The penalty stings, the listing gets pulled for a stretch, and the income takes a real hit. Regulation isn't optional." }
+      ]
+    },
+    {
       "id": "liability_lawsuit",
       "category": "litigation",
       "requires": { "monthly_revenue_gte": 7000, "customer_base_gte": 12 },

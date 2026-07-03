@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.68.5 — 2026-07-03 — 🚀 PROMOTED TO LIVE (v0.59.3 → v0.68.5)
+Owner-approved promote after the 2026-07-02 marathon playtest (20 beta releases in one day, all
+owner-driven). Everything since v0.59.3 is now the public game: deal panels with adjustable terms
+and deal-of-the-month; the equipment collection (10-item catalog, basket buying, real-world hassle
+events, luxury flex tier with audit risk); real Section 179 through taxable income; index loan at
+the real flat 5% / wash loan labeled net-0%; myFICO-accurate utilization repricing; ALIS-driven
+velocity banking (objective-based targeting with amortization math, cross-vehicle, duration-aware
+draw recs — final fix in this build); confirm-in-place with green flashes + Close buttons on every
+panel; Epic Life Roadmap unified card; honest freedom (debt service counts).
+- **Promote hygiene:** offline builds now carry a build-time `__EP_BETA` marker (build.ps1) — the
+  beta offline file keeps its dev/SIM cards, the public root offline file hides ALL beta chrome
+  (verified headless: no chip, no dev cards, 3 archetypes, clean run).
+- Beta-only content stays beta-only by path/marker gating: SIM head-start profiles + Beta Test
+  sandbox do not appear on the live site.
+
 ## v0.65.0 — 2026-07-02 — (beta) Equipment picker + one Epic Life Roadmap card + confirm toggles
 - **🚚 Equipment picker** (owner-approved catalog): `equipment_financing` opens a 10-item catalog
   (espresso $12k → car-wash tunnel $220k) defined in `actions_finance.json` under the action's
