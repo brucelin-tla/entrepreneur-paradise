@@ -51,6 +51,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.67.0',d:'2026-07-02 22:30',n:[
+'🧾 <strong>Section 179 is real now</strong> — equipment write-offs reduce this year\'s TAXABLE INCOME (absorbed against profit as it accrues — never creating a loss) instead of paying an instant cash rebate. The equipment panel shows your taxable income before → after and the estimated saving; the tax-season bill calls out exactly how much your write-offs saved. Same money, honest timing — the way it actually works.',
+'✕ Every control panel now has a <strong>Close button below Confirm</strong> — deal panels, equipment, policy, velocity, cash services, financial health.']},
 {v:'0.66.1',d:'2026-07-02 22:10',n:[
 '🚚 Equipment down payments now run through the normal funding waterfall — business credit first, then business cash, personal money LAST — exactly like property deals (they were quietly draining the wrong pocket). The panel shows the funding order, and the results screen shows where the money actually came from.']},
 {v:'0.66.0',d:'2026-07-02 21:55',n:[
@@ -1372,6 +1375,7 @@ openVelocityControl(){const s=this.state,fm=v=>this.fmtMoney(v);
    h+='</div>';}
  }
  if(active){const vd=this._velocityReadout();h+='<div style="border-top:1px solid var(--border);margin:12px 0 0;padding-top:8px;font-size:0.66rem;color:var(--text2);">Lifetime: interest saved <strong style="color:var(--accent);">'+fm(vd.interestSaved)+'</strong>'+(vd.equityBuilt>0?' · equity built '+fm(vd.equityBuilt):'')+(vd.totalChunked>0?' · chunked '+fm(vd.totalChunked):'')+'.</div>';}
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('⚡ Velocity Banking',h);},
 velToggleInfo(){this._velInfo=!this._velInfo;this.openVelocityControl();},
 // Stagers — write to _velStaged and re-render; nothing touches real state until velConfirm.
@@ -1432,6 +1436,7 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:4px;"><span id="ppc-fr" style="font-weight:700;color:var(--gold);">'+st.fundRate+'% · ≈ $'+Math.round(rev*st.fundRate/100).toLocaleString()+'/mo</span> — more builds cash value faster (opens borrowing sooner), less cash in pocket.</div>';
  h+='<button onclick="Game.polConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
  h+='<div style="font-size:0.6rem;color:var(--text2);text-align:center;margin-top:6px;">Managed by your concierge — free, applies this month. No finance move used.</div>';
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('🛡️ Cash-Value Policy',h);},
 // Stagers — write to _polStaged and re-render; nothing touches real state until polConfirm.
 polStageType(t){const s=this.state;if(s._polStaged)s._polStaged.loanType=(t==='variable'?'variable':'wash');this.openPolicyControl();},
@@ -1479,6 +1484,7 @@ openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
  else h+=row('Cash — business',fm(s.cash||0))+row('Cash — personal',fm(s.personal_cash||0));
  h+='</div>';
  if((s._credit_liquidated_total||0)>0)h+='<div style="margin-top:10px;font-size:0.64rem;color:var(--text2);">Lifetime liquidated '+fm(s._credit_liquidated_total)+' · fees paid '+fm(s._credit_liquidate_fees||0)+'.</div>';
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('💵 Cash Services',h);},
 // ===== Concierge service — 📊 Financial Health: a plain-English snapshot + verdict on the member's whole financial picture =====
 openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSeparated();
@@ -1517,6 +1523,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
  h+=row('Lifestyle cost',fm(s.lifestyle_expenses||0)+'/mo');
  h+='</div>';
  /* Paradise ladder + the passive-income advice card removed (owner) — that whole readout lives in the ⭐ Epic Life Roadmap card now */
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('📊 Financial Health',h);},
 // Concierge controls live at the top of Financial Health and are STAGED — setters write to _fhStaged; fhConfirm applies. openConciergeSettings kept as an alias for stray callers.
 openConciergeSettings(){return this.openFinancialHealth();},
@@ -2602,19 +2609,22 @@ openEquipControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));t
  for(const it of catalog.filter(x=>!x.luxury))renderItem(it);
  const lux=catalog.filter(x=>x.luxury);
  if(lux.length){h+='<div style="font-size:0.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 5px;">🏝️ Luxury &amp; flex — lifestyle plays, eyes open</div>';for(const it of lux)renderItem(it);}
- if(pick){const down=Math.round(pick.price*0.10),financed=pick.price-down,pmt=this._equipPmt(Math.round(pick.price*0.9)),taxBack=Math.round(pick.price*(s.tax_rate||0.25)*0.85*(pick.taxmult!=null?pick.taxmult:1));
+ if(pick){const down=Math.round(pick.price*0.10),financed=pick.price-down,pmt=this._equipPmt(Math.round(pick.price*0.9)),deduct=Math.round(pick.price*(pick.taxmult!=null?pick.taxmult:1)),ytd=Math.round(s._ytd_taxable_income||0),taxBack=Math.round(deduct*(s.tax_rate||0.25));
   const _bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),canGo=(s.cash||0)+(s.available_credit||0)+_bizAvail>=down;/* same funds test as the engine's canAfford — the down runs through the business-first waterfall */
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you buy the '+pick.label+'</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
   h+='<div class="breakdown-row"><span>Down (10%)</span><span style="font-weight:700;">'+fm(down)+'</span></div><div class="breakdown-detail">funded business-first: business credit → business cash → personal last</div>';
   h+='<div class="breakdown-row"><span>Financed</span><span style="font-weight:700;">'+fm(financed)+' · −'+fm(pmt)+'/mo</span></div>';
   h+=(pick.income?'<div class="breakdown-row"><span>Income</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.income)+'/mo</span></div>':'')+(pick.cap?'<div class="breakdown-row"><span>Revenue capacity</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.cap)+'/mo</span></div>':'')+(pick.opex?'<div class="breakdown-row"><span>Operating expenses</span><span style="font-weight:700;color:var(--accent);">'+fm(pick.opex)+'/mo</span></div>':'');
   h+=(pick.upkeep?'<div class="breakdown-row"><span>Upkeep</span><span style="font-weight:700;color:var(--red);">−'+fm(pick.upkeep)+'/mo</span></div>':'')+(pick.exp?'<div class="breakdown-row"><span>Lifestyle — experiences</span><span style="font-weight:700;color:var(--accent);">+'+pick.exp+'</span></div>':'')+(pick.rel?'<div class="breakdown-row"><span>Lifestyle — relationships</span><span style="font-weight:700;color:var(--accent);">+'+pick.rel+'</span></div>':'')+(pick.brand?'<div class="breakdown-row"><span>Brand / flex</span><span style="font-weight:700;color:var(--accent);">+'+pick.brand+'</span></div>':'');
-  h+='<div class="breakdown-row"><span>Sec. 179 tax back (year 1)'+(pick.taxmult!=null&&pick.taxmult<1?' · partial biz use':'')+'</span><span style="font-weight:700;color:var(--gold);">+'+fm(taxBack)+'</span></div>';
+  h+='<div class="breakdown-row"><span>Sec. 179 write-off'+(pick.taxmult!=null&&pick.taxmult<1?' · partial biz use':'')+'</span><span style="font-weight:700;color:var(--gold);">−'+fm(deduct)+' taxable income</span></div>';
+  h+='<div class="breakdown-row"><span>Taxable income this year</span><span style="font-weight:700;">'+fm(ytd)+' → '+fm(Math.max(0,ytd-deduct))+'</span></div>';
+  h+='<div class="breakdown-row"><span>Est. saved at tax season</span><span style="font-weight:700;color:var(--gold);">~'+fm(taxBack)+'</span></div><div class="breakdown-detail">The write-off offsets business profit as it accrues — it can\'t create a loss. You feel it as a smaller bill at tax season, not a check today.</div>';
   h+=(pick.audit?'<div class="breakdown-row"><span>Audit risk</span><span style="font-weight:700;color:var(--red);">+'+pick.audit+'</span></div><div class="breakdown-detail">Luxury write-offs are legal with documented business use — and they\'re what auditors look for first. The flex is real; so is the flag.</div>':'')+'</div>';
   if(!canGo)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--red);font-weight:600;text-align:center;">Not enough cash for the '+fm(down)+' down payment.</div>';
   else{h+='<button onclick="Game.equipConfirm()" style="width:100%;margin-top:10px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm')+'</button>';
    h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move.':'Uses this month\'s finance move.')+'</div>';}}
  else h+='<div style="font-size:0.68rem;color:var(--text2);text-align:center;margin-top:4px;">Tap a machine to see the deal.</div>';
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.dealBack()">Close</button>';
  this.showPopup(a.label,h);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
 equipPick(itemId){this.state._equip_choice=itemId;this.openEquipControl(this._equipCat||'finance','equipment_financing');},
 equipConfirm(){const cat=this._equipCat||'finance';this._paymentMethod='cash';this.selectAction(cat,'equipment_financing');this.openEquipControl(cat,'equipment_financing');},
@@ -2690,7 +2700,7 @@ openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));th
  if(canGo&&lockedNow&&!sel){h+='<div style="margin-top:10px;padding:8px 11px;background:rgba(239,68,68,0.08);border:1px solid var(--red);border-radius:8px;font-size:0.72rem;color:var(--red);font-weight:600;text-align:center;">Can\'t take it on these terms: '+lockReason+'</div>';canGo=false;}
  if(canGo){h+='<button onclick="Game.dealConfirm(\''+cat+'\',\''+id+'\')" style="width:100%;margin-top:12px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm')+'</button>';/* confirmed = green + tap-again-to-deselect (owner) */
   h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move — slider changes update it instantly.':'Uses this month\'s finance move. Your terms are remembered for next time.')+'</div>';}
- /* no "remove" link and no default Got it — Back exits, Confirm queues/updates; picking any other finance action replaces the queued move */
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.dealBack()">Close</button>';/* always an exit below Confirm (owner) */
  this.showPopup(a.label,h);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
 dealConfirm(cat,id){this._paymentMethod='cash';this.selectAction(cat,id);/* toggles: confirm queues, tap again deselects (owner) */this._dealInfo=false;this.openDealControl(cat,id);/* stay in the panel — button flips green "✓ Confirmed" so the player SEES it */},
 dealRemove(cat,id){if(this.selectedActions[cat]&&this.selectedActions[cat].id===id)this.selectAction(cat,id);this._dealInfo=false;this.hidePopup();},
@@ -2927,11 +2937,17 @@ if(action.id==='equipment_financing'&&success){const s=this.state;
   if(it.rel)s.lifestyle_relationships=Math.min(100,(s.lifestyle_relationships||0)+it.rel);
   if(it.upkeep)s.lifestyle_expenses=(s.lifestyle_expenses||0)+it.upkeep;
   if(it.audit)s.audit_risk=Math.min(100,(s.audit_risk||0)+it.audit);
-  const taxSaved=Math.round(it.price*(s.tax_rate||0.25)*0.85*(it.taxmult!=null?it.taxmult:1));s.cash+=taxSaved;s._equip_units=(s._equip_units||0)+1;
+  // Section 179 the REAL way: the write-off reduces this year's TAXABLE INCOME (absorbed against profit as it accrues — it can't create a loss), and the saving shows up as a smaller bill at tax season. No more instant cash rebate.
+  const deductWant=Math.round(it.price*(it.taxmult!=null?it.taxmult:1)),estSave=Math.round(deductWant*(s.tax_rate||0.25));
+  s._sec179_carry=(s._sec179_carry||0)+deductWant;
+  {const ab=Math.min(s._sec179_carry,s._ytd_taxable_income||0);if(ab>0){s._ytd_taxable_income-=ab;s._sec179_carry-=ab;s._sec179_ytd=(s._sec179_ytd||0)+ab;}}
+  s._equip_units=(s._equip_units||0)+1;
   const ben=it.income?('it\'s throwing off '+this.fmtMoney(it.income)+'/mo'):(it.cap?('capacity is up '+this.fmtMoney(it.cap)+'/mo'):('expenses just dropped '+this.fmtMoney(-(it.opex||0))+'/mo'));
-  s._dyn_narrative=it.icon+' '+it.label+' financed and in service — '+this.fmtMoney(down)+' down, the bank funded the other '+this.fmtMoney(financed)+', and '+ben+'. '+(it.taxmult!=null&&it.taxmult<1?'The write-off is limited to your documented business use — ~':'Section 179 wrote off the full '+this.fmtMoney(it.price)+', putting ~')+this.fmtMoney(taxSaved)+' back in your pocket.'+(it.luxury?' The flex is real — and so is the audit flag. Keep the logs clean.':'');
- }else{/* no pick (exec/bot auto-play) — legacy generic equipment */
-  const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));const cost=Math.round(15000*mult);s.total_debt+=cost;this._addLoan('equipment',cost);const capBump=Math.round(cost*0.5);s.revenue_capacity=(s.revenue_capacity||0)+capBump;s.systems_maturity=Math.min(100,(s.systems_maturity||0)+4);const taxSaved=Math.round(cost*(s.tax_rate||0.25)*0.85);s.cash+=taxSaved;s._equip_units=(s._equip_units||0)+1;s._dyn_narrative='You financed '+this.fmtMoney(cost)+' of equipment — capacity is up about '+this.fmtMoney(capBump)+'/mo. Section 179 let you deduct the full '+this.fmtMoney(cost)+' this year, putting ~'+this.fmtMoney(taxSaved)+' back in your pocket. The bank funded the asset; the tax code funded part of the payment.';}}
+  s._dyn_narrative=it.icon+' '+it.label+' financed and in service — '+this.fmtMoney(down)+' down, the bank funded the other '+this.fmtMoney(financed)+', and '+ben+'. '+(it.taxmult!=null&&it.taxmult<1?'Sec. 179 write-off limited to your documented business use: ':'Section 179 writes off the full price: ')+this.fmtMoney(deductWant)+' off this year\'s taxable income — worth ~'+this.fmtMoney(estSave)+' at tax season.'+(it.luxury?' The flex is real — and so is the audit flag. Keep the logs clean.':'');
+ }else{/* no pick (exec/bot auto-play) — legacy generic equipment, same real-179 treatment */
+  const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));const cost=Math.round(15000*mult);s.total_debt+=cost;this._addLoan('equipment',cost);const capBump=Math.round(cost*0.5);s.revenue_capacity=(s.revenue_capacity||0)+capBump;s.systems_maturity=Math.min(100,(s.systems_maturity||0)+4);
+  const estSave=Math.round(cost*(s.tax_rate||0.25));s._sec179_carry=(s._sec179_carry||0)+cost;{const ab=Math.min(s._sec179_carry,s._ytd_taxable_income||0);if(ab>0){s._ytd_taxable_income-=ab;s._sec179_carry-=ab;s._sec179_ytd=(s._sec179_ytd||0)+ab;}}
+  s._equip_units=(s._equip_units||0)+1;s._dyn_narrative='You financed '+this.fmtMoney(cost)+' of equipment — capacity is up about '+this.fmtMoney(capBump)+'/mo. Section 179 deducts the full '+this.fmtMoney(cost)+' from this year\'s taxable income — worth ~'+this.fmtMoney(estSave)+' at tax season. The bank funded the asset; the tax code funds part of the payment.';}}
 // CAPTIVE INSURANCE — form your own insurer; the monthly engine (monthlyTick) then runs the deductible-premium → tax-advantaged-reserve loop.
 if(action.id==='captive_insurance'&&success){const s=this.state;s._captive_active=true;s._captive_reserve=s._captive_reserve||0;s._dyn_narrative='Your captive insurance company is licensed. From here, your business pays it deductible premiums each month — and under §831(b) those premiums build reserves you own almost tax-free. You\'re moving money that would have gone to the IRS into a protected asset that compounds. Watch your audit risk: it must stay real insurance.';}
 // RETIREMENT PLAN (Solo 401(k)/SEP) — flips on the monthly pre-tax sweep in monthlyTick. The contribution is deductible, so only the after-tax portion is a real cash cost, while the FULL amount compounds tax-deferred in _retirement_balance.
@@ -3160,6 +3176,7 @@ if(s._partner_equity>0){const prof=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)
 // Tax inefficiency drag — high profit without tax structure overpays the IRS every month
 {const profit=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s.owner_pay||0)-(s._re_depreciation||0));if(profit>5000){let ineff=0.16;if(['s_corp','c_corp','multi_entity'].includes(s.entity_structure))ineff-=0.10;if(s._completed_actions.includes('tax_optimization'))ineff-=0.04;if(s._completed_actions.includes('tax_planning_session'))ineff-=0.02;if((s.trust_structure&&s.trust_structure!=='none'&&s.trust_structure!=='basic_llc'))ineff-=0.02;ineff=Math.max(0,ineff)*Math.min(1,profit/30000);if(this._perks().taxSmart)ineff*=0.7;/* Tax-Smart milestone perk: a dialed-in structure trims the residual drag */s.cash-=Math.round(profit*ineff);}}
 const taxableIncome=Math.max(0,s.monthly_revenue-s.cogs-s.operating_expenses-(s._re_depreciation||0));s._ytd_taxable_income=(s._ytd_taxable_income||0)+taxableIncome;
+if((s._sec179_carry||0)>0&&(s._ytd_taxable_income||0)>0){const ab=Math.min(s._sec179_carry,s._ytd_taxable_income);s._ytd_taxable_income-=ab;s._sec179_carry-=ab;s._sec179_ytd=(s._sec179_ytd||0)+ab;}/* Sec. 179 write-offs absorb against profit as it accrues — offsets income, never creates a loss */
 if(!sep&&s._completed_actions.includes('monthly_tax_reserve')){const res=Math.round(taxableIncome*(s.tax_rate||0.25));s.tax_reserve+=res;s.cash-=res;}
 const bizDebtSvc=Math.round(((s.total_debt||0)-(s.real_estate_debt||0))*0.018),ebitda=s.monthly_revenue-s.cogs-s.operating_expenses;s.dscr=bizDebtSvc>0?Math.round((ebitda/bizDebtSvc)*100)/100:99;
 // VELOCITY BANKING — running the household through a line of credit instead of a checking account. The edge is real but conditional: park income on a simple-interest line and every surplus dollar retires MORE than a dollar of amortizing principal (the interest you'd have paid is saved), freeing capital years faster and lowering utilization → score. But it's a CASH-FLOW strategy: it only accelerates while you're cash-flow positive. Go negative and the deficit rides on the line and compounds (the spiral). And in a credit-tight downturn the lender can FREEZE/cut the line — which only hurts if you were leaning on it. Discipline (positive CF + lightly-used line) is rewarded; over-leverage is punished.
@@ -3599,7 +3616,7 @@ return '<div style="background:var(--surface);border:1px solid '+(top?'var(--gol
 
 showTaxEvent(){const s=this.state,taxOwed=Math.round((s._ytd_taxable_income||0)*(s.tax_rate||0.25)),year=Math.ceil(this.month/12),sep=this.isSeparated(),payCash=sep?(s.personal_cash||0):(s.cash||0);
 this.showScreen('event-screen');this.renderStats('event-dashboard');document.getElementById('event-month-label').textContent='Tax Season — Year '+year;
-document.getElementById('event-box').innerHTML='<div class="event-category">TAXES</div><div class="event-narrative">The IRS doesn\'t care how hard your year was. Your accountant slides the number across the table: <strong>$'+this.fmt(taxOwed)+'</strong> owed.'+(s.tax_reserve>0?' You have $'+this.fmt(s.tax_reserve)+' in your tax reserve.':'')+'</div>';
+document.getElementById('event-box').innerHTML='<div class="event-category">TAXES</div><div class="event-narrative">The IRS doesn\'t care how hard your year was. Your accountant slides the number across the table: <strong>$'+this.fmt(taxOwed)+'</strong> owed.'+((s._sec179_ytd||0)>0?' <span style="color:var(--accent);">Your Sec. 179 equipment write-offs cut this year\'s taxable income by $'+this.fmt(s._sec179_ytd)+' — saving you ~$'+this.fmt(Math.round((s._sec179_ytd||0)*(s.tax_rate||0.25)))+' on this bill.</span>':'')+(s.tax_reserve>0?' You have $'+this.fmt(s.tax_reserve)+' in your tax reserve.':'')+'</div>';
 let choices=[];
 // Funding sources in the order a good advisor taps them: (1) a tax-free POLICY LOAN — borrow up to ~90% of cash value, the money keeps compounding behind a low-rate loan (positive carry, no credit check); (2) the earmarked TAX RESERVE; (3) CASH last. The waterfall uses policy & reserve FIRST so it protects your cash, and it can COMBINE all three — the gap the old menu couldn't cover.
 const pb=this._policyBorrowable(),res=Math.max(0,s.tax_reserve||0),cashAvail=Math.max(0,payCash);
@@ -3632,7 +3649,7 @@ else if(method==='cash'){s[cashKey]=(s[cashKey]||0)-amount;if(sep)s.personal_tax
 else if(method==='smart'){const r=drawWaterfall(amount);if(sep)s.personal_tax_ytd=(s.personal_tax_ytd||0)+(amount-r.unpaid);const seg=[];if(r.uP>0)seg.push(this.fmtMoney(r.uP)+' tax-free policy loan');if(r.uR>0)seg.push(this.fmtMoney(r.uR)+' from your reserve');if(r.uC>0)seg.push(this.fmtMoney(r.uC)+' cash');narrative='Paid in the advisor\'s order — '+seg.join(', then ')+'.'+(r.uP>0?' The policy loan is tax-free and your cash value keeps compounding behind it — you paid the IRS without your invested money ever pausing.':'');if(r.unpaid>0){s.total_debt+=r.unpaid;s.operating_expenses+=Math.round(r.unpaid*0.08/12);narrative+=' A small '+this.fmtMoney(r.unpaid)+' shortfall went onto an IRS plan.';}}
 else if(method==='installment'){const r=drawWaterfall(amount),rest=r.unpaid;if(rest>0){s.total_debt+=rest;s.operating_expenses+=Math.round(rest*0.08/12);s.audit_risk=(s.audit_risk||0)+10;}if(sep)s.personal_tax_ytd=(s.personal_tax_ytd||0)+(amount-rest);narrative='You paid '+this.fmtMoney(amount-rest)+' from your available funds (policy → reserve → cash) and set up an IRS installment agreement for the remaining '+this.fmtMoney(rest)+' — it accrues ~8%/yr in penalties &amp; interest, added to your monthly obligations. The plan itself doesn\'t ding your credit score, but let the balance grow and a federal tax lien can attach, which does hurt your borrowing.';}
 else{/* cant_pay — defer the whole bill */ s.total_debt+=amount;s.operating_expenses+=Math.round(amount*0.08/12);s.audit_risk=(s.audit_risk||0)+20;narrative='Nothing paid — the full '+this.fmtMoney(amount)+' becomes tax debt accruing penalties &amp; interest, and the IRS can file a lien. Note: a tax extension buys time to FILE, never time to PAY — the meter runs regardless. This is exactly the squeeze a funded policy or a tax reserve exists to prevent.';}
-s._ytd_taxable_income=0;
+s._ytd_taxable_income=0;s._sec179_ytd=0;s._sec179_carry=0;/* the tax year closes — unused write-off doesn't carry into next year here */
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Tax Outcome';
 document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in">'+narrative+'</div>';
 this._pendingTax=false;},
