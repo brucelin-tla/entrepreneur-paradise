@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.7',d:'2026-07-03 08:45',n:[
+'🏝️ <strong>Entrepreneur Paradise has an official home: play.teamlife.ai</strong> — proper app icon, share cards, and install-to-homescreen support. Old links keep working. Educational simulation — not financial advice — a Team Life Academy production.']},
 {v:'0.68.6',d:'2026-07-03 01:45',n:[
 '🎯 Epic Tools tune-up — the Debt/Velocity planner got a little smarter about which loan to pay first.']},
 {v:'0.68.5',d:'2026-07-03 01:15',n:[

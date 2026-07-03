@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Entrepreneur Paradise — BETA</title>
+<meta name="description" content="Build the machine. Then let it run. Entrepreneur Paradise is a 36-month business & wealth simulator — credit, leverage, real deals, real headaches. A Team Life Academy production. Educational simulation, not financial advice.">
+<link rel="canonical" href="https://play.teamlife.ai/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Team Life Academy">
+<meta property="og:title" content="Entrepreneur Paradise — 36-Month Business & Wealth Simulator">
+<meta property="og:description" content="Build the machine. Then let it run. Credit, leverage, real deals, real headaches — the Epic Life path, playable.">
+<meta property="og:url" content="https://play.teamlife.ai/">
+<meta property="og:image" content="https://play.teamlife.ai/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Entrepreneur Paradise — 36-Month Business & Wealth Simulator">
+<meta name="twitter:description" content="Build the machine. Then let it run.">
+<meta name="twitter:image" content="https://play.teamlife.ai/assets/og.png">
+<link rel="icon" type="image/svg+xml" href="../assets/icon.svg">
+<link rel="apple-touch-icon" href="../assets/icon-180.png">
+<link rel="manifest" href="../site.webmanifest">
+<meta name="theme-color" content="#0a0e17">
 <style>
 /* Entrepreneur Paradise — styles */
 :root{--bg:#0a0e17;--bg2:#111827;--bg3:#1a2236;--surface:#1f2937;--surface2:#273349;--border:#2d3a50;--text:#e8ecf2;--text2:#9ca3b4;--accent:#10b981;--accent2:#059669;--gold:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--pink:#ec4899;--radius:12px;--radius-sm:8px}
@@ -184,6 +200,7 @@ body{font-family:'Segoe UI',-apple-system,system-ui,sans-serif;background:var(--
 <div id="resume-list" style="max-width:420px;width:100%;margin:0 auto;display:none;"></div>
 <div id="whats-new" style="display:none;"></div>
 <div id="menu-footer" style="margin-top:18px;display:flex;align-items:center;gap:12px;justify-content:center;"><span id="version-line" style="color:var(--text2);font-size:0.7rem;opacity:0.6;">v0.38.1</span><span id="update-icon"></span></div>
+<div style="margin-top:8px;text-align:center;font-size:0.58rem;color:var(--text2);opacity:0.55;line-height:1.5;">Educational simulation — not financial, tax, or investment advice<br>© 2026 Team Life Academy · <span style="color:var(--gold);">play.teamlife.ai</span></div>
 </div>
 <div id="opening-screen" class="screen"><div class="month-header"><h2>Month 1</h2></div><div id="opening-narrative" class="narrative-box"></div><div id="opening-mentor" class="narrative-box" style="border-left-color:var(--gold);"></div><button class="btn-primary" onclick="Game.startGame()">Begin Your Journey</button></div>
 <div id="game-screen" class="screen"><div class="month-header"><h2 id="month-label">Month 1</h2><span class="stage-badge" id="stage-badge">Foundation</span></div><div id="month-narrative" class="narrative-box"></div><div id="character-line" class="narrative-box" style="border-left-color:var(--gold);display:none;"></div><div id="stats-dashboard" class="stats-grid"></div><div id="bars-section" class="bars-section"></div><div id="step-indicator" class="step-indicator"></div><div class="category-tabs" id="cat-tabs"></div><div id="action-list"></div><div class="bottom-bar"><button class="btn-primary" id="confirm-actions-btn" onclick="Game.primaryActionBtn()">Next →</button><button class="btn-secondary" id="endturn-now-btn" style="display:none;margin-top:6px;" onclick="Game.confirmActions()">End Turn</button></div></div>
@@ -2638,6 +2655,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.7',d:'2026-07-03 08:45',n:[
+'🏝️ <strong>Entrepreneur Paradise has an official home: play.teamlife.ai</strong> — proper app icon, share cards, and install-to-homescreen support. Old links keep working. Educational simulation — not financial advice — a Team Life Academy production.']},
 {v:'0.68.6',d:'2026-07-03 01:45',n:[
 '🎯 Epic Tools tune-up — the Debt/Velocity planner got a little smarter about which loan to pay first.']},
 {v:'0.68.5',d:'2026-07-03 01:15',n:[

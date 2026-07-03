@@ -24,11 +24,14 @@ Copy-Item "beta/version.json" "version.json" -Force
 Copy-Item "beta/css/*"        "css/"         -Recurse -Force
 Copy-Item "beta/config/*.json" "config/"     -Force
 
-# 2. index.html - take beta's shell (so structural changes carry over), strip BETA branding
+# 2. index.html - take beta's shell (so structural changes carry over), strip BETA branding,
+#    rewrite beta-relative asset/manifest paths (../assets -> assets) for the root.
 $html = Get-Content "beta/index.html" -Raw -Encoding UTF8
-$html = $html -replace '<title>[^<]*</title>', '<title>Entrepreneur Paradise</title>'
+$html = $html -replace '<title>[^<]*</title>', '<title>Entrepreneur Paradise &#8212; 36-Month Business &amp; Wealth Simulator</title>'
 $html = $html -replace '<h1>Entrepreneur Paradise[^\n]*?</h1>', '<h1>Entrepreneur Paradise</h1>'
 $html = $html -replace '\s*<span[^>]*>[^<]*Testing build</span>', ''
+$html = $html -replace '\.\./assets/', 'assets/'
+$html = $html -replace '\.\./site\.webmanifest', 'site.webmanifest'
 $html | Out-File "index.html" -Encoding utf8 -NoNewline
 
 # 3. Rebuild the standalone offline root game.html from the freshly-copied sources

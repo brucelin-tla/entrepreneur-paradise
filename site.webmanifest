@@ -1,0 +1,14 @@
+{
+  "name": "Entrepreneur Paradise — 36-Month Business & Wealth Simulator",
+  "short_name": "Paradise",
+  "description": "Build the machine. Then let it run. A Team Life Academy production.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0e17",
+  "theme_color": "#0a0e17",
+  "icons": [
+    { "src": "assets/icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

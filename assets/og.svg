@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#080b12"/><stop offset="0.5" stop-color="#0f1726"/><stop offset="0.75" stop-color="#1b2335"/><stop offset="1" stop-color="#3a2f33"/></linearGradient>
+<radialGradient id="sun" cx="0.5" cy="0.95" r="0.6"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.6"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#sun)"/>
+<g fill="#e8ecf2" opacity="0.4"><circle cx="140" cy="90" r="2"/><circle cx="420" cy="60" r="1.6"/><circle cx="820" cy="110" r="2.2"/><circle cx="1050" cy="70" r="1.5"/><circle cx="640" cy="140" r="1.8"/><circle cx="240" cy="180" r="1.4"/><circle cx="960" cy="200" r="1.6"/></g>
+<text x="600" y="215" font-size="150" text-anchor="middle">🏝️</text>
+<text x="600" y="345" font-family="Segoe UI, Arial, sans-serif" font-size="76" font-weight="800" text-anchor="middle" fill="#f5c842" letter-spacing="4">ENTREPRENEUR PARADISE</text>
+<text x="600" y="415" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="600" text-anchor="middle" fill="#e8ecf2">Build the machine. Then let it run.</text>
+<text x="600" y="470" font-family="Segoe UI, Arial, sans-serif" font-size="26" text-anchor="middle" fill="#9aa4b2">The 36-month business &amp; wealth simulation</text>
+<path d="M170 560 L330 480 L470 525 L640 405 L830 455 L1030 380" fill="none" stroke="#10b981" stroke-width="5" opacity="0.55" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="600" y="596" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#f5c842">play.teamlife.ai · a Team Life Academy production</text>
+</svg>
