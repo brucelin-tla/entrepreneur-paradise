@@ -1,4 +1,17 @@
 {
+  "model": "sonnet",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\":\"🪙 TOKEN RULES — default is Sonnet (set by project settings). /model up ONLY for money-mechanic math, fidelity audits, or architecture — then back down. ONE chunk of work per session, then start fresh. No fan-outs (workflows/deep-research) without a stated reason. Limit resets 11pm UTC = 1pm HST.\"}'"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "WebSearch",
