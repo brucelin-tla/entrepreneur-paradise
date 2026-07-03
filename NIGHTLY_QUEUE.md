@@ -62,12 +62,36 @@ reckoning narrative emitted from `monthlyTick` on phase flip. **Open questions f
 stance effects/magnitudes, how loud the signals are (how readable vs punishing), and whether stance is
 locked for the quarter or re-choosable.
 
-### 2. Big Bets — concentrated high-conviction plays (SPEC pending)
+### 2. 0% Business Card Stacking — the promo-cliff mechanic  💳 OWNER-REQUESTED (2026-07-02)
+**The gap:** a `business_credit_card_0pct` action existed pre-simplification and was cut. Today
+business credit limit is a ladder of one-time bumps (Banking Relationship +$5k, Holding Co +$12k,
+Business Credit Line ≈$15k×capacity) and then goes static. There is NO repeatable "expand your 0%
+business credit" loop — yet funding via 0% business cards is literally the Epic Life entry move.
+
+**The mechanic (small, self-contained — can build before or alongside #1):**
+- Repeatable finance action **"Stack 0% Business Cards"**, gated on `business_credit_profile`
+  established + personal score threshold; each take adds `business_credit_limit` scaled by
+  `calcCreditCapacity`, with diminishing size per round (banks see the inquiries).
+- **The promo cliff is the lesson:** each stacked tranche carries an intro window (~12–15 months,
+  tracked per-tranche, e.g. `_promo_tranches:[{amt,expires}]`). While in-window: 0% carry. When it
+  expires with a balance still on it: interest kicks in hard (+ monthly drag, credit-score pressure)
+  unless paid down or moved (Restructure Your Debt becomes the natural escape valve — its "0% intro
+  buys time" lesson text finally gets real teeth).
+- Pairs with the existing `liquidateCredit` credit→cash move: stack → liquidate → deploy → clear
+  before the cliff. That's the actual TLA funding sequence, now playable and testable.
+- **Legibility:** the card row / money bar shows "0% until m24" per tranche; the cliff month fires a
+  plain-English reckoning line either way (cleared it = "free money, executed" / carried it = the cost).
+- **Compliance note:** frame as education ("how 0% intro windows work"), no bank names, no
+  guaranteed-approval implication — consistent with existing action lesson style.
+- **Open for owner:** intro window length, how punishing the cliff is, stack cap (rounds or total
+  limit), whether failed stacking attempts ding the score.
+
+### 3. Big Bets — concentrated high-conviction plays (SPEC pending)
 Periodic distressed-acquisition / development / private-lending-tranche opportunities with a
 **sizing × timing × funding** decision (own cash vs leverage). Can 3× or crater. Plugs into the spine
 (right stance/phase = the window). Full spec after #1 lands.
 
-### 3. Drama events — chaos where Protection pays off (SPEC pending)
+### 4. Drama events — chaos where Protection pays off (SPEC pending)
 Branching crisis events (partner cash-out, key-operator defection, lawsuit, aggressive-tax audit,
 rival's move, health/liquidity crunch) whose menu + outcome are set by earlier Protection choices
 (trust / insurance / entity / reserves). Reuses the event system. Full spec after #1.
@@ -88,6 +112,14 @@ Older Part-1 tax tactics. Fine to build opportunistically, but Part 2 comes firs
 - **Balance-tuning numbers** — the routines PROPOSE tuning from playtest data; the owner picks the
   actual numbers (per `verify-design-decisions-first`).
 - **Feedback/telemetry backend** — Supabase tables + endpoint wiring; needs owner credentials.
+- **HELOC as a capital source (PARKED 2026-07-02, owner-raised).** HELOC today exists only as a
+  Velocity Banking vehicle + in the Epic Tools real-finances planner — there's no "open a HELOC,
+  draw cash, fund a deal" action. Deliberately parked, not forgotten: as a funding move it mostly
+  duplicates Cash-Out Refi (equity → lump sum) and the PAL (revolving borrow against assets). The
+  one thing a real HELOC adds is borrowing against the **personal residence** — and the game has no
+  personal-home asset in state at all. So the real design question is: *should the player's house
+  enter the game as an asset?* That drags in personal-vs-business separation (which the game
+  actively teaches). Owner call before any build.
 
 ---
 
