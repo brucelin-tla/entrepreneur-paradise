@@ -76,11 +76,14 @@ This machine has **no Node, npm, or real Python** — do not use `npx`/`http-ser
 
 ## Pending work
 
-- **Beta v0.61.0 awaiting owner playtest** (deal panels: term sliders on the 4 leverage
-  investments, seeded deal-of-the-month, 🟢🟡🔴 rating, first-open primers). Watch for:
-  honest down payments making big-tier deals feel like a cash wall late game. After a
-  green playtest → `/promote` to live. Detail: RELEASE_NOTES.md v0.61.0 + memory
-  `ep-leverage-pack-beta`.
+- **Beta v0.62.0 awaiting owner playtest** — two releases stacked: v0.61.0 deal panels
+  (term sliders on the 4 leverage investments, seeded deal-of-the-month, 🟢🟡🔴 rating,
+  first-open primers — watch for honest down payments making big-tier deals a cash wall
+  late game) + v0.62.0 simulated head-starts ("Operator — Year 2" / "Average Player —
+  Year 2" New Game cards: a bot plays m1–12 live through the engine via `startSimProfile`,
+  player takes over at m13; use these to jump straight to the deal-panel content). After a
+  green playtest → `/promote` to live (deal panels only — the sim cards are beta-only by
+  design). Detail: RELEASE_NOTES.md v0.61.0/v0.62.0 + memory `ep-leverage-pack-beta`.
 - **Deal-panel UI polish (owner feedback 2026-07-02, pre-playtest):** (a) DECIDED — add a
   `← Back` chip top-left inside the deal panel (reuse the `_epicPanel`/`_rmPanel` back-chip
   pattern; today the only exit is the bottom Close). (b) OPEN — put the number behind the
