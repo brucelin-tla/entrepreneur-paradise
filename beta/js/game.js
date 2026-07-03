@@ -2,7 +2,7 @@
 let CONFIG={};
 async function loadConfig(){const files=['starting_positions','actions_marketing','actions_operations','actions_finance','lifestyle_options','events','stage_thresholds','scoring_weights','archetypes','characters','narrative_beats'];let ue=false;for(const f of files){if(!ue){try{const _cv=(typeof PATCH_NOTES!=='undefined'&&PATCH_NOTES[0])?PATCH_NOTES[0].v:'';const r=await fetch('config/'+f+'.json'+(_cv?'?v='+_cv:''));if(!r.ok)throw 0;CONFIG[f]=await r.json();continue;}catch(e){ue=true;}}if(ue&&window.EMBEDDED_CONFIG&&window.EMBEDDED_CONFIG[f])CONFIG[f]=window.EMBEDDED_CONFIG[f];}}
 const CATS=['marketing','operations','finance'],CL={marketing:'Marketing',operations:'Operations',finance:'Finance',lifestyle:'Life'};
-const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve'];
+const MK=['monthly_revenue','cash','operating_expenses','total_debt','owner_pay','cogs','real_estate_equity','life_insurance_cv','investment_positions','available_credit','personal_guarantee_exposure','living_expenses','lifestyle_expenses','tax_reserve','business_credit_used','business_credit_limit','insurance_cash_value','other_monthly_revenue','personal_cash','real_estate_debt','private_bank_balance','private_bank_loan'];/* credit/balance keys included so result chips format as money (commas, rounded) instead of raw digit dumps */
 const IK=['total_debt','operating_expenses','audit_risk','litigation_exposure','key_person_dependency','cogs','partner_conflict_risk','living_expenses','lifestyle_expenses','personal_guarantee_exposure','churn_rate'];
 const BOOST_IDS=['customer_acquisition_sprint','build_content_presence','manage_debt','get_borrowing_power','build_delivery_foundation','scale_delivery','hire_specialists'];
 // Action directions — group the menu by theme so every takeable option stays visible (pick a direction, see its A/B/C)
@@ -51,6 +51,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.67.1',d:'2026-07-02 22:50',n:[
+'🔢 Result chips for credit and balance stats (business credit used/limit, cash value, personal cash, RE debt…) now format as money — commas, rounded — instead of raw digit dumps (Restructure Debt was the worst offender).',
+'ℹ️ The deal-panel info link now reads "Understand this investment" and flips to "✕ Hide" while the primer is open.',
+'👑 For the record: the Pledged Asset Line\'s net interest carry ALREADY counts as passive income everywhere (dashboard Passive/mo, roadmap, freedom %) — as does rental, lending and route income. If the line is drawn hard, the carry can be ~zero or negative; that\'s the real cost of leaning on it.']},
 {v:'0.67.0',d:'2026-07-02 22:30',n:[
 '🧾 <strong>Section 179 is real now</strong> — equipment write-offs reduce this year\'s TAXABLE INCOME (absorbed against profit as it accrues — never creating a loss) instead of paying an instant cash rebate. The equipment panel shows your taxable income before → after and the estimated saving; the tax-season bill calls out exactly how much your write-offs saved. Same money, honest timing — the way it actually works.',
 '✕ Every control panel now has a <strong>Close button below Confirm</strong> — deal panels, equipment, policy, velocity, cash services, financial health.']},
@@ -2641,7 +2645,7 @@ openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));th
  s._deal_primer_seen=s._deal_primer_seen||{};if(!s._deal_primer_seen[ptype]){this._dealInfo=true;s._deal_primer_seen[ptype]=true;}
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span style="font-weight:700;color:'+(c||'var(--text)')+'">'+v+'</span></div>';
  const slider=(lbl,min,max,val,valTxt,key)=>'<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 3px;">'+lbl+'</div><input type="range" min="'+min+'" max="'+max+'" step="5" value="'+val+'" style="width:100%;accent-color:var(--gold);" onchange="Game._dealStageSet(\''+id+'\',\''+key+'\',this.value)"><div style="font-size:0.78rem;font-weight:700;color:var(--gold);">'+valTxt+'</div>';
- const infoLbl=ptype==='property'?'ℹ️ How to read a deal':(ptype==='pal'?'ℹ️ How to size your draw':'ℹ️ How to read LTV headroom');
+ const infoLbl=this._dealInfo?'✕ Hide':'ℹ️ Understand this investment';/* toggle wording (owner): collapsed invites, open dismisses */
  let h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;"><button class="back-chip" style="margin:0;" onclick="Game.dealBack()">← Back</button><span onclick="Game.dealToggleInfo(\''+id+'\')" style="cursor:pointer;font-size:0.66rem;color:var(--text2);">'+infoLbl+'</span></div>';
  if(this._dealInfo)h+='<div style="margin-bottom:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;">'+this._DEAL_PRIMERS[ptype]+'</div>';
  let canGo=true;
