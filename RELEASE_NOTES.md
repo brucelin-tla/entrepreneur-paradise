@@ -1,5 +1,24 @@
 # Release Notes
 
+## v0.65.0 — 2026-07-02 — (beta) Equipment picker + one Epic Life Roadmap card + confirm toggles
+- **🚚 Equipment picker** (owner-approved catalog): `equipment_financing` opens a 10-item catalog
+  (espresso $12k → car-wash tunnel $220k) defined in `actions_finance.json` under the action's
+  `catalog` key (data-driven). Tier gating on `min_rev`; 10% down from cash, rest financed via
+  `_addLoan('equipment')` at ~9%/60mo; 🟢🟡🔴 = benefit/payment DSCR (income full, capacity ×0.30,
+  opex savings full); Sec. 179 tax-back (price × tax_rate × 0.85) preserved. The `suv179` item is
+  deliberately 🔴 — the G-Wagon lesson (write-off ≠ free). Legacy generic path kept as fallback for
+  exec/bot auto-picks (no staged choice); sim + harness PANEL_ACTS updated.
+- **⭐ One Epic Life Roadmap card** — renamed, progress bar + passive-vs-needs line unified; ladder
+  and duplicate readouts removed. Financial Health: "Confirm" (was "Confirm concierge"), pause
+  button removed (auto-unpauses stuck saves), bottom advice card removed.
+- **Confirm = toggle + color flip** (deal panels + equipment): gold "Confirm" → green "✓ Confirmed
+  — tap to undo"; tapping again deselects.
+- **Anti-jump layout**: velocity chunk-effectiveness box and cash-services projection moved BELOW
+  their Confirm buttons (resizing boxes were moving the button mid-slide).
+- Policy panel: passive numbers respond to the staged Wash↔Index toggle everywhere in the panel.
+- Verified headless: sim to m13 → open picker → pick vending → confirm → resolve month lands
+  +$700/mo income + financed debt; FH/roadmap render clean; 0 JS errors.
+
 ## v0.64.0 — 2026-07-02 — (beta) Owner playtest batch 2: confirm-in-place, sliders-by-confirm, honest freedom
 - **Confirm stays in the panel** (deal/policy/velocity/liquidity all re-render in place; captions
   flip to "✓ Queued/Confirmed"); every action button label unified to "Confirm".

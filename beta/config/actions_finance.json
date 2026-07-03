@@ -369,7 +369,7 @@
       "category": "finance",
       "stage": "leverage",
       "label": "Finance Equipment (Section 179)",
-      "description": "Use the bank's money to buy equipment that lifts your capacity — then write off the whole cost this year with Section 179. Productive debt plus an instant tax deduction.",
+      "description": "Pick a piece of income-producing equipment and buy it with the bank's money — 10% down, the asset collateralizes the loan, and Section 179 writes off the purchase this year. Bigger cash flow unlocks bigger equipment.",
       "lesson": "Good debt working twice: the equipment raises what your business can deliver, and Section 179 lets you deduct the whole purchase the year you place it in service — so the tax savings pay for a chunk of it. (It's capped to annual limits and can only offset business profit, not create a loss.) Far better than paying cash and depreciating slowly.",
       "cash_cost": 0,
       "energy_cost": 4,
@@ -377,7 +377,19 @@
       "effects": {},
       "success_rate": 1,
       "narrative_success": "Equipment financed and in service. Capacity is up — and the Section 179 write-off just cut this year's tax bill.",
-      "narrative_failure": "The equipment financing fell through this month."
+      "narrative_failure": "The equipment financing fell through this month.",
+      "catalog": [
+        { "id": "espresso", "icon": "☕", "label": "Commercial Kitchen Line", "price": 12000, "min_rev": 8000, "cap": 3000, "blurb": "The classic first equipment loan — more output per hour, every hour." },
+        { "id": "vending", "icon": "🥤", "label": "Vending Route — 8 machines", "price": 20000, "min_rev": 8000, "income": 700, "blurb": "Boring money: stocked machines earning while you sleep. The starter semi-passive route." },
+        { "id": "boxtruck", "icon": "🚚", "label": "Box Truck + Delivery Contract", "price": 45000, "min_rev": 15000, "cap": 9000, "blurb": "The last-mile logistics playbook — a contracted truck is a rolling revenue machine." },
+        { "id": "foodtrailer", "icon": "🚐", "label": "Food Trailer", "price": 38000, "min_rev": 15000, "cap": 7000, "brand": 4, "blurb": "Mobile storefront — revenue plus brand visibility, but it runs on your hustle." },
+        { "id": "suv179", "icon": "🚙", "label": "Heavy SUV — the '179 write-off'", "price": 90000, "min_rev": 30000, "cap": 1500, "blurb": "The famous G-Wagon deduction: over 6,000 lbs means a huge first-year write-off. The tax saving is real — but a deduction on something that barely cash-flows is still a cost. Eyes open." },
+        { "id": "solar", "icon": "☀️", "label": "Solar Install (ITC)", "price": 80000, "min_rev": 30000, "opex": -900, "blurb": "Cuts your power bill for decades plus the investment tax credit — expense arbitrage, not income." },
+        { "id": "cnc", "icon": "🏭", "label": "CNC / Production Machinery", "price": 110000, "min_rev": 35000, "cap": 22000, "sys": 6, "blurb": "Manufacturing margin: precision output, less labor per unit, a real moat." },
+        { "id": "atm", "icon": "🏧", "label": "ATM Route", "price": 100000, "min_rev": 40000, "income": 2600, "blurb": "Fee income on autopilot — the quiet route empire wealthy operators love." },
+        { "id": "laundro", "icon": "🧺", "label": "Laundromat Machine Refit", "price": 150000, "min_rev": 45000, "income": 4200, "blurb": "Quarters into cash flow with almost no labor — a private-equity darling for a reason." },
+        { "id": "carwash", "icon": "🚗", "label": "Car-Wash Tunnel Equipment", "price": 220000, "min_rev": 60000, "income": 6500, "blurb": "The bonus-depreciation plus membership-revenue play the smart money has been rolling up." }
+      ]
     },
     {
       "id": "merchant_cash_advance",

@@ -66,7 +66,7 @@
         const cats=Game._activeCats||['marketing','operations','finance'];
         for(const c of cats){if(Game.selectedActions[c])continue;const id=P.pick(c);if(id){const a=Game.getAvailableActions(c).find(x=>x.id===id);if(a&&!Game.isActionLocked(a)){
           // Panel-routed finance actions (policy loan/passive, velocity banking, the deal-panel investments) open a control panel for a human; a bot completes them by queuing the action directly (deal terms come from P.terms, set at run start).
-          if(c==='finance'&&(id==='policy_loan'||id==='activate_passive_income'||id==='velocity_banking'||id==='buy_real_estate'||id==='buy_str'||id==='private_banking'||id==='cash_out_refi'))Game.selectAction(c,id);
+          if(c==='finance'&&(id==='policy_loan'||id==='activate_passive_income'||id==='velocity_banking'||id==='buy_real_estate'||id==='buy_str'||id==='private_banking'||id==='cash_out_refi'||id==='equipment_financing'))Game.selectAction(c,id);
           else Game.selectActionPayment(c,id);
         }}}
         Game.resolveMonth();
