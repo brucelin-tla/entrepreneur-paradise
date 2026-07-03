@@ -2637,6 +2637,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.65.1',d:'2026-07-02 21:20',n:[
+'🛡️ Cash-Value Policy panel: one stats box instead of two — cash value, borrowable and surrender charge now live inside the single "Your policy · if you confirm" box with the before→after rows.']},
 {v:'0.65.0',d:'2026-07-02 21:00',n:[
 '🚚 <strong>Equipment picker</strong> — Finance Equipment now opens a catalog of real-world plays: espresso line, vending route, box truck, food trailer, the famous 6,000-lb "Sec. 179 write-off" SUV, solar, CNC, ATM route, laundromat refit, car-wash tunnel. Bigger revenue unlocks bigger tiers; 10% down, ~9% APR over 5 years; each machine shows its payment vs. what it earns (🟢🟡🔴) — and yes, the G-Wagon is deliberately 🔴: the write-off is real, the payment is still bigger than what it earns.',
 '⭐ <strong>One Epic Life Roadmap card</strong> — progress bar and your passive-income-vs-needs number are now one and the same card (the ladder and duplicate readouts are gone). Financial Health slimmed down: plain "Confirm" button, pause removed, bottom advice card removed.',
@@ -3980,8 +3982,7 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
  const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
  h+='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Your tax-free money vault. Set funding &amp; loan type, borrow against it, switch on passive income — <strong>review the projection, then Confirm</strong>. Nothing moves until you confirm.</div>';
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:4px 0 5px;">Now</div><div style="padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">';
- h+=row('Cash value',fm(cv),'var(--gold)')+row('Surrender charge',charge>0?'−'+fm(charge):'—',charge>0?'var(--red)':'var(--text2)')+row('Borrowable now',fm(borrow),'var(--accent)')+(loan>0?row('Loan outstanding',fm(loan),'var(--gold)'):'')+'</div>';
+ /* the "Now" box merged into the single projection box below (owner: one stats box, not two) */
  if(charge>0&&borrow<=0)h+='<div style="font-size:0.7rem;color:var(--gold);margin:10px 0;line-height:1.4;">⏳ The '+fm(charge)+' surrender charge still exceeds your borrowable value — keep funding it and your borrowing opens as the cash value grows and the charge phases out.</div>';
  const tBtn=(key,label,sub)=>{const on=st.loanType===key;return '<div onclick="Game.polStageType(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 6px;text-align:center;"><div style="font-size:0.72rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.55rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan type</div><div style="display:flex;gap:8px;margin-bottom:6px;">'+tBtn('wash','Wash · net 0%','3% charged, 3% credited — cancels out; lapse-proof')+tBtn('variable','Index · '+baseRate+'%','flat 5% charged; full cash value keeps earning the index — higher income, lapse risk')+'</div>';
@@ -3997,7 +3998,8 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  else h+='<div style="font-size:0.7rem;color:var(--text2);margin-bottom:6px;">Passive income unlocks once your cash value passes '+fm(5000)+'.</div>';
  const afterCash=(sep?(s.personal_cash||0):(s.cash||0))+st.loanAmt,curFundMo=Math.round(rev*(s._policy_fund_rate||0.15)),newFundMo=Math.round(rev*st.fundRate/100);
  const curPassive=curActive?this._policyPassiveMonthly():0,newPassive=(st.passiveOn&&cv>=5000)?this._policyPassiveMonthly(loan+st.loanAmt,isVar):0;/* staged loan TYPE moves the projection too — switch Wash↔Index and watch the passive number change before confirming */
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">If you confirm</div><div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your policy · if you confirm</div><div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
+ h+=row('Cash value',fm(cv),'var(--gold)')+row('Borrowable now',fm(borrow),'var(--accent)')+(charge>0?row('Surrender charge','−'+fm(charge),'var(--red)'):'');
  h+=proj((sep?'Cash — personal':'Cash'),fm(sep?(s.personal_cash||0):(s.cash||0)),fm(afterCash),st.loanAmt>0?'var(--accent)':'var(--text)');
  h+=proj('Policy loan',fm(loan),fm(loan+st.loanAmt),st.loanAmt>0?'var(--gold)':'var(--text)');
  h+=proj('Loan type',curVar?'Index 5%':'Wash net 0%',isVar?'Index 5%':'Wash net 0%');
