@@ -187,6 +187,24 @@ Older Part-1 tax tactics. Fine to build opportunistically, but Part 2 comes firs
 
 ---
 
+## 🔍 FINANCIAL-FIDELITY AUDIT — standing sweep (owner mandate 2026-07-03, prepare-only OK)
+Apply the 5-point self-check (CLAUDE.md) to every EXISTING money mechanic — find the flaws before
+the owner does. Audited ✓: policy passive draws grow the loan balance + accrue interest + lapse
+risk (correct); index/wash loan rates; FICO utilization repricing; equipment financing terms;
+Sec. 179 flow. **Open suspects, in priority order:**
+1. Velocity DRAW fee 6% — real balance-transfer fees run 3–5%; is 6% defensible or lazy?
+2. Rental/STR deal yields (`dealRoll`) vs real cap rates (~5–8% by market) — and the deal-rating
+   thresholds calibrated against them.
+3. Policy passive draw rates (6% wash / 8% index of base) vs sustainably-quoted real IUL income
+   (~5–6% of CV) — is 8% over-generous even with the headroom cap?
+4. Premium financing multiplier (25k×revenue mult → cash value) vs how real premium finance sizes.
+5. MCA factor 1.4 / holdback pacing vs real MCA economics (already brutal — verify not TOO brutal).
+6. Scaled credit line/loan amounts (`calcCreditCapacity` multipliers) vs real small-biz
+   underwriting (revenue multiples, score bands).
+7. Rental mortgage service rate (~7.8%/yr implied) vs current investment-property rates.
+8. Business credit building speed (D&B → established timeline) vs real Net-30/tradeline timelines.
+Each finding: PROPOSE the fix + real-world source; owner approves numbers (two-key rule).
+
 ## 🔒 NEEDS OWNER INPUT (do NOT auto-build)
 - **Balance-tuning numbers** — the routines PROPOSE tuning from playtest data; the owner picks the
   actual numbers (per `verify-design-decisions-first`).
