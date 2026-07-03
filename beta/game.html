@@ -1194,16 +1194,17 @@ window.EMBEDDED_CONFIG = {
       "narrative_success": "Equipment financed and in service. Capacity is up — and the Section 179 write-off just cut this year's tax bill.",
       "narrative_failure": "The equipment financing fell through this month.",
       "catalog": [
-        { "id": "espresso", "icon": "☕", "label": "Commercial Kitchen Line", "price": 12000, "min_rev": 8000, "cap": 3000, "blurb": "The classic first equipment loan — more output per hour, every hour." },
-        { "id": "vending", "icon": "🥤", "label": "Vending Route — 8 machines", "price": 20000, "min_rev": 8000, "income": 700, "blurb": "Boring money: stocked machines earning while you sleep. The starter semi-passive route." },
-        { "id": "boxtruck", "icon": "🚚", "label": "Box Truck + Delivery Contract", "price": 45000, "min_rev": 15000, "cap": 9000, "blurb": "The last-mile logistics playbook — a contracted truck is a rolling revenue machine." },
-        { "id": "foodtrailer", "icon": "🚐", "label": "Food Trailer", "price": 38000, "min_rev": 15000, "cap": 7000, "brand": 4, "blurb": "Mobile storefront — revenue plus brand visibility, but it runs on your hustle." },
-        { "id": "suv179", "icon": "🚙", "label": "Heavy SUV — the '179 write-off'", "price": 90000, "min_rev": 30000, "cap": 1500, "blurb": "The famous G-Wagon deduction: over 6,000 lbs means a huge first-year write-off. The tax saving is real — but a deduction on something that barely cash-flows is still a cost. Eyes open." },
-        { "id": "solar", "icon": "☀️", "label": "Solar Install (ITC)", "price": 80000, "min_rev": 30000, "opex": -900, "blurb": "Cuts your power bill for decades plus the investment tax credit — expense arbitrage, not income." },
-        { "id": "cnc", "icon": "🏭", "label": "CNC / Production Machinery", "price": 110000, "min_rev": 35000, "cap": 22000, "sys": 6, "blurb": "Manufacturing margin: precision output, less labor per unit, a real moat." },
-        { "id": "atm", "icon": "🏧", "label": "ATM Route", "price": 100000, "min_rev": 40000, "income": 2600, "blurb": "Fee income on autopilot — the quiet route empire wealthy operators love." },
-        { "id": "laundro", "icon": "🧺", "label": "Laundromat Machine Refit", "price": 150000, "min_rev": 45000, "income": 4200, "blurb": "Quarters into cash flow with almost no labor — a private-equity darling for a reason." },
-        { "id": "carwash", "icon": "🚗", "label": "Car-Wash Tunnel Equipment", "price": 220000, "min_rev": 60000, "income": 6500, "blurb": "The bonus-depreciation plus membership-revenue play the smart money has been rolling up." }
+        { "id": "espresso", "icon": "☕", "label": "Commercial Kitchen Line", "price": 12000, "min_rev": 8000, "cap": 2400, "blurb": "The classic first equipment loan — more output per hour, every hour." },
+        { "id": "vending", "icon": "🥤", "label": "Vending Route — 8 machines", "price": 20000, "min_rev": 8000, "income": 500, "blurb": "Boring money: stocked machines earning while you sleep. The starter semi-passive route." },
+        { "id": "boxtruck", "icon": "🚚", "label": "Box Truck + Delivery Contract", "price": 45000, "min_rev": 15000, "cap": 7500, "blurb": "The last-mile logistics playbook — a contracted truck is a rolling revenue machine." },
+        { "id": "solar", "icon": "☀️", "label": "Solar Install (ITC)", "price": 60000, "min_rev": 25000, "opex": -1150, "blurb": "Cuts your power bill for decades plus the investment tax credit. Financed over 5 years it's tight — the payoff is every year AFTER the loan." },
+        { "id": "cnc", "icon": "🏭", "label": "CNC / Production Machinery", "price": 110000, "min_rev": 35000, "cap": 16000, "sys": 6, "blurb": "Manufacturing margin: precision output, less labor per unit, a real moat." },
+        { "id": "atm", "icon": "🏧", "label": "ATM Route", "price": 100000, "min_rev": 40000, "income": 2400, "blurb": "Fee income on autopilot — the quiet route empire wealthy operators love." },
+        { "id": "laundro", "icon": "🧺", "label": "Laundromat Machine Refit", "price": 150000, "min_rev": 45000, "income": 3800, "blurb": "Quarters into cash flow with almost no labor — a private-equity darling for a reason." },
+        { "id": "carwash", "icon": "🚗", "label": "Car-Wash Tunnel Equipment", "price": 220000, "min_rev": 60000, "income": 6000, "blurb": "The bonus-depreciation plus membership-revenue play the smart money has been rolling up." },
+        { "id": "gwagon", "icon": "🚙", "label": "G-Wagon — the '179 write-off'", "price": 180000, "min_rev": 40000, "luxury": true, "cap": 1500, "brand": 5, "exp": 5, "upkeep": 400, "audit": 4, "blurb": "Over 6,000 lbs, so with documented majority business use the first-year write-off is real and legal. It flexes hard and clients notice — but the payment beats what it earns, and aggressive vehicle write-offs are an audit favorite." },
+        { "id": "yacht", "icon": "🛥️", "label": "Yacht (charter-managed)", "price": 350000, "min_rev": 80000, "luxury": true, "income": 2500, "exp": 10, "rel": 4, "brand": 5, "upkeep": 2900, "audit": 6, "taxmult": 0.5, "blurb": "In a charter program the write-off is legitimate business use — and charter income offsets some of the brutal ~10%/yr upkeep. Some. The rest is lifestyle, priced accordingly." },
+        { "id": "plane", "icon": "✈️", "label": "Light Aircraft (business travel)", "price": 600000, "min_rev": 120000, "luxury": true, "cap": 4000, "exp": 8, "brand": 8, "upkeep": 4500, "audit": 8, "taxmult": 0.5, "blurb": "The bonus-depreciation aircraft play — legal with documented business travel, and hours saved are real capacity. Also the single loudest audit flag in the tax code. Fly with clean logs." }
       ]
     },
     {
@@ -2637,6 +2638,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.66.0',d:'2026-07-02 21:55',n:[
+'🛥️ <strong>Luxury &amp; Flex equipment</strong> — the catalog grew a lifestyle section: the G-Wagon (real 179 write-off, real audit flag), a charter-managed yacht, and a light aircraft. They boost your lifestyle score and brand — the flex is genuine — but they cost you monthly, the write-offs are limited to documented business use, and every one raises your audit risk. Legal, powerful, and priced like the toys they are.',
+'⚖️ <strong>Equipment rebalance</strong> — trimmed the catalog to 8 business machines and tuned yields to real-world numbers: vending route and ATM route earn like real routes now, solar is honestly "tight over the loan, gravy after," CNC and box truck came down from too-generous.']},
 {v:'0.65.2',d:'2026-07-02 21:35',n:[
 '💵 Cash Services: one stats box, matching the policy panel — your available credit, cash and the before→after projection all live in a single "Your credit · if you confirm" box below Confirm.']},
 {v:'0.65.1',d:'2026-07-02 21:20',n:[
@@ -5164,29 +5168,34 @@ dealToggleInfo(id){this._dealInfo=!this._dealInfo;this.openDealControl(this._dea
 dealBack(){this._dealInfo=false;this.hidePopup();},/* back to the action list — the deal (and any queued terms) stays as-is */
 // ===== Equipment catalog picker — real-world equipment plays, tiers gated by ability to pay. 10% down, ~9% APR, 5yr; the asset collateralizes the loan; Section 179 writes the price off. =====
 _equipPmt(financed){const r=0.09/12,n=60;return Math.round(financed*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1));},
-_equipBenefit(it){return (it.income||0)+(it.cap||0)*0.30+(-(it.opex||0));},/* income counts fully; capacity ≈30% flows to profit; opex saving counts fully */
+_equipBenefit(it){return (it.income||0)+(it.cap||0)*0.30+(-(it.opex||0))-(it.upkeep||0);},/* income counts fully; capacity ≈30% flows to profit; opex saving counts fully; luxury upkeep counts against */
 openEquipControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));this._equipCat=cat;
  const a=this.getAvailableActions(cat).find(x=>x.id===id);if(!a)return;
  const catalog=a.catalog||[],rev=s.monthly_revenue||0,sel=!!(this.selectedActions[cat]&&this.selectedActions[cat].id===id);
  const pick=s._equip_choice&&catalog.find(x=>x.id===s._equip_choice);
  let h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;"><button class="back-chip" style="margin:0;" onclick="Game.dealBack()">← Back</button><span style="font-size:0.62rem;color:var(--text2);">10% down · ~9% APR · 5 yrs · Sec. 179</span></div>';
  h+='<div style="font-size:0.74rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">The bank funds the asset, the asset funds the payment — pick equipment your cash flow can carry. Bigger revenue unlocks bigger tiers.</div>';
- for(const it of catalog){const locked=rev<(it.min_rev||0),on=pick&&pick.id===it.id;
+ const renderItem=it=>{const locked=rev<(it.min_rev||0),on=pick&&pick.id===it.id;
   const pmt=this._equipPmt(Math.round(it.price*0.9)),ben=this._equipBenefit(it),dscr=pmt>0?ben/pmt:0;
-  const tag=dscr>=1.3?'<span style="color:var(--accent);font-weight:700;">🟢 '+(it.income?'cash-flows':'pays for itself')+'</span>':(dscr>=1.0?'<span style="color:var(--gold);font-weight:700;">🟡 tight</span>':'<span style="color:var(--red);font-weight:700;">🔴 costs you monthly'+(it.id==='suv179'?' — tax play':'')+'</span>');
-  if(locked){h+='<div style="border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin-bottom:6px;opacity:0.5;"><div style="display:flex;justify-content:space-between;font-size:0.74rem;"><span>'+it.icon+' '+it.label+'</span><span style="white-space:nowrap;">'+fm(it.price)+'</span></div><div style="font-size:0.6rem;color:var(--text2);">🔒 unlocks at '+fm(it.min_rev)+'/mo revenue</div></div>';continue;}
+  const tag=it.luxury?'<span style="color:var(--gold);font-weight:700;">🏝️ flex — costs monthly</span>':(dscr>=1.3?'<span style="color:var(--accent);font-weight:700;">🟢 '+(it.income?'cash-flows':'pays for itself')+'</span>':(dscr>=1.0?'<span style="color:var(--gold);font-weight:700;">🟡 tight</span>':'<span style="color:var(--red);font-weight:700;">🔴 costs you monthly</span>'));
+  if(locked){h+='<div style="border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin-bottom:6px;opacity:0.5;"><div style="display:flex;justify-content:space-between;font-size:0.74rem;"><span>'+it.icon+' '+it.label+'</span><span style="white-space:nowrap;">'+fm(it.price)+'</span></div><div style="font-size:0.6rem;color:var(--text2);">🔒 unlocks at '+fm(it.min_rev)+'/mo revenue</div></div>';return;}
   h+='<div onclick="Game.equipPick(\''+it.id+'\')" style="cursor:pointer;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.10)':'var(--surface)')+';border-radius:8px;padding:7px 10px;margin-bottom:6px;">';
   h+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.76rem;font-weight:700;"><span>'+it.icon+' '+it.label+'</span><span style="white-space:nowrap;">'+fm(it.price)+'</span></div>';
-  h+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.62rem;color:var(--text2);margin-top:2px;"><span>'+(it.income?'+'+fm(it.income)+'/mo income':(it.cap?'+'+fm(it.cap)+'/mo capacity':(it.opex?fm(-it.opex)+'/mo expenses cut':'')))+' · −'+fm(pmt)+'/mo payment</span><span>'+tag+'</span></div>';
+  h+='<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.62rem;color:var(--text2);margin-top:2px;"><span>'+(it.income?'+'+fm(it.income)+'/mo income':(it.cap?'+'+fm(it.cap)+'/mo capacity':(it.opex?fm(-it.opex)+'/mo expenses cut':'')))+(it.upkeep?' · −'+fm(it.upkeep)+'/mo upkeep':'')+' · −'+fm(pmt)+'/mo payment</span><span>'+tag+'</span></div>';
   if(on)h+='<div style="font-size:0.64rem;color:var(--text2);line-height:1.4;margin-top:4px;">'+it.blurb+'</div>';
-  h+='</div>';}
- if(pick){const down=Math.round(pick.price*0.10),financed=pick.price-down,pmt=this._equipPmt(Math.round(pick.price*0.9)),taxBack=Math.round(pick.price*(s.tax_rate||0.25)*0.85);
+  h+='</div>';};
+ for(const it of catalog.filter(x=>!x.luxury))renderItem(it);
+ const lux=catalog.filter(x=>x.luxury);
+ if(lux.length){h+='<div style="font-size:0.58rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 5px;">🏝️ Luxury &amp; flex — lifestyle plays, eyes open</div>';for(const it of lux)renderItem(it);}
+ if(pick){const down=Math.round(pick.price*0.10),financed=pick.price-down,pmt=this._equipPmt(Math.round(pick.price*0.9)),taxBack=Math.round(pick.price*(s.tax_rate||0.25)*0.85*(pick.taxmult!=null?pick.taxmult:1));
   const canGo=(s.cash||0)+(s.personal_cash||0)>=down;
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">If you buy the '+pick.label+'</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
   h+='<div class="breakdown-row"><span>Down (10%)</span><span style="font-weight:700;">'+fm(down)+'</span></div>';
   h+='<div class="breakdown-row"><span>Financed</span><span style="font-weight:700;">'+fm(financed)+' · −'+fm(pmt)+'/mo</span></div>';
   h+=(pick.income?'<div class="breakdown-row"><span>Income</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.income)+'/mo</span></div>':'')+(pick.cap?'<div class="breakdown-row"><span>Revenue capacity</span><span style="font-weight:700;color:var(--accent);">+'+fm(pick.cap)+'/mo</span></div>':'')+(pick.opex?'<div class="breakdown-row"><span>Operating expenses</span><span style="font-weight:700;color:var(--accent);">'+fm(pick.opex)+'/mo</span></div>':'');
-  h+='<div class="breakdown-row"><span>Sec. 179 tax back (year 1)</span><span style="font-weight:700;color:var(--gold);">+'+fm(taxBack)+'</span></div></div>';
+  h+=(pick.upkeep?'<div class="breakdown-row"><span>Upkeep</span><span style="font-weight:700;color:var(--red);">−'+fm(pick.upkeep)+'/mo</span></div>':'')+(pick.exp?'<div class="breakdown-row"><span>Lifestyle — experiences</span><span style="font-weight:700;color:var(--accent);">+'+pick.exp+'</span></div>':'')+(pick.rel?'<div class="breakdown-row"><span>Lifestyle — relationships</span><span style="font-weight:700;color:var(--accent);">+'+pick.rel+'</span></div>':'')+(pick.brand?'<div class="breakdown-row"><span>Brand / flex</span><span style="font-weight:700;color:var(--accent);">+'+pick.brand+'</span></div>':'');
+  h+='<div class="breakdown-row"><span>Sec. 179 tax back (year 1)'+(pick.taxmult!=null&&pick.taxmult<1?' · partial biz use':'')+'</span><span style="font-weight:700;color:var(--gold);">+'+fm(taxBack)+'</span></div>';
+  h+=(pick.audit?'<div class="breakdown-row"><span>Audit risk</span><span style="font-weight:700;color:var(--red);">+'+pick.audit+'</span></div><div class="breakdown-detail">Luxury write-offs are legal with documented business use — and they\'re what auditors look for first. The flex is real; so is the flag.</div>':'')+'</div>';
   if(!canGo)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--red);font-weight:600;text-align:center;">Not enough cash for the '+fm(down)+' down payment.</div>';
   else{h+='<button onclick="Game.equipConfirm()" style="width:100%;margin-top:10px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm')+'</button>';
    h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move.':'Uses this month\'s finance move.')+'</div>';}}
@@ -5500,9 +5509,13 @@ if(action.id==='equipment_financing'&&success){const s=this.state;
   if(it.opex)s.operating_expenses=Math.max(0,(s.operating_expenses||0)+it.opex);
   if(it.brand)s.brand_equity=Math.min(100,(s.brand_equity||0)+it.brand);
   if(it.sys)s.systems_maturity=Math.min(100,(s.systems_maturity||0)+it.sys);
-  const taxSaved=Math.round(it.price*(s.tax_rate||0.25)*0.85);s.cash+=taxSaved;s._equip_units=(s._equip_units||0)+1;
+  if(it.exp)s.lifestyle_experiences=Math.min(100,(s.lifestyle_experiences||0)+it.exp);
+  if(it.rel)s.lifestyle_relationships=Math.min(100,(s.lifestyle_relationships||0)+it.rel);
+  if(it.upkeep)s.lifestyle_expenses=(s.lifestyle_expenses||0)+it.upkeep;
+  if(it.audit)s.audit_risk=Math.min(100,(s.audit_risk||0)+it.audit);
+  const taxSaved=Math.round(it.price*(s.tax_rate||0.25)*0.85*(it.taxmult!=null?it.taxmult:1));s.cash+=taxSaved;s._equip_units=(s._equip_units||0)+1;
   const ben=it.income?('it\'s throwing off '+this.fmtMoney(it.income)+'/mo'):(it.cap?('capacity is up '+this.fmtMoney(it.cap)+'/mo'):('expenses just dropped '+this.fmtMoney(-(it.opex||0))+'/mo'));
-  s._dyn_narrative=it.icon+' '+it.label+' financed and in service — '+this.fmtMoney(down)+' down, the bank funded the other '+this.fmtMoney(financed)+', and '+ben+'. Section 179 wrote off the full '+this.fmtMoney(it.price)+', putting ~'+this.fmtMoney(taxSaved)+' back in your pocket.'+(it.id==='suv179'?' Nice write-off — now notice the payment is bigger than what it earns. The tax code subsidized it; it didn\'t make it free.':'');
+  s._dyn_narrative=it.icon+' '+it.label+' financed and in service — '+this.fmtMoney(down)+' down, the bank funded the other '+this.fmtMoney(financed)+', and '+ben+'. '+(it.taxmult!=null&&it.taxmult<1?'The write-off is limited to your documented business use — ~':'Section 179 wrote off the full '+this.fmtMoney(it.price)+', putting ~')+this.fmtMoney(taxSaved)+' back in your pocket.'+(it.luxury?' The flex is real — and so is the audit flag. Keep the logs clean.':'');
  }else{/* no pick (exec/bot auto-play) — legacy generic equipment */
   const mult=Math.max(1,Math.min(4,1+(s.monthly_revenue||0)/40000));const cost=Math.round(15000*mult);s.total_debt+=cost;this._addLoan('equipment',cost);const capBump=Math.round(cost*0.5);s.revenue_capacity=(s.revenue_capacity||0)+capBump;s.systems_maturity=Math.min(100,(s.systems_maturity||0)+4);const taxSaved=Math.round(cost*(s.tax_rate||0.25)*0.85);s.cash+=taxSaved;s._equip_units=(s._equip_units||0)+1;s._dyn_narrative='You financed '+this.fmtMoney(cost)+' of equipment — capacity is up about '+this.fmtMoney(capBump)+'/mo. Section 179 let you deduct the full '+this.fmtMoney(cost)+' this year, putting ~'+this.fmtMoney(taxSaved)+' back in your pocket. The bank funded the asset; the tax code funded part of the payment.';}}
 // CAPTIVE INSURANCE — form your own insurer; the monthly engine (monthlyTick) then runs the deductible-premium → tax-advantaged-reserve loop.
