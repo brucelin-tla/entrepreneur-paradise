@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.68.7 — 2026-07-03 — (beta) My Real Finances: honest-assumptions pass
+The adversarial premise pass from the process-remedy queue — the same skeptical-CFO treatment
+the fidelity check gives APRs, applied to the mode's own premise:
+- **"What has to be true" box** on the policy (IUL) illustration: index crediting is a long-run
+  average, not a promise (real years swing 0%-floor to cap); policy costs are NOT modeled (real
+  early-year cash value runs below premiums paid, often 5–10 yrs); funding discipline for 10+
+  years is the price of entry (quit early = surrender charges + sunk costs); "tax-free" holds
+  only while the policy stays in force — lapse with a loan outstanding and gains become taxable
+  (why the wash loan is the safe default).
+- **Projection honesty**: growth box now says "steady ~6%/yr *illustration* rate, before policy
+  costs"; horizons under ~10 years get an inline warning that costs + surrender typically eat
+  the compounding.
+- Display-only change — no RM math or game state touched. Every panel keeps the existing
+  educational/not-advice disclaimer + Strategist CTA.
+
 ## v0.68.5 — 2026-07-03 — 🚀 PROMOTED TO LIVE (v0.59.3 → v0.68.5)
 Owner-approved promote after the 2026-07-02 marathon playtest (20 beta releases in one day, all
 owner-driven). Everything since v0.59.3 is now the public game: deal panels with adjustable terms

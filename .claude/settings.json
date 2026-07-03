@@ -18,7 +18,15 @@
       "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__fire_trigger",
       "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__list_triggers",
       "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__list_environments",
-      "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__list_repos"
+      "mcp__bf7c680d-5fdc-5ef4-b4a0-abadb619bf0a__list_repos",
+      "mcp__Google_Calendar__list_calendars",
+      "mcp__Google_Calendar__list_events",
+      "mcp__Google_Calendar__get_event",
+      "mcp__Google_Calendar__create_event",
+      "mcp__9dc273b0-1c1e-4657-b765-2ec06c55f889__list_calendars",
+      "mcp__9dc273b0-1c1e-4657-b765-2ec06c55f889__list_events",
+      "mcp__9dc273b0-1c1e-4657-b765-2ec06c55f889__get_event",
+      "mcp__9dc273b0-1c1e-4657-b765-2ec06c55f889__create_event"
     ]
   }
 }
