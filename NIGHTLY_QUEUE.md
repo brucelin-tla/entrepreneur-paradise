@@ -123,6 +123,19 @@ business credit" loop — yet funding via 0% business cards is literally the Epi
   limit), whether failed stacking attempts ding the score.
 - **Engine tie-in:** ladder tier (#2) sets the stack cap and tranche size — better bank, bigger stacks.
 
+### 3.5 Equipment Picker — deal-panel for Finance Equipment  🚚 OWNER-REQUESTED (2026-07-02)
+Turn `equipment_financing` into a deal-panel picker (same pattern as property deals): a catalog of
+real-world equipment plays, tiers gated by ability to pay (equipment finance is collateralized —
+underwrite on cash flow/DTI, ~7–12% APR, 3–7yr terms, easier approval than unsecured). Catalog
+(owner reviewing): espresso line $8–15k / vending route $15–25k (starter) · box truck + logistics
+$35–60k / food trailer $30–50k (workhorse) · CNC $80–150k / laundromat refit $100–200k (heavy) ·
+**Section 179 6,000-lb SUV** $70–110k + solar ITC $60–120k (tax plays — big depreciation vs active
+income, the "G-Wagon write-off" lesson: a deduction on a non-cash-flowing asset is still a cost) ·
+ATM route $80–150k / car-wash tunnel $150–300k (empire, semi-passive `other_monthly_revenue`).
+🟢🟡🔴 rate each on payment-vs-cash-flow (DSCR), like property deals. Config-driven catalog
+(`config/equipment.json`), engine reuses the deal-panel plumbing. Build as its own beta release
+after owner reacts to the catalog.
+
 ### 4. Dream Home + HELOC — one asset, two systems  🏡 SPEC (un-parks HELOC, 2026-07-02)
 **The insight that un-parked HELOC:** the game has no personal residence, which killed HELOC-as-
 capital (it just duplicated Cash-Out Refi/PAL). But the owner also wants **dream-life building** —
