@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.64.1',d:'2026-07-02 20:05',n:[
+'📊 <strong>Maxing your cards now actually hurts</strong> — your credit score reprices utilization within ~2 months like real myFICO (it used to bleed just 4 pts/mo, so a 100%-utilization hit never really landed). It recovers just as fast when you pay the balances down — utilization has no memory. Slow steady climbs from history-building are unchanged.']},
 {v:'0.64.0',d:'2026-07-02 19:40',n:[
 '✅ <strong>Confirm stays put</strong> — confirming a deal, policy change, velocity move, or cash liquidation no longer bounces you out of the panel: you stay right there and SEE what you locked in. Every action button now just says "Confirm".',
 '🎛 <strong>Sliders live next to Confirm everywhere</strong> — policy monthly funding, cash-services amount, and velocity chunk & draw all moved directly above their Confirm buttons, same as the deal panels.',
@@ -3161,7 +3163,9 @@ s._lastCreditRepair=null;
 if(s._credit_repair&&this.month>=(s._credit_repair.startMonth||0)){const cr=s._credit_repair,before=s.personal_credit_score||0,remove=Math.min(cr.per,cr.remaining);cr.remaining-=remove;s.credit_negatives=Math.max(0,(s.credit_negatives||0)-remove);s.personal_credit_score=Math.min(850,before+cr.gainPer*remove);
 if(cr.remaining<=0){if(s.personal_credit_score<cr.floor)s.personal_credit_score=cr.floor;if(s.debt_breakdown)delete s.debt_breakdown.collections;s._credit_repair=null;}
 s._lastCreditRepair={month:this.month,removed:remove,remaining:(s._credit_repair?s._credit_repair.remaining:0),before:Math.round(before),after:Math.round(s.personal_credit_score)};}
-else{const target=this.calcFicoTarget(),cur=s.personal_credit_score||0;if(cur<target)s.personal_credit_score=Math.min(target,cur+9);else if(cur>target+10)s.personal_credit_score=Math.max(target,cur-4);}/* drift toward the myFICO-weighted target (utilization ~30%); the repair branch above handles active derogatory removal */
+else{const target=this.calcFicoTarget(),cur=s.personal_credit_score||0;
+if(cur<target)s.personal_credit_score=Math.min(target,cur+Math.max(9,Math.round((target-cur)*0.3)));/* small gaps (history aging) climb the slow +9; a BIG paydown gap recovers fast — real utilization has no memory */
+else if(cur>target)s.personal_credit_score=Math.max(target,cur-Math.max(12,Math.round((cur-target)*0.5)));}/* maxing your cards reprices within ~2 cycles like real myFICO (was −4/mo — a 115-pt utilization hit took 29 months to land, i.e. never) */
 // Epic Life perk (exclusive): the concierge disputes hard inquiries off your report every 6 months — saving the ~$1,000 a credit-repair service charges and lifting your approval odds.
 if(s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0){s._inquiriesCleared=s.credit_inquiries;s.credit_inquiries=0;this._epicSavings=(this._epicSavings||0)+1000;s._epic_savings_total=(s._epic_savings_total||0)+1000;}
 // Without Epic, hard inquiries still age off naturally — one drops every 6 months, so only RECENT credit-shopping keeps hurting your odds.
