@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.62.1 — 2026-07-02 — (beta) Sim-start recap + loud failure
+Beta-only. Owner playtested v0.62.0 and reported the sim profiles "enter at month 1" and read as
+an artificial/pre-built start. Could NOT reproduce (headless click-path test on both the site and
+the offline file lands m13, no errors) — best hypothesis is a stale build (OneDrive sync / browser
+cache serving pre-0.62.0 js, where the only special card is the god-mode 🧪 Beta Test sandbox,
+which DOES start at month 1 with artificial stats). Two changes so this can't be ambiguous again:
+- **📼 Landing recap** (`_simRecap`): arriving at Month 13 opens a popup proving the bot really
+  played — the finance moves it took (from `_playLog`), total moves, and the landed stats
+  (revenue/cash/credit/passive/debt). Distinguishes the SIM cards from the Beta Test sandbox at a
+  glance.
+- **🛟 Loud failure**: the sim loop is wrapped per-attempt; if all 3 attempts fail the player gets
+  an explicit "simulation didn't finish" popup with the error text and their actual month — never
+  a silent month-1 strand that looks like a fake profile.
+
 ## v0.62.0 — 2026-07-02 — (beta) Simulated year-2 head-starts: Operator & Average Player
 Beta-only release (`beta/`); the live root is untouched. Owner-requested playtest accelerators —
 jump straight to the mid-game where the deal panels and Part-2 content actually live.

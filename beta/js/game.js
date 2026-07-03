@@ -51,6 +51,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.62.1',d:'2026-07-02 17:30',n:[
+'📼 <strong>Year-1 recap on the simulated starts</strong> — landing at Month 13 now opens a recap proving the bot really played: the finance moves it took, moves made, and where you stand (revenue, cash, credit, passive, debt). Nothing is pre-set — every run differs.',
+'🛟 If the simulation ever stops early, it now says so loudly (with the error) instead of quietly leaving you at Month 1 — screenshot and report it.']},
 {v:'0.62.0',d:'2026-07-02 12:10',n:[
 '🤖 <strong>Two simulated head-starts (beta)</strong> — new "Operator — Year 2" and "Average Player — Year 2" profiles on the New Game screen. A bot plays your first 12 months live through the real engine the moment you tap the card — the Operator plays the intended finance-ladder path, the Average Player grinds revenue and neglects finance — then you take over at the start of month 13 with earned stats. Both unranked.']},
 {v:'0.61.0',d:'2026-07-02 10:35',n:[
@@ -966,12 +969,14 @@ startSimProfile(kind){
   const s=this.state,liq=(s.cash||0)+(s.personal_cash||0)+(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
   const aff=i=>(-cashOf(ch[i]))<=liq*0.9;if(aff(0))return 0;for(let i=0;i<ch.length;i++)if(aff(i))return i;return ch.length-1;};
  const PANEL_ACTS=['policy_loan','activate_passive_income','velocity_banking','buy_real_estate','buy_str','private_banking','cash_out_refi'];/* panel-routed for humans — a bot queues them directly */
+ let simErr=null;
  for(let attempt=0;attempt<3;attempt++){/* a year-1 death is near-impossible for these personas, but reroll rather than hand the player a corpse */
   const p=JSON.parse(JSON.stringify(base));p.id='sim_'+kind;p.label=kind==='operator'?'Operator — Year 2':'Average Player — Year 2';p.difficulty=null;
   this.selectArchetype(p,true);const s=this.state;s._tutorial_seen=true;s._ngplus=true;
   if(kind==='operator')s._dealTerms={buy_real_estate:{downPct:25},buy_str:{downPct:25},private_banking:{drawPct:50},cash_out_refi:{ltvPct:60}};/* disciplined: cushion on every lever */
   this.showScreen('game-screen');this.startGame();
   let guard=0,dead=false;
+  try{
   while(guard++<600){const sc=scr();
    if(sc==='end-screen'){dead=true;break;}
    if(sc==='checkpoint-screen')break;/* safety only — m12 is not a checkpoint anymore (finale is m18, checkpoint m24) */
@@ -985,10 +990,24 @@ startSimProfile(kind){
    if(sc==='event-screen'){if(this.currentEvent){const ch=this.currentEvent._scaledChoices||this.currentEvent.choices||[1];this.resolveEvent(Math.max(0,Math.min(evPick(this.currentEvent),ch.length-1)));}
     else{const cards=document.querySelectorAll('#event-choices .choice-card');if(cards.length)cards[0].click();else this.nextMonth();}continue;}
    if(sc==='result-screen'||sc==='lifestyle-screen'){this.nextMonth();continue;}
-   break;/* unknown screen — stop rather than loop blind */}
-  if(!dead&&!this._lost){this.hidePopup();return;}
+   throw new Error('sim stuck on screen: '+sc+' @m'+this.month);/* unknown screen — surface it, don't strand the player silently */}
+  }catch(e){simErr=e;continue;}/* reroll on error — if all 3 attempts fail we SHOW it below */
+  if(!dead&&!this._lost&&this.month>=13){this.hidePopup();this._simRecap(kind);return;}
  }
- this.hidePopup();},
+ // All attempts failed — never strand the player at month 1 looking like a fake start. Say what happened.
+ this.hidePopup();
+ this.showPopup('🤖 Simulation didn\'t finish','<div style="font-size:0.82rem;line-height:1.6;">The year-1 bot run stopped early'+(simErr?' with an error':'')+' — you\'re at <strong>Month '+this.month+'</strong> instead of 13.'+(simErr?'<div style="margin-top:8px;padding:8px 10px;background:var(--surface);border:1px solid var(--red);border-radius:6px;font-size:0.7rem;color:var(--red);word-break:break-all;">'+String(simErr).slice(0,300)+'</div>':'')+'<div style="margin-top:8px;color:var(--text2);font-size:0.74rem;">Please screenshot this and report it — that\'s exactly what the beta is for.</div></div>');},
+// The landing recap — proof the bot really PLAYED year 1 (this is not a pre-built save): what it did, where you stand.
+_simRecap(kind){const s=this.state,fm=v=>this.fmtMoney(Math.round(v)),log=this._playLog||[];
+ const fin=log.filter(e=>e.c==='finance').map(e=>e.l),finList=fin.slice(0,8).join(' · ')+(fin.length>8?' · +'+(fin.length-8)+' more':'');
+ const row=(l,v)=>'<div class="breakdown-row"><span>'+l+'</span><span style="font-weight:700;">'+v+'</span></div>';
+ let h='<div style="font-size:0.78rem;color:var(--text2);line-height:1.55;margin-bottom:8px;">'+(kind==='operator'?'Your operator just <strong style="color:var(--text);">played all 12 months live</strong> — every move picked and resolved through the real engine, nothing pre-set. He ran the finance ladder:':'This player just <strong style="color:var(--text);">played all 12 months live</strong> — grinding revenue and mostly ignoring the finance path (like most owners do):')+'</div>';
+ if(fin.length)h+='<div style="font-size:0.7rem;color:var(--gold);line-height:1.5;margin-bottom:8px;">'+finList+'</div>';
+ else h+='<div style="font-size:0.7rem;color:var(--gold);margin-bottom:8px;">Finance moves taken: almost none — that\'s the point.</div>';
+ h+='<div style="padding:4px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">';
+ h+=row('Moves made',log.length);h+=row('Monthly revenue',fm(s.monthly_revenue||0));h+=row('Cash',fm(s.cash||0));h+=row('Credit score',s.personal_credit_score||0);h+=row('Passive income',fm(s.other_monthly_revenue||0)+'/mo');h+=row('Total debt',fm(s.total_debt||0));h+='</div>';
+ h+='<div style="font-size:0.72rem;color:var(--text2);margin-top:8px;">You take over from <strong style="color:var(--text);">Month 13</strong>. Unranked run.</div>';
+ this.showPopup(kind==='operator'?'🤖 Year 1 — played by your operator':'🙂 Year 1 — played the usual way',h);},
 showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);},
 showPopup(t,b){document.getElementById('popup-title').innerHTML=t;document.getElementById('popup-body').innerHTML=b;const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='';document.getElementById('popup-container').style.display='block';this._lockScroll();},
 // Epic sub-panel: one clean "← Epic Life" button at the bottom (returns to the hub) and hide the default "Got it" — no redundant close buttons.
