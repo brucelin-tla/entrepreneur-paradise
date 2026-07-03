@@ -107,8 +107,27 @@ v0.61/v0.62 playtest). Two standing rules, enforced like the fidelity check:
 
 ## Token-lean process (this project tends to long sessions)
 
-- Start a FRESH session for each new chunk of work — context carries via these docs + memory + RELEASE_NOTES, not chat history.
+- Start a FRESH session for each new chunk of work — context carries via these docs + memory + RELEASE_NOTES, not chat history. **The marathon session is the #1 token burner**: every turn re-reads the whole conversation, so a 6-hour session costs multiples of six 1-hour sessions doing the same work.
 - Batch related tweaks into ONE release (one build/commit/push). Verify with targeted checks; lean on the user's mobile playtest. Screenshot only when the visual is the point.
+
+### Model ladder (owner mandate 2026-07-03 — hit the session limit mid-morning)
+
+Default **Sonnet** for everything; escalate per-TASK, never per-project:
+
+- **Sonnet (default):** docs, config/balance tuning, UI polish, copy, patch notes, routine
+  builds, playtest support, sales-suite CRUD work, framework/process writing.
+- **Opus/Fable (escalate):** designing or auditing a money mechanic (the fidelity check),
+  architecture decisions, thorny debugging after Sonnet stalls, adversarial premise passes.
+  Switch up with `/model` for that task, then back down.
+- Fan-outs (workflows, deep-research, multi-agent) are the single most expensive button in
+  the toolbox — only with an explicit reason, never inside nightly routines.
+
+### Standing token audit (fold into the Wednesday playtest block)
+
+Weekly, 5 minutes: check the usage panel; list the top 3 consumers (marathon session?
+routine? fan-out?); cut or cap the top offender. Nightly routines are prepare-only AND
+budget-capped: one research pass, no subagent fan-outs, no retry loops — if a routine hits
+a limit or permission wall, it stops and logs, it does not spin.
 
 ## Working preferences
 
