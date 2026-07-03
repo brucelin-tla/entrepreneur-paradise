@@ -2625,6 +2625,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.63.1',d:'2026-07-02 18:50',n:[
+'🛡️ <strong>Wash loan now says what it is: net 0%</strong> — the "Fixed · 3%" label read like a cost. It\'s a wash: 3% charged on the loan, 3% credited to the borrowed slice — they cancel exactly. The borrowed slice does NOT earn the index (that\'s the trade vs. the Index loan); the rest of your cash value still does. Mechanics were already right — the words weren\'t.']},
 {v:'0.63.0',d:'2026-07-02 18:20',n:[
 '🎛 <strong>Deal panels, decluttered</strong> — ← Back sits top-left, the slider sits right above Confirm (all the moving parts in thumb reach), and the extra buttons ("Got it", "✕ Remove") are gone. Picking a different finance move replaces a queued deal.',
 '🛡️ <strong>Index loan fixed to reality</strong> — the policy\'s variable loan is now a true INDEX LOAN at a flat 5% charged (modeled on John Hancock\'s Accumulation IUL), instead of floating with the market rate. Your full cash value keeps earning the index; the spread is the play, the lapse risk is the price.',
@@ -3956,8 +3958,8 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+='<input type="range" min="10" max="25" step="1" value="'+st.fundRate+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'ppc-fr\');if(e)e.textContent=this.value+\'% · ≈ $\'+Math.round('+rev+'*this.value/100).toLocaleString()+\'/mo\'" onchange="Game.polStageFund(this.value)">';
  h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;"><span id="ppc-fr" style="font-weight:700;color:var(--gold);">'+st.fundRate+'% · ≈ $'+Math.round(rev*st.fundRate/100).toLocaleString()+'/mo</span> — more builds cash value faster (opens borrowing sooner), less cash in pocket.</div>';
  const tBtn=(key,label,sub)=>{const on=st.loanType===key;return '<div onclick="Game.polStageType(\''+key+'\')" style="cursor:pointer;flex:1;border:1px solid '+(on?'var(--gold)':'var(--border)')+';background:'+(on?'rgba(245,200,66,0.12)':'var(--surface)')+';border-radius:6px;padding:7px 6px;text-align:center;"><div style="font-size:0.72rem;font-weight:700;color:'+(on?'var(--gold)':'var(--text)')+';">'+label+'</div><div style="font-size:0.55rem;color:var(--text2);margin-top:2px;line-height:1.3;">'+sub+'</div></div>';};
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan type</div><div style="display:flex;gap:8px;margin-bottom:6px;">'+tBtn('wash','Fixed · 3%','borrowed slice ~washes — lapse-proof')+tBtn('variable','Index · '+baseRate+'%','flat 5% charged; full cash value keeps earning the index — higher income, lapse risk')+'</div>';
- h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;line-height:1.35;">'+(isVar?'⚠️ Index bets the index return beats the flat '+baseRate+'% loan charge — great in good years, but a downturn can compound the loan past your cash value and lapse the policy (gains become taxable).':'Fixed keeps it safe — the loan and the borrowed slice roughly wash, so the policy can\'t lapse on you.')+'</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Loan type</div><div style="display:flex;gap:8px;margin-bottom:6px;">'+tBtn('wash','Wash · net 0%','3% charged, 3% credited — cancels out; lapse-proof')+tBtn('variable','Index · '+baseRate+'%','flat 5% charged; full cash value keeps earning the index — higher income, lapse risk')+'</div>';
+ h+='<div style="font-size:0.62rem;color:var(--text2);margin-bottom:12px;line-height:1.35;">'+(isVar?'⚠️ Index bets the index return beats the flat '+baseRate+'% loan charge — great in good years, but a downturn can compound the loan past your cash value and lapse the policy (gains become taxable).':'Wash = net 0%: the loan is charged 3% and the borrowed slice is credited 3% — they cancel exactly. The borrowed slice does NOT earn the index (that\'s the trade); the rest of your cash value still does. Structurally can\'t lapse.')+'</div>';
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Take a loan — tax-free, no credit check</div>';
  if(borrow>0){const step=Math.max(1,Math.round(borrow/100));
   h+='<input type="range" min="0" max="'+borrow+'" step="'+step+'" value="'+st.loanAmt+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'ppc-loan\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.polStageLoan(this.value)">';
@@ -3972,7 +3974,7 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">If you confirm</div><div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
  h+=proj((sep?'Cash — personal':'Cash'),fm(sep?(s.personal_cash||0):(s.cash||0)),fm(afterCash),st.loanAmt>0?'var(--accent)':'var(--text)');
  h+=proj('Policy loan',fm(loan),fm(loan+st.loanAmt),st.loanAmt>0?'var(--gold)':'var(--text)');
- h+=proj('Loan type',curVar?'Index':'Fixed',isVar?'Index':'Fixed');
+ h+=proj('Loan type',curVar?'Index 5%':'Wash net 0%',isVar?'Index 5%':'Wash net 0%');
  h+=proj('Funding /mo',fm(curFundMo),fm(newFundMo));
  h+=proj('Passive income',fm(curPassive)+'/mo',fm(newPassive)+'/mo',newPassive>0?'var(--accent)':'var(--text)');
  h+='</div>';
@@ -4364,7 +4366,7 @@ h+='<div class="breakdown-row"><span>Cash Value</span><span>'+this.fmtMoney(icv)
 h+='<div class="breakdown-detail">Grows ~7%/yr, tax-free — compounds even while borrowed against.</div>';
 {const _fr=Math.round((s._policy_fund_rate||0.15)*100),_rev=Math.round(s.monthly_revenue||0),_isVar=s._iul_loan_type==='variable';
  h+='<div class="breakdown-row"><span>Monthly funding</span><span>'+_fr+'% · '+this.fmtMoney(Math.round(_rev*_fr/100))+'/mo</span></div>';
- h+='<div class="breakdown-row"><span>Loan type</span><span>'+(_isVar?'Index 5%':'Fixed 3%')+'</span></div>';
+ h+='<div class="breakdown-row"><span>Loan type</span><span>'+(_isVar?'Index 5%':'Wash · net 0%')+'</span></div>';
  h+='<div class="breakdown-detail">Adjust funding, loan type, take a loan, or switch on passive income from the <strong>⭐ Epic Life</strong> panel.</div>';}
 h+='<div class="breakdown-row"><span>Loan Available (90%)</span><span>'+this.fmtMoney(pla)+'</span></div>';
 if(ilb>0){h+='<div class="breakdown-row"><span>Loan Outstanding</span><span style="color:var(--gold)">'+this.fmtMoney(ilb)+'</span></div>';h+='<div class="breakdown-detail">Accrues ~5%/yr. The cumulative loan is netted from your death benefit when you die — never repaid from your pocket.</div>';}
@@ -5725,7 +5727,7 @@ else if(!s._epic_life&&this.month%6===0&&(s.credit_inquiries||0)>0)s.credit_inqu
 s.energy=Math.min(100,s.energy+this.calcEnergyRecovery());s.fitness_level=Math.max(0,(s.fitness_level||0)-1);
 // IUL cash value is INDEXED to the cycle now — 0% floor in a downturn, capped (~12%/yr) in a boom, ~7-8% average. Your collateral holds in a crash (the floor) exactly when assets are cheap — that's the IUL's edge.
 // IUL ENGINE — the loan TYPE is the decision. WASH (~3.5%): the borrowed slice is parked at a matching rate → net 0%, the loan can NEVER outrun the collateral, lapse-proof (but the borrowed portion stops earning the index). VARIABLE (market ~5%): the FULL cash value keeps earning the index (0-15%) → positive arbitrage when the index beats the rate, but in a downturn the index floors at 0% while the loan keeps compounding — borrow too hard and the loan passes the cash value, the policy LAPSES, and the gains become taxable ordinary income (phantom income).
-{const idx=(s._index_return!=null)?s._index_return:0.0058,variable=s._iul_loan_type==='variable',washRate=0.03/12/* Fixed loan: ~3% wash */,varRate=0.05/12/* Index loan: 5% guaranteed charge (per John Hancock Accumulation IUL fixed index loan) — the borrowed slice keeps earning the index; the spread is the play, the lapse risk is the price */;
+{const idx=(s._index_return!=null)?s._index_return:0.0058,variable=s._iul_loan_type==='variable',washRate=0.03/12/* Wash loan = NET 0%: loan charged 3% (below) while the borrowed slice is credited 3% (not the index) — they cancel exactly */,varRate=0.05/12/* Index loan: 5% guaranteed charge (per John Hancock Accumulation IUL fixed index loan) — the borrowed slice keeps earning the index; the spread is the play, the lapse risk is the price */;
  if((s.insurance_cash_value||0)>0){const CV=s.insurance_cash_value,loan=s.insurance_loan_balance||0;
   if(!variable&&loan>0){const bf=Math.min(1,loan/Math.max(1,CV));s.insurance_cash_value=Math.round(CV*(1+idx*(1-bf)+washRate*bf));}/* wash: borrowed slice earns the wash rate, not the index */
   else s.insurance_cash_value=Math.round(CV*(1+idx));
