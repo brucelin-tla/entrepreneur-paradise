@@ -1,5 +1,21 @@
 # Release Notes
 
+## v0.68.10 — 2026-07-04 — (beta) Dashboard round 2
+- **Freedom moved to the Business column.** Reframed as a business-side question ("does the business
+  run without you") even though its inputs are personal. Still reveals on the same schedule as before
+  (once Life/mastery is a thing) and — deliberately — is NOT gated behind forming an LLC, unlike the
+  rest of the Business column. Verified: a pre-LLC save still sees Freedom while Money/Marketing stay
+  locked behind "Form an LLC."
+- **Culture rolls under Freedom** too, alongside System & Staff (was previously a standalone Business
+  funnel stat, shown only once you'd hired).
+- **"Funnel" renamed "Marketing & Operations"**, now headlined by **Customers** (the number that
+  actually pays the bills) with **Brand Equity & Leads** — the upstream detail — one tap behind it
+  (previously Brand Equity was the headline with Leads & Customers behind it).
+- **Policy Value and Net Worth moved off the main dashboard entirely**, into the 📊 Financial Health
+  panel (reachable from the ⭐ Epic Life hub) where the rest of the financial snapshot (net worth,
+  accessible capital, passive income, burn, cash flow, runway, utilization) already lives. Net Worth
+  was already shown there; Policy Value is newly added, right under Net Worth.
+
 ## v0.68.9 — 2026-07-04 — (beta) Dashboard decluttered + domain reference cleanup
 - **Collapsible stat details**, reusing the same "▸ / ▾" pattern already used by the Velocity loan
   list — each summary stat now shows one number by default, with its breakdown one tap away:

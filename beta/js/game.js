@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.10',d:'2026-07-04 13:00',n:[
+'📊 <strong>Dashboard round 2</strong> — Freedom moved to the Business side (it\'s "does the business run without you"); Culture rolled in under Freedom alongside System &amp; Staff; Business\'s funnel section is now "Marketing &amp; Operations" headlined by Customers, with Brand Equity &amp; Leads one tap behind it. Policy Value and Net Worth moved off the main dashboard into the 📊 Financial Health panel (⭐ Epic Life hub) where the rest of your snapshot already lives.']},
 {v:'0.68.9',d:'2026-07-04 11:30',n:[
 '📊 <strong>Dashboard decluttered</strong> — Energy, Freedom, Brand Equity and Net/mo now show one glance-able number each; tap "▸ see more" under each to expand its detail (Personal Mastery under Energy, System &amp; Staff under Freedom, Leads &amp; Customers under Brand Equity, Income/Expense under Net/mo). Same numbers, fewer rows.',
 '🔧 The game\'s own domain references are now consistent with where it actually lives.']},
@@ -1587,6 +1589,7 @@ openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSepar
   h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:16px 0 5px;">Your snapshot</div>';}
  h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 12px;">';
  h+=row('Net worth',fm(nw),nw>=0?'var(--accent)':'var(--red)');
+ h+=row('Policy value',fm(s.insurance_cash_value||0),(s.insurance_cash_value||0)>0?'var(--accent)':'var(--text2)');
  h+=row('Accessible capital',fm(accessible));
  h+=row('Passive income',fm(passive)+'/mo',passive>0?'var(--accent)':'var(--text2)');
  h+=row('Monthly burn',fm(burn)+'/mo');
@@ -1763,7 +1766,6 @@ P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash','p_cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
-if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,'var(--accent)'),null,null,'p_policy');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
@@ -1776,14 +1778,23 @@ P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=
 if(this._reveal('mastery')){
 P+=dashToggle('mastery','🧠 Personal Mastery');
 if(this._dashOpen.mastery)P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
-P+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
-P+=dashToggle('freedom','⚙️ System & 👷 Staff');
-if(this._dashOpen.freedom){
-P+=gauge('⚙️ System',sysMat,sysC);
-if((s.team_size||0)>0)P+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
 }
-}
+const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
+// Freedom lives on the Business side (it's "does the business run without you" — a business-side question,
+// even though the inputs are personal). Shown once mastery/Life is revealed, regardless of LLC status —
+// forming an LLC unlocks the detailed money/marketing panels below, not the founder's freedom score itself.
+if(this._reveal('mastery')){
+B+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
+B+=dashToggle('freedom','⚙️ System, 👷 Staff & 🎭 Culture');
+if(this._dashOpen.freedom){
+B+=gauge('⚙️ System',sysMat,sysC);
+if((s.team_size||0)>0){
+B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
+B+=cgauge('🎭 Culture',Math.round(_cul),_cul,_culC);
+}
+}
+}
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
 B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
@@ -1796,17 +1807,15 @@ B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
-/* Net Worth (consolidated) lives on the business side, right below debt; once revealed it stays visible even if it dips negative (shown red). No swing shown. */
-{const nwNow=this.calcNetWorth();const nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
-const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
+// Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
-// Funnel readout: Brand Equity is the headline (the lever that lifts conversion AND revenue per customer);
-// Leads → Customers are the detail behind it, one tap away. Staff moved under Freedom (Personal side) — it's
-// a founder-freedom lever (delegation), not a marketing funnel number. Culture shows once you've hired.
-B+='</div><div id="biz-ops">'+subLab('Funnel')+cgauge('✨ Brand Equity',_brand,_brand,_brC);
-B+=dashToggle('funnel','🎯 Leads & 👥 Customers');
-if(this._dashOpen.funnel)B+=cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)');
-B+=((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
+// Marketing & Operations readout: Customers is the headline (the number that actually pays the bills);
+// Brand Equity → Leads are the upstream detail behind it, one tap away. Staff & Culture moved under
+// Freedom (delegation/culture are founder-freedom levers, not funnel numbers).
+B+='</div><div id="biz-ops">'+subLab('Marketing & Operations')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)');
+B+=dashToggle('funnel','✨ Brand Equity & 🎯 Leads');
+if(this._dashOpen.funnel)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
+B+='</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
