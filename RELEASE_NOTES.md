@@ -1,5 +1,35 @@
 # Release Notes
 
+## v0.68.17 — 2026-07-04 — (beta) Section titles ARE the toggle; Systems Maturity moves under Marketing & Ops
+**Ask (owner):** remove the separate "Show Details"/"Hide Details" button text; instead make the
+section titles (Money, Capacity, Marketing & Operations) themselves the click target, with just a
+small arrow next to the title so it reads as clickable; move Systems Maturity to sit under
+Marketing & Operations instead of above it.
+
+**Change:** `renderStats()` in `beta/js/game.js`. Deleted the standalone `groupToggle()` button
+row entirely. `subLab(title, toggleKey)` now takes an optional toggle key — when passed, the
+title itself gets `onclick="Game.toggleDash(...)"`, `cursor:pointer`, and a trailing ▸ (collapsed)
+or ▾ (expanded) arrow. Wired to the same shared `_dashOpen.personal`/`_dashOpen.business` flag as
+before — clicking "Money" or "Capacity" on Personal (or "Money"/"Marketing & Operations" on
+Business) all toggle the SAME column-wide flag, they're just multiple entry points now instead of
+one dedicated button. Business's Systems Maturity block (built once as `sysMatHtml`, same
+`_reveal('mastery')` gating, independent of LLC status) moved from between Money and Marketing &
+Operations to after Marketing & Operations closes.
+
+Verified via headless Edge (iframe + injected script driving `Game.selectArchetype`/`Game.toggleDash`
+directly): confirmed "Show Details"/"Hide Details" text no longer appears anywhere, confirmed
+"Money"/"Capacity"/"Marketing & Operations" titles are each wired to the correct toggle key and
+show the closed arrow by default, confirmed clicking flips the arrow on ALL section titles in that
+column together (same shared flag), and confirmed Systems Maturity now renders after Customers/
+Marketing & Operations.
+
+**Note:** a concurrent, unrelated change landed in the repo during this session — a Supabase
+project migration (new `SUPA_URL`/`SUPA_KEY`, documented in this repo's `CLAUDE.md` under
+"Pending work") touched `js/game.js`/`game.html` (root) and the same two lines in
+`beta/js/game.js`/`beta/game.html`. That work was left as-is and NOT committed by this dashboard
+release — it's a separate in-progress change with its own owner-action items pending (Google OAuth
++ Auth redirect URLs on the new Supabase project).
+
 ## v0.68.16 — 2026-07-04 — (beta) Hide life-dim stats, bold the always-shown headlines, reorder
 **Ask (owner):** the 5 stats under Personal Mastery (Body/Mind/Spirit/Heart/Luxury) should default
 to hidden, like the other detail stats; bold the always-shown headline stats so once "Show
