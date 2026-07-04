@@ -1071,6 +1071,7 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "hire_your_kids",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "label": "Put Your Kids on Payroll",
@@ -1241,6 +1242,7 @@ window.EMBEDDED_CONFIG = {
     },
     {
       "id": "captive_insurance",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Form a Captive Insurance Co.",
@@ -2635,6 +2637,16 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.20',d:'2026-07-04 23:30',n:[
+'💵 <strong>Cash Services now works both ways</strong> — liquidate credit into cash for the usual 6% fee, or send cash the other way to pay utilization down for free (your business balance clears first, protecting your D&B score).',
+'💼 <strong>New: Owner Capital</strong> — a real, legal way to move your own money between you and your business. <strong>Inject capital</strong> (equity — no interest, no repayment, permanent business money) or make a <strong>shareholder loan</strong> (~4.5%, booked as real business debt — and you can call it back early with Repay). Not a membership perk — it unlocks the moment you form an LLC.',
+'🏖 <strong>Solo 401(k)/SEP</strong> now opens its own slider to pick your contribution rate, grounded in real 2025 IRS limits instead of a flat cap.',
+'🛡️ <strong>Cash-value policy</strong> gained a Repay-the-loan slider (mutually exclusive with borrowing) — pays down the policy loan with cash, raising net cash value and passive income.',
+'📋 Result screen now matches action cards — impacted stats + before/after are always visible, only the narrative/lesson collapses.',
+'🏠 Property/investment deals (real estate, STR, Pledged Asset Line, cash-out refi, equipment financing) no longer show a misleading "↻ RETRY — HALF COST" badge — their cost is a fresh roll every month, not a fixed price to chip away at.',
+'💰 CFO performance bonus removed (Sales &amp; Ops Manager bonuses stay); Hire Your Kids and Captive Insurance retired for now.',
+'🧾 Tax-reserve → policy "fold" offer now re-checks every month (with a cooldown) instead of only the instant you fund the policy.',
+'📅 Month-24 checkpoint screen removed — the run now only pauses at Month 18 (Part 1 Finale) and the end; Month 24 auto-saves quietly like Month 12 already did.']},
 {v:'0.68.19',d:'2026-07-04 22:00',n:[
 '📋 Action cards now show just the title — tap one to select it and see the full description, or tap "ⓘ preview" on any card to peek at it without committing. Locked moves are peekable too. A new filter bar (All / ✨ Untried / 🔑 Opens more) helps narrow a long list, and a "↺ last pick" tag marks whatever you took last time. Deal panels (Pledged Asset Line, rentals, Airbnb/STR, cash-out refi): "Understand this investment" stays collapsed until you tap it, with a NEW badge the first time. Managers/board: the bottom button now reads "Next: Finance →" / "Next: Life →" instead of surprising you with a popup after "Run the Month."']},
 {v:'0.68.18',d:'2026-07-04 21:00',n:[
@@ -3668,7 +3680,7 @@ startSimProfile(kind){
   try{
   while(guard++<600){const sc=scr();
    if(sc==='end-screen'){dead=true;break;}
-   if(sc==='checkpoint-screen')break;/* safety only — m12 is not a checkpoint anymore (finale is m18, checkpoint m24) */
+   if(sc==='checkpoint-screen')break;/* safety only — the only screen that renders into checkpoint-screen now is the m18 Part 1 Finale; m12/m24 just auto-save */
    if(sc==='game-screen'){
     if(this.month>=13)break;/* the handoff: bot played m1–12, the player starts month 13 */
     if(kind==='operator'&&!s._epic_life&&!s._epic_enroll_pending&&this.isSeparated()&&(s.cash||0)>4000)this.enrollEpicLife('monthly');
@@ -3734,7 +3746,7 @@ TUTORIAL_STEPS:[
 {sel:'#action-list',cat:'finance',title:'Move 3 — Finance',body:'Finance is where the real wealth is built — credit, leverage, and <strong>passive income</strong>. <strong>Tap the highlighted move.</strong>',wait:'select',waitHint:'Tap the highlighted action'},
 {cat:'finance',explain:true,title:'Why this move?',body:'<strong>Form Your LLC</strong> shields your personal assets and <strong>unlocks the Business side</strong> of your dashboard — where your funnel comes to life.'},
 {sel:'#confirm-actions-btn',title:'End your turn',body:function(){var b=document.getElementById('confirm-actions-btn');var t=(b&&b.textContent.trim())||'Confirm Actions';return 'All three moves are in. <strong>Tap "'+t+'"</strong> to play out the month and see what happens.';},wait:'endturn',waitHint:'__btn__'},
-{sel:'#tut-result-card',_noBack:true,title:'Your results',body:'Your moves play out here. <strong>Tap any card</strong> to see the exact stat changes and a quick <strong>lesson</strong> behind each one.'},
+{sel:'#tut-result-card',_noBack:true,title:'Your results',body:'Your moves play out here — the stat changes show right on each card. Tap <strong>"Hide description"</strong> (top right) to collapse the write-up and <strong>lesson</strong> once you\'ve read it.'},
 {sel:'#month-cash-panel',title:'Your money this month',body:'Your monthly bottom line — accessible capital, <strong>runway</strong>, and how your cash, credit and debt moved. Watch the runway: if it hits zero, the run is over.'},
 {sel:null,title:'That\'s the loop',body:'Every month: read your dashboard, make your three moves, end the turn, learn. Keep the <strong>funnel</strong> turning, build <strong>safeguards before</strong> trouble hits, and steer your profits toward <strong>passive, tax-free income</strong>. That\'s the path to paradise — now go build.'}
 ],
@@ -3856,7 +3868,7 @@ isActionLocked(a){const forceOpen=(a.id==='restructure_team'&&this.state._toxic_
 // Each amortizing loan (mortgage, SBA, equipment, term) is its own record with a FIXED rate + term, so we
 // know its lifetime interest and exactly how much FUTURE interest an early principal payment removes (by
 // shortening the schedule). THIS is what makes velocity banking honest — no flat "12% acceleration".
-_LOAN_TERMS:{mortgage:{rate:0.065,term:360,label:'Rental mortgage'},sba:{rate:0.105,term:120,label:'SBA loan'},equipment:{rate:0.08,term:60,label:'Equipment loan'},biz_term:{rate:0.12,term:60,label:'Business term loan'},personal_term:{rate:0.12,term:60,label:'Personal loan'},mca:{rate:0,term:12,label:'Cash advance'}},
+_LOAN_TERMS:{mortgage:{rate:0.065,term:360,label:'Rental mortgage'},sba:{rate:0.105,term:120,label:'SBA loan'},equipment:{rate:0.08,term:60,label:'Equipment loan'},biz_term:{rate:0.12,term:60,label:'Business term loan'},personal_term:{rate:0.12,term:60,label:'Personal loan'},mca:{rate:0,term:12,label:'Cash advance'},owner_loan:{rate:0.045,term:60,label:'Shareholder loan'}},/* owner_loan: a documented related-party loan, priced near the IRS mid-term AFR (~4.5%) rather than a bank's markup — real, but not free */
 _amortPayment(P,annualRate,n){const r=annualRate/12;return r>0?(P*r)/(1-Math.pow(1+r,-n)):P/Math.max(1,n);},
 // Interest still owed on `balance` if you keep paying `payment` to payoff (schedule shortens as balance falls).
 _interestRemaining(balance,annualRate,payment){const r=annualRate/12;if(r<=0)return 0;if(payment<=balance*r)return Infinity;let b=balance,tot=0,g=0;while(b>0.5&&g++<1500){const i=b*r;let pr=payment-i;if(pr>b)pr=b;tot+=i;b-=pr;}return tot;},
@@ -3864,7 +3876,7 @@ _monthsRemaining(balance,annualRate,payment){const r=annualRate/12;if(r>0&&payme
 // Create a loan (mirrors into the legacy bucket via sync). Caller still adjusts total_debt + cash as before.
 _addLoan(type,principal,label){this._ensureLoans();const s=this.state,T=this._LOAN_TERMS[type]||this._LOAN_TERMS.biz_term,bal=Math.round(principal);if(bal<=0)return null;const payment=Math.max(1,Math.round(this._amortPayment(bal,T.rate,T.term)));const loan={id:type+'_'+(s._loanSeq=(s._loanSeq||0)+1),type,label:label||T.label,balance:bal,rate:T.rate,term:T.term,payment,origPrincipal:bal,monthsPaid:0,interestPaid:0};(s.loans=s.loans||[]).push(loan);this._syncLoanBuckets();return loan;},
 // Legacy debt buckets are DERIVED from the ledger so every existing read (util, net worth, displays) stays correct.
-_syncLoanBuckets(){const s=this.state,L=(s.loans||[]).filter(x=>x.balance>0.5);s.loans=L;const sum=t=>L.filter(x=>t.indexOf(x.type)>=0).reduce((a,x)=>a+Math.max(0,x.balance),0);s.real_estate_debt=Math.round(sum(['mortgage']));s.business_installment_debt=Math.round(sum(['sba','equipment','biz_term','mca']));s._installment_debt=Math.round(sum(['personal_term']));},
+_syncLoanBuckets(){const s=this.state,L=(s.loans||[]).filter(x=>x.balance>0.5);s.loans=L;const sum=t=>L.filter(x=>t.indexOf(x.type)>=0).reduce((a,x)=>a+Math.max(0,x.balance),0);s.real_estate_debt=Math.round(sum(['mortgage']));s.business_installment_debt=Math.round(sum(['sba','equipment','biz_term','mca','owner_loan']));s._installment_debt=Math.round(sum(['personal_term']));},
 // Build the ledger from legacy state on first use (old saves / NG+ that predate it). total_debt already includes these.
 _ensureLoans(){const s=this.state;if(s.loans)return;s.loans=[];s._loanSeq=0;const re=s.real_estate_debt||0,bi=s.business_installment_debt||0,pi=s._installment_debt||0;/* snapshot before _addLoan re-syncs the buckets */if(re>0)this._addLoan('mortgage',re);if(bi>0)this._addLoan('biz_term',bi);if(pi>0)this._addLoan('personal_term',pi);},
 // Personal revolving (credit cards) — the derived remainder that isn't an amortizing loan or business revolving.
@@ -4086,9 +4098,10 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
  if(!hasPolicy){h+='<div style="font-size:0.82rem;color:var(--text2);line-height:1.55;">No cash-value policy yet. Open one from <strong>Finance → Build Wealth → Fund a Cash-Value Policy</strong> ($10k — about $9,800 lands as cash value). Once it\'s in force you\'ll manage funding, loans, and passive income right here.</div>';this._epicPanel('🛡️ Cash-Value Policy',h);return;}
  const cv=Math.round(s.insurance_cash_value||0),loan=Math.round(s.insurance_loan_balance||0),charge=this._policySurrenderCharge(),borrow=this._policyBorrowable();
  const rev=Math.round(s.monthly_revenue||0),baseRate=5/* index loan: flat 5% guaranteed charge (John Hancock Accumulation IUL) — no longer floats with the market rate */,sep=this.isSeparated(),curVar=s._iul_loan_type==='variable',curActive=!!s._passive_income_active;
- // Stage everything (loan type + funding % + loan amount + passive on); nothing moves until Confirm. Seed from current on first open.
- if(!s._polStaged)s._polStaged={loanType:(curVar?'variable':'wash'),loanAmt:0,fundRate:Math.round((s._policy_fund_rate||0.15)*100),passiveOn:curActive};
- const st=s._polStaged;st.loanAmt=Math.max(0,Math.min(Math.round(st.loanAmt||0),borrow));const isVar=st.loanType==='variable';
+ // Stage everything (loan type + funding % + loan amount + repay amount + passive on); nothing moves until Confirm. Seed from current on first open.
+ if(!s._polStaged)s._polStaged={loanType:(curVar?'variable':'wash'),loanAmt:0,repayAmt:0,fundRate:Math.round((s._policy_fund_rate||0.15)*100),passiveOn:curActive};
+ const st=s._polStaged;const availCash=sep?(s.personal_cash||0):(s.cash||0);
+ st.loanAmt=Math.max(0,Math.min(Math.round(st.loanAmt||0),borrow));st.repayAmt=Math.max(0,Math.min(Math.round(st.repayAmt||0),loan,availCash));const isVar=st.loanType==='variable';
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
  const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
  h+='<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:8px;">Your tax-free money vault. Set funding &amp; loan type, borrow against it, switch on passive income — <strong>review the projection, then Confirm</strong>. Nothing moves until you confirm.</div>';
@@ -4102,16 +4115,27 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
   h+='<input type="range" min="0" max="'+borrow+'" step="'+step+'" value="'+st.loanAmt+'" style="width:100%;accent-color:var(--accent);" oninput="var e=document.getElementById(\'ppc-loan\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.polStageLoan(this.value)">';
   h+='<div style="margin-bottom:12px;font-size:0.78rem;font-weight:700;color:var(--accent);">Borrow <span id="ppc-loan">$'+st.loanAmt.toLocaleString()+'</span></div>';
  } else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:12px;">No borrowing room yet — fund the policy above the surrender charge first.</div>';
+ // Repay the loan — pay it down with cash, any time, right from this panel. Lowers the outstanding
+ // loan, which raises your net cash value (cash value − loan) and — since passive income draws from
+ // that same net figure — raises your passive income too. Mutually exclusive with taking a new loan
+ // (staging one clears the other) so the projection below always reflects one clear move.
+ if(loan>0){const repayCap=Math.min(loan,availCash);
+  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Repay the loan — raises net cash value &amp; passive income</div>';
+  if(repayCap>0){const rstep=Math.max(1,Math.round(repayCap/100));
+   h+='<input type="range" min="0" max="'+repayCap+'" step="'+rstep+'" value="'+st.repayAmt+'" style="width:100%;accent-color:var(--gold);" oninput="var e=document.getElementById(\'ppc-repay\');if(e)e.textContent=\'$\'+Math.round(+this.value).toLocaleString();" onchange="Game.polStageRepay(this.value)">';
+   h+='<div style="margin-bottom:12px;font-size:0.78rem;font-weight:700;color:var(--gold);">Repay <span id="ppc-repay">$'+st.repayAmt.toLocaleString()+'</span>'+(repayCap<loan?' <span style="font-size:0.6rem;color:var(--text2);font-weight:400;">(capped by your cash on hand)</span>':'')+'</div>';
+  } else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:12px;">No cash on hand to repay with right now.</div>';
+ }
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">Tax-free passive income</div>';
  if(curActive){const moP=Math.round(cv*(isVar?0.08:0.06)/12);h+='<div style="padding:8px 10px;background:rgba(16,185,129,0.1);border-left:3px solid var(--accent);border-radius:var(--radius-sm);font-size:0.74rem;color:var(--accent);font-weight:600;margin-bottom:6px;">✓ Passive income ON — ≈ '+fm(moP)+'/mo tax-free'+(isVar!==curVar?' with your staged loan type':'')+', drawn automatically each month. Index draws harder (8%) than Wash (6%).</div>';}
  else if(cv>=5000)h+='<button onclick="Game.polStagePassive()" style="width:100%;border:1px solid '+(st.passiveOn?'var(--accent)':'var(--border)')+';background:'+(st.passiveOn?'rgba(16,185,129,0.12)':'var(--surface)')+';color:var(--text);border-radius:8px;padding:10px;cursor:pointer;font-weight:700;font-size:0.78rem;margin-bottom:6px;">'+(st.passiveOn?'✓ Passive income — ON (staged)':'🌴 Switch on tax-free passive income')+'</button>';
  else h+='<div style="font-size:0.7rem;color:var(--text2);margin-bottom:6px;">Passive income unlocks once your cash value passes '+fm(5000)+'.</div>';
- const afterCash=(sep?(s.personal_cash||0):(s.cash||0))+st.loanAmt,curFundMo=Math.round(rev*(s._policy_fund_rate||0.15)),newFundMo=Math.round(rev*st.fundRate/100);
- const curPassive=curActive?this._policyPassiveMonthly():0,newPassive=(st.passiveOn&&cv>=5000)?this._policyPassiveMonthly(loan+st.loanAmt,isVar):0;/* staged loan TYPE moves the projection too — switch Wash↔Index and watch the passive number change before confirming */
+ const afterCash=availCash+st.loanAmt-st.repayAmt,netLoan=Math.max(0,loan+st.loanAmt-st.repayAmt),curFundMo=Math.round(rev*(s._policy_fund_rate||0.15)),newFundMo=Math.round(rev*st.fundRate/100);
+ const curPassive=curActive?this._policyPassiveMonthly():0,newPassive=(st.passiveOn&&cv>=5000)?this._policyPassiveMonthly(netLoan,isVar):0;/* staged loan TYPE (and now repay amount) moves the projection too — a bigger repay raises the base passive draws from */
  h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your policy · if you confirm</div><div style="padding:4px 12px;background:rgba(245,200,66,0.06);border:1px solid var(--gold);border-radius:8px;">';
- h+=row('Cash value',fm(cv),'var(--gold)')+row('Borrowable now',fm(borrow),'var(--accent)')+(charge>0?row('Surrender charge','−'+fm(charge),'var(--red)'):'');
- h+=proj((sep?'Cash — personal':'Cash'),fm(sep?(s.personal_cash||0):(s.cash||0)),fm(afterCash),st.loanAmt>0?'var(--accent)':'var(--text)');
- h+=proj('Policy loan',fm(loan),fm(loan+st.loanAmt),st.loanAmt>0?'var(--gold)':'var(--text)');
+ h+=row('Cash value',fm(cv),'var(--gold)')+row('Net cash value (value − loan)',fm(cv-netLoan),'var(--accent)')+row('Borrowable now',fm(borrow),'var(--accent)')+(charge>0?row('Surrender charge','−'+fm(charge),'var(--red)'):'');
+ h+=proj((sep?'Cash — personal':'Cash'),fm(availCash),fm(afterCash),(st.loanAmt>0?'var(--accent)':(st.repayAmt>0?'var(--red)':'var(--text)')));
+ h+=proj('Policy loan',fm(loan),fm(netLoan),st.loanAmt>0?'var(--gold)':(st.repayAmt>0?'var(--accent)':'var(--text)'));
  h+=proj('Loan type',curVar?'Index 5%':'Wash net 0%',isVar?'Index 5%':'Wash net 0%');
  h+=proj('Funding /mo',fm(curFundMo),fm(newFundMo));
  h+=proj('Passive income',fm(curPassive)+'/mo',fm(newPassive)+'/mo',newPassive>0?'var(--accent)':'var(--text)');
@@ -4126,40 +4150,68 @@ openPolicyControl(){const s=this.state,fm=v=>this.fmtMoney(v);
 // Stagers — write to _polStaged and re-render; nothing touches real state until polConfirm.
 polStageType(t){const s=this.state;if(s._polStaged)s._polStaged.loanType=(t==='variable'?'variable':'wash');this.openPolicyControl();},
 polStageFund(v){const s=this.state;if(s._polStaged)s._polStaged.fundRate=Math.max(10,Math.min(25,Math.round(+v||15)));this.openPolicyControl();},
-polStageLoan(v){const s=this.state;if(s._polStaged)s._polStaged.loanAmt=Math.max(0,Math.round(+v||0));this.openPolicyControl();},
+polStageLoan(v){const s=this.state;if(s._polStaged){s._polStaged.loanAmt=Math.max(0,Math.round(+v||0));if(s._polStaged.loanAmt>0)s._polStaged.repayAmt=0;/* borrow and repay are mutually exclusive — one clear move at a time */}this.openPolicyControl();},
+polStageRepay(v){const s=this.state;if(s._polStaged){s._polStaged.repayAmt=Math.max(0,Math.round(+v||0));if(s._polStaged.repayAmt>0)s._polStaged.loanAmt=0;}this.openPolicyControl();},
 polStagePassive(){const s=this.state;if(s._polStaged)s._polStaged.passiveOn=!s._polStaged.passiveOn;this.openPolicyControl();},
 // Epic perk: managing the policy is FREE (no finance move) and applies immediately. Confirm locks in the whole staged set at once, then returns to the hub.
 polConfirm(){const s=this.state,st=s._polStaged;if(!st){this.showEpicLife();return;}
  s._iul_loan_type=(st.loanType==='variable'?'variable':'wash');s._policy_fund_rate=Math.max(0.10,Math.min(0.25,(st.fundRate||15)/100));
+ const sep=this.isSeparated(),cashKey=sep?'personal_cash':'cash';
  const amt=Math.max(0,Math.min(Math.round(st.loanAmt||0),this._policyBorrowable()));
- if(amt>0){const sep=this.isSeparated();s.insurance_loan_balance=(s.insurance_loan_balance||0)+amt;if(sep)s.personal_cash=(s.personal_cash||0)+amt;else s.cash=(s.cash||0)+amt;s._policy_act=s._policy_act||{};s._policy_act.loan=(s._policy_act.loan||0)+amt;}
+ if(amt>0){s.insurance_loan_balance=(s.insurance_loan_balance||0)+amt;s[cashKey]=(s[cashKey]||0)+amt;s._policy_act=s._policy_act||{};s._policy_act.loan=(s._policy_act.loan||0)+amt;}
+ // Repay — pay the loan down with cash, any time. Raises net cash value (cash value − loan), which is
+ // exactly what passive income draws from, so this is also how you grow passive income without adding
+ // more cash value: pay the loan back down.
+ const repay=Math.max(0,Math.min(Math.round(st.repayAmt||0),s.insurance_loan_balance||0,s[cashKey]||0));
+ if(repay>0){s.insurance_loan_balance=Math.max(0,(s.insurance_loan_balance||0)-repay);s[cashKey]=(s[cashKey]||0)-repay;s._policy_act=s._policy_act||{};s._policy_act.repay=(s._policy_act.repay||0)+repay;}
  if(st.passiveOn&&(s.insurance_cash_value||0)>=5000&&!s._passive_income_active){s._passive_income_active=true;s._policy_act=s._policy_act||{};s._policy_act.passiveOn=true;}
  s._polStaged=null;this._refreshDashboards();this._justConfirmed='pol';this.openPolicyControl();/* stay HERE so the player sees what they just locked in */},
 // ===== Epic Life perk — Credit → Cash: liquidate available credit into spendable cash for a flat 6% fee, no turn used =====
 _creditHeadroom(){const s=this.state;return Math.max(0,(s.available_credit||0)+Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)));},
 // Draw business-available FIRST (protects personal utilization/score), then personal. Debt rises by the full amount drawn; you net that amount minus the 6% fee. A priced cash advance, not free money.
 liquidateCredit(amount){const s=this.state;if(!s._epic_life)return{drawn:0,fee:0,net:0};const head=this._creditHeadroom();amount=Math.max(0,Math.min(Math.round(amount||0),Math.floor(head)));if(amount<=0)return{drawn:0,fee:0,net:0};const fee=Math.round(amount*0.06),net=amount-fee;const bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));let need=amount;const bd=Math.min(need,bizAvail);if(bd>0){s.business_credit_used=(s.business_credit_used||0)+bd;need-=bd;}if(need>0){s.available_credit=Math.max(0,(s.available_credit||0)-need);need=0;}s.total_debt=(s.total_debt||0)+amount;s.cash=(s.cash||0)+net;s._credit_liquidated_total=(s._credit_liquidated_total||0)+amount;s._credit_liquidate_fees=(s._credit_liquidate_fees||0)+fee;return{drawn:amount,fee:fee,net:net};},
-// Stage an amount (no money moves yet); Confirm applies it and returns to the Epic Life menu.
-liqStage(amt){this.state._liqStaged=Math.max(0,Math.round(amt||0));this.openCreditLiquidity();},
+// The inverse of liquidate — spend cash to pay DOWN utilization instead of drawing it. No fee (paying a balance down never carries one). Business cash pays the business line first (protects D&B/business utilization), then personal cash (if separated) clears general revolving cards.
+_creditPaydownRoom(){const s=this.state;const pool=(s.cash||0)+(this.isSeparated()?Math.max(0,s.personal_cash||0):0),owed=Math.max(0,s.business_credit_used||0)+this._persRevolving();return Math.max(0,Math.min(pool,owed));},
+creditPaydown(amount){const s=this.state;if(!s._epic_life)return{paid:0};amount=Math.max(0,Math.min(Math.round(amount||0),Math.floor(this._creditPaydownRoom())));if(amount<=0)return{paid:0};
+ let need=amount;const fromBiz=Math.min(need,Math.max(0,s.cash||0));if(fromBiz>0){s.cash-=fromBiz;need-=fromBiz;}
+ if(this.isSeparated()&&need>0){const fromPers=Math.min(need,Math.max(0,s.personal_cash||0));if(fromPers>0){s.personal_cash-=fromPers;need-=fromPers;}}
+ const paid=amount-need;if(paid<=0)return{paid:0};
+ const bizUsed=Math.max(0,s.business_credit_used||0),toBiz=Math.min(paid,bizUsed);
+ if(toBiz>0){s.business_credit_used-=toBiz;s.total_debt=Math.max(0,(s.total_debt||0)-toBiz);}
+ const toPers=paid-toBiz;if(toPers>0){s.total_debt=Math.max(0,(s.total_debt||0)-toPers);s.available_credit=(s.available_credit||0)+toPers;}
+ s._credit_paydown_total=(s._credit_paydown_total||0)+paid;return{paid,toBiz,toPers};},
+// Stage an amount (no money moves yet); Confirm applies it and returns to the Epic Life menu. Liquidate and pay-down are mutually exclusive — staging one clears the other, same pattern as the policy panel's borrow/repay.
+liqStage(amt){this.state._liqStaged=Math.max(0,Math.round(amt||0));if(this.state._liqStaged>0)this.state._paydownStaged=0;this.openCreditLiquidity();},
 liqClear(){this.state._liqStaged=0;this.openCreditLiquidity();},
-liqConfirm(){const a=Math.max(0,Math.round(this.state._liqStaged||0));if(a<1000)return;this.liquidateCredit(a);this.state._liqStaged=0;this._refreshDashboards();this._justConfirmed='liq';this.openCreditLiquidity();/* stay here — the stats box shows the cash landing */},
+paydownStage(amt){this.state._paydownStaged=Math.max(0,Math.round(amt||0));if(this.state._paydownStaged>0)this.state._liqStaged=0;this.openCreditLiquidity();},
+csConfirm(){const s=this.state;const liq=Math.max(0,Math.round(s._liqStaged||0)),pd=Math.max(0,Math.round(s._paydownStaged||0));
+ if(liq>=1000){this.liquidateCredit(liq);s._liqStaged=0;this._justConfirmed='liq';}
+ else if(pd>=1000){this.creditPaydown(pd);s._paydownStaged=0;this._justConfirmed='paydown';}
+ else return;
+ this._refreshDashboards();this.openCreditLiquidity();/* stay here — the stats box shows the result */},
 openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
- if(!s._epic_life){this._epicPanel('💵 Cash Services','<div style="font-size:0.85rem;line-height:1.6;">👑 <strong>Members-only perk.</strong> Epic Life lets your concierge liquidate your available credit into cash on demand — for a flat 6% fee, no turn used.</div>');return;}
+ if(!s._epic_life){this._epicPanel('💵 Cash Services','<div style="font-size:0.85rem;line-height:1.6;">👑 <strong>Members-only perk.</strong> Epic Life lets your concierge liquidate your available credit into cash on demand — for a flat 6% fee, no turn used — or send cash the other way to pay down utilization.</div>');return;}
  const head=this._creditHeadroom(),pa=s.available_credit||0,ba=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0));
+ const pdRoom=this._creditPaydownRoom();
  const staged=Math.min(Math.max(0,Math.round(s._liqStaged||0)),Math.floor(head));
+ const pdStaged=Math.min(Math.max(0,Math.round(s._paydownStaged||0)),Math.floor(pdRoom));
  const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
  const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
- let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Turn available credit into spendable cash for a flat <strong style="color:var(--gold);">6% fee</strong>, no turn used. Pick an amount, review the projection, then <strong>Confirm</strong>.</div>';
+ let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Turn available credit into spendable cash for a flat <strong style="color:var(--gold);">6% fee</strong>, or send cash the other way to pay utilization down — no fee, no turn used. Pick an amount, review the projection, then <strong>Confirm</strong>.</div>';
  // ONE stats box (below Confirm) — Now + projection merged, same as the policy panel (owner)
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Amount to liquidate — slide to set</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Liquidate credit → cash (6% fee)</div>';
  if(head>=1000){const hmax=Math.floor(head);h+='<input type="range" min="0" max="'+hmax+'" step="'+Math.max(1,Math.round(hmax/100))+'" value="'+staged+'" style="width:100%;accent-color:var(--gold);" onchange="Game.liqStage(this.value)">';
-  h+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);margin-bottom:4px;">'+fm(staged)+'</div>';}
- else h+='<div style="font-size:0.72rem;color:var(--text2);">No available credit to liquidate right now — open a line or lower utilization first.</div>';
- {const _jc=this._justConfirmed==='liq';this._justConfirmed=null;
-  if(_jc)h+='<button style="width:100%;margin-top:10px;background:var(--accent);color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;">✓ Confirmed — cash landed</button>';
-  else if(staged>=1000)h+='<button onclick="Game.liqConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
-  else if(head>=1000)h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';}
- h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your credit'+(staged>=1000?' · if you confirm':'')+'</div><div style="padding:6px 12px;background:'+(staged>=1000?'rgba(16,185,129,0.06)':'var(--surface)')+';border:1px solid '+(staged>=1000?'var(--accent)':'var(--border)')+';border-radius:8px;">';
+  h+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);margin-bottom:8px;">'+fm(staged)+'</div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:8px;">No available credit to liquidate right now — open a line or lower utilization first.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">Pay down utilization with cash — no fee</div>';
+ if(pdRoom>=1000){const pmax=Math.floor(pdRoom);h+='<input type="range" min="0" max="'+pmax+'" step="'+Math.max(1,Math.round(pmax/100))+'" value="'+pdStaged+'" style="width:100%;accent-color:var(--accent);" onchange="Game.paydownStage(this.value)">';
+  h+='<div style="font-size:0.72rem;font-weight:700;color:var(--accent);margin-bottom:4px;">'+fm(pdStaged)+'</div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);">No spare cash or revolving balance to pay down right now.</div>';
+ {const _jc=this._justConfirmed==='liq'||this._justConfirmed==='paydown';const _jcLabel=this._justConfirmed==='paydown'?'✓ Confirmed — utilization paid down':'✓ Confirmed — cash landed';this._justConfirmed=null;
+  if(_jc)h+='<button style="width:100%;margin-top:10px;background:var(--accent);color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;">'+_jcLabel+'</button>';
+  else if(staged>=1000||pdStaged>=1000)h+='<button onclick="Game.csConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+  else if(head>=1000||pdRoom>=1000)h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';}
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your credit'+((staged>=1000||pdStaged>=1000)?' · if you confirm':'')+'</div><div style="padding:6px 12px;background:'+((staged>=1000||pdStaged>=1000)?'rgba(16,185,129,0.06)':'var(--surface)')+';border:1px solid '+((staged>=1000||pdStaged>=1000)?'var(--accent)':'var(--border)')+';border-radius:8px;">';
  h+=row('Available to liquidate',fm(head),'var(--accent)')+'<div class="breakdown-detail">· Business credit '+fm(ba)+'  · Personal credit '+fm(pa)+'</div>';
  if(staged>=1000){const fee=Math.round(staged*0.06),net=staged-fee,bd=Math.min(staged,ba),pdraw=staged-bd;
   h+=proj('Cash — business',fm(s.cash||0),fm((s.cash||0)+net),'var(--accent)');
@@ -4168,11 +4220,75 @@ openCreditLiquidity(){const s=this.state,fm=v=>this.fmtMoney(v);
   if(bd>0)h+=proj('Business credit used',fm(s.business_credit_used||0),fm((s.business_credit_used||0)+bd));
   if(pdraw>0)h+=proj('Personal credit available',fm(pa),fm(pa-pdraw),'var(--red)');
   h+='<div class="breakdown-detail">6% fee '+fm(fee)+' · you receive '+fm(net)+' cash (business credit drawn first to protect your personal score)</div>';}
+ else if(pdStaged>=1000){const bizUsed=Math.max(0,s.business_credit_used||0),toBiz=Math.min(pdStaged,bizUsed),toPers=pdStaged-toBiz;
+  let need=pdStaged;const fromBiz=Math.min(need,Math.max(0,s.cash||0));need-=fromBiz;const fromPers=this.isSeparated()?Math.min(need,Math.max(0,s.personal_cash||0)):0;
+  h+=proj('Cash — business',fm(s.cash||0),fm((s.cash||0)-fromBiz));
+  h+=proj('Cash — personal',fm(s.personal_cash||0),fm((s.personal_cash||0)-fromPers));
+  h+=proj('Total debt',fm(s.total_debt||0),fm(Math.max(0,(s.total_debt||0)-pdStaged)),'var(--accent)');
+  if(toBiz>0)h+=proj('Business credit used',fm(s.business_credit_used||0),fm(Math.max(0,(s.business_credit_used||0)-toBiz)),'var(--accent)');
+  if(toPers>0)h+=proj('Personal credit available',fm(pa),fm(pa+toPers),'var(--accent)');
+  h+='<div class="breakdown-detail">No fee — business balance clears first (protects your D&amp;B utilization), then personal revolving.</div>';}
  else h+=row('Cash — business',fm(s.cash||0))+row('Cash — personal',fm(s.personal_cash||0));
  h+='</div>';
- if((s._credit_liquidated_total||0)>0)h+='<div style="margin-top:10px;font-size:0.64rem;color:var(--text2);">Lifetime liquidated '+fm(s._credit_liquidated_total)+' · fees paid '+fm(s._credit_liquidate_fees||0)+'.</div>';
+ if((s._credit_liquidated_total||0)>0||(s._credit_paydown_total||0)>0)h+='<div style="margin-top:10px;font-size:0.64rem;color:var(--text2);">Lifetime liquidated '+fm(s._credit_liquidated_total||0)+' · fees paid '+fm(s._credit_liquidate_fees||0)+' · paid down '+fm(s._credit_paydown_total||0)+'.</div>';
  h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
  this._epicPanel('💵 Cash Services',h);},
+// ===== Owner Capital — legal, deliberate ways to move YOUR OWN money between yourself and your business (not an Epic Life perk — any LLC owner can do this in real life, member or not) =====
+_ownerLoanBalance(){this._ensureLoans();return Math.round((this.state.loans||[]).filter(x=>x.type==='owner_loan').reduce((a,x)=>a+Math.max(0,x.balance),0));},
+// Equity injection: personal cash → business cash, permanently. No interest, no repayment — it's just business money now, at business risk. Net-worth neutral (combined cash is the same pool either way); the real cost is losing it as your personal safety net.
+_capitalInject(amount){const s=this.state;if(!this.isSeparated())return{amt:0};amount=Math.max(0,Math.min(Math.round(amount||0),Math.max(0,s.personal_cash||0)));if(amount<1000)return{amt:0};s.personal_cash-=amount;s.cash=(s.cash||0)+amount;s._capital_injected_total=(s._capital_injected_total||0)+amount;return{amt:amount};},
+// Shareholder loan: personal cash → business cash, booked as a REAL loan (~4.5%, near the IRS related-party rate) in the same ledger every other loan uses — shows in Debt, costs real monthly debt service, and velocity banking can target it like any other loan.
+_ownerLoanIn(amount){const s=this.state;if(!this.isSeparated())return{amt:0};amount=Math.max(0,Math.min(Math.round(amount||0),Math.max(0,s.personal_cash||0)));if(amount<1000)return{amt:0};s.personal_cash-=amount;s.cash=(s.cash||0)+amount;s.total_debt=(s.total_debt||0)+amount;this._addLoan('owner_loan',amount);s._owner_loan_drawn_total=(s._owner_loan_drawn_total||0)+amount;return{amt:amount};},
+// Repay yourself early (unlike a bank loan, YOU are the lender — calling it in returns cash to your personal pocket, not just to the business's books). Reuses the same extra-principal math velocity banking uses.
+_ownerLoanRepay(amount){const s=this.state;const bal=this._ownerLoanBalance();amount=Math.max(0,Math.min(Math.round(amount||0),bal,Math.max(0,s.cash||0)));if(amount<1000)return{amt:0};
+ let remaining=amount;for(const ln of (s.loans||[]).filter(x=>x.type==='owner_loan'&&x.balance>0.5)){if(remaining<=0)break;const chunk=Math.min(remaining,Math.round(ln.balance));if(chunk<=0)continue;this._loanPayExtra(ln,chunk);remaining-=chunk;}
+ const paid=amount-remaining;if(paid<=0)return{amt:0};
+ s.cash=(s.cash||0)-paid;s.personal_cash=(s.personal_cash||0)+paid;s._owner_loan_repaid_total=(s._owner_loan_repaid_total||0)+paid;return{amt:paid};},
+// Stage one of the three moves (mutually exclusive — staging one clears the others, same pattern as every other concierge panel).
+ocStageInject(v){const s=this.state;if(!s._ocStaged)s._ocStaged={inject:0,loan:0,repay:0};s._ocStaged.inject=Math.max(0,Math.round(+v||0));if(s._ocStaged.inject>0){s._ocStaged.loan=0;s._ocStaged.repay=0;}this.openOwnerCapital();},
+ocStageLoan(v){const s=this.state;if(!s._ocStaged)s._ocStaged={inject:0,loan:0,repay:0};s._ocStaged.loan=Math.max(0,Math.round(+v||0));if(s._ocStaged.loan>0){s._ocStaged.inject=0;s._ocStaged.repay=0;}this.openOwnerCapital();},
+ocStageRepay(v){const s=this.state;if(!s._ocStaged)s._ocStaged={inject:0,loan:0,repay:0};s._ocStaged.repay=Math.max(0,Math.round(+v||0));if(s._ocStaged.repay>0){s._ocStaged.inject=0;s._ocStaged.loan=0;}this.openOwnerCapital();},
+ocConfirm(){const s=this.state,st=s._ocStaged;if(!st)return;
+ if(st.inject>=1000){this._capitalInject(st.inject);this._justConfirmed='oc_inject';}
+ else if(st.loan>=1000){this._ownerLoanIn(st.loan);this._justConfirmed='oc_loan';}
+ else if(st.repay>=1000){this._ownerLoanRepay(st.repay);this._justConfirmed='oc_repay';}
+ else return;
+ s._ocStaged=null;this._refreshDashboards();this.openOwnerCapital();/* stay here — the stats box shows the result */},
+openOwnerCapital(){const s=this.state,fm=v=>this.fmtMoney(v);
+ if(!this.isSeparated()){this._epicPanel('💼 Owner Capital','<div style="font-size:0.85rem;line-height:1.6;color:var(--text2);">Moving money between you and your business — legally — needs an LLC first. Complete <strong>Made It Legal</strong> (Finance → Build Your Foundation) to unlock capital injections and shareholder loans.</div>');return;}
+ const pc=Math.max(0,s.personal_cash||0),bc=Math.max(0,s.cash||0),loanBal=this._ownerLoanBalance();
+ if(!s._ocStaged)s._ocStaged={inject:0,loan:0,repay:0};const st=s._ocStaged;
+ st.inject=Math.max(0,Math.min(Math.round(st.inject||0),pc));st.loan=Math.max(0,Math.min(Math.round(st.loan||0),pc));st.repay=Math.max(0,Math.min(Math.round(st.repay||0),loanBal,bc));
+ const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span'+(c?' style="color:'+c+';font-weight:700;"':'')+'>'+v+'</span></div>';
+ const proj=(l,b,a2,c)=>'<div class="breakdown-row"><span>'+l+'</span><span><span style="color:var(--text2)">'+b+'</span> → <strong style="color:'+(c||'var(--text)')+'">'+a2+'</strong></span></div>';
+ let h='<div style="font-size:0.82rem;line-height:1.55;color:var(--text2);">Two legal ways to move your own money into the business — an <strong>equity injection</strong> (no repayment, no interest, at risk in the business) or a <strong>shareholder loan</strong> (a real ~4.5% loan the business pays back — you can call it in early too). Nothing moves until you Confirm.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">💰 Inject capital — equity, no repayment</div>';
+ if(pc>=1000){const imax=Math.floor(pc);h+='<input type="range" min="0" max="'+imax+'" step="'+Math.max(1,Math.round(imax/100))+'" value="'+st.inject+'" style="width:100%;accent-color:var(--accent);" onchange="Game.ocStageInject(this.value)">';
+  h+='<div style="font-size:0.72rem;font-weight:700;color:var(--accent);margin-bottom:8px;">'+fm(st.inject)+'</div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:8px;">No personal cash on hand to inject right now.</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">🏦 Loan to the business — ~4.5%, repayable</div>';
+ if(pc>=1000){const lmax=Math.floor(pc);h+='<input type="range" min="0" max="'+lmax+'" step="'+Math.max(1,Math.round(lmax/100))+'" value="'+st.loan+'" style="width:100%;accent-color:var(--gold);" onchange="Game.ocStageLoan(this.value)">';
+  h+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);margin-bottom:8px;">'+fm(st.loan)+'</div>';}
+ else h+='<div style="font-size:0.72rem;color:var(--text2);margin-bottom:8px;">No personal cash on hand to lend right now.</div>';
+ if(loanBal>0){h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px;">↩ Repay yourself early — pulls cash back out</div>';
+  const rmax=Math.floor(Math.min(loanBal,bc));
+  if(rmax>=1000){h+='<input type="range" min="0" max="'+rmax+'" step="'+Math.max(1,Math.round(rmax/100))+'" value="'+st.repay+'" style="width:100%;accent-color:var(--red);" onchange="Game.ocStageRepay(this.value)">';
+   h+='<div style="font-size:0.72rem;font-weight:700;color:var(--red);margin-bottom:4px;">'+fm(st.repay)+'</div>';}
+  else h+='<div style="font-size:0.72rem;color:var(--text2);">Business doesn\'t have the cash on hand to repay you right now.</div>';}
+ {const jc=this._justConfirmed,labels={oc_inject:'✓ Confirmed — capital injected',oc_loan:'✓ Confirmed — loan funded',oc_repay:'✓ Confirmed — cash returned to you'};this._justConfirmed=null;
+  if(labels[jc])h+='<button style="width:100%;margin-top:10px;background:var(--accent);color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;">'+labels[jc]+'</button>';
+  else if(st.inject>=1000||st.loan>=1000||st.repay>=1000)h+='<button onclick="Game.ocConfirm()" style="width:100%;margin-top:10px;background:var(--gold);color:#1a1205;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">Confirm</button>';
+  else h+='<div style="font-size:0.66rem;color:var(--text2);margin-top:8px;">Pick an amount above to preview the outcome — nothing happens until you Confirm.</div>';}
+ const active=st.inject>=1000||st.loan>=1000||st.repay>=1000;
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Your capital'+(active?' · if you confirm':'')+'</div><div style="padding:6px 12px;background:'+(active?'rgba(16,185,129,0.06)':'var(--surface)')+';border:1px solid '+(active?'var(--accent)':'var(--border)')+';border-radius:8px;">';
+ if(st.inject>=1000){h+=proj('Cash — personal',fm(pc),fm(pc-st.inject),'var(--red)');h+=proj('Cash — business',fm(bc),fm(bc+st.inject),'var(--accent)');h+='<div class="breakdown-detail">Permanent — no interest, no repayment. That cash is now business money, at business risk.</div>';}
+ else if(st.loan>=1000){h+=proj('Cash — personal',fm(pc),fm(pc-st.loan),'var(--red)');h+=proj('Cash — business',fm(bc),fm(bc+st.loan),'var(--accent)');h+=proj('Total debt',fm(s.total_debt||0),fm((s.total_debt||0)+st.loan),'var(--red)');h+='<div class="breakdown-detail">Booked as a real business loan at ~4.5% — shows in Debt, costs monthly debt service like any loan, and you can pull it back early with Repay above.</div>';}
+ else if(st.repay>=1000){h+=proj('Cash — business',fm(bc),fm(bc-st.repay),'var(--red)');h+=proj('Cash — personal',fm(pc),fm(pc+st.repay),'var(--accent)');h+=proj('Shareholder loan balance',fm(loanBal),fm(Math.max(0,loanBal-st.repay)),'var(--accent)');h+='<div class="breakdown-detail">Returns your own principal to you personally — the business\'s debt shrinks by the same amount.</div>';}
+ else{h+=row('Cash — personal',fm(pc))+row('Cash — business',fm(bc))+(loanBal>0?row('Shareholder loan outstanding',fm(loanBal),'var(--gold)'):'');}
+ h+='</div>';
+ if((s._capital_injected_total||0)>0||(s._owner_loan_drawn_total||0)>0)h+='<div style="margin-top:10px;font-size:0.64rem;color:var(--text2);">Lifetime injected '+fm(s._capital_injected_total||0)+' · loaned in '+fm(s._owner_loan_drawn_total||0)+' · repaid to you '+fm(s._owner_loan_repaid_total||0)+'.</div>';
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.hidePopup()">Close</button>';
+ this._epicPanel('💼 Owner Capital',h);},
 // ===== Concierge service — 📊 Financial Health: a plain-English snapshot + verdict on the member's whole financial picture =====
 openFinancialHealth(){const s=this.state,fm=v=>this.fmtMoney(v),sep=this.isSeparated();
  const cash=(s.cash||0)+(s.personal_cash||0),bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),accessible=cash+(s.available_credit||0)+bizAvail;
@@ -4817,7 +4933,7 @@ const _paradise=this._epicRoadmapData().freedomPct>=100;/* financially free: pas
 const epic=(!this._tutActive&&(this._reveal('epic')||member||pendingEpic))?'<div id="epic-btn" class="cat-tab cat-icon" title="'+(_paradise?'🏝️ Paradise — you\'re financially free':'Epic Life Membership')+'" style="background:linear-gradient(135deg,'+(_paradise?'var(--accent),#0e9f6e':'var(--gold),#b8932f')+');color:#1a1205;border-color:'+(_paradise?'var(--accent)':'var(--gold)')+';font-weight:700;" onclick="Game.showEpicLife()">'+(_paradise?'🏝️':'⭐'+((member||pendingEpic)?'<span style="font-size:0.62rem;">✓</span>':''))+'</div>':'';
 document.getElementById('cat-tabs').innerHTML='<div class="cat-tabs-scroll">'+tabs+'</div>'+epic;},
 showEpicLife(){const s=this.state,a=(CONFIG.actions_finance.actions||[]).find(x=>x.id==='epic_life_membership')||{};const fm=v=>this.fmtMoney(v);
-s._polStaged=null;s._velStaged=null;s._fhStaged=null;/* returning to the hub discards any un-confirmed staging so each panel opens fresh from current state */
+s._polStaged=null;s._velStaged=null;s._fhStaged=null;s._liqStaged=0;s._paydownStaged=0;s._ocStaged=null;/* returning to the hub discards any un-confirmed staging so each panel opens fresh from current state */
 const member=!!s._epic_life,selected=!!s._epic_enroll_pending;
 const setup=a.cash_cost||500,mo=a.recurring_cost||300,yr=3000;
 let h=member
@@ -4827,12 +4943,14 @@ h+=this._epicRoadmapBar(!member);
 // Wealth-tools hub: the two advanced money controls live here. Policy is open to everyone; velocity is a members-only perk (shows the upsell in its own panel).
 {const _hasPol=(s.insurance_cash_value||0)>0||(s._completed_actions||[]).includes('fund_accumulation_policy');
  // Concierge services — the ⭐ hub opens a MENU of category panels (financial health, policy, velocity, cash services, concierge settings).
- const tile=(fn,icon,label,sub,accent)=>{const on=member,col=on?(accent||'var(--gold)'):'var(--text2)',bd=on?(accent||'var(--gold)'):'var(--border)',bg=on?('rgba('+(accent==='var(--accent)'?'16,185,129':'245,200,66')+',0.1)'):'var(--surface)';return '<div onclick="Game.'+fn+'" style="cursor:pointer;flex:1 1 30%;min-width:96px;border:1px solid '+bd+';background:'+bg+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">'+icon+'</div><div style="font-size:0.72rem;font-weight:700;color:'+col+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);">'+(on?sub:'👑 Members only')+'</div></div>';};
+ const tile=(fn,icon,label,sub,accent,forceOn,lockLabel)=>{const on=forceOn!=null?forceOn:member,col=on?(accent||'var(--gold)'):'var(--text2)',bd=on?(accent||'var(--gold)'):'var(--border)',bg=on?('rgba('+(accent==='var(--accent)'?'16,185,129':'245,200,66')+',0.1)'):'var(--surface)';return '<div onclick="Game.'+fn+'" style="cursor:pointer;flex:1 1 30%;min-width:96px;border:1px solid '+bd+';background:'+bg+';border-radius:8px;padding:10px;text-align:center;"><div style="font-size:1.15rem;">'+icon+'</div><div style="font-size:0.72rem;font-weight:700;color:'+col+';">'+label+'</div><div style="font-size:0.56rem;color:var(--text2);">'+(on?sub:(lockLabel||'👑 Members only'))+'</div></div>';};
  h+='<div style="font-size:0.6rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:14px 0 5px;">Concierge services</div><div style="display:flex;flex-wrap:wrap;gap:8px;">';
  h+=tile('openFinancialHealth()','📊','Financial Health',((s._concierge_paused)?'Snapshot · concierge paused':'Snapshot · concierge'),'var(--accent)');
  h+=tile('openPolicyControl()','🛡️','Cash-Value Policy',(_hasPol?'Fund · loan · passive':'Open one to start'),'var(--gold)');
  h+=tile('openVelocityControl()','⚡','Velocity Banking',(s._velocity_active?'Active · tune':(s._velocity_setup?'Paused · tune':'Sweep debt faster')),'var(--accent)');
  h+=tile('openCreditLiquidity()','💵','Cash Services','Credit → cash · 6%','var(--gold)');
+ // Owner Capital isn't a membership perk — any LLC owner can legally inject/loan capital, so it's gated on isSeparated() (formed an LLC), not on Epic Life membership.
+ h+=tile('openOwnerCapital()','💼','Owner Capital',(this._ownerLoanBalance()>0?'Inject · loan · repay':'Inject or loan capital'),'var(--accent)',this.isSeparated(),'Form an LLC first');
  h+='</div>';}
 if(member)h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Active — '+(s._epic_plan==='annual'?'annual plan ('+fm(yr)+'/yr)':'monthly plan ('+fm(mo)+'/mo)')+'. Your concierge is running your playbook.</div>';
 else if(selected){h+='<div style="margin-top:12px;text-align:center;font-weight:700;color:var(--accent);">✓ Selected — '+(s._epic_plan==='annual'?'annual':'monthly')+' plan enrolls when you End Turn (it doesn\'t use your Finance action or any energy — your team handles it).</div>';
@@ -5186,20 +5304,24 @@ _lastPickInCat(cat){const log=this._playLog||[];for(let i=log.length-1;i>=0;i--)
 // Tap-to-preview: expand an action's description/preview WITHOUT selecting it, so you can compare a
 // couple of candidates before committing. Independent of selection state; toggled per (category,id).
 togglePeek(cat,id){this._peeked=this._peeked||{};const k=cat+':'+id;this._peeked[k]=!this._peeked[k];this.renderActions();},
-setActionFilter(key){this._actionFilter=key;this.renderActions();},
+// Available-card description toggle — OPEN by default, closed only if the player has manually hidden
+// it; independent of selection (selecting a card never changes this).
+toggleCardOpen(cat,id){this._cardCollapsed=this._cardCollapsed||{};const k=cat+':'+id;this._cardCollapsed[k]=!this._cardCollapsed[k];this.renderActions();},
 renderActions(){const actions=this.getAvailableActions(this.currentCategory).filter(a=>!this._epicHandled(a)&&a.id!=='epic_life_membership'),sel=this.selectedActions[this.currentCategory];this._cfoHintShown=false;
 const urgency=a=>this._actionUrgency(a);
 // Each action's direction-group name, shown as a tag on the card (replaces the old collapsible groups).
 const _grpOf={};for(const grp of (ADIR[this.currentCategory]||[]))for(const id of grp[1])_grpOf[id]=grp[0];
 const card=a=>{const done=this.isActionCompleted(a),locked=this.isActionLocked(a),isSel=sel&&sel.id===a.id;const reason=done?'Already completed':locked?this.getLockedReason(a):'';const outgrown=!done&&!locked&&this.isActionOutgrown(a);const rc=(this.state._action_counts||{})[a.id]||0;const inv=INVEST_OWN[a.id];const takenBefore=!done&&!a.one_time&&rc>0&&!isSel&&!inv;/* investments never "sink" as taken-before — owning one is a portfolio, not a finished chore */
-const peeked=!!(this._peeked&&this._peeked[this.currentCategory+':'+a.id]);const expanded=isSel||peeked;
+// Expanded (description + owned-state showing) by default — manually hidden per card, independent of
+// selection. Selecting a card no longer changes its expand state at all.
+const cardOpen=!(this._cardCollapsed&&this._cardCollapsed[this.currentCategory+':'+a.id]);
 const cls=done?'completed-action':isSel?'selected':locked?'locked':takenBefore?'taken-before':'';const onclick=(locked||done)?'':"Game.selectActionPayment('"+this.currentCategory+"','"+a.id+"')";const desc=this.linkTerms(a.description);const repeatBadge=(!a.one_time&&rc>0&&!isSel)?(inv?'<span class="repeat-badge" style="background:rgba(212,175,55,0.16);color:var(--gold);">'+inv.i+' ×'+rc+' '+inv.w+'</span>':'<span class="repeat-badge">✓ done ×'+rc+'</span>'):'';const isNew=!done&&!locked&&this.state._action_new_month&&this.state._action_new_month[a.id]===this.month;const newBadge=isNew?'<span class="new-badge">NEW</span>':'';
 // A subtle callback if this is the same move you took last time you were in this category — not urgent,
 // just orienting ("oh right, this is what I did last time"). Never on the currently selected card (SELECTED already covers that).
 const lastPickBadge=(!done&&!locked&&!isSel&&this._lastPickInCat(this.currentCategory)===a.id)?'<span class="repeat-badge" style="background:rgba(59,130,246,0.14);color:var(--blue);">↺ last pick</span>':'';
-// Peek toggle: preview the description/impact WITHOUT selecting — lets you compare a couple of cards
-// before committing to one. Stops the click from bubbling up to the card's own select handler.
-const peekBtn=(!done&&!locked&&!isSel)?'<span onclick="event.stopPropagation();Game.togglePeek(\''+this.currentCategory+'\',\''+a.id+'\')" style="cursor:pointer;font-size:0.6rem;color:var(--blue);font-weight:600;margin-left:6px;white-space:nowrap;">'+(peeked?'▾ hide':'ⓘ preview')+'</span>':'';
+// Expand/Hide toggle, top-right of the card so it never overlaps the tap-to-select area. Stops the
+// click from bubbling up to the card's own select handler.
+const openToggle=!locked?'<span onclick="event.stopPropagation();Game.toggleCardOpen(\''+this.currentCategory+'\',\''+a.id+'\')" style="cursor:pointer;font-size:0.6rem;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0;">'+(cardOpen?'▾ Hide description':'▸ Expand description')+'</span>':'';
 const isPartial=!done&&!locked&&this.state._partial_actions&&this.state._partial_actions[a.id];const partialBadge=isPartial?'<span class="new-badge" style="background:var(--gold);color:#1a1205;">↻ RETRY — HALF COST</span>':'';
 const rehireBadge=(!done&&!locked&&this.state._rehire&&this.state._rehire[a.id])?'<span class="new-badge" style="background:var(--orange);color:#1a1205;">↻ REHIRE</span>':'';
 // Prerequisite marker: this action is a gate for other actions still to come. Mark it so the player knows it opens up the tree (tooltip lists what it unlocks).
@@ -5212,11 +5334,11 @@ const grpName=_grpOf[a.id];const grpTag=grpName?'<span class="group-tag">'+grpNa
 // Top row: group name + status badges (NEW / RETRY / SELECTED / picks) together on one line.
 const rescueBadge=(!done&&!locked&&a.id==='restructure_team'&&this._needsRestructure())?'<span class="new-badge" style="background:var(--red);color:#fff;">'+(this.state._toxic_closer?'⚠ FIRE THE CLOSER':'⚠ CUT PAYROLL — FIX THIS')+'</span>':'';
 const topInner=grpTag+rescueBadge+rehireBadge+unlockBadge+selBadge+partialBadge+offBadge+newBadge+repeatBadge+lastPickBadge;const topRow=topInner?'<div class="card-toprow">'+topInner+'</div>':'';
-// Collapsed to just the title + top-row badges + cost tags until picked — a long list scans and scrolls
-// faster when only the name is competing for attention. Tapping a card selects it AND expands its
-// description/preview right there, so you read the full pitch on the one you're actually considering.
-// A "ⓘ preview" link on unselected cards expands the same detail WITHOUT selecting, for comparing options.
-return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<h4>'+a.label+peekBtn+'</h4>'+(expanded?('<p>'+desc+'</p>'+(!done&&!locked?this.ownedPreview(a.id):'')+(!done?this.actionPreview(a):'')):'')+'<div class="action-costs">'+
+// Expanded by default (description + owned-state) — "▾ Hide description" in the title row collapses
+// it manually per card; selecting the card never changes this. The "Stats impacted" line stays
+// visible either way — it's the compact always-there summary, only the prose description toggles.
+const statsLine=!done?this.actionPreview(a):'';
+return'<div class="action-card '+cls+(isNew?' is-new':'')+' fade-in" style="'+(outgrown?'opacity:0.6;':'')+'" onclick="'+onclick+'">'+topRow+'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;"><h4 style="margin:0 0 4px;flex:1;min-width:0;">'+a.label+'</h4>'+openToggle+'</div>'+(cardOpen?('<p>'+desc+'</p>'+(!done&&!locked?this.ownedPreview(a.id):'')):'')+statsLine+'<div class="action-costs">'+
 (a.id==='pay_down_debt'?(()=>{const pl=this._debtPaydownPlan(),est=pl.payRev+pl.payLoan;
 // est=$0 has two very different causes — don't lump them as "already healthy". If utilization/DTI is high but you have no spare cash, say so (you're stuck, not fine).
 if(est>0)return '<span class="cost-tag cost-cash">💵 ~'+this.fmt(est)+'</span>';
@@ -5245,33 +5367,19 @@ const isPartialA=a=>this.state._partial_actions&&this.state._partial_actions[a.i
 // One flat list with group-name tags on each card. Order: retry (finish what you started) → the FRESH POOL (never-taken choices + owned investments, SHUFFLED per month so the menu never stales into one fixed order) → other already-run repeatables (sunk) → locked (unlocks next) → completed. Once fresh choices are exhausted, the owned investments ARE the top of the menu — reinvesting becomes the late-game default. The shuffle is seeded by the month so it's stable across re-renders within a turn.
 const _takenBefore=a=>!a.one_time&&((this.state._action_counts||{})[a.id]||0)>0&&!INVEST_OWN[a.id];
 const _shufKey=a=>{let h=((this.month||0)+1)*2654435761>>>0;const id=a.id;for(let i=0;i<id.length;i++)h=((h^id.charCodeAt(i))*16777619)>>>0;return h;};
-const availAll=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;/* a just-unlocked action is pinned on top for its debut month only — after that it joins the shuffle */const ta=_takenBefore(a)?1:0,tb=_takenBefore(b)?1:0;if(ta!==tb)return ta-tb;/* chores you've already run sink below the fresh pool */return _shufKey(a)-_shufKey(b);});
-// (No "affordable-first" sort tier: isActionLocked() already excludes anything you can't afford from
-// this list entirely — every card here is by definition already affordable, so that tier would be a no-op.)
+const avail=actions.filter(a=>!this.isActionCompleted(a)&&!this.isActionLocked(a)).sort((a,b)=>{const pa=isPartialA(a)?1:0,pb=isPartialA(b)?1:0;if(pa!==pb)return pb-pa;const na=isNewA(a)?1:0,nb=isNewA(b)?1:0;if(na!==nb)return nb-na;/* a just-unlocked action is pinned on top for its debut month only — after that it joins the shuffle */const ta=_takenBefore(a)?1:0,tb=_takenBefore(b)?1:0;if(ta!==tb)return ta-tb;/* chores you've already run sink below the fresh pool */return _shufKey(a)-_shufKey(b);});
 const locked=actions.filter(a=>!this.isActionCompleted(a)&&this.isActionLocked(a));
 const completed=actions.filter(a=>this.isActionCompleted(a));
-// Simple filter chips above the list: All / never taken / opens more of the tree. (Affordability isn't
-// a useful filter here — see the note above, everything in this list already clears that bar.) Only
-// thins the fresh-pool view for DISPLAY — _freshLeft/_ownsInvest below still read the unfiltered
-// availAll, so the "grow the portfolio" banner reflects the real state, not just the current filter.
-this._actionFilter=this._actionFilter||'all';
-const neverTaken=a=>((this.state._action_counts||{})[a.id]||0)===0;
-let avail=availAll;
-if(this._actionFilter==='untried')avail=availAll.filter(neverTaken);
-else if(this._actionFilter==='gateway')avail=availAll.filter(a=>this._isGateway(a));
-const filterChip=(key,label)=>'<div class="lb-seg '+(this._actionFilter===key?'active':'')+'" onclick="Game.setActionFilter(\''+key+'\')">'+label+'</div>';
-const filterBar=availAll.length?'<div class="lb-scope" style="margin-bottom:8px;">'+filterChip('all','All')+filterChip('untried','✨ Untried')+filterChip('gateway','🔑 Opens more')+'</div>':'';
 // Locked rows are tappable too — a "ⓘ" reveals what the action actually does, so you can judge whether
 // chasing its prerequisite is worth it, without waiting until it unlocks to find out.
 const lockRow=a=>{const _gw=this._neededBy(a.id).some(id=>!(this.state._completed_actions||[]).includes(id));const pk=!!(this._peeked&&this._peeked['locked:'+a.id]);
 return '<div style="opacity:0.55;"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 12px;font-size:0.78rem;cursor:pointer;" onclick="Game.togglePeek(\'locked\',\''+a.id+'\')"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔒 '+a.label+(_gw?' <span title="prerequisite — unlocks more actions once taken" style="color:var(--blue);">🔑</span>':'')+(_grpOf[a.id]?' <span class="group-tag" style="opacity:0.8;">'+_grpOf[a.id]+'</span>':'')+' <span style="color:var(--blue);font-size:0.62rem;font-weight:600;">'+(pk?'▾':'ⓘ')+'</span></span><span style="color:var(--text2);font-size:0.68rem;text-align:right;flex-shrink:0;">'+this.getLockedReason(a)+'</span></div>'+(pk?'<div style="padding:0 12px 8px;font-size:0.7rem;color:var(--text2);line-height:1.4;">'+this.linkTerms(a.description)+'</div>':'')+'</div>';};
 // When every fresh (never-taken) move here is done and the player owns repeatable investments, reframe the menu: this isn't "nothing new" — it's the scaling phase.
 const _cnts=this.state._action_counts||{};
-const _freshLeft=availAll.some(a=>((_cnts[a.id]||0)===0)&&!isPartialA(a));
-const _ownsInvest=availAll.some(a=>INVEST_OWN[a.id]&&(_cnts[a.id]||0)>0);
+const _freshLeft=avail.some(a=>((_cnts[a.id]||0)===0)&&!isPartialA(a));
+const _ownsInvest=avail.some(a=>INVEST_OWN[a.id]&&(_cnts[a.id]||0)>0);
 if(!_freshLeft&&_ownsInvest)listHtml+='<div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.35);border-radius:var(--radius-sm);padding:8px 12px;margin:4px 0 8px;font-size:0.74rem;color:var(--gold);"><strong>🔁 Grow the portfolio</strong> — every fresh move here is taken. Now you scale: each unit you add compounds your cash flow and leverage.</div>';
-listHtml+=filterBar;
-listHtml+=avail.length?avail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No '+(this._actionFilter==='untried'?'untried':this._actionFilter==='gateway'?'gateway':'')+' moves right now'+(this._actionFilter!=='all'?' — try “All”.':'.')+'</div>';
+listHtml+=avail.length?avail.map(card).join(''):'<div style="text-align:center;padding:14px;color:var(--text2);font-size:0.8rem;">No moves available here right now.</div>';
 if(locked.length)listHtml+='<div style="padding:10px 12px 2px;font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;opacity:0.7;">Unlocks next</div>'+locked.map(lockRow).join('');
 if(completed.length){if(this._showAllActions)listHtml+=hdr('Completed')+completed.map(card).join('')+'<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=false;Game.renderActions();">Show less ▴</span></div>';else listHtml+='<div style="text-align:center;padding:10px;"><span style="color:var(--text2);cursor:pointer;font-size:0.85rem;" onclick="Game._showAllActions=true;Game.renderActions();">Show '+completed.length+' completed ▾</span></div>';}
 // Unified "Your Team's Plan" panel — one place that shows every exec's pick (and the board/lifestyle), with a single button to run the month. Replaces the old separate focus-toggle + board-button.
@@ -5297,7 +5405,7 @@ if(ac.includes('finance')&&!delegFin&&this._hasRequiredFinance()&&!this.selected
 if(ac.includes('lifestyle')&&!this.selectedActions['lifestyle']){if(this.currentCategory!=='lifestyle')this.switchCategory('lifestyle');this._focusActionList();this.showPopup('🏖️ One more — your Life action','Your team has the business handled this month. <strong>Your Life action is always your own pick</strong> — choose one life investment below, then run the month.');return;}
 this.resolveMonth();},
 
-selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(id==='policy_loan'||id==='activate_passive_income'){this.openPolicyControl();return;}/* policy management lives in the ⭐ hub panel — taking a loan / switching on passive is done there (and queued as the finance move) */if(id==='buy_real_estate'||id==='buy_str'||id==='private_banking'||id==='cash_out_refi'){this.openDealControl(cat,id);return;}if(id==='equipment_financing'){this.openEquipControl(cat,id);return;}/* equipment opens its catalog picker *//* investment deals open the deal panel — review this month's roll, set your terms, then confirm to queue */this._paymentMethod='cash';this.selectAction(cat,id);},
+selectActionPayment(cat,id){const action=this.getAvailableActions(cat).find(a=>a.id===id);if(!action||this.isActionLocked(action))return;if(id==='policy_loan'||id==='activate_passive_income'){this.openPolicyControl();return;}/* policy management lives in the ⭐ hub panel — taking a loan / switching on passive is done there (and queued as the finance move) */if(id==='buy_real_estate'||id==='buy_str'||id==='private_banking'||id==='cash_out_refi'){this.openDealControl(cat,id);return;}if(id==='equipment_financing'){this.openEquipControl(cat,id);return;}/* equipment opens its catalog picker */if(id==='retirement_plan'){this.openRetirementControl(cat,id);return;}/* pick your contribution rate before opening the plan *//* investment deals open the deal panel — review this month's roll, set your terms, then confirm to queue */this._paymentMethod='cash';this.selectAction(cat,id);},
 
 getLockedReason(a){const s=this.state,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.business_credit_used||0)),totalFunds=(s.cash||0)+(s.available_credit||0)+bizAvail,pr=a.prerequisites||{};if(this._epicOnlyLocked(a))return'👑 Epic Life members only';if(pr.needs){const miss=pr.needs.find(id=>!(s._completed_actions||[]).includes(id));if(miss)return'Needs: '+this.actionLabel(miss);}{const cc=this.actionCashCost(a);if(cc&&totalFunds<cc)return'Not enough cash or credit';}{const ec=this.actionEnergyCost(a);if(ec>0&&(s.energy||0)-ec<-40)return'Too exhausted';}for(const[k,v]of Object.entries(pr)){if(k==='needs')continue;/* only report a prerequisite the player actually FAILS — the first-listed one may already be met (e.g. PAL blamed the 680 score at a player sitting on 800 when the real blocker was the $40k) */
 if(k==='liquid_cash_gte'){if(((s.cash||0)+(s.personal_cash||0))<v)return'Need '+this.fmtMoney(v)+' in cash';continue;}
@@ -5365,7 +5473,7 @@ dealRoll(id){const s=this.state,isSTR=id==='buy_str';
  return {tier:t[0],fairValue,price,noi,capQ,disc,baseYield,rating:q>=1.12?'strong':q>=0.92?'fair':'thin'};},
 _dealTag(r){const M={strong:['🟢 strong deal','var(--accent)'],fair:['🟡 fair deal','var(--gold)'],thin:['🔴 thin deal','var(--red)']}[r.rating];return '<span style="color:'+M[1]+';font-weight:700;white-space:nowrap;">'+M[0]+'</span>';},
 // Player-set terms per investment (persist run-long as "your usual terms"; defaults are middle-of-the-road, NOT max leverage).
-_dealTerm(id){const d={buy_real_estate:{downPct:20},buy_str:{downPct:20},private_banking:{drawPct:50},cash_out_refi:{ltvPct:70}};return Object.assign({},d[id]||{},(this.state._dealTerms||{})[id]||{});},
+_dealTerm(id){const d={buy_real_estate:{downPct:20},buy_str:{downPct:20},private_banking:{drawPct:50},cash_out_refi:{ltvPct:70},retirement_plan:{pct:8}};return Object.assign({},d[id]||{},(this.state._dealTerms||{})[id]||{});},
 _dealStageSet(id,k,v){const s=this.state;s._dealTerms=s._dealTerms||{};s._dealTerms[id]=s._dealTerms[id]||{};s._dealTerms[id][k]=Math.round(+v||0);this.openDealControl(this._dealCat||'finance',id);},
 dealToggleInfo(id){this._dealInfo=!this._dealInfo;if(this._dealInfo){const s=this.state,ptype=(id==='buy_real_estate'||id==='buy_str')?'property':(id==='private_banking'?'pal':'refi');s._deal_primer_seen=s._deal_primer_seen||{};s._deal_primer_seen[ptype]=true;}this.openDealControl(this._dealCat||'finance',id);},
 dealBack(){this._dealInfo=false;this.hidePopup();},/* back to the action list — the deal (and any queued terms) stays as-is */
@@ -5419,9 +5527,11 @@ equipPick(itemId){const s=this.state;if((s._equip_owned||[]).includes(itemId))re
  s._equip_choice=c;this.openEquipControl(this._equipCat||'finance','equipment_financing');},
 equipConfirm(){const cat=this._equipCat||'finance';this._paymentMethod='cash';this.selectAction(cat,'equipment_financing');this.openEquipControl(cat,'equipment_financing');},
 _DEAL_PRIMERS:{
-property:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW TO READ A DEAL</div><ol style="margin:0;padding-left:18px;font-size:0.72rem;color:var(--text2);line-height:1.55;"><li><strong style="color:var(--text);">Price vs. worth</strong> — are you paying under fair value? Downturns are when discounts appear; in a boom you overpay for the same building.</li><li><strong style="color:var(--text);">Yield — THE number to compare deals</strong> — monthly net cash flow per dollar of price. The 🟢/🟡/🔴 tag rates this deal against an average market deal. It rates the DEAL, not whether you can afford it — that judgment stays yours.</li><li><strong style="color:var(--text);">Your cushion</strong> — less down payment = higher loan-to-value. Past ~75% LTV a downturn can force a sale; under ~65% you ride the crash out.</li><li><strong style="color:var(--text);">The hidden line: the tax shield</strong> — depreciation isn\'t on the price tag, but it\'s real return. An STR\'s shield is bigger and hits your ACTIVE income — at the cost of your time.</li><li><strong style="color:var(--text);">You don\'t have to buy</strong> — a new deal rolls every month. Passing on a thin deal is a skill; having dry powder ready for a strong one is the other skill.</li></ol>',
-pal:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW TO SIZE YOUR DRAW</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.55;">The line lets you borrow against a portfolio that <strong style="color:var(--text);">stays invested and keeps compounding</strong> — liquidity without selling, and no capital-gains tax. The interest roughly cancels what the portfolio earns, so the line itself is nearly free carry. The whole game is the draw:<br><br>• <strong style="color:var(--text);">Draw low (≤55%)</strong> — even a deep crash can\'t margin-call you. Sleep-at-night leverage.<br>• <strong style="color:var(--text);">Draw high (&gt;65%)</strong> — a market drop pushes the loan past the pledged value\'s limit → <strong style="color:var(--red);">MARGIN CALL</strong>: the bank force-sells your portfolio at the bottom.<br><br>Rule of the wealthy: the line is dry powder for strong deals — never draw it to the max just because you can.</div>',
-refi:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW TO READ YOUR LTV HEADROOM</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.55;">Loan-to-value = your total property debt ÷ what the portfolio is worth. The refi pulls equity out as <strong style="color:var(--text);">tax-free loan cash</strong> (a loan, not a sale — no capital gains) by pushing your LTV up toward the 75% ceiling.<br><br>• <strong style="color:var(--text);">Stop around 60–65%</strong> and you keep a crash-proof cushion — the BRRRR engine with staying power.<br>• <strong style="color:var(--text);">Pull to the 75% max</strong> and you\'ve recycled the most capital — but one downturn puts you underwater and a forced sale on the table.<br><br>Recycle capital, never your cushion. The pull only makes sense if the cash goes into something that cash-flows.</div>'},
+// Simplified reading level (owner, 2026-07-04): shorter sentences, plain words, jargon defined the
+// first time it's used instead of assumed. Same teaching content, easier to actually read.
+property:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW TO READ A DEAL</div><ol style="margin:0;padding-left:18px;font-size:0.72rem;color:var(--text2);line-height:1.55;"><li><strong style="color:var(--text);">Good price or bad price?</strong> Is this cheaper or pricier than it\'s really worth? Prices drop in a downturn and rise in a boom — same building either way.</li><li><strong style="color:var(--text);">The main number: monthly cash flow</strong> — how much money is left over each month, per dollar you paid. The 🟢/🟡/🔴 tag compares this deal to a typical one. It only rates the DEAL — not whether you should buy it. That call is yours.</li><li><strong style="color:var(--text);">How much cushion you have</strong> — put down less cash and you owe more (this ratio is called loan-to-value, or LTV). Above ~75% owed, a downturn could force you to sell. Below ~65%, you can ride out a crash.</li><li><strong style="color:var(--text);">A tax bonus most people miss</strong> — buildings "lose value" on paper every year (called depreciation) even while making you money — that lowers your tax bill. Airbnb-style rentals get a bigger bonus, but eat more of your time.</li><li><strong style="color:var(--text);">You don\'t have to buy</strong> — a new deal shows up every month. Skipping a weak one is smart. So is waiting with cash ready for a great one.</li></ol>',
+pal:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW MUCH TO BORROW</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.55;">This line lets you borrow money using your investments as collateral (a promise, not a sale) — <strong style="color:var(--text);">your money stays invested and keeps growing</strong>. You never sell anything, so there\'s no tax on gains. The interest you pay roughly matches what your investments earn, so borrowing here is nearly free. How much you draw is the whole decision:<br><br>• <strong style="color:var(--text);">Draw a little (≤55%)</strong> — even a bad crash can\'t force you to repay early. The safe way to use it.<br>• <strong style="color:var(--text);">Draw a lot (&gt;65%)</strong> — if the market drops, you could owe more than your investments are worth. Then the bank can force-sell them at the worst possible time — that\'s called a <strong style="color:var(--red);">margin call</strong>.<br><br>Rule: keep this line ready for a good opportunity. Don\'t max it out just because you can.</div>',
+refi:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW MUCH CASH TO PULL OUT</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.55;">Loan-to-value (LTV) = how much you owe on your properties ÷ what they\'re worth. This move lets you pull cash out of your properties as a <strong style="color:var(--text);">loan, not a sale</strong> — so you don\'t pay tax on it. It works by raising your LTV, up to a 75% limit.<br><br>• <strong style="color:var(--text);">Stop around 60–65%</strong> and you keep a safety cushion if prices drop.<br>• <strong style="color:var(--text);">Go to the 75% max</strong> and you pull out the most cash — but a downturn could leave you owing more than the property is worth, risking a forced sale.<br><br>Rule: only pull cash out if it\'s going into something that pays you back monthly. Never pull out your whole safety cushion.</div>'},
 openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));this._dealCat=cat;
  const a=this.getAvailableActions(cat).find(x=>x.id===id);if(!a)return;
  // Render even when the current terms make it unaffordable (e.g. sliding the down payment past your cash) — the panel explains and disables Confirm instead of silently refusing.
@@ -5497,6 +5607,43 @@ openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));th
  this.showPopup(a.label,h);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
 dealConfirm(cat,id){this._paymentMethod='cash';this.selectAction(cat,id);/* toggles: confirm queues, tap again deselects (owner) */this._dealInfo=false;this.openDealControl(cat,id);/* stay in the panel — button flips green "✓ Confirmed" so the player SEES it */},
 dealRemove(cat,id){if(this.selectedActions[cat]&&this.selectedActions[cat].id===id)this.selectAction(cat,id);this._dealInfo=false;this.hidePopup();},
+// Solo 401(k)/SEP — same deal-panel pattern as property/PAL/refi (slider + live preview + Confirm),
+// but its own control since it doesn't fit the property/pal/refi ptype split. Real 2025 IRS figures:
+// $23,500/yr personal elective-deferral limit (~$1,958/mo) and $70,000/yr combined employee+employer
+// limit (~$5,833/mo) for a Solo 401(k)/SEP — the chosen rate is capped by whichever applies.
+_RETIREMENT_PRIMER:'<div style="font-size:0.72rem;font-weight:800;color:var(--gold);margin-bottom:5px;">HOW MUCH TO PUT IN EACH MONTH</div><div style="font-size:0.72rem;color:var(--text2);line-height:1.55;">A Solo 401(k) lets you set aside part of your business profit before taxes come out. You only pay tax on it later, when you withdraw it, and it grows tax-deferred until then.<br><br>• <strong style="color:var(--text);">Up to about $1,958/mo</strong> ($23,500/yr) — the standard yearly limit for what YOU can personally set aside. Most businesses can comfortably do this.<br>• <strong style="color:var(--text);">Above that, up to about $5,833/mo</strong> ($70,000/yr combined) — your business can ALSO contribute on your behalf, on top of your own amount. This needs real profit behind it.<br><br>Every dollar you put in costs you less than a dollar of cash — the tax deduction covers part of it — and the rest compounds for years. Rule: don\'t starve your business of cash just to max this out. Steady beats maxed.</div>',
+openRetirementControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));this._dealCat=cat;
+ const a=this.getAvailableActions(cat).find(x=>x.id===id);if(!a)return;
+ const sel=!!(this.selectedActions[cat]&&this.selectedActions[cat].id===id);
+ const t=this._dealTerm(id);
+ const EMP_DEFERRAL_MO=1958,COMBINED_CAP_MO=5833;
+ const pctVal=Math.max(2,Math.min(30,t.pct||8)),pct=pctVal/100;
+ const raw=Math.round((s.monthly_revenue||0)*pct);
+ const cap=raw>EMP_DEFERRAL_MO?COMBINED_CAP_MO:EMP_DEFERRAL_MO;
+ const contrib=Math.min(raw,cap),capped=raw>cap;
+ const cashCost=Math.round(contrib*(1-(s.tax_rate||0.25)));
+ let bal=s._retirement_balance||0;for(let i=0;i<12;i++)bal=(bal+contrib)*1.005;/* same ~6%/yr credited monthly in monthlyTick */
+ const row=(l,v,c)=>'<div class="breakdown-row"><span>'+l+'</span><span style="font-weight:700;color:'+(c||'var(--text)')+'">'+v+'</span></div>';
+ const slider=(lbl,min,max,val,valTxt,key)=>'<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 3px;">'+lbl+'</div><input type="range" min="'+min+'" max="'+max+'" step="1" value="'+val+'" style="width:100%;accent-color:var(--gold);" onchange="Game._retStageSet(\''+id+'\',\''+key+'\',this.value)"><div style="font-size:0.78rem;font-weight:700;color:var(--gold);">'+valTxt+'</div>';
+ const infoLbl=(this._retInfo?'✕ Hide':'ℹ️ Understand this investment')+((!this._retInfo&&!(s._deal_primer_seen&&s._deal_primer_seen.retirement))?'<span class="new-badge">NEW</span>':'');
+ let h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;"><button class="back-chip" style="margin:0;" onclick="Game.retirementBack()">← Back</button><span onclick="Game.retirementToggleInfo()" style="cursor:pointer;font-size:0.66rem;color:var(--text2);">'+infoLbl+'</span></div>';
+ if(this._retInfo)h+='<div style="margin-bottom:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;">'+this._RETIREMENT_PRIMER+'</div>';
+ h+='<div style="font-size:0.58rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin:8px 0 5px;">At this rate</div><div style="padding:4px 12px;background:rgba(16,185,129,0.06);border:1px solid var(--accent);border-radius:8px;">';
+ h+=row('Monthly contribution',fm(contrib)+'/mo','var(--accent)');
+ h+=row('Real cash cost (after deduction)','−'+fm(cashCost)+'/mo','var(--gold)');
+ h+=row('Tax saved',fm(contrib-cashCost)+'/mo','var(--accent)');
+ h+=row('Balance in 12 months',fm(bal),'var(--accent)');
+ h+='<div class="breakdown-detail">'+(capped?('⚠ Capped by the '+(cap===EMP_DEFERRAL_MO?'$23,500/yr personal deferral limit — to put in more, your business needs enough profit to contribute on your behalf too.':'$70,000/yr combined limit — you\'re already at the max a Solo 401(k) allows.')):'Well within IRS limits — there\'s room to put in more if you want to.')+'</div>';
+ h+='</div>';
+ h+=slider('Contribution rate — % of monthly revenue',2,30,pctVal,pctVal+'% of revenue = '+fm(contrib)+'/mo','pct');
+ h+='<button onclick="Game.retirementConfirm(\''+cat+'\',\''+id+'\')" style="width:100%;margin-top:12px;background:'+(sel?'var(--accent)':'var(--gold)')+';color:#08130c;border:none;border-radius:8px;padding:11px;font-weight:800;font-size:0.82rem;cursor:pointer;">'+(sel?'✓ Confirmed — tap to undo':'Confirm')+'</button>';
+ h+='<div style="font-size:0.58rem;color:'+(sel?'var(--accent)':'var(--text2)')+';text-align:center;margin-top:5px;">'+(sel?'✓ Queued as this month\'s finance move — slider changes update it instantly.':'Uses this month\'s finance move. Your rate is remembered going forward.')+'</div>';
+ h+='<button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="Game.retirementBack()">Close</button>';
+ this.showPopup(a.label,h);const _d=document.querySelector('#popup-container .popup-box > button.btn-secondary');if(_d)_d.style.display='none';},
+_retStageSet(id,k,v){const s=this.state;s._dealTerms=s._dealTerms||{};s._dealTerms[id]=s._dealTerms[id]||{};s._dealTerms[id][k]=Math.round(+v||0);this.openRetirementControl(this._dealCat||'finance',id);},
+retirementToggleInfo(){this._retInfo=!this._retInfo;if(this._retInfo){const s=this.state;s._deal_primer_seen=s._deal_primer_seen||{};s._deal_primer_seen.retirement=true;}this.openRetirementControl(this._dealCat||'finance','retirement_plan');},
+retirementConfirm(cat,id){this._paymentMethod='cash';this.selectAction(cat,id);this._retInfo=false;this.openRetirementControl(cat,id);},
+retirementBack(){this._retInfo=false;this.hidePopup();},
 creditPreview(id){const s=this.state,cf=this.calcCreditCapacity(),fm=v=>this.fmtMoney(Math.round(v));let txt='';switch(id){
 case 'business_credit_line':txt='≈ '+fm(15000*cf)+' line, sized to your credit & revenue';break;
 case 'bank_personal_loan':{if(this.isSeparated()){txt='≈ '+fm(25000*cf)+' business term loan, sized to your revenue & credit';}else{const c2=Math.max(0.6,Math.min(2.5,((s.personal_credit_score||600)-560)/120));txt='≈ '+fm(10000*c2)+' personal loan now — larger business loan once you form an LLC';}break;}
@@ -5668,13 +5815,21 @@ this._syncExecCompletions();/* a failed exec hire/promote still fills the role (
 if(success&&this.state._rehire&&this.state._rehire[action.id])delete this.state._rehire[action.id];/* role re-filled — clear the rehire flag */
 // Log a trap the moment it's taken (traps are always a setback, so success/fail doesn't matter). "Survived" is settled by reaching the run's end alive — a lost run never gets the badge.
 if(TRAPS.includes(action.id)){if(!this.state._traps_hit)this.state._traps_hit=[];if(!this.state._traps_hit.includes(action.id))this.state._traps_hit.push(action.id);}
-if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
+// Deal-panel/investment actions are excluded from the retry/half-cost mechanic (owner, 2026-07-04):
+// their cost is a fresh roll every month (dealRoll/basket total), not a fixed price you're chipping
+// away at, so "retry at half cost" never actually applied to their real cost (buy_real_estate/buy_str/
+// equipment_financing were already bypassing the halving in actionCashCost's early-return) — it just
+// showed a misleading "HALF COST" badge. A new deal rolls next month regardless; no special-cased retry state needed.
+const DEAL_PANEL_IDS=['buy_real_estate','buy_str','private_banking','cash_out_refi','equipment_financing'];
+if(!this.state._partial_actions)this.state._partial_actions={};if(cat!=='lifestyle'&&!DEAL_PANEL_IDS.includes(action.id)){if(success)delete this.state._partial_actions[action.id];else this.state._partial_actions[action.id]=true;}
 if(success||cat==='lifestyle')this.state._action_counts[action.id]=(this.state._action_counts[action.id]||0)+1;
 // Non-lifestyle recurring costs (insurance premiums, memberships) become an ongoing monthly operating expense — added once when first activated.
 if(success&&cat!=='lifestyle'&&action.recurring_cost&&action.id!=='epic_life_membership'){if(!this.state._active_recurring_costs)this.state._active_recurring_costs={};if(!this.state._active_recurring_costs[action.id]){this.state._active_recurring_costs[action.id]=action.recurring_cost;this.state.operating_expenses=(this.state.operating_expenses||0)+action.recurring_cost;
 // Term-limited recurring cost (e.g. a cash advance that gets paid off): mark when it should stop draining.
 if(action.recurring_term){if(!this.state._recurring_expiry)this.state._recurring_expiry={};this.state._recurring_expiry[action.id]=this.month+action.recurring_term;}}}
-if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','operations','finance'].includes(cat)){const role=cat==='marketing'?'Sales Manager':cat==='operations'?'Ops Manager':'CFO';const bonus=Math.max(1000,Math.min(15000,Math.round((this.state.monthly_revenue||0)*0.03)));this.payCost(bonus,false);_execBonuses.push({role,bonus,label:action.label});}
+// CFO/Finance is deliberately excluded (owner, 2026-07-04) — Sales Manager and Ops Manager keep their
+// performance bonus on a successful auto-pick; the CFO does not get one.
+if(this._autoPicked&&this._autoPicked[cat]===action.id&&success&&['marketing','operations'].includes(cat)){const role=cat==='marketing'?'Sales Manager':'Ops Manager';const bonus=Math.max(1000,Math.min(15000,Math.round((this.state.monthly_revenue||0)*0.03)));this.payCost(bonus,false);_execBonuses.push({role,bonus,label:action.label});}
 this.state[skillKey]=Math.min(100,(this.state[skillKey]||0)+(action.id==='do_work_yourself'?5:2));
 if(action.id==='advanced_tax_strategy'&&success){this.state.tax_rate=Math.max(0.15,(this.state.tax_rate||0.25)-0.02);['tax_planning_session','tax_optimization'].forEach(id=>{if(!this.state._completed_actions.includes(id))this.state._completed_actions.push(id);});}
 if(action.id==='policy_loan'&&success){const sep=this.isSeparated(),cv=this.state.insurance_cash_value||0,headroom=this._policyBorrowable(),loanAmt=Math.min(headroom,(this.state._pending_policy_loan_amt||headroom)),before=sep?(this.state.personal_cash||0):(this.state.cash||0);this.state._pending_policy_loan_amt=0;if(loanAmt<=0){this.state._dyn_narrative='You\'ve already borrowed up to 90% of your '+this.fmtMoney(cv)+' cash value — there\'s no loan room left right now. Keep funding the policy (or let it compound) to open more borrowing capacity.';}else{if(sep)this.state.personal_cash=before+loanAmt;else this.state.cash=before+loanAmt;this.state.insurance_loan_balance=(this.state.insurance_loan_balance||0)+loanAmt;effects.cash=(effects.cash||0)+loanAmt;this.state._dyn_narrative='Policy loan approved instantly — no credit check, no taxes. '+this.fmtMoney(loanAmt)+' (your remaining room up to 90% of the '+this.fmtMoney(cv)+' cash value) went straight into your personal cash: '+this.fmtMoney(before)+' → '+this.fmtMoney(before+loanAmt)+'. The cash value keeps compounding at ~7%/yr as if you never touched it; the loan accrues ~5%/yr and is netted from your death benefit — never repaid from your pocket.';}}
@@ -5881,8 +6036,13 @@ if(s._star_stage==='active'){s.energy=Math.max(-40,(s.energy||0)-2);s._star_stre
 else if(s._star_stage==='leaving'){const sysHit=Math.min(s.systems_maturity||0,10);s.systems_maturity=Math.max(0,(s.systems_maturity||0)-sysHit);s.team_size=Math.max(0,(s.team_size||0)-1);s.key_person_dependency=Math.min(100,(s.key_person_dependency||0)+10);s.churn_rate=Math.min(0.5,(s.churn_rate||0)+0.01);s.cash=(s.cash||0)-5000;this._clearRecurring('hire_star_operator');s._star_stage=null;s._star_streak=0;s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Your star operator resigned',narrative:'He gave two weeks\' notice — "startups just aren\'t for me." He was never going to ride out the hard part; he came for a line on his résumé. His work walks out with him: systems take a hit, the knowledge gap lands back on you, and you\'re hiring again. The lesson the hard way — hire people who see the vision, not just the ones who look great on paper.'}]);}
 // CAPTIVE INSURANCE — the deductible-premium → tax-advantaged-reserve loop. The business pays a premium (deductible, so only the after-tax portion is a real cash cost), and the FULL premium accumulates in your captive reserve, which compounds nearly tax-free (~5%/yr) under §831(b). Net: money that would have gone to the IRS becomes a protected, compounding asset you own. Carries a little audit risk (the IRS scrutinizes captives).
 if(s._captive_active){const premium=Math.min(Math.round((s.monthly_revenue||0)*0.06),25000);if(premium>0){const net=Math.round(premium*(1-(s.tax_rate||0.25)));s.cash=(s.cash||0)-net;s._captive_reserve=(s._captive_reserve||0)+premium;}if((s._captive_reserve||0)>0)s._captive_reserve=Math.round((s._captive_reserve||0)*1.004);s.litigation_exposure=Math.max(0,(s.litigation_exposure||0)-1);if(this.month%6===0)s.audit_risk=Math.min(100,(s.audit_risk||0)+2);}
-// RETIREMENT PLAN — the pre-tax sweep. A slice of profit (≈8% of revenue, capped ~$1,900/mo to echo the elective-deferral limit) goes in PRE-TAX: the deduction means only the after-tax portion (contribution×(1−tax_rate)) actually leaves cash, while the FULL contribution lands in _retirement_balance and compounds tax-deferred (~6%/yr). A deductible dollar becomes a compounding asset for ~75¢.
-if(s._retirement_active){const contribution=Math.min(Math.round((s.monthly_revenue||0)*0.08),1900);if(contribution>0){const cashCost=Math.round(contribution*(1-(s.tax_rate||0.25)));s.cash=(s.cash||0)-cashCost;s._retirement_balance=(s._retirement_balance||0)+contribution;}if((s._retirement_balance||0)>0)s._retirement_balance=Math.round((s._retirement_balance||0)*1.005);}
+// RETIREMENT PLAN — the pre-tax sweep. Player-chosen rate (openRetirementControl's slider, stored in
+// _dealTerms.retirement_plan.pct, default 8%) of revenue goes in PRE-TAX, capped by the real IRS limits:
+// ~$1,958/mo ($23,500/yr personal elective-deferral) alone, or ~$5,833/mo ($70,000/yr combined
+// employee+employer) once the rate is high enough to draw on the employer/profit-sharing side too. The
+// deduction means only the after-tax portion (contribution×(1−tax_rate)) actually leaves cash, while the
+// FULL contribution lands in _retirement_balance and compounds tax-deferred (~6%/yr).
+if(s._retirement_active){const EMP_DEFERRAL_MO=1958,COMBINED_CAP_MO=5833;const pct=(((s._dealTerms&&s._dealTerms.retirement_plan&&s._dealTerms.retirement_plan.pct)||8))/100;const raw=Math.round((s.monthly_revenue||0)*pct);const cap=raw>EMP_DEFERRAL_MO?COMBINED_CAP_MO:EMP_DEFERRAL_MO;const contribution=Math.min(raw,cap);if(contribution>0){const cashCost=Math.round(contribution*(1-(s.tax_rate||0.25)));s.cash=(s.cash||0)-cashCost;s._retirement_balance=(s._retirement_balance||0)+contribution;}if((s._retirement_balance||0)>0)s._retirement_balance=Math.round((s._retirement_balance||0)*1.005);}
 // HIRE YOUR KIDS — the income-shifting benefit. A modest deductible wage (≈2% of revenue, capped ~$1,200/mo) is paid to family for real work; the business deducts it and the child owes ~$0 under their standard deduction, so the household simply keeps the tax that wage would have cost in your bracket (~wage×tax_rate). Deliberately modest — a smart efficiency, not a windfall. (Wage flows pocket-to-pocket inside the household, so only the tax saved is a net gain.)
 if(s._family_payroll){const wage=Math.min(Math.round((s.monthly_revenue||0)*0.02),1200);if(wage>0){const taxSaved=Math.round(wage*(s.tax_rate||0.25));s.cash=(s.cash||0)+taxSaved;s._kids_tax_saved=(s._kids_tax_saved||0)+taxSaved;}}
 // Term-limited recurring costs falling off (e.g. a merchant cash advance, once it's paid off): stop the monthly drain, drop it from the burn breakdown, and post a "paid off" note.
@@ -6092,6 +6252,13 @@ if((s._equip_owned||[]).length){const _eqAct=(CONFIG.actions_finance&&CONFIG.act
    s._pendingRipples=(s._pendingRipples||[]).concat([{source:_it.icon+' '+_it.label+' — headache',narrative:_msg+' Cost you '+this.fmtMoney(_cost)+' and a piece of your week. Every machine is a small business — systems and people are what make it passive.'}]);
    break;/* one headache a month is plenty */}}}
 if((s.tax_reserve||0)>0)s.tax_reserve=Math.round((s.tax_reserve||0)*(1+0.04/12)); // tax reserve sits in a money-market account earning ~4%/yr fixed (taxable) — a policy grows faster and tax-free
+// Fold-in offer used to be a ONE-SHOT check fired only the instant fund_accumulation_policy succeeded
+// (and only if tax_reserve was already >0 at that exact moment) — so a reserve that built up before the
+// policy existed, or that started accruing only after, never got offered at all (owner-reported bug,
+// 2026-07-04: "somehow still have tax reserve even though I have a cash value policy"). Now it re-checks
+// every month, with a 3-month cooldown so it doesn't nag if declined, and fires for ANY order of
+// policy-then-reserve or reserve-then-policy as long as both exist and there's something worth folding.
+if((s.tax_reserve||0)>0&&(s._auto_fund_insurance||(s.insurance_cash_value||0)>0)&&!this._pendingReserveFold&&(this.month-(s._reserveFoldAskedMonth||0))>=3){this._pendingReserveFold=true;s._reserveFoldAskedMonth=this.month;}
 {const _pt=sep?'personal_cash':'cash';s[_pt]=(s[_pt]||0)+(s.other_monthly_revenue||0); // asset income (real estate, lending) → personal once separated
 s._lastPassive=null;if(s._passive_income_active&&s.insurance_cash_value>0){const moPassive=this._policyPassiveMonthly()/* passive draws from (cash value − outstanding loan), capped by borrowable headroom — one source of truth, so displays match what's paid */,_pb=s[_pt]||0;if(moPassive>0){const _preI=s._iul_funding_type==='pre_tax',_net=_preI?Math.round(moPassive*(1-Math.min(0.4,s.tax_rate||0.25))):moPassive;/* POST-tax: income is TAX-FREE (Roth). PRE-tax: it's deferred income coming due — taxable (Traditional). */s[_pt]=_pb+_net;s.insurance_passive_loan_total=(s.insurance_passive_loan_total||0)+moPassive;s.insurance_loan_balance=(s.insurance_loan_balance||0)+moPassive;s._lastPassive={amt:_net,gross:moPassive,taxed:_preI,before:Math.round(_pb),after:Math.round(_pb+_net),month:this.month};}}}
 // LAPSE — if the loan ever reaches the cash value, the policy collapses: gains taxed as ordinary income (you owe tax on money you already spent), and the tax-free engine is gone. Only the variable loan can get here; the wash loan is structurally safe.
@@ -6182,7 +6349,10 @@ const body=this._brokeGraphic()+'<div style="line-height:1.55;">Your <strong>acc
 const sel=document.getElementById('result-accessible')?'#result-accessible':(document.getElementById('month-cash-panel')?'#month-cash-panel':null);
 if(sel)this._spotlightTip(sel,'💥 Game Over — Insolvent',body);
 else this.showPopup('💥 Game Over — Insolvent',body);},
-toggleResultDetail(id,ev){if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.term-link'))return;/* don't toggle when tapping a glossary term inside the card */const d=document.getElementById(id);if(!d)return;const open=d.style.display!=='none';d.style.display=open?'none':'block';const t=d.previousElementSibling;if(t)t.innerHTML=t.innerHTML.replace(open?'▴':'▾',open?'▾':'▴');},
+// Result-card description toggle — top-right of the card, matching the action-card pattern (owner,
+// 2026-07-04): impacted stats + before/after changes always show; only the narrative/lesson prose
+// collapses. Expanded by default, same as action cards.
+toggleResultDesc(id,el){const d=document.getElementById(id);if(!d)return;const open=d.style.display!=='none';d.style.display=open?'none':'block';if(el)el.textContent=open?'▸ Expand description':'▾ Hide description';},
 showResults(results,triggeredEvent){/* Insolvency no longer jumps straight to game over — we render the results (Cash & Credit shows you went over) and let any triggered event play out first; the game-over fires when you advance (see nextMonth). */
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Month '+this.month+' — Results';
 let html='';
@@ -6208,20 +6378,22 @@ if(this.state._inquiriesCleared){html+='<div class="fade-in" style="background:r
 let _firstCard=true,_ci=0;for(const r of results){
 const chips=[];for(const[k,v]of Object.entries(r.effects)){if(typeof v!=='number'||v===0)continue;if(r._baKeys&&r._baKeys.includes(k))continue;if(k==='personal_credit_score'&&r._scoreMoved)continue;if(r._mastery&&(k.indexOf('lifestyle_')===0||k==='fitness_level'||k==='energy'))continue;/* dimension panel covers these */const abs=Math.abs(v),isMoney=MK.includes(k);if(isMoney&&(!r.action||r.action.category!=='finance'))continue;if(isMoney&&abs<500)continue;if(!isMoney&&abs<3)continue;const inv=IK.includes(k),color=inv?(v>0?'var(--red)':'var(--accent)'):(v>0?'var(--accent)':'var(--red)');const val=isMoney?((v>0?'+':'')+this.fmtMoney(v)):((v>0?'+':'')+v);chips.push('<span style="font-size:0.7rem;font-weight:700;background:rgba(127,127,127,0.12);border-radius:999px;padding:2px 8px;color:'+color+';white-space:nowrap;">'+val+' '+(this._keyIcon(k)?this._keyIcon(k)+' ':'')+this.formatStatName(k)+'</span>');}
 const firstLesson=r.success&&r.action.lesson&&!(this.state._lessons_shown||[]).includes(r.action.id);if(firstLesson)(this.state._lessons_shown=(this.state._lessons_shown||[])).push(r.action.id);
-// Collapse the verbose stat-change details + lesson behind a per-card toggle to cut the wall of text.
+// Impacted stats + before/after changes always show now (matching the action-card pattern); only the
+// narrative/lesson prose collapses, via a top-right toggle instead of "tap anywhere on the card".
 const _chipsH=chips.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">'+chips.join('')+'</div>':'';
 const _baH=r.beforeAfter?'<div style="margin-top:8px;background:rgba(127,127,127,0.08);border-radius:var(--radius-sm);padding:6px 9px;">'+r.beforeAfter.map(row=>'<div style="display:flex;justify-content:space-between;gap:8px;font-size:0.73rem;padding:2px 0;"><span style="color:var(--text2);">'+(this._lblIcon(row[0])?this._lblIcon(row[0])+' ':'')+row[0]+'</span><span style="white-space:nowrap;"><span style="color:var(--text2);">'+row[1]+'</span> <span style="color:'+(row[3]||'var(--accent)')+';font-weight:700;">→ '+row[2]+'</span></span></div>').join('')+'</div>':'';
 const _lesH=firstLesson?'<div style="font-size:0.73rem;color:var(--gold);line-height:1.5;margin-top:8px;border-top:1px dashed var(--border);padding-top:6px;"><strong>💡 Lesson:</strong> '+this.linkTerms(r.action.lesson)+'</div>':'';
-const _det=_chipsH+_baH+_lesH;
-const _detBlock=_det?'<div'+(_firstCard?' id="tut-result-detail"':'')+' style="margin-top:7px;font-size:0.72rem;color:var(--blue);font-weight:600;">▾ Tap card for details'+(firstLesson?' & lesson':'')+'</div><div id="rdet'+_ci+'" style="display:none;">'+_det+'</div>':'';
-html+='<div class="fade-in"'+(_firstCard?' id="tut-result-card"':'')+(_det?' onclick="Game.toggleResultDetail(\'rdet'+_ci+'\',event)"':'')+' style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;'+(_det?'cursor:pointer;':'')+'">'+
-'<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;"><strong style="font-size:0.92rem;'+(r.action._epic?'color:var(--gold);':'')+'">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.action._epic?'var(--gold)':(r.success?'var(--accent)':'var(--gold)'))+';white-space:nowrap;">'+(r.action._epic?'⭐ Epic Life':(r.success?'Success':'Didn\'t finish'))+'</span></div>'+
-(r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+
+const descId='rdesc'+_ci,hasDesc=!!(r.narrative||_lesH);
+const descBlock=hasDesc?'<div id="'+descId+'" style="display:block;">'+(r.narrative?'<div style="font-size:0.8rem;color:var(--text2);line-height:1.5;margin-top:5px;">'+r.narrative+'</div>':'')+_lesH+'</div>':'';
+const toggleLink=hasDesc?'<span'+(_firstCard?' id="tut-result-detail"':'')+' onclick="Game.toggleResultDesc(\''+descId+'\',this)" style="cursor:pointer;font-size:0.6rem;color:var(--blue);font-weight:600;white-space:nowrap;flex-shrink:0;">▾ Hide description</span>':'';
+html+='<div class="fade-in"'+(_firstCard?' id="tut-result-card"':'')+' style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:9px;">'+
+'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;"><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0;"><strong style="font-size:0.92rem;'+(r.action._epic?'color:var(--gold);':'')+'">'+(r.action._epic?'🌟 ':'')+r.action.label+'</strong><span style="font-size:0.64rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:'+(r.action._epic?'var(--gold)':(r.success?'var(--accent)':'var(--gold)'))+';white-space:nowrap;">'+(r.action._epic?'⭐ Epic Life':(r.success?'Success':'Didn\'t finish'))+'</span></div>'+toggleLink+'</div>'+
+descBlock+
+_chipsH+_baH+
 ((r.cost>0)?(()=>{const f=r.fund||{},src=[];if(f.cash>0)src.push('cash');if(f.biz>0)src.push('business credit');if(f.persCash>0)src.push('personal cash');if(f.persCredit>0)src.push('personal credit');return '<div style="font-size:0.73rem;color:var(--text2);margin-top:6px;">💸 '+(r.action.recurring_cost?'Setup':'Cost')+' <strong style="color:var(--red);">−'+this.fmtMoney(r.cost)+'</strong>'+(src.length?' <span style="color:var(--text2);">· from '+src.join(' + ')+'</span>':'')+'</div>';})():'')+
 ((r.success&&r.action.recurring_cost)?'<div style="font-size:0.73rem;color:var(--purple);margin-top:4px;">🔁 +'+this.fmtMoney(r.action.recurring_cost)+'/mo ongoing operating expense</div>':'')+
 ((r.action.energy_cost&&r.action.energy_cost!==0&&!r._mastery&&!r._execRun)?(()=>{const _es=(r._energySpent!=null&&r.action.energy_cost>0)?r._energySpent:r.action.energy_cost;return '<div style="font-size:0.73rem;color:'+(_es>0?'var(--orange)':'var(--accent)')+';margin-top:4px;">⚡ '+(_es>0?'−'+_es+' energy spent':'+'+Math.abs(_es)+' energy gained')+'</div>';})():'')+
 (r._mastery||'')+
-_detBlock+
 '</div>';_firstCard=false;_ci++;}
 // End-of-month Cash & Credit position — before → after for the whole month, plus how this month's action costs were funded
 const _mc=this._monthCashSummary;if(_mc){const s=this.state,st=_mc.start,sp=_mc.spend,sep=this.isSeparated(),fm=v=>this.fmtMoney(Math.round(v));
@@ -6308,10 +6480,10 @@ const triggered=(this.state._lifestyle_buffs||[]).filter(b=>b.trigger_month<=thi
 if(triggered.length){this.state._lifestyle_buffs=(this.state._lifestyle_buffs||[]).filter(b=>b.trigger_month>this.month);
 for(const buff of triggered)this.applyEffects(buff.effects);
 this.state._pendingRipples=(this.state._pendingRipples||[]).concat(triggered.map(b=>({source:b.source,narrative:b.narrative,paidOff:true})));}
-// Episodic structure: Part 1 (m1–18) ends in a themed FINALE at m18 (the payoff — your wealth machine is built), with a carry-state handoff into Part 2 (m19–36). Month 12 is NO LONGER a checkpoint screen — the year-end tax bill already fired above (that's "April tax season"), so m12 just quietly auto-saves and continues (no off-ramp before the payoff). m24 stays a light Part-2 re-hook checkpoint; m36 goes straight to the final score.
+// Episodic structure: Part 1 (m1–18) ends in a themed FINALE at m18 (the payoff — your wealth machine is built), with a carry-state handoff into Part 2 (m19–36). Only TWO checkpoint screens exist now (owner, 2026-07-04: "we are doing 18/36 only") — m12 and m24 just quietly auto-save and continue, no screen, no off-ramp; m18 is the Part 1 Finale; m36 goes straight to the final score.
 if(this.month===12){this.autoSave();}
 if(this.month===18){this.showPart1Finale();return;}
-if(this.month===24){this.showCheckpoint();return;}
+if(this.month===24){this.autoSave();}
 this.month++;if(this.month>36){this.endGame();return;}this.renderMonth();},
 
 showEvent(evt){this.showScreen('event-screen');this.renderStats('event-dashboard');document.getElementById('event-month-label').textContent='Month '+this.month+' — Event';document.getElementById('event-box').innerHTML='<div class="event-category">'+evt.category+'</div><div class="event-narrative">'+evt.narrative+'</div>';let note=this._mitigationNote(evt);
@@ -6477,23 +6649,9 @@ this.showScreen('result-screen');document.getElementById('result-month-label').t
 document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in">'+narrative+'</div>';
 this._pendingTax=false;},
 
-showCheckpoint(){
-this._atCheckpoint=true;/* saves taken here resume on the NEXT month, not a replay of the year-end month (see _snapshot) */
-const scores=this.calculateFinalScores(),composite=this.calcComposite(scores),year=Math.ceil(this.month/12);
-let html='<div class="month-header"><h2>Month '+this.month+' — Two-Thirds There</h2></div>';
-html+='<div style="text-align:center;font-size:0.8rem;color:var(--text2);line-height:1.5;max-width:420px;margin:0 auto 8px;">Part 2 is compounding. One year left — keep letting the machine run toward your final Paradise score.</div>';
-html+='<div class="checkpoint-label">SCORE SO FAR</div><div class="checkpoint-score">'+composite+' <span style="font-size:0.9rem;color:var(--text2)">/ 600</span></div>';
-html+='<div class="radar-wrap"><canvas id="cp-radar" width="260" height="260"></canvas></div>';
-html+='<div class="stats-grid">'+this._renderScoreCards(scores)+'</div>';
-html+=this.buildDebrief();
-html+='<button class="btn-primary" onclick="Game.continueFromCheckpoint()">▶ Continue — Finish the Run (Month 36)</button>';
-html+='<div style="text-align:center;font-size:0.72rem;color:var(--text2);margin-top:6px;">One year left — let the machine compound into your final Paradise score at month 36. Ranked scores post at the <strong>Part 1 finale (month 18)</strong> and the <strong>finish (month 36)</strong>.</div>';
-this.autoSave();/* checkpoint is auto-persisted */
-{const _co=(this.state.company_name||'').trim(),_dt=new Date().toISOString().split('T')[0];html+='<div style="margin-top:14px;background:rgba(16,185,129,0.08);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:11px 14px;font-size:0.74rem;color:var(--text2);line-height:1.5;">💾 <strong style="color:var(--accent);">Progress auto-saved</strong>'+(_co?' — '+this._esc(_co):'')+' · '+_dt+'.<br>Close the tab anytime and pick it back up from <strong>Continue</strong> on the title screen.</div>';}
-html+='<button class="btn-secondary" onclick="Game.autoSave();Game.showMainMenu()" style="margin-top:14px;">🏠 Main Menu</button>';
-document.getElementById('checkpoint-content').innerHTML=html;this.showScreen('checkpoint-screen');
-setTimeout(()=>{const cv=document.getElementById('cp-radar');if(cv)this.drawRadarOn(cv,scores);},100);},
-
+// showCheckpoint() (the old month-24 "Two-Thirds There" screen) removed 2026-07-04 — checkpoints are
+// 18/36 only now; m24 just quietly auto-saves (see the episodic-structure comment above). Kept
+// continueFromCheckpoint() below since showPart1Finale()'s "Begin Part 2" button still uses it.
 continueFromCheckpoint(){this.month++;this.renderMonth();},
 
 // PART 1 FINALE (month 18) — the payoff climax: your wealth machine is built. Carry-state handoff into Part 2 (m19–36), or finish here and post a ranked Part-1 score. Reuses the checkpoint screen + scoring; Part-1-specific pillar weighting is a fast-follow.
@@ -6523,10 +6681,21 @@ setTimeout(()=>{const cv=document.getElementById('cp-radar');if(cv)this.drawRada
 LIFE_BUSINESS_FUNDED:['executive_health_retreat','concierge_medicine','fitness_training','gym_routine','sleep_routine','morning_routine','annual_physical','therapy_coaching','nutrition_coach','learn_new_skill','masterclass_workshop','leadership_coaching','write_book','mentor_others','company_retreat'],
 lifeActionIsPersonal(a){if(!a)return true;if(a.funding)return a.funding!=='business';return !this.LIFE_BUSINESS_FUNDED.includes(a.id);},
 // Personal Mastery impact panel (shared by the quarterly check-in and the delegated-life result card): which dimensions moved + the new mastery score, given before-snapshots.
+// Extended (owner, 2026-07-04) to also surface the ENERGY GENERATION effect — Mastery drives your
+// monthly recovery rate (calcEnergyRecovery: max(4, 6+mastery×0.10)/mo), not just the one-time energy
+// stat change above — and a "next level" hint naming the point gap to the next Mastery tier.
 _masteryPanel(dB,mB,enB){const dA=this.lifeDims(),mA=this.calcPersonalMastery(),enA=Math.round(this.state.energy);
 let rows=['Body','Mind','Spirit','Heart','Luxury'].filter(k=>dA[k]!==dB[k]).map(k=>{const up=dA[k]>dB[k];return '<div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;"><span style="color:var(--text2)">'+this.LIFE_ICON[k]+' '+k+'</span><span><span style="color:var(--text2)">'+dB[k]+'</span> <span style="color:'+(up?'var(--accent)':'var(--red)')+';font-weight:700;">→ '+dA[k]+'</span></span></div>';}).join('');
 if(enA!==enB)rows+='<div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;"><span style="color:var(--text2)">⚡ Energy</span><span><span style="color:var(--text2)">'+enB+'</span> <span style="color:'+(enA>enB?'var(--accent)':'var(--red)')+';font-weight:700;">→ '+enA+'</span></span></div>';
+const recB=Math.max(4,Math.round(6+mB*0.10)),recA=Math.max(4,Math.round(6+mA*0.10));
+if(recA!==recB)rows+='<div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;"><span style="color:var(--text2)">🔋 Energy generation/mo</span><span><span style="color:var(--text2)">+'+recB+'</span> <span style="color:'+(recA>recB?'var(--accent)':'var(--red)')+';font-weight:700;">→ +'+recA+'</span></span></div>';
 if(!rows&&mA===mB)return '';const mUp=mA>=mB;
+// Next-tier hint (tiers match the color thresholds used everywhere else: <30 red, 30-60 gold, 60+ blue). Only announces reaching the top tier once, on the actual crossing, so it doesn't repeat every month after.
+let nextLine='';
+if(mA<30)nextLine='🎯 <strong style="color:var(--gold);">'+(30-mA)+'</strong> more point'+((30-mA)===1?'':'s')+' to reach <strong>Developing</strong> Mastery (faster energy recovery)';
+else if(mA<60)nextLine='🎯 <strong style="color:var(--gold);">'+(60-mA)+'</strong> more point'+((60-mA)===1?'':'s')+' to reach <strong>Strong</strong> Mastery (faster energy recovery)';
+else if(mB<60)nextLine='🏅 You\'ve reached Strong Mastery — the top tier';
+if(nextLine)rows+='<div style="font-size:0.74rem;color:var(--text2);margin-top:5px;padding-top:5px;border-top:1px dashed var(--border);">'+nextLine+'</div>';
 return '<div class="fade-in" style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:var(--radius-sm);padding:11px 13px;margin:10px 0 9px;"><div style="font-size:0.86rem;font-weight:700;margin-bottom:5px;">✨ Personal Mastery '+mB+' → <span style="color:'+(mUp?'var(--accent)':'var(--red)')+'">'+mA+'</span></div>'+rows+'</div>';},
 // Life-action preview: name the Personal Mastery dimension(s) the action builds, plus any other stat it touches (money shows its current value, like the other action menus).
 lifeActionPreview(a){const s=this.state,DIM={lifestyle_health:'Body',fitness_level:'Body',lifestyle_legacy:'Mind',lifestyle_spiritual:'Spirit',lifestyle_philanthropy:'Spirit',lifestyle_relationships:'Heart',lifestyle_experiences:'Luxury'};

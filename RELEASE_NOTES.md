@@ -1,5 +1,34 @@
 # Release Notes
 
+## v0.68.20 — 2026-07-04 — (beta) Owner Capital (inject/loan/repay), Cash Services pay-down, retirement slider, policy repay, result-screen match, checkpoint cleanup
+**Ask (owner):** late-game personal cash piles up with no legal way to fund a struggling business —
+"I should be able to loan money or invest into my company," plus "pay down utilization inside cash
+services." Bundled with the prior session's held batch (also un-shipped) per the "don't ship
+back-to-back while playtesting" rule.
+
+**New: Owner Capital** (`openOwnerCapital()` in `beta/js/game.js`) — a new concierge-hub tile, gated on
+having formed an LLC (`isSeparated()`), NOT on Epic Life membership (any real LLC owner can do this,
+member or not). Two instruments, mutually exclusive per confirm like the policy panel's borrow/repay:
+- **Inject capital** — personal cash → business cash, dollar for dollar. No interest, no repayment.
+  Net-worth neutral (personal + business cash is already one combined pool) — the real cost is that
+  it's no longer your personal safety net, it's now business money at business risk.
+- **Shareholder loan** (`owner_loan`, ~4.5% — near the IRS related-party mid-term rate rather than a
+  bank markup) — booked as a real loan in the same ledger every other loan uses (`_addLoan`), so it
+  shows in Debt, costs real monthly debt service, and velocity banking can target it like any other
+  loan. Unlike a bank loan, you can **call it back early** with the Repay slider — money returns to
+  your personal cash, not just off the business's books.
+
+**Cash Services** (`openCreditLiquidity()`) gained the inverse of liquidate: **pay down utilization**
+with cash, no fee (business balance clears first to protect D&B/business utilization, then personal
+revolving). Same mutually-exclusive staging as liquidate.
+
+**Held-batch items from the prior session, now shipping together:** Solo 401(k)/SEP opens a real
+contribution-rate slider (2025 IRS limits, not a flat cap); cash-value policy gained a Repay slider;
+result screen now matches action cards (impacted stats always visible, only narrative collapses);
+property/investment deals no longer show a misleading half-cost retry badge; CFO performance bonus
+removed; Hire Your Kids and Captive Insurance retired; tax-reserve→policy fold offer re-checks monthly;
+Month-24 checkpoint screen removed (only Month 18 and the end still pause the run).
+
 ## v0.68.19 — 2026-07-04 — (beta) Action-card overhaul: collapse/preview/filter, deal-panel primer polish, manager button fix
 **Ask (owner):** make action cards title-only until selected for easier scanning, then a batch of his
 own follow-up suggestions to try out — a way to preview a card without selecting it, hide "Understand

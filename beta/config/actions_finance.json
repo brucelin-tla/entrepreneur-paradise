@@ -239,6 +239,7 @@
     },
     {
       "id": "hire_your_kids",
+      "enabled": false,
       "category": "finance",
       "stage": "leverage",
       "label": "Put Your Kids on Payroll",
@@ -409,6 +410,7 @@
     },
     {
       "id": "captive_insurance",
+      "enabled": false,
       "category": "finance",
       "stage": "wealth",
       "label": "Form a Captive Insurance Co.",
