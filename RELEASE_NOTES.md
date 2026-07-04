@@ -1,5 +1,29 @@
 # Release Notes
 
+## v0.68.16 — 2026-07-04 — (beta) Hide life-dim stats, bold the always-shown headlines, reorder
+**Ask (owner):** the 5 stats under Personal Mastery (Body/Mind/Spirit/Heart/Luxury) should default
+to hidden, like the other detail stats; bold the always-shown headline stats so once "Show
+Details" is tapped, it's obvious which numbers were already visible; move Systems Maturity above
+Customers on the Business side.
+
+**Change:** `renderStats()` in `beta/js/game.js`. The life-dimension row under Personal Mastery
+(`_dsub` — the Body/Mind/Spirit/Heart/Luxury icon strip) now only renders when
+`_dashOpen.personal` is true; the Personal Mastery gauge itself still always shows. `row()`,
+`netRow()`, `gauge()`, and `cgauge()` all gained a trailing `primary` flag that bolds the label
+span (`font-weight:700`) — applied to every always-shown headline (Capital, Cash Flow/mo, Credit
+Score, Investments, Freedom, Personal Mastery, Energy on Personal; Capital, Cash Flow/mo, D&B
+Score, Systems Maturity, Customers on Business) and left off every toggle-gated stat (Cash,
+Credit, Income/Revenue, Expense, Debt, life dims, Brand Equity, Leads, Culture, Staff). On
+Business, Systems Maturity (+ its Culture/Staff detail) is now built once into a small HTML
+snippet (`sysMatHtml`) and inserted between the Money and Marketing & Operations sections — same
+gating as before (shows regardless of LLC status once revealed), just repositioned above Customers.
+
+Verified via headless Edge (iframe + injected script driving `Game.selectArchetype`/`Game.toggleDash`
+directly, plus a raw-HTML dump to directly confirm the bold span attribute): confirmed the
+life-dim row is absent while closed and appears when opened, confirmed Systems Maturity precedes
+Customers, confirmed Culture still precedes Staff, and confirmed the primary/bold styling lands on
+exactly the intended headline rows.
+
 ## v0.68.15 — 2026-07-04 — (beta) Dashboard polish: renames, icon, Capacity block reorder
 **Ask (owner):** shorten "Accessible Capital" to "Capital" and give it an icon; shorten "Founder
 Freedom" to "Freedom" and move it up under the Capacity heading; make Personal Mastery always
