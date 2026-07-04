@@ -1,5 +1,30 @@
 # Release Notes
 
+## v0.68.14 — 2026-07-04 — (beta) Dashboard reorder: headline → hidden breakdown, per owner spec
+**Ask (owner, 2026-07-03):** reorder both dashboard columns so each headline pairs with a specific
+hidden breakdown, in this order — Capital → Cash+Credit, Net Cashflow → Income/Revenue+Expense,
+Credit Score/D&B Score → Debt — remove Passive/mo entirely, then below that: Personal gets Founder
+Freedom (moved off Business) followed by Energy → Personal Mastery; Business gets Customers →
+Leads+Brand Equity followed by Systems Maturity → Staff+Culture.
+
+**Change:** `renderStats()` in `beta/js/game.js` reordered accordingly. Debt is no longer an
+always-shown row — it now sits behind the group toggle, directly under Credit Score (Personal) /
+D&B Score (Business). Passive/mo's standalone row is gone (the dollar amount still feeds Net
+Cashflow via `persInc`, just isn't shown as its own line). Founder Freedom relocated from the
+Business column to the top of the Personal column's second section, unconditional (no hidden
+detail of its own) — same `_reveal('mastery')` gate it always had. On the Business side, Systems
+Maturity is now its own always-shown headline (previously it lived behind Founder Freedom's old
+toggle); Staff + Culture are its hidden detail. Both columns still use the single
+`_dashOpen.personal`/`_dashOpen.business` toggle from v0.68.13 — this release only reorders and
+regroups what's behind it.
+
+Verified via headless Edge (iframe + injected script, `Game.selectArchetype`/`Game.toggleDash`
+driven directly): confirmed both columns' headline ordering, confirmed each hidden group sits
+directly behind its own headline (Cash/Credit between Capital and Cash Flow; Debt after Credit
+Score/D&B; Staff/Culture after Systems Maturity), confirmed Passive/mo never renders, confirmed
+Founder Freedom only appears on Personal, and confirmed the two columns stay independent when only
+one is expanded.
+
 ## v0.68.13 — 2026-07-04 — (beta) Dashboard: one toggle per column, not one per section
 **Ask:** too many separate "hide"/"show" buttons scattered across the stats dashboard — Income &
 Expense, Cash & Credit, Personal Mastery on the Personal side; Revenue & Expense, Cash & Credit,

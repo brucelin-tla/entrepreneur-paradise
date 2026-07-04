@@ -2640,6 +2640,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.14',d:'2026-07-04 17:00',n:[
+'📊 Dashboard reorder: each headline number now leads its own hidden breakdown — Accessible Capital → Cash + Credit, Cash Flow → Income/Revenue + Expense, Credit Score/D&B Score → Debt. Passive/mo dropped as its own line (still counted in Cash Flow). Founder Freedom moved to the Personal side, above Energy → Personal Mastery. Business now reads Customers → Brand Equity + Leads, then Systems Maturity → Staff + Culture.']},
 {v:'0.68.13',d:'2026-07-04 16:00',n:[
 '📊 Dashboard: one "▸ Show Details" button per side now — Personal and Business each expand or collapse everything in that column together, instead of a separate toggle under every section.']},
 {v:'0.68.12',d:'2026-07-04 15:00',n:[
@@ -4357,22 +4359,27 @@ const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(
 // every detail section in that column opens or closes together, instead of a toggle per section.
 this._dashOpen=this._dashOpen||{};
 const groupToggle=(key)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cursor:pointer;font-size:0.62rem;color:var(--blue);font-weight:700;text-align:center;padding:2px 1px 5px;margin-bottom:3px;border-bottom:1px solid rgba(127,127,127,0.14);">'+(this._dashOpen[key]?'▾ Hide Details':'▸ Show Details')+'</div>';
+// Order (owner spec, 2026-07-03): Capital > Cash+Credit; Cash Flow > Income/Revenue+Expense;
+// Credit Score/D&B > Debt — each headline always shown, its breakdown behind the one group toggle.
+// Passive/mo removed as its own row (still folds into Cash Flow via persInc). Below that: Personal
+// gets Founder Freedom (moved off the Business side — it's a founder question, not a business-
+// finances one) then Energy > Personal Mastery; Business gets Customers > Leads+Brand Equity then
+// Systems Maturity > Staff+Culture.
 let P=colHead('Personal','var(--accent)');P+=groupToggle('personal');P+=subLab('Money');
-P+=netRow('Cash Flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
-if(this._dashOpen.personal){
-P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
-P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
-}
-// Accessible Capital = cash + available credit, one headline number (same definition as the Financial
-// Health panel's "Accessible capital"); the Cash/Credit split (with utilization %) sits behind the group toggle.
 P+=row('Accessible Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash');
 if(this._dashOpen.personal){
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 }
-P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+P+=netRow('Cash Flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+if(this._dashOpen.personal){
+P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
+P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
+}
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
-if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
+if(this._dashOpen.personal){
+P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+}
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
@@ -4381,6 +4388,7 @@ const gauge=(label,v,col,sub,id,subBelow)=>'<div'+(id?' id="'+id+'"':'')+' style
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
+if(this._reveal('mastery'))P+=gauge('🕊️ Founder Freedom',fr,frC,this.getFounderRole());
 P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
 if(this._reveal('mastery')&&this._dashOpen.personal){
 P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
@@ -4390,40 +4398,37 @@ let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep||this._reveal('mastery'))B+=groupToggle('business');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
-B+=netRow('Cash Flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
-if(this._dashOpen.business){
-B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
-B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
-}
-// Accessible Capital = cash + available credit, same headline-then-detail treatment as the Personal side.
 B+=row('Accessible Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)));
 if(this._dashOpen.business){
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
 }
-B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
+B+=netRow('Cash Flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+if(this._dashOpen.business){
+B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
+B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
+}
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
+if(this._dashOpen.business){
+B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
+}
 // Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
-// Marketing & Operations readout: Customers is the headline (the number that actually pays the bills);
-// Brand Equity → Leads are the upstream detail behind it, folded under the same Business group toggle.
+// Marketing & Operations readout: Customers (headline) — Brand Equity + Leads behind the group toggle.
 B+='</div><div id="biz-ops">'+subLab('Marketing & Operations')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)');
 if(this._dashOpen.business)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
 B+='</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
-// Freedom is the capstone read — "so is this actually working for you" — shown last, after the operational
-// numbers it's a verdict on. Regardless of LLC status (it's a founder-freedom question, not a business-
-// finances one — forming an LLC unlocks the money/marketing panels above, not this).
+// Systems Maturity (headline) — Staff + Culture behind the group toggle. Founder Freedom lives on the
+// Personal side now. Regardless of LLC status, same as Founder Freedom used to be — a founder/ops
+// maturity read, not gated on having separated business finances yet.
 if(this._reveal('mastery')){
-B+=gauge('🕊️ Founder Freedom',fr,frC,this.getFounderRole());
-if(this._dashOpen.business){
 B+=gauge('⚙️ Systems Maturity',sysMat,sysC);
-if((s.team_size||0)>0){
+if(this._dashOpen.business&&(s.team_size||0)>0){
 B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
 B+=cgauge('🎭 Culture',Math.round(_cul),_cul,_culC);
-}
 }
 }
 const cfoBtn='';/* CFO is no longer in the game (owner) — the briefing button is retired */
