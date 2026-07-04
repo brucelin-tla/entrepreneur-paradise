@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.68.12 — 2026-07-04 — (beta) Fix: update detection was one-shot only
+**Bug:** `_checkForUpdate()` only ran once, inside `init()` — meaning it only ever fired at the moment
+the game first loaded. If a new version was pushed while someone already had the game open (title
+screen or mid-run), the running page had no way to notice — the "🔄 Update now" banner/icon only
+appeared for someone who happened to close and reopen the tab on their own. No polling existed anywhere
+in the codebase.
+
+**Fix:** `_startUpdatePolling()` (called once from `init()`, idempotent) now re-runs `_checkForUpdate()`
+every 30 seconds, and immediately whenever the tab regains focus (`visibilitychange`). Stops polling
+once an update is already flagged, so it doesn't keep hitting `version.json` after the banner's up.
+
+Verified via headless Edge with a stubbed `fetch`: confirmed the banner appears and shows the right
+version when a newer `version.json` is detected, confirmed the guard skips a redundant fetch once
+already flagged, and confirmed a simulated tab-focus event triggers a fresh check.
+
 ## v0.68.11 — 2026-07-04 — (beta) Dashboard round 3 + clarity renames
 - **Accessible Capital**: Cash + Credit fold into one headline number per column (same definition as
   the Financial Health panel's "Accessible capital"), with the Cash/Credit split — including
