@@ -1,5 +1,27 @@
 # Release Notes
 
+## v0.68.15 — 2026-07-04 — (beta) Dashboard polish: renames, icon, Capacity block reorder
+**Ask (owner):** shorten "Accessible Capital" to "Capital" and give it an icon; shorten "Founder
+Freedom" to "Freedom" and move it up under the Capacity heading; make Personal Mastery always
+shown (was hidden behind the group toggle); keep Energy last/lowest in that block; on the Business
+side, show Culture above Staff.
+
+**Change:** `renderStats()` in `beta/js/game.js`. `RICON` gets a `'Capital':'💰'` entry so the
+renamed row picks up an icon automatically (same lookup Cash/Credit/Debt already use). The
+Personal column's Capacity block is now: `subLab('Capacity')` → Freedom (🕊️, renamed) → Personal
+Mastery (🧠, now unconditional — no longer gated on `_dashOpen.personal`) → Energy (⚡, unchanged,
+still last). Business's Systems Maturity detail swaps order: Culture (🎭) now renders before Staff
+(👷). The Personal/Business group toggle still only gates Cash, Credit, Income/Revenue, Expense,
+and Debt — the five stats meant to stay collapsed until "Show Details" is tapped.
+
+Verified via headless Edge (iframe + injected script driving `Game.selectArchetype`/`Game.toggleDash`
+directly): confirmed the 💰 icon renders on both columns' Capital row, confirmed "Accessible
+Capital"/"Founder Freedom" no longer appear anywhere, confirmed Personal Mastery renders with the
+toggle closed, confirmed Capacity → Freedom → Personal Mastery → Energy ordering with Energy last,
+confirmed Culture precedes Staff once Business details are opened, and confirmed the five
+toggle-gated stats (Cash, Credit, Income/mo, Expense/mo, Debt) are still hidden by default and
+appear correctly when opened.
+
 ## v0.68.14 — 2026-07-04 — (beta) Dashboard reorder: headline → hidden breakdown, per owner spec
 **Ask (owner, 2026-07-03):** reorder both dashboard columns so each headline pairs with a specific
 hidden breakdown, in this order — Capital → Cash+Credit, Net Cashflow → Income/Revenue+Expense,

@@ -2640,6 +2640,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.15',d:'2026-07-04 18:00',n:[
+'📊 Dashboard polish: "Accessible Capital" is now just "Capital" (with its own 💰 icon); "Founder Freedom" is now "Freedom", moved up under Personal Mastery — both now always shown, with Energy staying last at the bottom. Business side: Culture now shows above Staff.']},
 {v:'0.68.14',d:'2026-07-04 17:00',n:[
 '📊 Dashboard reorder: each headline number now leads its own hidden breakdown — Accessible Capital → Cash + Credit, Cash Flow → Income/Revenue + Expense, Credit Score/D&B Score → Debt. Passive/mo dropped as its own line (still counted in Cash Flow). Founder Freedom moved to the Personal side, above Energy → Personal Mastery. Business now reads Customers → Brand Equity + Leads, then Systems Maturity → Staff + Culture.']},
 {v:'0.68.13',d:'2026-07-04 16:00',n:[
@@ -4348,7 +4350,7 @@ const bizCash=s.cash||0,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.busi
 const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0)+(sep?debtSvc:0),bizScore=this.calcBizCreditScore();
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
-const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash Flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
+const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash Flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼','Capital':'💰'};
 const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
@@ -4362,11 +4364,10 @@ const groupToggle=(key)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cur
 // Order (owner spec, 2026-07-03): Capital > Cash+Credit; Cash Flow > Income/Revenue+Expense;
 // Credit Score/D&B > Debt — each headline always shown, its breakdown behind the one group toggle.
 // Passive/mo removed as its own row (still folds into Cash Flow via persInc). Below that: Personal
-// gets Founder Freedom (moved off the Business side — it's a founder question, not a business-
-// finances one) then Energy > Personal Mastery; Business gets Customers > Leads+Brand Equity then
-// Systems Maturity > Staff+Culture.
+// gets Freedom then Personal Mastery (both always shown) then Energy (lowest, always shown);
+// Business gets Customers > Leads+Brand Equity then Systems Maturity > Culture+Staff.
 let P=colHead('Personal','var(--accent)');P+=groupToggle('personal');P+=subLab('Money');
-P+=row('Accessible Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash');
+P+=row('Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash');
 if(this._dashOpen.personal){
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
@@ -4388,17 +4389,19 @@ const gauge=(label,v,col,sub,id,subBelow)=>'<div'+(id?' id="'+id+'"':'')+' style
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
-if(this._reveal('mastery'))P+=gauge('🕊️ Founder Freedom',fr,frC,this.getFounderRole());
-P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
-if(this._reveal('mastery')&&this._dashOpen.personal){
+// Capacity block: Freedom, then Personal Mastery (both always shown now, no toggle needed), Energy last/lowest.
+P+=subLab('Capacity');
+if(this._reveal('mastery')){
+P+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
 P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
 }
+P+=gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep||this._reveal('mastery'))B+=groupToggle('business');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
-B+=row('Accessible Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)));
+B+=row('Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)));
 if(this._dashOpen.business){
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
@@ -4427,8 +4430,8 @@ B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div sty
 if(this._reveal('mastery')){
 B+=gauge('⚙️ Systems Maturity',sysMat,sysC);
 if(this._dashOpen.business&&(s.team_size||0)>0){
-B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
 B+=cgauge('🎭 Culture',Math.round(_cul),_cul,_culC);
+B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
 }
 }
 const cfoBtn='';/* CFO is no longer in the game (owner) — the briefing button is retired */
