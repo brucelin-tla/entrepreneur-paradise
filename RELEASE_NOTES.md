@@ -1,5 +1,24 @@
 # Release Notes
 
+## v0.68.13 — 2026-07-04 — (beta) Dashboard: one toggle per column, not one per section
+**Ask:** too many separate "hide"/"show" buttons scattered across the stats dashboard — Income &
+Expense, Cash & Credit, Personal Mastery on the Personal side; Revenue & Expense, Cash & Credit,
+Brand Equity & Leads, Systems/Staff/Culture on the Business side (7 toggles total).
+
+**Change:** collapsed to ONE toggle per column. `renderStats()` in `beta/js/game.js` now uses a
+single `_dashOpen.personal` / `_dashOpen.business` flag (via a new `groupToggle()` helper) instead
+of the 7 separate per-section keys (`pmoney`, `pcapital`, `mastery`, `bmoney`, `bcapital`, `funnel`,
+`freedom`). Tapping "▸ Show Details" under Personal opens Income/Expense + Cash/Credit + Personal
+Mastery together; tapping it under Business opens Revenue/Expense + Cash/Credit + Brand Equity/Leads
++ Systems/Staff/Culture together. The two columns stay independent of each other. The Business
+toggle only renders when there's something behind it to show (LLC formed, or Founder Freedom
+revealed) — same gating the old per-section toggles had individually.
+
+Verified via headless Edge (iframe + injected script driving `Game.selectArchetype`/`Game.toggleDash`
+directly, since top-level `const Game` isn't a `window` property in a classic script): confirmed
+exactly one toggle renders per column, confirmed all detail rows in a column open/close together,
+confirmed re-closing hides them again, and confirmed the two columns toggle independently.
+
 ## v0.68.12 — 2026-07-04 — (beta) Fix: update detection was one-shot only
 **Bug:** `_checkForUpdate()` only ran once, inside `init()` — meaning it only ever fired at the moment
 the game first loaded. If a new version was pushed while someone already had the game open (title

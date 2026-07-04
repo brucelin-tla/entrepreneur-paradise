@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.13',d:'2026-07-04 16:00',n:[
+'📊 Dashboard: one "▸ Show Details" button per side now — Personal and Business each expand or collapse everything in that column together, instead of a separate toggle under every section.']},
 {v:'0.68.12',d:'2026-07-04 15:00',n:[
 '🔄 Update detection is now live, not one-shot — it used to only check for a new version once, right when you first opened the game, so a build pushed while you already had it open went unnoticed until you happened to reload. Now it also re-checks every 30 seconds and instantly whenever you switch back to this tab.']},
 {v:'0.68.11',d:'2026-07-04 14:15',n:[
@@ -1762,22 +1764,20 @@ const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+co
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
 const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'&#8722;')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
 const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
-// Collapsed-by-default detail toggle (same pattern as the Velocity loan list's "▸ See all / ▾ Hide") — keeps
-// the dashboard to one glance-able number per line, with the breakdown one tap away when someone wants it.
+// Collapsed-by-default detail toggle — ONE button per column (Personal / Business): tap it and
+// every detail section in that column opens or closes together, instead of a toggle per section.
 this._dashOpen=this._dashOpen||{};
-const dashToggle=(key,label)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cursor:pointer;font-size:0.58rem;color:var(--blue);font-weight:600;text-align:right;padding:1px 1px 2px;">'+(this._dashOpen[key]?'▾ Hide':'▸ '+label)+'</div>';
-let P=colHead('Personal','var(--accent)');P+=subLab('Money');
+const groupToggle=(key)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cursor:pointer;font-size:0.62rem;color:var(--blue);font-weight:700;text-align:center;padding:2px 1px 5px;margin-bottom:3px;border-bottom:1px solid rgba(127,127,127,0.14);">'+(this._dashOpen[key]?'▾ Hide Details':'▸ Show Details')+'</div>';
+let P=colHead('Personal','var(--accent)');P+=groupToggle('personal');P+=subLab('Money');
 P+=netRow('Cash Flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
-P+=dashToggle('pmoney','Income & Expense');
-if(this._dashOpen.pmoney){
+if(this._dashOpen.personal){
 P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
 }
 // Accessible Capital = cash + available credit, one headline number (same definition as the Financial
-// Health panel's "Accessible capital"); the Cash/Credit split (with utilization %) sits one tap behind it.
+// Health panel's "Accessible capital"); the Cash/Credit split (with utilization %) sits behind the group toggle.
 P+=row('Accessible Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash');
-P+=dashToggle('pcapital','Cash & Credit');
-if(this._dashOpen.pcapital){
+if(this._dashOpen.personal){
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 }
@@ -1793,24 +1793,22 @@ const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
 P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
-if(this._reveal('mastery')){
-P+=dashToggle('mastery','🧠 Personal Mastery');
-if(this._dashOpen.mastery)P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
+if(this._reveal('mastery')&&this._dashOpen.personal){
+P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
 }
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
+if(sep||this._reveal('mastery'))B+=groupToggle('business');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
 B+=netRow('Cash Flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
-B+=dashToggle('bmoney','Revenue & Expense');
-if(this._dashOpen.bmoney){
+if(this._dashOpen.business){
 B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
 B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
 }
 // Accessible Capital = cash + available credit, same headline-then-detail treatment as the Personal side.
 B+=row('Accessible Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)));
-B+=dashToggle('bcapital','Cash & Credit');
-if(this._dashOpen.bcapital){
+if(this._dashOpen.business){
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
 }
@@ -1819,11 +1817,9 @@ B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)
 // Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
 // Marketing & Operations readout: Customers is the headline (the number that actually pays the bills);
-// Brand Equity → Leads are the upstream detail behind it, one tap away. Staff & Culture moved under
-// Freedom (delegation/culture are founder-freedom levers, not funnel numbers).
+// Brand Equity → Leads are the upstream detail behind it, folded under the same Business group toggle.
 B+='</div><div id="biz-ops">'+subLab('Marketing & Operations')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)');
-B+=dashToggle('funnel','✨ Brand Equity & 🎯 Leads');
-if(this._dashOpen.funnel)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
+if(this._dashOpen.business)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
 B+='</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
@@ -1833,8 +1829,7 @@ B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div sty
 // finances one — forming an LLC unlocks the money/marketing panels above, not this).
 if(this._reveal('mastery')){
 B+=gauge('🕊️ Founder Freedom',fr,frC,this.getFounderRole());
-B+=dashToggle('freedom','⚙️ Systems, 👷 Staff & 🎭 Culture');
-if(this._dashOpen.freedom){
+if(this._dashOpen.business){
 B+=gauge('⚙️ Systems Maturity',sysMat,sysC);
 if((s.team_size||0)>0){
 B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
@@ -1930,7 +1925,8 @@ return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_cash:{scope:'personal',fn:'showCash'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
-// Dashboard detail-toggle click handler (see dashToggle() inside renderStats) — flips one collapsed section open/shut and re-renders whichever dashboard is currently on screen.
+// Dashboard detail-toggle click handler (see groupToggle() inside renderStats) — flips the whole Personal or
+// Business detail group open/shut ('personal'/'business') and re-renders whichever dashboard is on screen.
 toggleDash(key){this._dashOpen=this._dashOpen||{};this._dashOpen[key]=!this._dashOpen[key];this._refreshDashboards();},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
 // Player-set policy funding rate (10–25% of revenue/mo) — driven by the slider on the Policy info screen. Higher = faster cash value (clears the surrender charge sooner) but less cash in pocket.
