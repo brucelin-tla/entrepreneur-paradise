@@ -1,5 +1,24 @@
 # Release Notes
 
+## v0.68.9 — 2026-07-04 — (beta) Dashboard decluttered + domain reference cleanup
+- **Collapsible stat details**, reusing the same "▸ / ▾" pattern already used by the Velocity loan
+  list — each summary stat now shows one number by default, with its breakdown one tap away:
+  - **Energy** → collapsible **Personal Mastery** (gauge + the five life dimensions).
+  - **Freedom** → collapsible **System** (`systems_maturity`, previously tracked internally but never
+    shown on the dashboard) **& Staff** (moved here from the Business/Funnel row — it's a founder-
+    freedom lever, not a marketing-funnel number).
+  - **Brand Equity** → collapsible **Leads & Customers**.
+  - **Net/mo** (both Personal and Business) → collapsible **Income/Expense** (or **Revenue/Expense**
+    on the business side).
+  - Nothing was removed — every stat still renders, just nested one tap deeper unless someone wants
+    the detail. Each section toggles independently and persists open/closed across re-renders within
+    a session.
+- **Domain cleanup:** the game's meta tags (canonical, og:url, og:image, twitter:image) and the
+  title-screen footer referenced `play.teamlife.ai` — the domain from before it was repointed to
+  `game.teamlife.ai`. Updated in both `index.html` (root — this repo's live entry point) and
+  `beta/index.html`, plus both offline `game.html` builds regenerated. Historical patch-note text
+  mentioning the old domain is left as-is (changelog is append-only).
+
 ## v0.68.8 — 2026-07-04 — (beta) Velocity banking is now automatic with membership
 - **Velocity banking retired as a standalone finance action.** It used to require separately
   completing a "Velocity Banking 👑" finance card (credit score ≥ 640, 3 energy) even after joining

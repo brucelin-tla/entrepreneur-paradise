@@ -51,6 +51,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.9',d:'2026-07-04 11:30',n:[
+'📊 <strong>Dashboard decluttered</strong> — Energy, Freedom, Brand Equity and Net/mo now show one glance-able number each; tap "▸ see more" under each to expand its detail (Personal Mastery under Energy, System &amp; Staff under Freedom, Leads &amp; Customers under Brand Equity, Income/Expense under Net/mo). Same numbers, fewer rows.',
+'🔧 The game\'s own domain references are now consistent with where it actually lives.']},
 {v:'0.68.8',d:'2026-07-04 10:00',n:[
 '⚡ <strong>Velocity banking is now a straight Epic Life Membership perk</strong> — it switches on the moment you join, no separate finance action or turn needed. The old standalone "Velocity Banking" finance card is retired (existing members get it switched on automatically too).']},
 {v:'0.68.7',d:'2026-07-03 08:45',n:[
@@ -1744,10 +1747,17 @@ const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+co
 const subLab=t=>'<div style="font-size:0.52rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.9px;opacity:0.55;margin:8px 0 1px;text-align:center;">'+t+'</div>';
 const netRow=(label,net,liquid,click,id,statKey)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'&#8722;')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey);};
 const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
+// Collapsed-by-default detail toggle (same pattern as the Velocity loan list's "▸ See all / ▾ Hide") — keeps
+// the dashboard to one glance-able number per line, with the breakdown one tap away when someone wants it.
+this._dashOpen=this._dashOpen||{};
+const dashToggle=(key,label)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cursor:pointer;font-size:0.58rem;color:var(--blue);font-weight:600;text-align:right;padding:1px 1px 2px;">'+(this._dashOpen[key]?'▾ Hide':'▸ '+label)+'</div>';
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
+P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+P+=dashToggle('pmoney','Income & Expense');
+if(this._dashOpen.pmoney){
 P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
-P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+}
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash','p_cash');
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
@@ -1757,18 +1767,31 @@ if((s.insurance_cash_value||0)>0)P+=row('Policy Value',m(s.insurance_cash_value,
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
+const sysMat=Math.round(s.systems_maturity||0),sysC=sysMat>60?'var(--blue)':sysMat>30?'var(--gold)':'var(--red)';
 const gauge=(label,v,col,sub,id,subBelow)=>'<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+((sub&&!subBelow)?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+col+'"></div></div>'+((sub&&subBelow)?'<div style="font-size:0.54rem;color:'+col+';font-weight:600;margin-top:3px;line-height:1.2;">'+sub+'</div>':'')+'</div>';
 const cgauge=(label,val,fill,col)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
 P+=subLab('Capacity')+gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45);
-if(this._reveal('mastery'))P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>'+gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
+if(this._reveal('mastery')){
+P+=dashToggle('mastery','🧠 Personal Mastery');
+if(this._dashOpen.mastery)P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div><div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
+P+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
+P+=dashToggle('freedom','⚙️ System & 👷 Staff');
+if(this._dashOpen.freedom){
+P+=gauge('⚙️ System',sysMat,sysC);
+if((s.team_size||0)>0)P+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
+}
+}
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
+B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+B+=dashToggle('bmoney','Revenue & Expense');
+if(this._dashOpen.bmoney){
 B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
 B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
-B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+}
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
@@ -1777,8 +1800,13 @@ B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_d
 {const nwNow=this.calcNetWorth();const nwHtml='<span style="color:'+(nwNow>=0?'var(--accent)':'var(--red)')+'">'+fmt(nwNow)+'</span>';if(this._reveal('networth'))B+=row('Net Worth',nwHtml,null,'dash-networth','p_networth');}
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
-// Funnel readout: Leads → Customers → Brand Equity (the lever that lifts conversion AND revenue per customer). Staff & Culture only appear once you've hired — they affect your delivery-capacity ceiling.
-B+='</div><div id="biz-ops">'+subLab('Funnel')+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)')+cgauge('✨ Brand Equity',_brand,_brand,_brC)+((s.team_size||0)>0?cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)')+cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
+// Funnel readout: Brand Equity is the headline (the lever that lifts conversion AND revenue per customer);
+// Leads → Customers are the detail behind it, one tap away. Staff moved under Freedom (Personal side) — it's
+// a founder-freedom lever (delegation), not a marketing funnel number. Culture shows once you've hired.
+B+='</div><div id="biz-ops">'+subLab('Funnel')+cgauge('✨ Brand Equity',_brand,_brand,_brC);
+B+=dashToggle('funnel','🎯 Leads & 👥 Customers');
+if(this._dashOpen.funnel)B+=cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)');
+B+=((s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC):'')+'</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
 }
@@ -1870,6 +1898,8 @@ return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_cash:{scope:'personal',fn:'showCash'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
+// Dashboard detail-toggle click handler (see dashToggle() inside renderStats) — flips one collapsed section open/shut and re-renders whichever dashboard is currently on screen.
+toggleDash(key){this._dashOpen=this._dashOpen||{};this._dashOpen[key]=!this._dashOpen[key];this._refreshDashboards();},
 statInfo(key){const d=this.STAT_INFO[key];if(!d)return;if(!this.state._statsViewed)this.state._statsViewed={};this.state._statsViewed[key]=true;this._refreshDashboards();this[d.fn](d.scope);},
 // Player-set policy funding rate (10–25% of revenue/mo) — driven by the slider on the Policy info screen. Higher = faster cash value (clears the surrender charge sooner) but less cash in pocket.
 setPolicyFundRate(v){const pct=Math.max(10,Math.min(25,Math.round(+v||15)));this.state._policy_fund_rate=pct/100;if(this.autoSave)this.autoSave();this._refreshDashboards();},
