@@ -1,5 +1,37 @@
 # Release Notes
 
+## v0.68.19 — 2026-07-04 — (beta) Action-card overhaul: collapse/preview/filter, deal-panel primer polish, manager button fix
+**Ask (owner):** make action cards title-only until selected for easier scanning, then a batch of his
+own follow-up suggestions to try out — a way to preview a card without selecting it, hide "Understand
+this investment" by default (highlight if unseen), a proactive "Next: Life →"/"Next: Finance →" button
+for managers/board instead of a surprise popup, plus his own ideas (a "last pick" tag, an action filter).
+
+**Action cards** (`renderActions()` in `beta/js/game.js`): cards now show just the title + top-row
+badges + cost tags until selected — description, owned-state, and impact preview only render once a
+card is picked. A new "ⓘ preview" link on any unselected card expands the same detail WITHOUT
+selecting it (`togglePeek(cat,id)`, independent of `selectedActions`) so you can compare a couple of
+candidates before committing. Locked rows are peekable the same way, so you can read what a
+prerequisite-gated action actually does before it unlocks. A "↺ last pick" badge marks whichever
+action you most recently took in that category (`_lastPickInCat()`, reading the `_playLog` — which
+now also records each entry's action `id`, not just its label). A new filter bar (All / ✨ Untried /
+🔑 Opens more) sits above the list; note "💰 Affordable" was NOT shipped — testing showed
+`isActionLocked()` already excludes anything unaffordable from this list, so an affordability filter
+would never do anything.
+
+**Deal panels** (Pledged Asset Line, rentals, Airbnb/STR, cash-out refi): "Understand this investment"
+no longer auto-expands on first view — it stays collapsed every time the panel opens, with a small NEW
+badge on the toggle until you've actually tapped it open once.
+
+**Managers/board:** the bottom button now reads "Next: Finance →" / "Next: Life →" and navigates to
+that tab when either is still required, instead of unconditionally saying "▶ Run the Month" and
+interrupting with a popup after you tap it.
+
+Verified via headless Edge across two rounds plus a full regression pass (all changes together, no
+conflicts): card collapse/expand-on-select, peek toggle independent of selection, locked-row peek,
+last-pick badge, both filter chips (gateway shown/non-gateway hidden, untried correctly hides
+previously-taken), deal-panel collapsed-by-default + NEW badge + clears after tap, and the
+manager-mode button text + navigation.
+
 ## v0.68.18 — 2026-07-04 — (beta) Global leaderboard removed (local-only); independent Money/Capacity/Ops toggles
 **Ask (owner):** remove the global leaderboard for now, local-only is fine; hide Personal Mastery
 by default again; make Money and Capacity/Marketing & Operations independent toggles — opening one
