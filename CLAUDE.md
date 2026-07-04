@@ -102,6 +102,28 @@ playing skeptical CFO against your own build before it ships.
 
 ## Pending work
 
+- **Global leaderboard (Supabase + Google sign-in) removed, local-only for now
+  (2026-07-04).** Backstory: the game's Supabase project was actually shared with EPIC
+  Suite (a completely separate product), and that caused a real bug — a Supabase Auth
+  magic-link email meant for EPIC Suite redirected to this game's page because the
+  shared project's Auth config pointed here. Rather than run two Supabase projects for
+  a leaderboard with zero real rows in it yet, the owner decided to drop the
+  global/Supabase-backed leaderboard entirely: removed the `@supabase/supabase-js` CDN
+  script tag, the `SUPA_URL`/`SUPA_KEY` consts, `_initSupabase()` and its call in
+  `init()`, and the Google-auth functions (`signInGoogle`/`signOutGoogle`/`_afterAuth`/
+  `_sbFetchTop`/`_sbSubmit`/`_sbRowToEntry`/`_queuePendingGlobal`/`_flushPendingGlobal`)
+  from `js/game.js`, `game.html`, `beta/js/game.js`, `beta/game.html`. `LB_BACKEND` stays
+  permanently `null`, so the leaderboard screen's existing "🌐 Global leaderboard —
+  coming soon" state now covers this honestly — no dead sign-in button, no network call.
+  Local ("📱 This Device") leaderboard is untouched and still works exactly as before
+  (`localStorage` only, no backend). A short dead-code reference remains in
+  `saveToLeaderboard()`'s unreachable `if(this._sb)` branch — harmless (never executes
+  since `_sb` is never set) but worth a tidy pass if this file gets touched again.
+  The short-lived dedicated Supabase project created for this (`smkxshkgdnuwtgnuzzxo`)
+  is now paused, not deleted (no delete tool available) — safe to delete from the
+  dashboard, or repurpose, whenever. If a global leaderboard comes back later, it needs
+  its own dedicated backend from day one — never share a Supabase project with another
+  product again, that's the actual lesson here.
 - **Beta v0.62.0 awaiting owner playtest** — two releases stacked: v0.61.0 deal panels
   (term sliders on the 4 leverage investments, seeded deal-of-the-month, 🟢🟡🔴 rating,
   first-open primers — watch for honest down payments making big-tier deals a cash wall
