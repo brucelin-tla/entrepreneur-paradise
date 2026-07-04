@@ -1,5 +1,16 @@
 # Release Notes
 
+## v0.68.8 — 2026-07-04 — (beta) Velocity banking is now automatic with membership
+- **Velocity banking retired as a standalone finance action.** It used to require separately
+  completing a "Velocity Banking 👑" finance card (credit score ≥ 640, 3 energy) even after joining
+  Epic Life Membership. Now it switches on the instant membership does — same defaults (balanced
+  sweep, HELOC if you have real-estate equity, otherwise your credit line) — no extra action or turn.
+- **Backward-compatible:** members who joined before this change (and never separately completed the
+  old action) get healed automatically the next time their month renders — nobody gets stuck behind
+  a deleted action.
+- Cleaned up every reference to the retired action (menu filtering, the anti-stuck safety net, the
+  members-only-perk lock list) so nothing dangling points at an action that no longer exists in config.
+
 ## v0.68.5 — 2026-07-03 — 🚀 PROMOTED TO LIVE (v0.59.3 → v0.68.5)
 Owner-approved promote after the 2026-07-02 marathon playtest (20 beta releases in one day, all
 owner-driven). Everything since v0.59.3 is now the public game: deal panels with adjustable terms
