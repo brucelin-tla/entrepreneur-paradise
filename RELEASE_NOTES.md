@@ -1,5 +1,20 @@
 # Release Notes
 
+## v0.68.11 — 2026-07-04 — (beta) Dashboard round 3 + clarity renames
+- **Accessible Capital**: Cash + Credit fold into one headline number per column (same definition as
+  the Financial Health panel's "Accessible capital"), with the Cash/Credit split — including
+  utilization % — one tap behind it. Same treatment Cash Flow already got.
+- **Founder Freedom moves to last** in the Business column, after Marketing & Operations — the
+  capstone "is this actually working for you" read, rather than leading with the verdict before the
+  numbers behind it.
+- **Personal column reordered**: Cash Flow/mo → Accessible Capital → Debt → Credit Score → Passive/mo
+  → Investments → Energy/Personal Mastery. **Business column reordered**: Cash Flow/mo → Accessible
+  Capital → Debt → D&B Score → Marketing & Operations (Customers → Brand Equity & Leads) → Founder
+  Freedom (→ Systems Maturity, Staff & Culture).
+- **Three renames for clarity**: "Net/mo" → "Cash Flow/mo", "Freedom" → "Founder Freedom" (it now sits
+  in the Business column, where a bare "Freedom" read ambiguously), "System" → "Systems Maturity"
+  (matches the actual internal stat name and the "Systemized" milestone).
+
 ## v0.68.10 — 2026-07-04 — (beta) Dashboard round 2
 - **Freedom moved to the Business column.** Reframed as a business-side question ("does the business
   run without you") even though its inputs are personal. Still reveals on the same schedule as before

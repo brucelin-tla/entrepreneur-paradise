@@ -51,6 +51,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.11',d:'2026-07-04 14:15',n:[
+'📊 <strong>Dashboard round 3</strong> — Cash + Credit fold into one "Accessible Capital" line (breakdown one tap behind, same treatment as Cash Flow); Founder Freedom now shows last on the Business side, after Marketing &amp; Operations, as the capstone read rather than the lead-in. Three renames for clarity: "Net/mo" → "Cash Flow/mo", "Freedom" → "Founder Freedom", "System" → "Systems Maturity".']},
 {v:'0.68.10',d:'2026-07-04 13:00',n:[
 '📊 <strong>Dashboard round 2</strong> — Freedom moved to the Business side (it\'s "does the business run without you"); Culture rolled in under Freedom alongside System &amp; Staff; Business\'s funnel section is now "Marketing &amp; Operations" headlined by Customers, with Brand Equity &amp; Leads one tap behind it. Policy Value and Net Worth moved off the main dashboard into the 📊 Financial Health panel (⭐ Epic Life hub) where the rest of your snapshot already lives.']},
 {v:'0.68.9',d:'2026-07-04 11:30',n:[
@@ -1743,7 +1745,7 @@ const bizCash=s.cash||0,bizAvail=Math.max(0,(s.business_credit_limit||0)-(s.busi
 const bizLoan=(s.business_credit_used||0)+(s.business_installment_debt||0)+(s.real_estate_debt||0),bizExp=(s.operating_expenses||0)+(s.cogs||0)+(sep?debtSvc:0),bizScore=this.calcBizCreditScore();
 const scoreCol=v=>v<620?'var(--red)':v<700?'var(--gold)':'var(--accent)',dbCol=v=>v<40?'var(--red)':v<70?'var(--gold)':'var(--accent)',cashCol=v=>v>5000?'var(--accent)':v<2000?'var(--red)':'var(--gold)';
 const m=(v,col)=>'<span style="color:'+col+';">'+fmt(v)+'</span>';
-const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Net/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
+const RICON={'Credit Score':'📊','Cash':'💵','Credit':'💳','Income/mo':'📈','Passive/mo':'👑','Expense/mo':'📉','Cash Flow/mo':'💸','Debt':'🏦','Policy Value':'🛡️','Investments':'📊','Net Worth':'💎','D&B Score':'🏢','Revenue/mo':'📈','Owner Equity':'💼'};
 const _vs=s._statsViewed||{};
 const row=(label,valHtml,click,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):click;const ic=!!onclk;const badge=ic?(statKey&&!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 1px;border-bottom:1px solid rgba(127,127,127,0.14);'+(ic?'cursor:pointer;':'')+'"'+(ic?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(badge?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 const colHead=(t,col)=>'<div style="font-size:0.66rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.6px;text-align:center;padding-bottom:4px;margin-bottom:3px;border-bottom:2px solid '+col+';">'+t+'</div>';
@@ -1755,16 +1757,22 @@ const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(
 this._dashOpen=this._dashOpen||{};
 const dashToggle=(key,label)=>'<div onclick="Game.toggleDash(\''+key+'\')" style="cursor:pointer;font-size:0.58rem;color:var(--blue);font-weight:600;text-align:right;padding:1px 1px 2px;">'+(this._dashOpen[key]?'▾ Hide':'▸ '+label)+'</div>';
 let P=colHead('Personal','var(--accent)');P+=subLab('Money');
-P+=netRow('Net/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
+P+=netRow('Cash Flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow');
 P+=dashToggle('pmoney','Income & Expense');
 if(this._dashOpen.pmoney){
 P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
 }
-P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
-P+=row('Cash',m(persCash,cashCol(persCash)),null,'dash-cash','p_cash');
+// Accessible Capital = cash + available credit, one headline number (same definition as the Financial
+// Health panel's "Accessible capital"); the Cash/Credit split (with utilization %) sits one tap behind it.
+P+=row('Accessible Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash');
+P+=dashToggle('pcapital','Cash & Credit');
+if(this._dashOpen.pcapital){
+P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
+}
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
+P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score');
 if(passiveInc>0)P+=row('Passive/mo',m(passiveInc,'var(--gold)'),null,null,'p_passive');
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest');
 const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPersonalMastery(),fr=this.calcFreedom(),rec=this.calcEnergyRecovery();
@@ -1781,32 +1789,23 @@ if(this._dashOpen.mastery)P+='<div onclick="Game.statInfo(\'p_mastery\')" style=
 }
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
-// Freedom lives on the Business side (it's "does the business run without you" — a business-side question,
-// even though the inputs are personal). Shown once mastery/Life is revealed, regardless of LLC status —
-// forming an LLC unlocks the detailed money/marketing panels below, not the founder's freedom score itself.
-if(this._reveal('mastery')){
-B+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole());
-B+=dashToggle('freedom','⚙️ System, 👷 Staff & 🎭 Culture');
-if(this._dashOpen.freedom){
-B+=gauge('⚙️ System',sysMat,sysC);
-if((s.team_size||0)>0){
-B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
-B+=cgauge('🎭 Culture',Math.round(_cul),_cul,_culC);
-}
-}
-}
 if(sep){
 B+='<div id="biz-money">'+subLab('Money');
-B+=netRow('Net/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
+B+=netRow('Cash Flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow');
 B+=dashToggle('bmoney','Revenue & Expense');
 if(this._dashOpen.bmoney){
 B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
 B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
 }
-B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
+// Accessible Capital = cash + available credit, same headline-then-detail treatment as the Personal side.
+B+=row('Accessible Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)));
+B+=dashToggle('bcapital','Cash & Credit');
+if(this._dashOpen.bcapital){
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
+}
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
+B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb');
 // Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
 // Marketing & Operations readout: Customers is the headline (the number that actually pays the bills);
@@ -1818,6 +1817,20 @@ if(this._dashOpen.funnel)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge
 B+='</div>';
 }else{
 B+='<div style="text-align:center;padding:16px 6px;color:var(--text2);"><div style="font-size:1.3rem;">🔒</div><div style="font-size:0.6rem;margin-top:6px;line-height:1.45;">Form an LLC to separate and unlock your business finances</div></div>';
+}
+// Freedom is the capstone read — "so is this actually working for you" — shown last, after the operational
+// numbers it's a verdict on. Regardless of LLC status (it's a founder-freedom question, not a business-
+// finances one — forming an LLC unlocks the money/marketing panels above, not this).
+if(this._reveal('mastery')){
+B+=gauge('🕊️ Founder Freedom',fr,frC,this.getFounderRole());
+B+=dashToggle('freedom','⚙️ Systems, 👷 Staff & 🎭 Culture');
+if(this._dashOpen.freedom){
+B+=gauge('⚙️ Systems Maturity',sysMat,sysC);
+if((s.team_size||0)>0){
+B+=cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)');
+B+=cgauge('🎭 Culture',Math.round(_cul),_cul,_culC);
+}
+}
 }
 const cfoBtn='';/* CFO is no longer in the game (owner) — the briefing button is retired */
 const achBtn='';/* achievements moved off the game screen — reachable from the result screen (owner: less dashboard clutter) */
