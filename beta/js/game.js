@@ -13,10 +13,6 @@ const TRAPS=['rapid_offshore_scaleup','influencer_megadeal'];
 const INVEST_OWN={buy_real_estate:{i:'🏠',w:'owned'},buy_str:{i:'🏖',w:'owned'},private_banking:{i:'📊',w:'open'},cash_out_refi:{i:'♻️',w:'done'}};
 // Display metadata for the trap "achievements" — revealed only after a player has taken & lived through that trap (kept secret beforehand so finding them stays part of the game).
 const TRAP_META={rapid_offshore_scaleup:{i:'🌏',n:'Offshore Over-Hire'},influencer_megadeal:{i:'📣',n:'Influencer Megadeal'}};
-// Supabase backend (publishable key is public-safe; data is protected by Row Level Security). Used for the global leaderboard + future async-multiplayer.
-const SUPA_URL='https://widdgynledwpqaqndtvz.supabase.co';
-const SUPA_KEY='sb_publishable_YTOYoDxjm7MpIuvvSjwOyQ_ToGCW3PQ';
-const GOOGLE_G='<svg width="16" height="16" viewBox="0 0 48 48" style="vertical-align:middle;flex-shrink:0;"><path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.3 6.1 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.6 44 30.9 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
 // Credit-approval actions — success is underwritten by personal utilization + myFICO 3B (see _creditApprovalChance), not the flat success_rate.
 const CREDIT_APPROVAL=['bank_personal_loan','business_credit_line','debt_restructure','sba_loan'];
 const LOAN_APPROVAL=['bank_personal_loan','sba_loan'];/* term loans underwritten on DTI; the rest of CREDIT_APPROVAL is revolving credit underwritten on utilization. debt_restructure qualifies you for BOTH a line and a loan, so it's underwritten on the worse of the two (see resolveMonth). */
@@ -51,6 +47,8 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.18',d:'2026-07-04 21:00',n:[
+'🌐 Global leaderboard removed for now — leaderboards are local-only (this device) until a dedicated backend is set up properly. 📊 Dashboard: Personal Mastery is hidden by default again (tap "Capacity" to see it); Money and Capacity/Marketing & Operations are now independent — opening one no longer reveals the other\'s hidden stats.']},
 {v:'0.68.17',d:'2026-07-04 20:00',n:[
 '📊 Dashboard: removed the "Show/Hide Details" button — the section titles (Money, Capacity, Marketing & Operations) are now the click target themselves, with a small ▸/▾ arrow next to the title. Business side: Systems Maturity now shows under Marketing & Operations instead of above it.']},
 {v:'0.68.16',d:'2026-07-04 19:00',n:[
@@ -680,7 +678,7 @@ state:null,month:1,selectedActions:{},selectedLifestyle:null,actionHistory:[],ev
 
 GLOSSARY:{'EBITDA':'Earnings Before Interest, Taxes, Depreciation & Amortization — your business\'s operating profit.','COGS':'Cost of Goods Sold — direct costs to deliver your product/service.','DSCR':'Debt Service Coverage Ratio — operating income divided by debt payments. Above 1.25 is healthy.','SOP':'Standard Operating Procedure — written steps so anyone can do a task without you.','LOC':'Line of Credit — revolving credit you draw from as needed.','LLC':'Limited Liability Company — separates personal assets from business liability.','S-Corp':'S Corporation — tax election splitting income between salary and distributions to save taxes.','CRM':'Customer Relationship Management — software tracking prospects and deals.','EIN':'Employer Identification Number — your business tax ID.','HELOC':'Home Equity Line of Credit.','OPM':'Other People\'s Money — borrowed or investor capital.','JV':'Joint Venture — parties pooling resources for a project.','IP':'Intellectual Property — proprietary methods or technology.','Net Worth':'Assets minus liabilities.','Brand Equity':'Market recognition and perceived value of your business.','Key-Person Dependency':'How much the business relies on you personally.','Churn Rate':'Percentage of customers lost each month.','Utilization':'Percentage of available credit in use. Below 30% boosts score.','Tradeline':'A credit account on your report.','Monthly Burn':'Total monthly expenses across life and business.','Living Expenses':'Personal cost of living — rent, food, utilities, transport.','Holding Company':'A parent entity that owns your operating business(es). It manages money, holds assets, and isolates your personal finances from business operations and liabilities.','Operating Entity':'The business entity that runs day-to-day operations, holds contracts, employs staff, and takes on business debt. Sits under the holding company.','Liability Shield':'Legal separation between entities so that debts and lawsuits against one entity can\'t reach the assets of another.'},
 
-async init(){await loadConfig();this._initSupabase();this.renderMainMenu();this.renderTitleMeta();this._renderUpdateIcon();this._checkForUpdate();this._startUpdatePolling();this._initBetaBadge();
+async init(){await loadConfig();this.renderMainMenu();this.renderTitleMeta();this._renderUpdateIcon();this._checkForUpdate();this._startUpdatePolling();this._initBetaBadge();
 // Warn before an accidental refresh/close mid-game (progress is autosaved, but this prevents the surprise). Only fires during a live run.
 window.addEventListener('beforeunload',(e)=>{const live=['game-screen','event-screen','lifestyle-screen','result-screen'].some(id=>{const el=document.getElementById(id);return el&&el.classList.contains('active');});if(live&&this.archetype&&!this._lost){e.preventDefault();e.returnValue='';}});},
 // Persistent "testing build" chip on EVERY screen so players (and bots) always know they're not on the live game. Location-gated to /beta/ so the SAME game.js renders nothing on the live root (clean promotion). Tap for the what-is-beta explainer.
@@ -1779,23 +1777,26 @@ const subLab=(t,toggleKey)=>{const arrow=toggleKey?(this._dashOpen[toggleKey]?' 
 const netRow=(label,net,liquid,click,id,statKey,primary)=>{const c=net>=0?'var(--accent)':'var(--red)';const v='<span style="color:'+c+'">'+(net>=0?'+':'&#8722;')+fmt(Math.abs(net))+'</span>';return row(label,v,click,id,statKey,primary);};
 const hlRow=(label,valHtml,bg,id,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!(_vs[statKey])?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';return '<div'+(id?' id="'+id+'"':'')+' style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;padding:3px 5px;margin:1px 0;border-radius:4px;background:'+bg+';'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;">'+(RICON[label]?'<span style="font-size:0.72rem;">'+RICON[label]+'</span> ':'')+label+(statKey?' '+badge:'')+'</span><span style="font-size:0.8rem;font-weight:700;text-align:right;white-space:nowrap;">'+valHtml+'</span></div>';};
 // Order (owner spec, 2026-07-03): Capital > Cash+Credit; Cash Flow > Income/Revenue+Expense;
-// Credit Score/D&B > Debt — each headline always shown, its breakdown behind the one group toggle.
+// Credit Score/D&B > Debt — each headline always shown, its breakdown behind the Money toggle.
 // Passive/mo removed as its own row (still folds into Cash Flow via persInc). Below that: Personal
-// gets Freedom then Personal Mastery (both always shown) then Energy (lowest, always shown);
-// Business gets Marketing & Operations (Customers > Leads+Brand Equity) then Systems Maturity > Culture+Staff.
-let P=colHead('Personal','var(--accent)');P+=subLab('Money','personal');
+// gets Freedom (always shown) then Personal Mastery (hidden, its own Capacity toggle) then Energy
+// (lowest, always shown); Business gets Marketing & Operations (Customers > Leads+Brand Equity, its
+// own toggle) then Systems Maturity > Culture+Staff (shares the Marketing & Operations toggle — it
+// has no title of its own). Money and Capacity/Marketing & Operations are INDEPENDENT toggles —
+// opening one must not reveal the other's hidden stats.
+let P=colHead('Personal','var(--accent)');P+=subLab('Money','p_money');
 P+=row('Capital',m(persCash+persAvail,cashCol(persCash+persAvail)),null,'dash-cash','p_cash',true);
-if(this._dashOpen.personal){
+if(this._dashOpen.p_money){
 P+=row('Cash',m(persCash,cashCol(persCash)));
 P+=row('Credit',m(persAvail,persAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+persUtil+'%</span>',null,null,'p_credit');
 }
 P+=netRow('Cash Flow/mo',persInc-persExp,persCash+persAvail,null,'dash-cashflow','p_flow',true);
-if(this._dashOpen.personal){
+if(this._dashOpen.p_money){
 P+=hlRow('Income/mo',m(persInc,persInc>0?'var(--accent)':'var(--text2)'),'rgba(34,197,94,0.12)',null,'p_income');
 P+=hlRow('Expense/mo',m(persExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'p_expense');
 }
 P+=row('Credit Score','<span style="color:'+scoreCol(persScore)+'">'+persScore+'</span>',null,null,'p_score',true);
-if(this._dashOpen.personal){
+if(this._dashOpen.p_money){
 P+=row('Debt',m(persLoan,persLoan>30000?'var(--red)':'var(--text)'),null,'dash-debt','p_debt');
 }
 if((s.investment_positions||0)>0)P+=row('Investments',m(s.investment_positions,'var(--accent)'),null,null,'p_invest',true);
@@ -1807,46 +1808,46 @@ const gauge=(label,v,col,sub,id,subBelow,primary)=>'<div'+(id?' id="'+id+'"':'')
 const cgauge=(label,val,fill,col,primary)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;'+(primary?'font-weight:700;':'')+'">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
-// Capacity block: Freedom, then Personal Mastery (both always shown, bolded); the 5 life-dimension
-// stats (Body/Mind/Spirit/Heart/Luxury) that used to sit under Personal Mastery are now hidden behind
-// the group toggle same as Cash/Credit/Income/Expense/Debt. Energy stays last/lowest, always shown.
-P+=subLab('Capacity','personal');
+// Capacity block: Freedom is always shown; Personal Mastery (+ the 5 life-dimension stats
+// Body/Mind/Spirit/Heart/Luxury) defaults to hidden behind its OWN "Capacity" toggle — independent
+// of the "Money" toggle above. Energy stays last/lowest, always shown.
+P+=subLab('Capacity','p_capacity');
 if(this._reveal('mastery')){
 P+=gauge('🕊️ Freedom',fr,frC,this.getFounderRole(),null,false,true);
-P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'),null,false,true)+'</div>';
-if(this._dashOpen.personal){
+if(this._dashOpen.p_capacity){
+P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge('🧠 Personal Mastery',mas,masC,(_vs['p_mastery']?'ⓘ':'⚠ ⓘ'))+'</div>';
 P+='<div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
 }
 }
 P+=gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45,true);
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
-// Systems Maturity (headline, bolded) — Culture + Staff behind the group toggle. Built once so it can
-// render regardless of LLC status (same as Founder Freedom used to — not gated on sep), now positioned
-// under Marketing & Operations.
-const sysMatHtml=this._reveal('mastery')?(gauge('⚙️ Systems Maturity',sysMat,sysC,null,null,false,true)+(this._dashOpen.business&&(s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC)+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)'):'')):'';
+// Systems Maturity (headline, bolded) — Culture + Staff behind the Marketing & Operations toggle
+// (it has no title of its own, so it shares b_ops). Built once so it can render regardless of LLC
+// status (same as Founder Freedom used to — not gated on sep), positioned under Marketing & Operations.
+const sysMatHtml=this._reveal('mastery')?(gauge('⚙️ Systems Maturity',sysMat,sysC,null,null,false,true)+(this._dashOpen.b_ops&&(s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC)+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)'):'')):'';
 if(sep){
-B+='<div id="biz-money">'+subLab('Money','business');
+B+='<div id="biz-money">'+subLab('Money','b_money');
 B+=row('Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)),null,null,null,true);
-if(this._dashOpen.business){
+if(this._dashOpen.b_money){
 B+=row('Cash',m(bizCash,cashCol(bizCash)));
 B+=row('Credit',(s.business_credit_limit||0)>0?(m(bizAvail,bizAvail>0?'var(--accent)':'var(--text2)')+' <span style="font-size:0.58rem;color:var(--text2);font-weight:400;">'+bizUtil+'%</span>'):'<span style="color:var(--text2)">—</span>',null,null,'b_credit');
 }
 B+=netRow('Cash Flow/mo',(s.monthly_revenue||0)-bizExp,bizCash+bizAvail,null,null,'b_flow',true);
-if(this._dashOpen.business){
+if(this._dashOpen.b_money){
 B+=hlRow('Revenue/mo',m(s.monthly_revenue,'var(--accent)'),'rgba(34,197,94,0.12)',null,'b_revenue');
 B+=hlRow('Expense/mo',m(bizExp,'var(--gold)'),'rgba(239,68,68,0.12)',null,'b_expense');
 }
 B+=row('D&B Score','<span style="color:'+(bizScore?dbCol(bizScore):'var(--text2)')+'">'+(bizScore?bizScore+'/100':'—')+'</span>',null,null,'b_dnb',true);
-if(this._dashOpen.business){
+if(this._dashOpen.b_money){
 B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_debt');
 }
 // Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
 B+='</div>';
-// Marketing & Operations readout: Customers (headline, bolded) — Brand Equity + Leads behind the group toggle.
-B+='<div id="biz-ops">'+subLab('Marketing & Operations','business')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)',true);
-if(this._dashOpen.business)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
+// Marketing & Operations readout: Customers (headline, bolded) — Brand Equity + Leads behind its own toggle.
+B+='<div id="biz-ops">'+subLab('Marketing & Operations','b_ops')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)',true);
+if(this._dashOpen.b_ops)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
 B+='</div>';
 B+=sysMatHtml;
 }else{
@@ -4079,51 +4080,26 @@ if(e.scores)setTimeout(()=>{const cv=document.getElementById('lb-radar');if(cv)t
 // Shared run-entry builder (end screen + year checkpoint both post via this).
 _buildLBEntry(name){const scores=this.calculateFinalScores();const _arch=this.determineArchetype(scores);return {name:name,archetype:this.archetype.id,months:this.month>36?36:this.month,composite:this._compositeFor(scores),scores:scores,title:_arch.title,subtitle:_arch.subtitle,playLog:this._playLog||[],badges:this.calcBadges(),mastery:this.calcPersonalMastery(),company:(this.state.company_name||''),traps:(this.state._traps_hit||[]).slice(),scams:this._scamsSurvivedLifetime(),scamsRun:(this.state._scams_survived||0),stats:this._statSnapshot(),date:new Date().toISOString().split('T')[0]};},
 // Post the current year-checkpoint run to the leaderboard (local always; global if signed in, else queue + offer sign-in). Lets a 12/24-month run be ranked while you keep playing.
-postCheckpoint(){const el=document.getElementById('cp-save-name');const name=((el&&el.value)||this._authName()||'').trim()||'Anonymous';const entry=this._buildLBEntry(name);this._myLBName=name;let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));const box=document.getElementById('cp-post-box');let msg;if(this._sb){if(this._isSignedIn()){this._lbSubmitGlobal(entry);msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Posted your '+entry.months+'-month run to the global leaderboard.</div>';}else{this._queuePendingGlobal(entry);msg='<div style="text-align:center;color:var(--text2);font-size:0.76rem;margin-bottom:8px;">Saved to this device — sign in to post it to the global board:</div><button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google</button>';}}else{msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Saved to this device’s leaderboard.</div>';}if(box)box.innerHTML=msg;},
+postCheckpoint(){const el=document.getElementById('cp-save-name');const name=((el&&el.value)||this._authName()||'').trim()||'Anonymous';const entry=this._buildLBEntry(name);this._myLBName=name;let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));const box=document.getElementById('cp-post-box');const msg='<div style="text-align:center;color:var(--accent);font-weight:600;font-size:0.82rem;">✓ Saved to this device’s leaderboard.</div>';if(box)box.innerHTML=msg;},
 saveToLeaderboard(){
 const name=(document.getElementById('player-name').value||'').trim()||'Anonymous';
 const entry=this._buildLBEntry(name),composite=entry.composite;
 let lb=JSON.parse(localStorage.getItem('ep_leaderboard')||'[]');lb.push(entry);localStorage.setItem('ep_leaderboard',JSON.stringify(lb));
-this._myLBName=name;let _globalNote='';
-// Global board: post now if signed in, otherwise queue the run + offer Google sign-in (which auto-posts on return).
-if(this._sb){if(this._isSignedIn()){this._lbSubmitGlobal(entry);_globalNote='<div style="text-align:center;color:var(--accent);font-size:0.78rem;margin-bottom:8px;">✓ Posted to the global leaderboard.</div>';}else{this._queuePendingGlobal(entry);_globalNote='<button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google to post globally</button>';}}
+this._myLBName=name;
 // Completed runs no longer need their in-progress save
 let _sv=this.loadSaves().filter(s=>!(s.name===name&&s.archetype===this.archetype.id));localStorage.setItem('ep_saves',JSON.stringify(_sv));
 const isRecord=lb.filter(e=>e.archetype===entry.archetype&&e.months===entry.months).sort((a,b)=>b.composite-a.composite)[0].name===entry.name;
-document.getElementById('end-save').innerHTML='<div style="text-align:center;color:var(--accent);font-weight:600;margin:12px 0;">✓ Saved!'+(isRecord?' New record for '+this.archetype.label+' — '+entry.months+' months!':'')+'</div>'+_globalNote+'<button class="btn-outline" onclick="Game.showLeaderboard(\'end\')">View Leaderboard</button>';},
+document.getElementById('end-save').innerHTML='<div style="text-align:center;color:var(--accent);font-weight:600;margin:12px 0;">✓ Saved!'+(isRecord?' New record for '+this.archetype.label+' — '+entry.months+' months!':'')+'</div>'+'<button class="btn-outline" onclick="Game.showLeaderboard(\'end\')">View Leaderboard</button>';},
 
-// ---- Global leaderboard hook (backend wired later — see RELEASE_NOTES "v0.4 leaderboard") ----
-// To go live: set Game.LB_BACKEND = { async fetchTop(arch,months){return [entries]}, async submit(entry){} }.
-// fetchTop returns entries in the SAME shape as local (name, composite, archetype, months, badges, playLog, stats, date),
-// already sorted desc by composite and capped to the top 10. submit() pushes one finished run. Until set, Global shows a "coming soon" state.
+// ---- Leaderboard is local-only for now (global/Supabase backend removed 2026-07-04 —
+// see this repo's CLAUDE.md "Pending work" for why). LB_BACKEND stays null, so
+// renderLBList()'s existing "coming soon" state covers the Global tab honestly.
+// To bring a backend back: set Game.LB_BACKEND = { async fetchTop(arch,months){return [entries]}, async submit(entry){} }.
 LB_BACKEND:null,
 _lbSubmitGlobal(entry){if(this.LB_BACKEND&&this.LB_BACKEND.submit){try{Promise.resolve(this.LB_BACKEND.submit(entry)).catch(()=>{});}catch(e){}}},
-
-// ---- Supabase: Google auth + global leaderboard backend ----
-_initSupabase(){try{
-if(!window.supabase||!window.supabase.createClient)return; // offline build / SDK didn't load → stays local-only
-this._sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-this.LB_BACKEND={fetchTop:(a,m)=>this._sbFetchTop(a,m),submit:(e)=>this._sbSubmit(e)};
-this._sb.auth.getSession().then(({data})=>{this._authUser=(data&&data.session)?data.session.user:null;this._afterAuth();});
-this._sb.auth.onAuthStateChange((_e,session)=>{this._authUser=session?session.user:null;this._afterAuth();});
-}catch(e){}},
 _isSignedIn(){return !!this._authUser;},
 _authName(){const u=this._authUser;if(!u)return '';const m=u.user_metadata||{};return m.full_name||m.name||((u.email||'').split('@')[0])||'Player';},
-async signInGoogle(){if(!this._sb)return;try{await this._sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0].split('?')[0]}});}catch(e){}},
-async signOutGoogle(){if(!this._sb)return;try{await this._sb.auth.signOut();}catch(e){}this._authUser=null;this._afterAuth();},
-// Runs after auth state settles (initial load + sign in/out): refresh visible auth UI + flush any run queued before a sign-in redirect.
-_afterAuth(){this._flushPendingGlobal();const lb=document.getElementById('leaderboard-screen');if(lb&&lb.classList.contains('active'))this.showLeaderboard(this._lbFrom);},
-// Map a DB row → the entry shape the leaderboard UI expects.
-_sbRowToEntry(r){return {name:r.name,company:r.company,archetype:r.archetype,months:r.months,composite:r.composite,scores:r.scores||null,mastery:r.mastery||0,badges:r.badges||[],traps:r.traps||[],scams:r.scams||0,scamsRun:0,playLog:r.play_log||[],stats:r.stats||null,date:(r.created_at||'').split('T')[0]};},
-async _sbFetchTop(arch,ms){let q=this._sb.from('runs').select('name,company,archetype,months,composite,scores,badges,mastery,traps,scams,play_log,stats,created_at').eq('archetype',arch);if(+ms===18)q=q.gte('months',16).lte('months',21);else if(+ms===36)q=q.gte('months',34);const {data,error}=await q.order('composite',{ascending:false}).limit(10);if(error)throw error;return (data||[]).map(r=>this._sbRowToEntry(r));},
-async _sbSubmit(entry){const u=this._authUser;if(!u)return;const row={user_id:u.id,name:entry.name,company:entry.company||'',archetype:entry.archetype,months:entry.months,composite:entry.composite,scores:entry.scores||null,badges:entry.badges||[],mastery:entry.mastery||0,traps:entry.traps||[],scams:entry.scams||0,stats:entry.stats||null,play_log:entry.playLog||[]};const {error}=await this._sb.from('runs').insert(row);if(error)throw error;},
-// Posting requires sign-in, which redirects away (losing the run). So stash the entry, sign in, and auto-post it on return.
-_queuePendingGlobal(entry){try{localStorage.setItem('ep_pending_global',JSON.stringify(entry));}catch(e){}},
-_flushPendingGlobal(){if(!this._isSignedIn())return;let e=null;try{e=JSON.parse(localStorage.getItem('ep_pending_global')||'null');}catch(_){}if(!e)return;try{localStorage.removeItem('ep_pending_global');}catch(_){}this._myLBName=e.name;Promise.resolve(this._sbSubmit(e)).catch(()=>{});},
-// Sign-in button / signed-in identity, shown on the global leaderboard tab.
-_authBarHtml(){if(!this._sb)return '';
-if(this._isSignedIn())return '<div style="display:flex;align-items:center;gap:8px;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:10px;font-size:0.78rem;"><span style="color:var(--text2);min-width:0;">Signed in as <strong style="color:var(--text);">'+this._esc(this._authName())+'</strong></span><span onclick="Game.signOutGoogle()" style="color:var(--blue);cursor:pointer;font-weight:600;flex-shrink:0;">Sign out</span></div>';
-return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;"><div style="font-size:0.76rem;color:var(--text2);margin-bottom:7px;">Sign in to post your runs to the global board.</div><button onclick="Game.signInGoogle()" class="btn-secondary" style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">'+GOOGLE_G+' Sign in with Google</button></div>';},
+_authBarHtml(){return '';},
 
 showLeaderboard(from){
 this._lbFrom=from||'title';this.showScreen('leaderboard-screen');

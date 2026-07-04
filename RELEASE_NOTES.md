@@ -1,5 +1,35 @@
 # Release Notes
 
+## v0.68.18 — 2026-07-04 — (beta) Global leaderboard removed (local-only); independent Money/Capacity/Ops toggles
+**Ask (owner):** remove the global leaderboard for now, local-only is fine; hide Personal Mastery
+by default again; make Money and Capacity/Marketing & Operations independent toggles — opening one
+should never unhide the other's stats.
+
+**Leaderboard:** adopted and finished an in-flight change from a concurrent session on this repo —
+the Supabase-backed global leaderboard (Google sign-in, `SUPA_URL`/`SUPA_KEY`, the `@supabase/
+supabase-js` CDN script) was already stripped from `js/game.js`/`game.html`/`beta/js/game.js`/
+`beta/game.html`/`index.html`/`beta/index.html`, with `LB_BACKEND` staying `null` so the existing
+"🌐 Global leaderboard — coming soon" state covers the Global tab honestly. Local ("📱 This
+Device") leaderboard is untouched. Did a small follow-up tidy pass this session flagged as
+needed: removed the now-dead `if(this._sb)` branches in `postCheckpoint()`/`saveToLeaderboard()`
+(unreachable — `_sb` is never set now — but referenced already-removed functions) and the
+now-unused `GOOGLE_G` SVG constant, in both `js/game.js` and `beta/js/game.js`.
+
+**Dashboard (beta only):** `renderStats()` in `beta/js/game.js`. Personal Mastery's gauge moved
+back behind its own toggle (no longer bolded/always-shown — that was v0.68.16's change, reverted).
+Split the single per-column `_dashOpen.personal`/`_dashOpen.business` flag into four independent
+ones: `p_money` (Personal's Cash/Credit/Income/Expense/Debt), `p_capacity` (Personal Mastery + the
+5 life-dimension stats), `b_money` (Business's Cash/Credit/Revenue/Expense/Debt), `b_ops`
+(Marketing & Operations' Brand Equity/Leads, and Systems Maturity's Culture/Staff — grouped in
+since Systems Maturity has no title of its own). Each section title (`subLab(title, toggleKey)`)
+now wires to its own key instead of sharing one per column.
+
+Verified via headless Edge (iframe + injected script driving `Game.selectArchetype`/`Game.toggleDash`
+directly): confirmed `LB_BACKEND` is `null` and `signInGoogle`/`_initSupabase` no longer exist,
+confirmed the leaderboard screen shows no sign-in button, confirmed Personal Mastery is hidden by
+default, and confirmed opening Money never reveals Capacity/Marketing & Operations content (and
+vice versa) on both columns.
+
 ## v0.68.17 — 2026-07-04 — (beta) Section titles ARE the toggle; Systems Maturity moves under Marketing & Ops
 **Ask (owner):** remove the separate "Show Details"/"Hide Details" button text; instead make the
 section titles (Money, Capacity, Marketing & Operations) themselves the click target, with just a
