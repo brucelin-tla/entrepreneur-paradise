@@ -1,5 +1,47 @@
 # Release Notes
 
+## v0.68.31 — 2026-07-05 — (beta) Real estate leverage has real consequences now
+
+**Ask (owner):** "I was spamming buying real estate with 10% down only and never really got punished in the
+game. It just seems a bit easy." Investigated and confirmed: the downturn margin-call check only runs
+ONCE across the entire 36-month run (there's exactly one downturn window, months 14-21ish, 4-7 months
+long) and can only ever force-sell exactly ONE property regardless of portfolio size — so a player who
+never lands in that window, or who has enough reserves to dodge the one check, pays zero cost for
+unlimited 10%-down leverage. Fleshed out four design options with the owner; he chose "all three
+combined" (raise the down-payment floor, price high leverage immediately via a PMI-style monthly cost,
+and scale the downturn consequence to how reckless the portfolio actually is).
+
+**Fix** (`beta/js/game.js`):
+1. **Down payment floor raised 10% → 20%**, in the deal-panel slider, the purchase handlers
+   (`buy_real_estate`/`buy_str`), and the cash-cost calculation. Real conventional/DSCR investment loans
+   essentially never go below 20% down — 10% wasn't a real financing option in the first place.
+2. **New `_re_pmi_applied` high-LTV surcharge**: once portfolio-aggregate LTV crosses 80%, an ongoing
+   monthly cost (~0.8%/yr of the real-estate debt, matching real PMI's 0.5-1.5%/yr range) cuts into rental
+   income every month — real, felt, immediate, not a downturn dice roll. Cancels automatically once LTV
+   drops back under 80%, matching how real PMI actually works. Same delta-tracking pattern already used
+   for the operator-capacity haircut, so it never permanently drifts the underlying income figures.
+3. **Margin-call severity now scales with recklessness**: instead of always force-selling exactly one
+   property, the number sold scales with how far over the 90% post-crash LTV line the portfolio is and how
+   deep the downturn ran (`sellFrac = max(1/units, min(1, (ltv-0.90)*2.5 + (depth-0.8)*0.6))`). A portfolio
+   that just barely trips the line still loses one property (unchanged from before); a portfolio spammed
+   entirely at max leverage in a severe downturn can lose most of it — because in reality, if every
+   property was bought equally thin, a uniform price drop puts all of them underwater together, not just a
+   token one.
+4. The existing Portfolio Leverage Risk indicator (the colored LTV shown on the dashboard once you own
+   real estate) already covers the "make it visible" piece — no separate gauge needed.
+
+**Verified headlessly** (all 5 checks): down payment clamps to the new 20% floor even when a stale/lower
+`_dealTerms` value is requested; the PMI surcharge activates when LTV crosses 80% and reverses cleanly
+when it drops back under; a reckless 10-unit portfolio bought thin, hit by a severe downturn, lost 9 of 10
+properties; a conservative 5-unit portfolio at 25% LTV in the identical downturn severity was completely
+untouched.
+
+**Also discussed, not yet implemented — loan rates:** the owner asked about extending real-world
+calibration to term-loan pricing too. Separate from this release; see the conversation for the full
+impact analysis (credit-score-scaled rates on `bank_personal_loan` would make weak-credit borrowing
+materially more expensive, reinforcing "build credit before you leverage" — and would compound with DSCR
+gates, since worse rates degrade DSCR, making subsequent loans harder to qualify for). Awaiting go-ahead.
+
 ## v0.68.30 — 2026-07-05 — (beta) Multi-bank relationship banking raises the stacking ceiling
 
 **Ask (owner):** pushback on v0.68.29's flat $250k lifetime cap — "wouldn't we be able to build a

@@ -2653,6 +2653,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.31',d:'2026-07-05 11:59',n:[
+'Real estate leverage has real teeth now. Down payment floor raised from 10% to 20% (real investment-property loans essentially never go lower). Max out at the new floor and you now pay an ongoing high-LTV surcharge — real PMI — cutting into your rental income every month you stay over 80% loan-to-value, not just in a downturn. And the downturn crash test itself no longer taps you on the wrist for exactly one property regardless of portfolio size — spam a bunch of thin-margin deals and a bad downturn can now cost you most of them, while a conservatively-leveraged portfolio still rides straight through untouched.'
+]},
 {v:'0.68.30',d:'2026-07-05 10:18',n:[
 'Build a Banking Relationship is repeatable again — up to 4 real relationships, ~6 months apart, each one genuinely raising how much business credit you can stack (scaled to your revenue), on top of the ~$250k personal-credit-gated card-stacking ceiling from the last update. Real multi-bank relationship banking, not another card-stacking round. Personal credit limit stays untouched by this — that\'s a separate system in real life (issuer-specific reviews of YOUR income/credit file), not something a business banking relationship raises.'
 ]},
@@ -4534,7 +4537,7 @@ return out;},
 // Late-game cost scaling: repeatable marketing/ops actions cost more as the company grows, so they stay a real decision instead of pocket change (effects scale too, via scaleActionEffects).
 // A second attempt after a partial costs half — you've already done most of the legwork, just need to finish the job.
 isRetry(a){return !!(a&&this.state._partial_actions&&this.state._partial_actions[a.id]);},
-actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */if(a.id==='buy_real_estate'||a.id==='buy_str'){const r=this.dealRoll(a.id),t=this._dealTerm(a.id);return Math.round(r.price*Math.max(0.1,Math.min(0.5,(t.downPct||20)/100)));}if(a.id==='equipment_financing'){const _s=this.state,_ch=typeof _s._equip_choice==='string'?[_s._equip_choice]:(_s._equip_choice||[]);const _sum=_ch.reduce((t,cid)=>{const _it=(a.catalog||[]).find(x=>x.id===cid&&!(_s._equip_owned||[]).includes(x.id));return t+(_it?_it.price:0);},0);return Math.round(_sum*0.10);}/* the whole basket's down payment runs through the normal funding waterfall (biz credit → biz cash → personal LAST) *//* property buys cost the HONEST down payment on this month's deal at the player's chosen % */if(a.category==='lifestyle'&&this.state._epic_life){const _lb=a.cash_cost||0;return _lb?Math.round(_lb*0.8):0;}/* Epic members: 20% off lifestyle upgrade upfront cost */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
+actionCashCost(a){if(a.id==='debt_restructure')return a._epic?0:this._debtRestructureFee();/* min($2k, 10% success fee on the credit/loan qualified); free for Epic members */if(a.id==='buy_real_estate'||a.id==='buy_str'){const r=this.dealRoll(a.id),t=this._dealTerm(a.id);return Math.round(r.price*Math.max(0.2,Math.min(0.5,(t.downPct||20)/100)));}if(a.id==='equipment_financing'){const _s=this.state,_ch=typeof _s._equip_choice==='string'?[_s._equip_choice]:(_s._equip_choice||[]);const _sum=_ch.reduce((t,cid)=>{const _it=(a.catalog||[]).find(x=>x.id===cid&&!(_s._equip_owned||[]).includes(x.id));return t+(_it?_it.price:0);},0);return Math.round(_sum*0.10);}/* the whole basket's down payment runs through the normal funding waterfall (biz credit → biz cash → personal LAST) *//* property buys cost the HONEST down payment on this month's deal at the player's chosen % */if(a.category==='lifestyle'&&this.state._epic_life){const _lb=a.cash_cost||0;return _lb?Math.round(_lb*0.8):0;}/* Epic members: 20% off lifestyle upgrade upfront cost */const base=a.cash_cost||0;if(!base)return 0;const retry=this.isRetry(a)?0.5:1;if(a.one_time||(a.category!=='marketing'&&a.category!=='operations'))return Math.round(base*retry);return Math.round(base*Math.min(5,Math.max(1,0.4+this.calcBusinessLevel()*0.6))*retry);},
 actionEnergyCost(a){let e=a.energy_cost||0;if(e<=0)return e;if(this.isRetry(a))e*=0.5;
 // Operational systems pay an energy DIVIDEND: documented SOPs, project management and automation mean your hands-on moves drain less energy as systems_maturity rises (up to ~40% off at full maturity). You spend energy building systems now to spend less on everything later.
 const disc=Math.min(0.4,(this.state.systems_maturity||0)/250);e*=(1-disc);
@@ -5810,7 +5813,7 @@ openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));th
  let h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;"><button class="back-chip" style="margin:0;" onclick="Game.dealBack()">← Back</button><span onclick="Game.dealToggleInfo(\''+id+'\')" style="cursor:pointer;font-size:0.66rem;color:var(--text2);">'+infoLbl+'</span></div>';
  if(this._dealInfo)h+='<div style="margin-bottom:10px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;">'+this._DEAL_PRIMERS[ptype]+'</div>';
  let canGo=true;
- if(ptype==='property'){const r=this.dealRoll(id),down=Math.max(10,Math.min(50,t.downPct||20))/100;
+ if(ptype==='property'){const r=this.dealRoll(id),down=Math.max(20,Math.min(50,t.downPct||20))/100;
   const mort=Math.round(r.price*(1-down)),cashDown=Math.round(r.price*down),equity=r.fairValue-mort;
   const noiAdj=Math.max(0,Math.round(r.noi+r.price*(down-0.2)*0.0065));/* more down = smaller mortgage payment = more of the rent is yours */
   const yld=Math.round(noiAdj*12/r.price*1000)/10;
@@ -5832,7 +5835,7 @@ openDealControl(cat,id){const s=this.state,fm=v=>this.fmtMoney(Math.round(v));th
   if(id==='buy_str')h+='<div class="breakdown-detail">🏖 Hands-on hospitality: +8 key-person risk (leans on your time), exposed to city STR rules — and the depreciation shields your ACTIVE income, which a normal rental can\'t.</div>';
   if((a.success_rate||1)<1)h+='<div class="breakdown-detail">Closing odds ~'+Math.round((a.success_rate||1)*100)+'% — a rough close still buys it, on thinner cash flow.</div>';
   h+='</div>';
-  h+=slider('Down payment — your cash in the deal',10,50,Math.round(down*100),Math.round(down*100)+'% = '+fm(cashDown)+' down','downPct');/* slider LAST, right above Confirm — all the moving parts in thumb reach */}
+  h+=slider('Down payment — your cash in the deal',20,50,Math.round(down*100),Math.round(down*100)+'% = '+fm(cashDown)+' down','downPct');/* slider LAST, right above Confirm — all the moving parts in thumb reach. Floor is 20% — real DSCR/conventional investment loans essentially never go lower. */}
  else if(ptype==='pal'){const pledge=Math.round((s.cash||0)*0.85);/* business cash — matches the actual handler (private_banking), same rule as every other deal-panel action */
   const draw=Math.max(20,Math.min(70,t.drawPct||50))/100,drawAmt=Math.round(pledge*draw);
   const moEarn=Math.round(pledge*0.004),moCost=Math.round(drawAmt*0.0054),net=moEarn-moCost;
@@ -6208,7 +6211,7 @@ if(action.id==='hire_highticket_closer'&&success){const s=this.state;s._toxic_cl
 if(action.id==='merchant_cash_advance'&&success){const s=this.state;const mult=Math.max(1,Math.min(3,1+(s.monthly_revenue||0)/30000));const got=Math.round(20000*mult),owed=Math.round(got*1.4);s.cash+=got;s.total_debt+=owed;this._addLoan('mca',owed);s._mca_taken=(s._mca_taken||0)+1;s._dyn_narrative='You got '+this.fmtMoney(got)+' today — but you owe '+this.fmtMoney(owed)+' (a 1.4 factor rate ≈ 60%+ APR), repaid daily out of your sales. THIS is the cost of needing money when your credit can\'t get you a real loan. Every dollar of good credit you build is a dollar you never have to borrow this way.';}
 if(action.id==='buy_real_estate'){const s=this.state,fmt=v=>this.fmtMoney(Math.round(v));
 // The deal panel, card preview and this handler all read the same seeded monthly roll — what you saw is what you buy. Terms (down payment %) come from the deal panel; the ECONOMY sets the entry price (downturn = discount, boom = overpay).
-const r=this.dealRoll('buy_real_estate'),t=this._dealTerm('buy_real_estate'),down=Math.max(0.1,Math.min(0.5,(t.downPct||20)/100));
+const r=this.dealRoll('buy_real_estate'),t=this._dealTerm('buy_real_estate'),down=Math.max(0.2,Math.min(0.5,(t.downPct||20)/100));
 const fairValue=r.fairValue,price=r.price;
 const mort=Math.round(price*(1-down));/* the player chose the leverage — less down = more leverage, thinner cushion */
 const equity=fairValue-mort;/* your stake is vs FAIR value — buy cheap in a bust and you're instantly up */
@@ -6224,7 +6227,7 @@ const reDepr=Math.round(price*0.8/27.5/12);s._re_depreciation=(s._re_depreciatio
 s._dyn_narrative=success?('You closed on the '+r.tier+' — worth '+fmt(fairValue)+', bought for '+fmt(price)+(r.disc<0.95?' (a soft market handed you a discount, so you start with extra equity)':'')+' with '+Math.round(down*100)+'% down. It nets '+fmt(noi)+'/mo, and that\'s fine: the real win is the <strong>'+fmt(reDepr)+'/mo depreciation write-off</strong> sheltering your income, plus tenants paying down your loan and the property appreciating.'):('The '+r.tier+' closed on tougher terms — thinner cash flow ('+fmt(noi)+'/mo) — but you still locked in the depreciation tax shield and a foothold in the market.');}
 if(action.id==='buy_str'){const s=this.state,fmt=v=>this.fmtMoney(Math.round(v));
 // Same seeded monthly roll + player terms as buy_real_estate — the panel's projection IS the purchase.
-const r=this.dealRoll('buy_str'),t=this._dealTerm('buy_str'),down=Math.max(0.1,Math.min(0.5,(t.downPct||20)/100));
+const r=this.dealRoll('buy_str'),t=this._dealTerm('buy_str'),down=Math.max(0.2,Math.min(0.5,(t.downPct||20)/100));
 const fairValue=r.fairValue,price=r.price,mort=Math.round(price*(1-down)),equity=fairValue-mort;
 this._addLoan('mortgage',mort);s.total_debt+=mort;s.real_estate_equity=(s.real_estate_equity||0)+equity;
 // STR: ~2× a long-term rental's cash flow, but a hospitality operation (leans on your time) exposed to local regulation (see str_regulation_crackdown event)
@@ -6417,6 +6420,16 @@ if(s._partner_equity>0){const prof=Math.max(0,(s.monthly_revenue||0)-(s.cogs||0)
   const target=raw>0&&over>0?-Math.round(totalIncome*(over/raw)*0.35):0;
   const delta=target-(s._operator_haircut_applied||0);
   if(delta){s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)+delta);s._operator_haircut_applied=target;}}
+ // HIGH-LTV SURCHARGE (real PMI) — once your real-estate portfolio's aggregate LTV crosses 80%, a real
+ // lender charges private mortgage insurance (~0.5-1.5%/yr of the loan, modeled at 0.8%) until you pay it
+ // down or values recover — so over-leveraging costs you something every month from day one, not just on
+ // the rare downturn dice roll. Same delta-tracking pattern as the operator haircut above.
+ {const reVal=(s.real_estate_equity||0)+(s.real_estate_debt||0),reLTV=reVal>0?(s.real_estate_debt||0)/reVal:0;
+  const target=reLTV>0.8?-Math.round((s.real_estate_debt||0)*0.008/12):0;
+  const delta=target-(s._re_pmi_applied||0);
+  if(delta){s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)+delta);
+   if(target<0&&(s._re_pmi_applied||0)===0)s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — High-LTV Surcharge',narrative:'Your portfolio\'s loan-to-value crossed 80% — real lenders charge PMI once you\'re this leveraged. A monthly surcharge (~'+this.fmtMoney(-target)+') is now cutting into your rental income until you pay debt down or values recover. This is real PMI: it cancels automatically once you\'re back under ~80% LTV.'}]);
+   s._re_pmi_applied=target;}}
  // EMPLOYEE RETENTION — keeping a team is a constant fight against a market that will out-pay and out-benefit you. People leave for more money, better benefits, equity, room to grow, or because they're burned out — and the bigger/better your team, the harder recruiters pull at them. You can only sustain the headcount your PAY, BENEFITS, EQUITY, CULTURE, GROWTH PATH and SYSTEMS can hold. Hire past that and people churn out faster than you replace them — which is exactly why small businesses stay small.
  {const team=s.team_size||0;
   if(team>0){const c=id=>(s._completed_actions||[]).includes(id),cul=s.company_culture==null?45:s.company_culture,over=s._orgOver||0;
@@ -6476,17 +6489,23 @@ if(s._credit_tight&&(s.real_estate_debt||0)>0&&(s._asset_units||0)>0&&!s._re_squ
  const reSvc=Math.round(debt*0.006),reDSCR=reSvc>0?(s._asset_income||0)/reSvc:99;/* can the rents cover the mortgage? */
  const dp=this._dryPowder?this._dryPowder():{total:Math.max(0,(s.cash||0)+(s.personal_cash||0))},reserves=dp.total;
  if(ltv>0.90&&reDSCR<1.1&&reserves<reSvc*6){
-  // MARGIN CALL — underwater, the property can't carry itself, and there's no cushion or refinance. The lender forces a sale of one property into the depressed market. Underwater means the sale doesn't even clear the loan — you eat the deficiency in cash, plus selling costs, and lose the income.
-  const perDebt=Math.round(debt/units),perEq=Math.round(eq/units),perInc=Math.round((s._asset_income||0)/units);
+  // MARGIN CALL — underwater, the property can't carry itself, and there's no cushion or refinance. Real
+  // lenders don't treat a portfolio as one blended average: if it was ALL bought thin, a uniform price drop
+  // pushes EVERY unit underwater at once, not just a token one. Scale how many get force-sold by how far
+  // over the danger line the portfolio is AND how deep the downturn ran — a portfolio bought at the (now)
+  // 20% floor barely over the line still loses just one; a portfolio spammed at max leverage in a severe
+  // downturn can lose most of it. Never sell more than you own, and always at least one (the trigger fired).
+  const sellFrac=Math.max(1/units,Math.min(1,(ltv-0.90)*2.5+(depth-0.8)*0.6)),unitsToSell=Math.max(1,Math.min(units,Math.round(units*sellFrac)));
+  const perDebt=Math.round(debt/units)*unitsToSell,perEq=Math.round(eq/units)*unitsToSell,perInc=Math.round((s._asset_income||0)/units)*unitsToSell;
   const proceeds=Math.round((perDebt+perEq)*(1-haircut)),deficiency=Math.max(0,perDebt-proceeds),sellCost=Math.round((perDebt+perEq)*0.06);
   s.real_estate_debt=Math.max(0,debt-perDebt);s.total_debt=Math.max(0,(s.total_debt||0)-perDebt);
-  s.real_estate_equity=Math.max(0,eq-perEq);s._asset_units=Math.max(0,units-1);
-  if(s._keyman_active&&(s._keyman_units||0)>0){s._keyman_units=Math.max(0,(s._keyman_units||0)-1);this._keymanReconcile();}/* sold unit no longer needs coverage — stop paying its premium */
+  s.real_estate_equity=Math.max(0,eq-perEq);s._asset_units=Math.max(0,units-unitsToSell);
+  if(s._keyman_active&&(s._keyman_units||0)>0){s._keyman_units=Math.max(0,(s._keyman_units||0)-unitsToSell);this._keymanReconcile();}/* sold units no longer need coverage — stop paying their premium */
   s.other_monthly_revenue=Math.max(0,(s.other_monthly_revenue||0)-perInc);s._asset_income=Math.max(0,(s._asset_income||0)-perInc);
   s.cash=(s.cash||0)-(deficiency+sellCost);if(s.cash<0){const unc=this.coverShortfall(-s.cash);s.cash=0;if(unc>0)s.cash=-unc;}
-  s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-25);/* a forced sale / loan workout craters your credit */
+  s.personal_credit_score=Math.max(300,(s.personal_credit_score||0)-25);/* a forced sale / loan workout craters your credit — same hit whether it's one property or several */
   s._re_margin_called=(s._re_margin_called||0)+1;
-  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — MARGIN CALL',narrative:'The crash caught you over-leveraged. Property values fell ~'+Math.round(haircut*100)+'%, your loan-to-value blew past 90% (underwater), the rents no longer cover the mortgage, and with credit frozen you can\'t refinance. The lender forced a sale — and selling into the bottom, the '+this.fmtMoney(proceeds)+' didn\'t even clear the '+this.fmtMoney(perDebt)+' loan. You ate '+this.fmtMoney(deficiency+sellCost)+' in deficiency and costs, lost '+this.fmtMoney(perInc)+'/mo of income, and your credit took a 25-point hit. THIS is over-leverage: in the good times it amplified your returns, in the bust it nearly buried you. More equity down, property that covers its own debt, and reserves are what carry you through.'}]);
+  s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate — MARGIN CALL',narrative:'The crash caught you over-leveraged. Property values fell ~'+Math.round(haircut*100)+'%, your loan-to-value blew past 90% (underwater), the rents no longer cover the mortgage, and with credit frozen you can\'t refinance. The lender forced a sale of <strong>'+unitsToSell+' of your '+units+' propert'+(units===1?'y':'ies')+'</strong> — and selling into the bottom, the '+this.fmtMoney(proceeds)+' didn\'t even clear the '+this.fmtMoney(perDebt)+' owed on '+(unitsToSell>1?'them':'it')+'. You ate '+this.fmtMoney(deficiency+sellCost)+' in deficiency and costs, lost '+this.fmtMoney(perInc)+'/mo of income, and your credit took a 25-point hit. THIS is over-leverage: the more of your portfolio you bought thin, the more of it went down together. More equity down, property that covers its own debt, and reserves are what carry you through.'}]);
  } else {
   // RODE IT THROUGH — leverage was conservative (or reserves/cash flow covered it). Equity dips on paper but you're never forced to sell, so it recovers with the market.
   s._pendingRipples=(s._pendingRipples||[]).concat([{source:'Real Estate',narrative:'Property values dipped ~'+Math.round(haircut*100)+'% in the downturn, so your equity is down on paper. But your leverage was conservative — '+(ltv<=0.90?'healthy LTV':'')+(reDSCR>=1.1?(ltv<=0.90?', ':'')+'rents cover the mortgage':'')+(reserves>=reSvc*6?', reserves on hand':'')+' — so no lender can force your hand. You hold, the income keeps flowing, and the equity recovers as the market does. This is why you don\'t over-leverage: staying power turns a crash into a non-event.'}]);
