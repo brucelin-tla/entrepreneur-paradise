@@ -1,5 +1,86 @@
 # Release Notes
 
+## v0.68.25 — 2026-07-05 — (beta) Epic Life panel reorg + tax-reserve/policy bailout fix + Operator Capacity
+**Ask (owner):** reorganize the four Epic Life sub-panels (Cash-Value Policy, Velocity Banking, Financial
+Health, Owner Capital) into a consistent Dashboard → controls → Confirm shape, each with its own
+"Understand X" explainer instead of the generic Membership button; fold Cash Services into Owner Capital;
+simplify Financial Health's concierge focus down to two options; then two follow-on asks: let a folded tax
+reserve still act as a bailout via a policy loan, and extend key-man insurance / staffing capacity to
+equipment-financed income assets (not just real estate), with a new hire action to raise that capacity.
+
+**Shared panel chrome** (`_epicPanel` in `beta/js/game.js`): now takes optional `rightLabel`/`rightOnclick`
+params so each sub-panel can swap the top-right "👑 Membership" button for its own toggle-able
+"Understand X" bullet block (`_understandBlock()`), defaulting to Membership when not passed. Membership
+info is still reachable via a small link added to the ⭐ Epic Life hub itself (`showEpicLife()`).
+
+**Cash-Value Policy** (`openPolicyControl`): reordered to Dashboard (cash value, surrender charge,
+outstanding loan, loan type, passive income/mo with its on/off control inline) → sliders (funding %, take a
+loan, repay loan) → loan type (wash/index) → fold-tax-reserve button → the existing "if you confirm"
+projection → Confirm/Close. Pure reorder, all existing calc/state paths untouched.
+
+**Velocity Banking** (`openVelocityControl`): new Dashboard (installment loans total, interest still ahead
+summed across the whole loan pool, monthly debt service) added above the existing objective/ALIS-pick/
+chunk/draw controls; loan list moved below that; the monthly-sweep on/off + aggressiveness control moved
+down next to Confirm (previously at the top). No new mechanic — the "auto chunk" ask turned out to already
+be what the monthly sweep % does (cash-only, already automatic); draw-from-credit stays a manual,
+Confirm-gated action as before.
+
+**Financial Health** (`openFinancialHealth` + `_epicLifePick`'s `FOCUS` table): Dashboard collapsed to 6
+headline rows — passive income, total cash flow, monthly total expense, total asset value, total debt (each
+clickable through to a real breakdown), and net worth as a plain number. Two new breakdown popups,
+`showHealthCashFlow()` and `showHealthAssets()`, mirror `calcNetWorth()`'s exact component list component-
+for-component so the headline number always matches what the breakdown sums to. Concierge `FOCUS` replaced
+4 options (Balanced/Debt/Passive/Protection) with 2 (`protection`: combined_insurance + wyoming_holding_llc;
+`leverage`: debt_restructure + banking_relationship) — the other actions aren't orphaned, they just fall
+back to natural playbook order (same as the old 'balanced' behavior). Tapping the active focus again clears
+it back to that neutral order.
+
+**Owner Capital + Cash Services merge** (`openOwnerCapital`, was two panels): Cash Services'
+liquidate/paydown sliders folded into the same panel and staged object (`_ocStaged` now has 5 mutually-
+exclusive keys: inject/loan/repay/liq/paydown). Critical constraint preserved: Owner Capital's inject/loan/
+repay is gated on `isSeparated()` (any LLC owner), Cash Services' liquidate/paydown is gated on `_epic_life`
+(a real membership perk) — the two gates stay independent, so a non-member with an LLC still gets Owner
+Capital sliders (with a Cash Services teaser), and vice versa. `openCreditLiquidity()` and its `liqStage`/
+`paydownStage`/`csConfirm` handlers are gone; the hub's separate Cash Services tile is gone too (folded into
+Owner Capital's tile).
+
+**Tax reserve → policy loan bailout** (`_tapTaxReserveToSurvive`): previously only drew from `s.tax_reserve`,
+all-or-nothing — once a player folds the reserve into their policy (`polStageFold`), `tax_reserve` is
+permanently 0, so every OTHER kind of cash shortfall (not just an actual tax bill, which already had its own
+policy-loan waterfall in `resolveTax`) silently lost its safety net. Now falls through to a tax-free policy
+loan against `_policyBorrowable()`, same all-or-nothing waterfall style, before the caller's next fallback
+(personal cash / game over).
+
+**Operator Capacity** (new system): `_operator_count` is a dedicated field, deliberately separate from
+`team_size`/`_orgCapacity()` (the existing team-vs-management-overhead mechanic) so a remote asset operator
+never feeds that unrelated management-debt math. `_operatorRawAssets()` = real estate doors
+(`_asset_units`) + income-bearing equipment (`_equipIncomeUnitsCount()`, via a new shadow ledger
+`_equip_income` tracked alongside — not replacing — the existing `other_monthly_revenue` bump at equipment
+purchase). `_operatorCapacity()` = `_operator_count * 2`. Recomputed once per `monthlyTick`:
+`_operator_assets` (what `key_operator_loss`'s `probability_scales_with` reads, weighting uncovered assets
+2x for risk) and a delta-tracked neglect haircut (`_operator_haircut_applied`, same pattern as the existing
+`calcExecComp` delta tracking) that trims `other_monthly_revenue` by ~35% of the uncovered share's income —
+recomputed fresh each tick so it never permanently corrupts the underlying `_asset_income`/`_equip_income`
+figures other code still reads as real numbers. `key_operator_loss` (events.json + its game.js handler) now
+gates/scales on `_operator_assets` instead of `_asset_units`, and branches between a real-estate payout
+(unchanged) and a new equipment payout (claims reduce `type:'equipment'` loans via `_loanPayExtra`, remove
+one owned income item), weighted by each pool's real share. `key_man_policy`'s initial enrollment now
+snapshots equipment units too, not just real estate. New repeatable action `hire_asset_operator`
+(`actions_operations.json`, $500 cash / $4,000/mo recurring, effects `{_operator_count:1}` — a plain
+additive effect, no engine special-casing needed). Surfaced in `showPortfolio()` (new "👷 Operator Coverage"
+section) and the Portfolio dashboard tile (now also triggers on equipment/operators alone, not just
+doors/pledged-line/investments).
+
+**Verification:** built a headless-Edge harness (`ep_panel_test.html`, driving `beta/game.html` via
+`iframe.contentWindow.eval` per the established cross-frame pattern, `--allow-file-access-from-files` to get
+past the file:// same-origin block, polling for `CONFIG.narrative_beats` before starting since
+`loadConfig()`'s sequential per-file fetch/embedded-fallback loop means early CONFIG keys can populate before
+later ones). 76 assertions covering every panel's dashboard/controls/Confirm math, the FOCUS toggle, the
+Owner Capital/Cash Services independent gating, the tax-reserve/policy fallback (both the empty-reserve and
+reserve-still-covers-it paths), operator capacity/overextension math, the income haircut applying and
+lifting via real `monthlyTick()` calls, and the `key_operator_loss` equipment branch (via a direct
+`resolveEvent()` call with a constructed test event) — all pass, zero console/exceptions.
+
 ## v0.68.24 — 2026-07-05 — (beta) Consistent business-funded deals + passive-income breakdown
 **Ask (owner):** confirmed the recommendation to make all 5 deal-panel actions consistently
 business-funded (from the investment-deal-funding audit last release), plus make the Epic Life
