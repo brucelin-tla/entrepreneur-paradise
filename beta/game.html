@@ -2637,6 +2637,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.23',d:'2026-07-05 01:15',n:[
+'📊 <strong>Energy, Customers, and Systems Maturity are now clickable</strong> — same as Capital, Cash Flow, and Credit Score/D&B already were. Tap the number for a real breakdown (Energy: how your recovery rate is built; Customers: what\'s filling and draining the bucket; Systems Maturity: your org capacity and what it\'s protecting). Customers and Systems Maturity also each got their OWN independent toggle for Brand Equity/Leads and Culture/Staff — opening one no longer bundles with the other.',
+'🔍 <strong>Credit Score and D&B, explained for real</strong> — their breakdown popups now show the actual weighted formula behind the number: for personal, the 5 real FICO factors at their real weights (Payment History 35%, Utilization 30%, Length of History 15%, Credit Mix 10%, New Credit 10%); for business D&B, the 4 real components (Business Profile, Business Identity, Credit Depth, Vendor Tradelines) plus the utilization penalty. Plain language, real math — the same numbers that actually produced the score you\'re looking at.']},
 {v:'0.68.22',d:'2026-07-05 00:20',n:[
 '🧾 <strong>Fold-your-tax-reserve-in is no longer a monthly popup</strong> — it kept re-asking every few months and got annoying. It now lives as an on-demand button inside the 🛡️ Cash-Value Policy panel, available any time you\'re holding a reserve — nothing interrupts your turn anymore.']},
 {v:'0.68.21',d:'2026-07-04 23:59',n:[
@@ -4383,13 +4386,19 @@ calcExecComp(){const s=this.state;const mgr=Math.round(Math.max(2500,Math.min(45
 isSeparated(){return !['none','sole_prop',undefined,null,''].includes(this.state.entity_structure);},
 _recordDraw(amt){this.state._owner_draws_total=(this.state._owner_draws_total||0)+amt;this.state.capital_account=(this.state.capital_account||0)-amt;},
 // D&B (business credit) score — built from a real business identity (DUNS, phone, address, website/social), reporting vendor tradelines, and credit/loan history. Maxes ~100 only when ALL are in place and utilization is healthy.
+// The 4 additive components + utilization penalty behind the D&B-style number, as real point values —
+// single source of truth shared by calcBizCreditScore() and the explainer popup (showCreditScore), so
+// the popup's "how it's calculated" math always matches what actually produced the number on screen.
+_dnbFactors(){const s=this.state;
+ const prof=s.business_credit_profile==='established'?45:s.business_credit_profile==='building'?28:14, // real business credit profile status (established > building > none)
+  cred=s._dnb_profile?22:0,                                    // DUNS number + business phone/address + website/social — the paperwork that makes you a checkable business
+  lim=Math.min(18,(s.business_credit_limit||0)/2500),          // credit & loan history depth — more business credit extended to you
+  tradelines=Math.min(15,(s._dnb_tradelines||0)*3),            // vendor accounts reporting your on-time payments to the business bureaus
+  util=this.calcBizUtil(),pen=util>50?Math.round((util-50)*0.4):0; // penalty once utilization crosses 50%
+ return {prof,cred,lim,tradelines,util,pen};},
 calcBizCreditScore(){const s=this.state;const profKnown=s.business_credit_profile&&s.business_credit_profile!=='none';if(!profKnown&&!(s.business_credit_limit>0)&&!s._dnb_profile)return 0;
-const prof=s.business_credit_profile==='established'?45:s.business_credit_profile==='building'?28:14;
-const cred=s._dnb_profile?22:0;                              // DUNS + business phone + address + website/social presence
-const lim=Math.min(18,(s.business_credit_limit||0)/2500);    // credit & loan history depth
-const tradelines=Math.min(15,(s._dnb_tradelines||0)*3);      // vendor accounts reporting on-time payments
-const util=this.calcBizUtil();const pen=util>50?Math.round((util-50)*0.4):0;
-return Math.max(0,Math.min(100,Math.round(prof+cred+lim+tradelines-pen)));},
+const f=this._dnbFactors();
+return Math.max(0,Math.min(100,Math.round(f.prof+f.cred+f.lim+f.tradelines-f.pen)));},
 // Personal Mastery — the five dimensions of a life well-lived, built from your Life investments.
 lifeDims(){const s=this.state,c=v=>Math.max(0,Math.min(100,Math.round(v)));return {Body:c((s.lifestyle_health||0)*0.75+(s.fitness_level||0)*0.25),Mind:c(s.lifestyle_legacy||0),Spirit:c(((s.lifestyle_spiritual||0)+(s.lifestyle_philanthropy||0))/2),Heart:c(s.lifestyle_relationships||0),Luxury:c(s.lifestyle_experiences||0)};},
 LIFE_THEME:{health:'Body',relationships:'Heart',spiritual:'Spirit',philanthropy:'Spirit',experiences:'Luxury',legacy:'Mind'},
@@ -4528,8 +4537,12 @@ const enReal=Math.min(100,s.energy||0),en=Math.max(0,enReal),mas=this.calcPerson
 const enC=enReal>60?'var(--accent)':enReal>30?'var(--gold)':'var(--red)',masC=mas>60?'var(--blue)':mas>30?'var(--gold)':'var(--red)',frC=fr>60?'var(--accent)':fr>30?'var(--gold)':'var(--red)';
 const sysMat=Math.round(s.systems_maturity||0),sysC=sysMat>60?'var(--blue)':sysMat>30?'var(--gold)':'var(--red)';
 // primary=true bolds the gauge/cgauge label too — same "was it always visible" signal as row()'s primary.
-const gauge=(label,v,col,sub,id,subBelow,primary)=>'<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;'+(primary?'font-weight:700;':'')+'">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+((sub&&!subBelow)?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+col+'"></div></div>'+((sub&&subBelow)?'<div style="font-size:0.54rem;color:'+col+';font-weight:600;margin-top:3px;line-height:1.2;">'+sub+'</div>':'')+'</div>';
-const cgauge=(label,val,fill,col,primary)=>'<div style="padding:4px 1px 2px;"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;'+(primary?'font-weight:700;':'')+'">'+label+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';
+// Optional trailing statKey (mirrors row()/hlRow()) makes the WHOLE gauge — number included — open a
+// breakdown popup via Game.statInfo(), same click-anywhere-on-the-row behavior every other stat already has.
+const gauge=(label,v,col,sub,id,subBelow,primary,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';
+return '<div'+(id?' id="'+id+'"':'')+' style="padding:4px 1px 2px;'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;'+(primary?'font-weight:700;':'')+'">'+label+(badge?' '+badge:'')+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+Math.round(v)+((sub&&!subBelow)?' <span style="font-size:0.54rem;color:var(--text2);font-weight:400;">'+sub+'</span>':'')+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,v))+'%;background:'+col+'"></div></div>'+((sub&&subBelow)?'<div style="font-size:0.54rem;color:'+col+';font-weight:600;margin-top:3px;line-height:1.2;">'+sub+'</div>':'')+'</div>';};
+const cgauge=(label,val,fill,col,primary,statKey)=>{const onclk=statKey?('Game.statInfo(\''+statKey+'\')'):null;const badge=statKey?(!_vs[statKey]?'<span class="info-btn info-new">i</span>':'<span class="info-btn">i</span>'):'';
+return '<div style="padding:4px 1px 2px;'+(onclk?'cursor:pointer;':'')+'"'+(onclk?' onclick="'+onclk+'"':'')+'><div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px;"><span style="font-size:0.6rem;color:var(--text2);white-space:nowrap;'+(primary?'font-weight:700;':'')+'">'+label+(badge?' '+badge:'')+'</span><span style="font-size:0.75rem;font-weight:700;color:'+col+';white-space:nowrap;">'+val+'</span></div><div class="bar-track" style="height:4px;margin-top:3px;"><div class="bar-fill" style="width:'+Math.max(0,Math.min(100,fill))+'%;background:'+col+'"></div></div></div>';};
 const _d=this.lifeDims(),dCol=v=>v<30?'var(--red)':v<60?'var(--gold)':'var(--text2)',_dsub=Object.keys(_d).map(k=>'<span style="color:'+dCol(_d[k])+';white-space:nowrap;">'+this.LIFE_ICON[k]+_d[k]+'</span>').join(' ');
 const enSub=enReal<0?'⚠ burnout · high illness risk':en<=30?'⚠ low · moves fail more & deliver less':en<=45?'⚠ +'+rec+'/mo · rest soon':'+'+rec+'/mo';
 // Capacity block: Freedom is always shown; Personal Mastery (+ the 5 life-dimension stats
@@ -4543,13 +4556,13 @@ P+='<div onclick="Game.statInfo(\'p_mastery\')" style="cursor:pointer;">'+gauge(
 P+='<div style="font-size:0.6rem;text-align:center;margin:0 0 2px;display:flex;justify-content:space-between;gap:2px;">'+_dsub+'</div>';
 }
 }
-P+=gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45,true);
+P+=gauge('⚡ Energy',enReal,enC,enSub,'dash-energy',enReal<=45,true,'p_energy');
 const _cul=s.company_culture==null?45:s.company_culture,_culC=_cul>60?'var(--accent)':_cul>35?'var(--gold)':'var(--red)';
 let B=colHead('Business',sep?'var(--blue)':'var(--text2)');
-// Systems Maturity (headline, bolded) — Culture + Staff behind the Marketing & Operations toggle
-// (it has no title of its own, so it shares b_ops). Built once so it can render regardless of LLC
-// status (same as Founder Freedom used to — not gated on sep), positioned under Marketing & Operations.
-const sysMatHtml=this._reveal('mastery')?(gauge('⚙️ Systems Maturity',sysMat,sysC,null,null,false,true)+(this._dashOpen.b_ops&&(s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC)+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)'):'')):'';
+// Systems Maturity — now its OWN toggle (b_sys_open), independent of Customers, revealing Culture +
+// Staff underneath it specifically. Built once so it can render regardless of LLC status (same as
+// Founder Freedom used to — not gated on sep).
+const sysMatHtml=this._reveal('mastery')?('<div id="biz-sys">'+subLab('Systems','b_sys_open')+gauge('⚙️ Systems Maturity',sysMat,sysC,null,null,false,true,'b_systems')+(this._dashOpen.b_sys_open&&(s.team_size||0)>0?cgauge('🎭 Culture',Math.round(_cul),_cul,_culC)+cgauge('👷 Staff',s.team_size||0,Math.min(100,(s.team_size||0)*10),'var(--accent)'):'')+'</div>'):'';
 if(sep){
 B+='<div id="biz-money">'+subLab('Money','b_money');
 B+=row('Capital',m(bizCash+bizAvail,cashCol(bizCash+bizAvail)),null,null,null,true);
@@ -4569,9 +4582,10 @@ B+=row('Debt',m(bizLoan,bizLoan>50000?'var(--red)':'var(--text)'),null,null,'b_d
 // Net Worth moved off the main dashboard — it lives in the Financial Health panel (⭐ Epic Life hub) now, alongside Policy Value.
 const _brand=Math.round(s.brand_equity||0),_brC=_brand>60?'var(--accent)':_brand>30?'var(--gold)':'var(--text2)';
 B+='</div>';
-// Marketing & Operations readout: Customers (headline, bolded) — Brand Equity + Leads behind its own toggle.
-B+='<div id="biz-ops">'+subLab('Marketing & Operations','b_ops')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)',true);
-if(this._dashOpen.b_ops)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
+// Customers — now its OWN toggle (b_cust_open), independent of Systems Maturity, revealing Brand
+// Equity + Leads underneath it specifically (previously both shared one "Marketing & Operations" flag).
+B+='<div id="biz-ops">'+subLab('Customers','b_cust_open')+cgauge('👥 Customers',s.customer_base||0,Math.min(100,s.customer_base||0),'var(--accent)',true,'b_customers');
+if(this._dashOpen.b_cust_open)B+=cgauge('✨ Brand Equity',_brand,_brand,_brC)+cgauge('🎯 Leads',s.leads||0,Math.min(100,s.leads||0),'var(--accent)');
 B+='</div>';
 B+=sysMatHtml;
 }else{
@@ -4621,14 +4635,24 @@ calcBizUtil(){const s=this.state,bizUsed=s.business_credit_used||0,bizLim=s.busi
 // Payment-history factor (the 35% pillar): real derogatories hit hardest on the FIRST mark, then the marginal damage tapers and floors out (a file with 6 collections isn't 6× worse than one). Diminishing curve from 1.0 → ~0.55. Their REAL bite is on approvals (see _creditApprovalChance), not bottomless score loss.
 _payHistoryFactor(neg){neg=Math.max(0,neg||0);return 1-0.45*(1-Math.exp(-neg*0.55));},
 // myFICO 3B-style target score: the five FICO factors at their real weights — payment history 35%, amounts owed / utilization 30%, length of history 15%, credit mix 10%, new credit 10%. The live personal_credit_score drifts toward this each month (monthlyTick), so utilization moves ~30% of the score, exactly like the real model.
-calcFicoTarget(){const s=this.state,u=this.calcPersUtil(),neg=s.credit_negatives||0;
-const fPay=this._payHistoryFactor(neg);/* payment history (35%): first derogatory hurts most, then caps */
-const fUtil=u===0?0.9:u<=9?1:u<=29?0.8:u<=49?0.55:u<=74?0.3:0.1;/* amounts owed / utilization (30%): a hair of usage scores a touch better than literally 0% */
-const fLen=Math.min(1,(s._credit_history_base!=null?s._credit_history_base:0.45)+(Math.min(this.month,48)/48)*0.55);/* length of history (15%): a starting baseline (weak↔strong, customizable in New Game+) that ages over the run */
-const hasRev=((s.available_credit||0)>0)||u>0,hasInst=((s._installment_debt||0)>0)||((s.business_installment_debt||0)>0),hasBiz=(s.business_credit_limit||0)>0,types=(hasRev?1:0)+(hasInst?1:0)+(hasBiz?1:0);
-const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
-const inq=s.credit_inquiries||0;const fNew=Math.max(0.3,(s._credit_repair?0.7:0.85)-Math.min(0.45,inq*0.06));/* new credit (10%): hard inquiries (and an open repair) cap the top — each inquiry shaves a little */
-return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
+// The 5 real FICO factors, at their real weights, as 0–1 factor values PLUS the weight each carries —
+// single source of truth shared by calcFicoTarget() and the explainer popup (showCreditScore), so the
+// popup's "how it's calculated" math always matches what actually produced the number on screen.
+_ficoFactors(){const s=this.state,u=this.calcPersUtil(),neg=s.credit_negatives||0;
+ const fPay=this._payHistoryFactor(neg);/* payment history (35%): first derogatory hurts most, then caps */
+ const fUtil=u===0?0.9:u<=9?1:u<=29?0.8:u<=49?0.55:u<=74?0.3:0.1;/* amounts owed / utilization (30%): a hair of usage scores a touch better than literally 0% */
+ const fLen=Math.min(1,(s._credit_history_base!=null?s._credit_history_base:0.45)+(Math.min(this.month,48)/48)*0.55);/* length of history (15%): a starting baseline (weak↔strong, customizable in New Game+) that ages over the run */
+ const hasRev=((s.available_credit||0)>0)||u>0,hasInst=((s._installment_debt||0)>0)||((s.business_installment_debt||0)>0),hasBiz=(s.business_credit_limit||0)>0,types=(hasRev?1:0)+(hasInst?1:0)+(hasBiz?1:0);
+ const fMix=Math.min(1,0.55+0.15*types);/* credit mix (10%) */
+ const inq=s.credit_inquiries||0;const fNew=Math.max(0.3,(s._credit_repair?0.7:0.85)-Math.min(0.45,inq*0.06));/* new credit (10%): hard inquiries (and an open repair) cap the top — each inquiry shaves a little */
+ return [
+  {key:'pay',label:'Payment History',weight:0.35,val:fPay,desc:'Do you pay on time? This is the single biggest factor — a missed payment lingers on your file for months.'},
+  {key:'util',label:'Credit Utilization',weight:0.30,val:fUtil,desc:'How much of your available credit you\'re using right now ('+u+'%). Under 30% is healthy; under 10% is ideal. This moves the fastest — pay a balance down and it recovers within a couple months.'},
+  {key:'len',label:'Length of History',weight:0.15,val:fLen,desc:'How long you\'ve had credit. This only grows with time — there\'s no shortcut, just don\'t close your oldest accounts.'},
+  {key:'mix',label:'Credit Mix',weight:0.10,val:fMix,desc:'Having different KINDS of credit — revolving cards, an installment loan, business credit — shows lenders you can handle variety.'},
+  {key:'new',label:'New Credit',weight:0.10,val:fNew,desc:'Opening a lot of new accounts or credit checks recently makes lenders nervous. Fades the longer you go without applying for more.'}
+ ];},
+calcFicoTarget(){const f=this._ficoFactors();let w=0;for(const x of f)w+=x.weight*x.val;return Math.round(300+550*w);},
 // Real-life credit underwriting for approval actions (lines, cards, term loans): personal utilization is the dominant gate — above 30% approval odds fall off a cliff — and the lender pulls your personal myFICO 3B even for BUSINESS credit (the owner personally guarantees it). Returns the chance of approval.
 _creditApprovalChance(isLoan){const s=this.state,score=Math.round(s.personal_credit_score||600);
 // The dominant gate differs by product: a term LOAN is underwritten on debt-to-income (can your cash flow service the payment?); a revolving CREDIT line/card is underwritten on UTILIZATION (how much of your existing limits are you already using?). They don't cross-contaminate — high utilization never sinks a loan, and high DTI never sinks a card.
@@ -4663,7 +4687,7 @@ let payLoan=0;if(this.calcDTI()>30&&budget>0)payLoan=Math.min(s._installment_deb
 return {payRev:Math.round(payRev),payLoan:Math.round(payLoan)};},
 
 // Dashboard stat-info dispatcher: marks the stat viewed (clears its pulsing badge), then opens the scoped info popup.
-STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_cash:{scope:'personal',fn:'showCash'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'}},
+STAT_INFO:{p_score:{scope:'personal',fn:'showCreditScore'},b_dnb:{scope:'business',fn:'showCreditScore'},p_credit:{scope:'personal',fn:'showCreditAvail'},b_credit:{scope:'business',fn:'showCreditAvail'},p_policy:{scope:'personal',fn:'showCreditAvail'},p_income:{scope:'personal',fn:'showRevenue'},p_passive:{scope:'personal',fn:'showRevenue'},b_revenue:{scope:'business',fn:'showRevenue'},p_flow:{scope:'personal',fn:'showNetFlow'},b_flow:{scope:'business',fn:'showNetFlow'},p_cash:{scope:'personal',fn:'showCash'},p_debt:{scope:'personal',fn:'showDebt'},b_debt:{scope:'business',fn:'showDebt'},b_expense:{scope:'business',fn:'showBurn'},p_expense:{scope:'personal',fn:'showBurn'},p_networth:{scope:'personal',fn:'showAssets'},p_invest:{scope:'personal',fn:'showAssets'},p_mastery:{scope:'personal',fn:'showMastery'},b_equity:{scope:'business',fn:'showOwnerEquity'},p_energy:{scope:'personal',fn:'showEnergy'},b_customers:{scope:'business',fn:'showCustomers'},b_systems:{scope:'business',fn:'showSystemsMaturity'}},
 // Re-render whichever dashboard is currently on screen (the game dashboard, or the event-screen one) so the viewed badge clears wherever you tapped it.
 _refreshDashboards(){['stats-dashboard','event-dashboard'].forEach(id=>{const el=document.getElementById(id);if(el&&el.offsetParent!==null){try{this.renderStats(id);}catch(e){}}});},
 // Dashboard detail-toggle click handler (wired to the clickable section titles built by subLab() inside
@@ -4873,13 +4897,58 @@ else bf.push({l:'Established business credit',i:'positive',d:'Strong history'});
 if(['llc','s_corp','c_corp','multi_entity'].includes(s.entity_structure))bf.push({l:'Entity established',i:'positive',d:s.entity_structure.replace(/_/g,' ').toUpperCase()});
 if(s._banker_state==='trusted'||s._banker_state==='champion')bf.push({l:'Strong banking relationship',i:'positive',d:'Banker trusts you'});
 if(!bf.length)bf.push({l:'No business credit yet',i:'neutral',d:'Form an LLC and open business credit'});
-let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">'+(wantB&&!wantP?'Your <strong>D&B score</strong> rates your business\'s creditworthiness — build it and the company can borrow on its own name, without your personal guarantee.':'Your <strong>credit score</strong> is how lenders judge your reliability — it sets how much you can borrow and how cheaply. The biggest levers are paying on time and keeping <strong>utilization</strong> low.')+' Here\'s what\'s helping or hurting it right now.</div>';
+// "How it's built" — the real weighted formula behind the number, in plain language. Shares the exact
+// same factor math as calcFicoTarget()/calcBizCreditScore() (via _ficoFactors()/_dnbFactors()), so this
+// breakdown can never drift out of sync with the number actually shown on the dashboard.
+const factorRow=x=>{const pct=Math.round(x.val*100),col=x.val>=0.8?'var(--accent)':x.val>=0.5?'var(--gold)':'var(--red)';
+ return '<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-weight:600;">'+x.label+' <span style="color:var(--text2);font-weight:400;font-size:0.68rem;">('+Math.round(x.weight*100)+'% of your score)</span></span><span style="color:'+col+';font-weight:700;">'+pct+'%</span></div><div style="font-size:0.72rem;color:var(--text2);margin-top:1px;">'+x.desc+'</div></div>';};
+const dnbRow=(label,pts,max,desc)=>{const col=pts/max>=0.8?'var(--accent)':pts/max>=0.4?'var(--gold)':'var(--text2)';
+ return '<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-weight:600;">'+label+'</span><span style="color:'+col+';font-weight:700;">+'+Math.round(pts)+' <span style="color:var(--text2);font-weight:400;font-size:0.68rem;">/ '+max+'</span></span></div><div style="font-size:0.72rem;color:var(--text2);margin-top:1px;">'+desc+'</div></div>';};
+let h=this._scopeChip(scope)+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">'+(wantB&&!wantP?'Your <strong>D&B score</strong> rates your business\'s creditworthiness — build it and the company can borrow on its own name, without your personal guarantee.':'Your <strong>credit score</strong> is how lenders judge your reliability — it sets how much you can borrow and how cheaply. The biggest levers are paying on time and keeping <strong>utilization</strong> low.')+' Here\'s exactly how it\'s built, and what\'s helping or hurting it right now.</div>';
 if(wantP){h+=head('Personal — MyFICO 3B','var(--accent)',true);
-h+='<div style="font-size:1.1rem;font-weight:700;color:'+(score>=700?'var(--accent)':score>=620?'var(--gold)':'var(--red)')+'">'+score+' <span style="font-size:0.7rem;color:var(--text2);">/ 850</span></div>'+pf.map(frow).join('');}
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(score>=700?'var(--accent)':score>=620?'var(--gold)':'var(--red)')+'">'+score+' <span style="font-size:0.7rem;color:var(--text2);">/ 850</span></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 2px;">How it\'s built — the 5 real FICO factors</div>'+this._ficoFactors().map(factorRow).join('');
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">What\'s moving it right now</div>'+pf.map(frow).join('');}
 if(wantB){h+=head('Business — D&B','var(--blue)',!wantP);
-h+='<div style="font-size:1.1rem;font-weight:700;color:'+(biz>=70?'var(--accent)':biz>=40?'var(--gold)':'var(--text2)')+'">'+(biz?biz+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span>':'—')+'</div>'+bf.map(frow).join('');}
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(biz>=70?'var(--accent)':biz>=40?'var(--gold)':'var(--text2)')+'">'+(biz?biz+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span>':'—')+'</div>';
+const df=this._dnbFactors();
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 2px;">How it\'s built — the real D&amp;B components</div>';
+h+=dnbRow('Business Profile',df.prof,45,'Do you have a real, established business credit profile — not just tied to your personal name? Established beats Building beats none.');
+h+=dnbRow('Business Identity',df.cred,22,'A DUNS number, a real business address/phone, a website — the paperwork that makes you a checkable, legitimate business.');
+h+=dnbRow('Credit Depth',df.lim,18,'How much business credit you\'ve actually been extended. More credit in the company\'s name means a deeper track record.');
+h+=dnbRow('Vendor Tradelines',df.tradelines,15,'Vendors and suppliers who report your on-time payments to the business bureaus. Each one that reports adds up.');
+if(df.pen>0)h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:baseline;"><span style="font-weight:600;color:var(--red);">Utilization Penalty</span><span style="color:var(--red);font-weight:700;">&minus;'+Math.round(df.pen)+'</span></div><div style="font-size:0.72rem;color:var(--text2);margin-top:1px;">Using over half of your business credit limit ('+df.util+'% right now) starts docking points. Keep it under 50%.</div></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">What\'s moving it right now</div>'+bf.map(frow).join('');}
 h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);font-style:italic;">'+(wantP?'MyFICO 3B (300–850) is your personal score across all three bureaus. ':'')+(wantB?'D&B (0–100) rates your <strong>business</strong> — build it and the company can borrow on its own name, without your personal guarantee. ':'')+'Utilization = revolving credit only; DTI = all debt vs income.</div>';
 h+=this._statFooter();this.showPopup(wantB&&!wantP?'Business Credit Score (D&B)':wantP&&!wantB?'Personal Credit Score (MyFICO 3B)':'Credit Scores',h);},
+// ===== Newly-clickable dashboard headlines (owner ask, 2026-07-05): Energy, Customers, Systems Maturity —
+// same click-a-number-for-a-real-breakdown treatment every other dashboard stat already has. Lighter
+// than the credit-score breakdowns above (those are the two the owner wants explained in real depth). =====
+showEnergy(){const s=this.state,e=Math.round(s.energy||0),rec=this.calcEnergyRecovery(),mas=this.calcPersonalMastery(),bonus=rec-6;
+let h=this._scopeChip('personal')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Energy is your fuel for the month — actions cost it, rest and Personal Mastery restore it. Run it into the red and your moves start failing more and delivering less.</div>';
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(e>60?'var(--accent)':e>30?'var(--gold)':'var(--red)')+'">'+e+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 2px;">How it regenerates</div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Base recovery</span><span style="color:var(--accent);font-weight:700;">+6/mo</span></div><div style="font-size:0.72rem;color:var(--text2);">Everyone gets this much back each month, no matter what.</div></div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Personal Mastery bonus</span><span style="color:var(--accent);font-weight:700;">+'+bonus+'/mo</span></div><div style="font-size:0.72rem;color:var(--text2);">Mastery is '+mas+'/100 — roughly a tenth of that comes back as extra recovery. The higher your Mastery, the faster you bounce back each month.</div></div>';
+h+='<div style="font-size:0.72rem;color:var(--text2);margin-top:8px;line-height:1.5;">Total: <strong style="color:var(--accent);">+'+rec+'/mo</strong>. Life actions and some business moves cost energy up front — spend it faster than you regenerate it and you run a deficit.</div>';
+h+=this._statFooter();this.showPopup('⚡ Energy',h);},
+showCustomers(){const s=this.state,cust=s.customer_base||0,leads=s.leads||0;
+const convRate=Math.min(0.5,0.05+(s.skill_marketing||0)/300+(s.brand_equity||0)/1000+Math.min(0.20,(s.sales_conversion||0)*0.01)),churn=Math.round((s.churn_rate||0)*100);
+let h=this._scopeChip('business')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Your customer count is a leaky bucket — leads convert in every month, churn drains back out. Both sides matter.</div>';
+h+='<div style="font-size:1.1rem;font-weight:700;color:var(--accent);">'+cust+' <span style="font-size:0.7rem;color:var(--text2);">customers</span></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 2px;">Filling the bucket</div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Leads in the pipeline</span><span style="color:var(--accent);font-weight:700;">'+leads+'</span></div><div style="font-size:0.72rem;color:var(--text2);">Prospects who haven\'t bought yet. Un-nurtured leads go cold over time, so fresh marketing keeps this pipeline full.</div></div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Conversion rate</span><span style="color:var(--accent);font-weight:700;">~'+Math.round(convRate*100)+'%/mo</span></div><div style="font-size:0.72rem;color:var(--text2);">A base rate, plus your marketing skill, your brand equity, and any sales team you\'ve built. Stronger brand and a real sales process both lift this.</div></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 2px;">Draining the bucket</div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;color:'+(churn>15?'var(--red)':churn>8?'var(--gold)':'var(--accent)')+';">Churn</span><span style="color:'+(churn>15?'var(--red)':churn>8?'var(--gold)':'var(--accent)')+';font-weight:700;">~'+churn+'%/mo</span></div><div style="font-size:0.72rem;color:var(--text2);">A bigger customer base with weak Systems Maturity churns faster — you can\'t serve everyone well without real systems behind you. Strong Systems Maturity slows this down.</div></div>';
+h+=this._statFooter();this.showPopup('👥 Customers',h);},
+showSystemsMaturity(){const s=this.state,sys=Math.round(s.systems_maturity||0),cap=Math.round(this._orgCapacity()),team=s.team_size||0,over=Math.max(0,team-cap);
+let h=this._scopeChip('business')+'<div style="font-size:0.84rem;color:var(--text2);line-height:1.55;margin-bottom:10px;">Systems Maturity is how well your business runs on documented process instead of your own two hands — it sets how big a team you can actually support without things breaking.</div>';
+h+='<div style="font-size:1.1rem;font-weight:700;color:'+(sys>60?'var(--blue)':sys>30?'var(--gold)':'var(--red)')+'">'+sys+' <span style="font-size:0.7rem;color:var(--text2);">/ 100</span></div>';
+h+='<div style="font-size:0.66rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 2px;">What it controls</div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Org capacity right now</span><span style="color:'+(over>0?'var(--red)':'var(--accent)')+';font-weight:700;">'+cap+' people</span></div><div style="font-size:0.72rem;color:var(--text2);">A founder alone can only lead a few people well — systems and real managers extend how many you can support. '+(over>0?'You\'re '+over+' over that right now, and management debt is compounding.':'Your team ('+team+') fits comfortably within it.')+'</div></div>';
+h+='<div style="padding:5px 0;border-bottom:1px solid var(--border);"><div style="display:flex;justify-content:space-between;"><span style="font-weight:600;">Customer retention</span><span style="color:var(--text2);font-weight:700;">linked</span></div><div style="font-size:0.72rem;color:var(--text2);">Higher Systems Maturity slows churn as your customer base grows — a bigger book needs real systems to serve well, not just more hustle.</div></div>';
+h+=this._statFooter();this.showPopup('⚙️ Systems Maturity',h);},
 showCfoReport(){const s=this.state,rev=s.monthly_revenue||0,cogs=s.cogs||0,opex=s.operating_expenses||0;
 const opProfit=Math.max(0,rev-cogs-opex),margin=rev>0?Math.round(opProfit/rev*100):0;
 const valuation=Math.round(Math.max(opProfit*12*3,rev*12*0.5));

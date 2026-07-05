@@ -1,5 +1,28 @@
 # Release Notes
 
+## v0.68.23 — 2026-07-05 — (beta) Energy/Customers/Systems Maturity clickable + real Credit Score/D&B math
+**Ask (owner):** make Energy, Customers, and Systems Maturity clickable-for-a-breakdown like Capital/Cash
+Flow/Credit Score already are; let players tap the NUMBER itself instead of a tiny (i) icon; and for
+Credit Score/D&B specifically, explain the real-world calculation at a simplified reading level.
+
+**Dashboard** (`renderStats()` in `beta/js/game.js`): `gauge()`/`cgauge()` now accept an optional
+`statKey`, mirroring how `row()`/`hlRow()` already put their `onclick` on the whole row (number
+included) rather than a separate icon — Energy, Customers, and Systems Maturity now open a real
+breakdown popup (`showEnergy`, `showCustomers`, `showSystemsMaturity`) when tapped anywhere on the row.
+Customers and Systems Maturity also got their own independent toggle (`b_cust_open`/`b_sys_open`,
+replacing the single shared `b_ops`) for revealing Brand Equity/Leads and Culture/Staff respectively —
+opening one no longer bundles the other's hidden stats, matching the same independence the Money/
+Capacity toggles already had.
+
+**Credit Score / D&B** (`showCreditScore()`): added a "How it's built" section showing the REAL weighted
+formula — refactored `calcFicoTarget()`/`calcBizCreditScore()` into `_ficoFactors()`/`_dnbFactors()` so
+the popup's math is always the exact same math that produced the number on screen, not a separate
+approximation. Personal: the 5 real FICO factors (Payment History 35%, Utilization 30%, Length of
+History 15%, Credit Mix 10%, New Credit 10%), each with a plain-language description. Business: the 4
+real D&B components (Business Profile, Business Identity, Credit Depth, Vendor Tradelines) plus the
+utilization penalty above 50%. The existing "what's helping or hurting it right now" situational flags
+are kept underneath as a second section.
+
 ## v0.68.22 — 2026-07-05 — (beta) Tax-reserve fold moved out of a monthly popup, into the policy panel
 **Ask (owner):** "everyr month it's asking to fold taxes into the policy, maybe have it be inside the
 policy menu instead, dont want the pop up every month."
