@@ -1,5 +1,26 @@
 # Release Notes
 
+## v0.68.24 — 2026-07-05 — (beta) Consistent business-funded deals + passive-income breakdown
+**Ask (owner):** confirmed the recommendation to make all 5 deal-panel actions consistently
+business-funded (from the investment-deal-funding audit last release), plus make the Epic Life
+roadmap's passive-income line obviously clickable for a full source breakdown.
+
+**Deal funding consistency**: `private_banking` (Pledged Asset Line) used to pick whichever pocket —
+`cash` or `personal_cash` — currently held MORE money (`isSeparated() && personal_cash > cash`).
+`cash_out_refi` used a different rule again — a plain `isSeparated()` ternary. Both are now business-
+cash-only, matching `buy_real_estate`/`buy_str`/`equipment_financing`, which never had a personal option
+at all. Also fixed the same drift in `openDealControl()`'s PAL preview (was showing a different pledge
+amount than the actual handler would produce), the downturn margin-call squeeze, and the monthly PAL
+carry — all four spots that touched this one mechanic are now consistent. Real business owners who want
+to fund a deal with personal wealth now have the correct tool: 💼 Owner Capital (inject or loan), shipped
+last release — capitalize the entity, then the entity buys the asset, instead of the game quietly
+reaching into whichever pocket had more cash.
+
+**Passive income breakdown**: the Epic Life Roadmap's "💸 Passive $X/mo vs $Y/mo needed" line now opens
+`showPassiveIncome()` — a real per-source breakdown (real estate/STR rental income via the separately-
+tracked `_asset_income`, other passive investments, tax-free policy income, Pledged Asset Line carry)
+instead of just the combined total, plus what it needs to cover for Freedom.
+
 ## v0.68.23 — 2026-07-05 — (beta) Energy/Customers/Systems Maturity clickable + real Credit Score/D&B math
 **Ask (owner):** make Energy, Customers, and Systems Maturity clickable-for-a-breakdown like Capital/Cash
 Flow/Credit Score already are; let players tap the NUMBER itself instead of a tiny (i) icon; and for
