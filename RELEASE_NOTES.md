@@ -1,5 +1,18 @@
 # Release Notes
 
+## v0.68.22 — 2026-07-05 — (beta) Tax-reserve fold moved out of a monthly popup, into the policy panel
+**Ask (owner):** "everyr month it's asking to fold taxes into the policy, maybe have it be inside the
+policy menu instead, dont want the pop up every month."
+
+Removed the recurring `_pendingReserveFold` popup entirely (it re-checked every month with a 3-month
+cooldown and still felt like nagging). Folding the tax reserve into the cash-value policy is now a
+button inside `openPolicyControl()` — same math as before (~2% cost of insurance, ~98% lands as cash
+value, still covers taxes via a tax-free policy loan when the bill comes), staged and applied through
+the same Confirm flow as the loan/repay/passive-income controls already in that panel. Available any
+time there's a reserve to fold, no cooldown, never interrupts a turn. Also added the fold to the
+month-end wealth-detail card (`_epicWealthDetail()`) alongside loan/passive-income activity, which
+didn't exist before either.
+
 ## v0.68.21 — 2026-07-04 — (beta) Finale overhaul (net worth trend, marquee showcase, character epilogue, milestone trophies) + Net Worth double-count fix
 **Ask (owner):** "the 36-month end screen barely has things players would want to look at" — give suggestions, then build them.
 
