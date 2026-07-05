@@ -1,5 +1,38 @@
 # Release Notes
 
+## v0.68.28 — 2026-07-05 — (beta) Fixed Debt Restructure → Liquidate Credit money glitch
+
+**Ask (owner):** playtest report — an interaction between Debt Restructure and liquidating personal credit
+was creating millions in personal-credit increase.
+
+**Root cause** (`beta/js/game.js`): `debt_restructure`'s success handler moves a chunk of personal revolving
+debt onto a new/existing business credit line. Moving that balance already lowers personal utilization
+correctly, because `calcPersUtil()`'s `persRev` (personal revolving debt) is `total_debt` minus
+`business_credit_used` (among other buckets) — so as `business_credit_used` grows by the moved amount,
+`persRev` shrinks by the same amount automatically. But the handler ALSO added the moved amount directly
+to `available_credit` (the player's personal credit LIMIT headroom) — and the deferred second stage,
+`applyDebtRestructure()` (which swaps remaining revolving debt into a fixed installment loan), added its
+own swapped amount to `available_credit` a SECOND time. Since restructuring debt doesn't actually raise
+your personal credit limit in real life, both additions were pure fabricated credit — and since
+`debt_restructure` isn't a one-time action, repeating it kept compounding `available_credit` without bound.
+The ⭐ Epic Life "Liquidate credit → cash" perk (`liquidateCredit()`) reads directly off `available_credit`
+(via `_creditHeadroom()`) and converts it to real spendable cash at a 6% fee — so the fabricated credit was
+fully cashable.
+
+**Reproduced headlessly:** one Debt Restructure inflated `available_credit` from $5,000 to $44,980 from a
+$60k starting personal-debt position; liquidating the resulting headroom paid out **$288,054 in real cash**.
+After the fix, `available_credit` stays flat at $5,000 across 5 repeated restructures, and personal
+utilization still drops correctly via the existing `persRev` mechanism (no other behavior change — score
+gains, business-line opening, and the installment swap all still work as before).
+
+**Fix:** removed both erroneous `available_credit +=` lines (one in the immediate action handler, one in
+`applyDebtRestructure()`). Utilization/score improvements from restructuring are unaffected — they were
+already fully driven by `persRev` shrinking, not by the `available_credit` bump.
+
+**Not fixed, flagged separately:** `business_credit_limit` still grows without bound on every repeated
+Debt Restructure (a different, real issue — business credit, not personal) — out of scope for this fix
+since it wasn't the reported symptom; worth a look next.
+
 ## v0.68.27 — 2026-07-04 — (beta) Finance delegation removed — always the player's own pick
 
 **Ask (owner):** playtest report — "Run the Month" silently ran without a Finance pick while on Epic Life
