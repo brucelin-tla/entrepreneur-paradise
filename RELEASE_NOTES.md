@@ -1,5 +1,46 @@
 # Release Notes
 
+## v0.68.26 — 2026-07-05 — (beta) Passive-income score fix + delegated-Finance-skip notice
+**Ask (owner):** two playtest bug reports on the same session — end-game passive income score reading 0
+despite real passive income, and a delegated Finance turn silently doing nothing with no confirmation.
+
+**Passive-income score bug** (`calculateFinalScores` in `beta/js/game.js`): the `passive_income` score
+pillar computed its own separate, narrower estimate — `real_estate_owned*700 + investment_positions*0.01 +
+private_bank_balance*0.004` (plus policy income) — instead of the canonical formula every other screen uses
+(`other_monthly_revenue + policy income + pledged-line carry`, via `showPassiveIncome()`/Financial Health's
+dashboard). Reproduced headlessly: state with `other_monthly_revenue=30000` and nothing in the three fields
+the old formula read scored `passive_income: 0`; after the fix, the same state scores `74`, matching the
+game's own documented ladder ("$30k→74"). One-line fix — swap in the canonical formula. Root cause: `other_
+monthly_revenue` is where private lending, an acquired business, and STR income beyond the flat per-door
+estimate all actually live (per the `showPassiveIncome()` breakdown built 2026-07-05) — the scoring function
+predates that and was never updated to match.
+
+**Delegated-Finance-silently-skipped bug**: once Finance is delegated (`_canDelegateFinance()` — Wealth
+stage or passive income active), `runTeamMonth()`'s auto-pick calls `bestAction('finance')`, which
+deliberately excludes traps, the variable IUL loan, the pre-tax DB plan, merchant cash advance, and the two
+character-arc hires (toxic closer / mercenary star operator) — real high-stakes choices meant to always stay
+the player's own call, never auto-picked. If those were the only finance options left in a given month,
+`bestAction()` correctly returns `null` — but nothing downstream ever surfaced that: `results` still had
+entries from delegated marketing/operations, so `showResults()`'s only "did nothing" message
+(`if(!results.length)`) never fired, and the turn resolved with finance completely untouched, zero feedback.
+Reproduced headlessly by forcing `bestAction('finance')` to return null in a delegated state and confirming
+`primaryActionBtn()` → `runTeamMonth()` → `resolveMonth()` completed with no popup and no trace. Fix: when
+this happens, `runTeamMonth()` now sets `state._financeAutoSkipped={month}`, and `showResults()` renders a
+"💼 No Finance Move This Month" banner (same pattern as the existing passive-income/credit-repair banners)
+before clearing the flag — confirmed the banner shows exactly in that case and stays silent on every normal
+month with a real pick.
+
+**Verification:** extended the headless-Edge harness pattern from the prior release for both bugs (direct
+`calculateFinalScores()` calls for the scoring fix; `bestAction` monkey-patched to force the null case,
+then a real `resolveMonth()`/`showResults()` pass for the banner). Full existing 76-check regression suite
+re-run clean after each fix — 0 failures, 0 exceptions.
+
+**Not fixed / needs more info:** an SBA-loan-showing-increased-personal-utilization report from the same
+session. Traced the full mechanic twice (forcing the loan to succeed, once with real revolving debt present
+so a miscalculation would actually be visible) — the loan's own before→after card never showed a utilization
+row, and `business_installment_debt`/`calcPersUtil()` net out exactly as designed. Asked the owner to pin
+down which specific screen/number showed the increase; no repro yet, so no code change made.
+
 ## v0.68.25 — 2026-07-05 — (beta) Epic Life panel reorg + tax-reserve/policy bailout fix + Operator Capacity
 **Ask (owner):** reorganize the four Epic Life sub-panels (Cash-Value Policy, Velocity Banking, Financial
 Health, Owner Capital) into a consistent Dashboard → controls → Confirm shape, each with its own
