@@ -47,6 +47,10 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.21',d:'2026-07-04 23:59',n:[
+'🏁 <strong>Finale, overhauled</strong> — the Month 36 end screen was sitting on a pile of tracked data nobody ever saw. Now it shows: a <strong>Net Worth trend chart</strong> of the whole 36-month arc (plus your best and toughest month), a real <strong>Marquee Purchases</strong> showcase (icon, cost, month bought — not just a bare label list), a <strong>"People Along The Way"</strong> epilogue for your mentor/banker/rival/family reflecting how those relationships actually ended up, and <strong>Milestone trophies</strong> that now keep the "why it mattered" line instead of discarding it.',
+'🎖️ More lifestyle purchases now earn a real flex badge — yacht ownership, an art collection, a major philanthropic foundation, a world sabbatical, a country club membership, and full household staff all count now (previously only 4 of ~11 marquee items did).',
+'🔧 <strong>Net Worth double-count fixed</strong> — capital_account (retained earnings) was being added on top of cash that already reflected it, quietly inflating the Net Worth stat, the end-screen radar, and the composite score the longer a business stayed profitable. Net Worth now reads correctly — expect it to look lower than before on the same save, especially late-game.']},
 {v:'0.68.20',d:'2026-07-04 23:30',n:[
 '💵 <strong>Cash Services now works both ways</strong> — liquidate credit into cash for the usual 6% fee, or send cash the other way to pay utilization down for free (your business balance clears first, protecting your D&B score).',
 '💼 <strong>New: Owner Capital</strong> — a real, legal way to move your own money between you and your business. <strong>Inject capital</strong> (equity — no interest, no repayment, permanent business money) or make a <strong>shareholder loan</strong> (~4.5%, booked as real business debt — and you can call it back early with Repay). Not a membership perk — it unlocks the moment you form an LLC.',
@@ -1321,9 +1325,10 @@ _survivalRunway(){const s=this.state;const bizAvail=Math.max(0,(s.business_credi
 // Total net worth: all assets (cash, investments, real-estate equity, policy cash value, retained business equity, private-bank balance) minus all debt.
 // Pledged Asset Line monthly carry: the pledged portfolio yields (~5%/yr) NET of the SBLOC borrow cost (~6.5%/yr) — so PAL is roughly carry-neutral on its own (the value is the leverage + dry powder, not the spread).
 _pbCarry(st){const s=st||this.state;return Math.round((s.private_bank_balance||0)*0.004)-Math.round((s.private_bank_loan||0)*0.0054);},
-calcNetWorth(st){const s=st||this.state;const cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,cap=Math.max(0,s.capital_account||0),pbb=s.private_bank_balance||0,cap_res=s._captive_reserve||0,ret=s._retirement_balance||0;
+calcNetWorth(st){const s=st||this.state;const cash=(s.cash||0)+(s.personal_cash||0),inv=s.investment_positions||0,re=s.real_estate_equity||0,cv=s.insurance_cash_value||0,pbb=s.private_bank_balance||0,cap_res=s._captive_reserve||0,ret=s._retirement_balance||0;
  // real_estate_equity is ALREADY value − mortgage (appreciation + tenant paydown flow into it), so the mortgage (real_estate_debt) must NOT be subtracted again — exclude it from total_debt to avoid double-counting.
- const debt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0))+(s.insurance_loan_balance||0)+(s.private_bank_loan||0);return cash+inv+re+cv+cap+pbb+cap_res+ret-debt;},
+ // capital_account (retained earnings) is deliberately NOT added here — it's already reflected in `cash` (retained profit is what accumulates as business cash every month), so summing it too would double-count the same dollars. capital_account still has its own home in showOwnerEquity()/the debrief breakdown.
+ const debt=Math.max(0,(s.total_debt||0)-(s.real_estate_debt||0))+(s.insurance_loan_balance||0)+(s.private_bank_loan||0);return cash+inv+re+cv+pbb+cap_res+ret-debt;},
 // Cash-value policy SURRENDER CHARGE — like a real IUL/whole-life, the early years carry a surrender charge that eats into what you can actually borrow against, so you must fund the policy WELL ABOVE the charge before its loanable value turns positive. $10k when the policy opens, phasing out over ~10 years (steepest early, exactly like a real surrender-charge schedule). This is why you can't just open it and immediately borrow — you have to seed it up first.
 _policySurrenderCharge(){const s=this.state;if(!((s.insurance_cash_value||0)>0||(s._completed_actions||[]).includes('fund_accumulation_policy')))return 0;const opened=s._policy_open_month||this.month||1,yrs=Math.max(0,(this.month||1)-opened)/12;return Math.max(0,Math.round(10000*(1-yrs/10)));},
 // What you can ACTUALLY borrow against the policy: 90% of cash value, LESS the surrender charge, less any existing loan. Single source of truth for every borrow path (policy loan, tax bill, dry powder, passive income).
@@ -4152,7 +4157,7 @@ confirmLifestyle(){if(!this.selectedLifestyle)return;const a=this.selectedLifest
 const buffs={mentor_others:{delay:3,effects:{leads:5,brand_equity:5,monthly_revenue:500},narrative:"Your mentee referred a client to you. 'You helped me — let me return the favor,' she said."},volunteer_time:{delay:2,effects:{brand_equity:8,leads:3},narrative:"Someone from the volunteer site reached out — they need exactly what you offer. 'I liked how you showed up that Saturday.'"},faith_community:{delay:4,effects:{leads:4,brand_equity:3,lifestyle_relationships:5},narrative:"A fellow member mentioned your business to their network. Three warm introductions this week."},family_trip:{delay:1,effects:{energy:10,lifestyle_relationships:5},narrative:"You came back recharged. Your partner said you seem lighter. The clarity is showing up in your work."},therapy_coaching:{delay:2,effects:{energy:8,lifestyle_health:3},narrative:"The patterns your therapist helped you see — you're catching them in real time now."},learn_new_skill:{delay:3,effects:{brand_equity:5,leads:3},narrative:"The class led to an unexpected connection — your instructor runs a business and just became a client."},charity_donation:{delay:2,effects:{brand_equity:8},narrative:"The charity featured your business in their donor spotlight newsletter. 2,000 people saw it."}};
 if(buffs[a.id]){const b=buffs[a.id];if(!this.state._lifestyle_buffs)this.state._lifestyle_buffs=[];this.state._lifestyle_buffs.push({trigger_month:this.month+b.delay,effects:b.effects,narrative:b.narrative,source:a.label});}
 if(!this.state._action_counts)this.state._action_counts={};this.state._action_counts[a.id]=(this.state._action_counts[a.id]||0)+1;
-this.lifestyleHistory.push(a);
+this.lifestyleHistory.push(Object.assign({},a,{_month:this.month}));
 const _impact=this._masteryPanel(_dB,_mB,_enB);
 this.showScreen('result-screen');document.getElementById('result-month-label').textContent='Lifestyle — '+a.subcategory;document.getElementById('results-content').innerHTML='<div class="result-narrative fade-in"><strong>'+a.label+'</strong><br><br>'+a.narrative+'</div>'+_impact;this.selectedLifestyle=null;},
 
@@ -4182,9 +4187,11 @@ let h='<div class="epilogue-box" style="text-align:left;margin-top:16px;"><div s
 if(learned.length){h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Put Into Practice</div>';for(const i of learned)h+='<div style="margin-bottom:7px;font-size:0.9rem;"><span style="color:var(--accent);font-weight:600;">&#10003; '+i.name+'</span> — '+i.got+'</div>';}
 if(missed.length){h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">Left On The Table <span style="text-transform:none;opacity:0.7;">(you saw these but didn\'t take them)</span></div>';for(const i of missed)h+='<div style="margin-bottom:7px;font-size:0.9rem;opacity:0.9;"><span style="color:var(--gold);font-weight:600;">&#9675; '+i.name+'</span> — '+i.miss+'</div>';}
 const haveM={};(s._milestones_achieved||[]).forEach(m=>haveM[m.id]=1);const gotM=MILESTONES.filter(m=>haveM[m.id]),missM=MILESTONES.filter(m=>!haveM[m.id]);
+const catCol={marketing:'var(--accent)',operations:'var(--blue)',finance:'var(--gold)'};
 h+='<div style="color:var(--text2);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;border-top:1px solid var(--border);padding-top:10px;">🏆 Milestones — '+gotM.length+'/'+MILESTONES.length+' unlocked</div>';
-if(gotM.length)h+='<div style="font-size:0.85rem;line-height:1.7;">'+gotM.map(m=>'<span style="color:var(--accent);">&#127942; '+m.title+'</span>').join(' &nbsp;·&nbsp; ')+'</div>';
-if(missM.length)h+='<div style="font-size:0.8rem;line-height:1.7;margin-top:6px;opacity:0.7;"><span style="color:var(--gold);">Still on the table:</span> '+missM.map(m=>m.title).join(' &nbsp;·&nbsp; ')+'</div>';
+// Trophy grid — promoted from a comma-separated title list to real cards, each keeping the mentor line explaining WHY it mattered (previously only ever shown mid-game, then discarded).
+if(gotM.length)h+='<div style="display:flex;flex-direction:column;gap:6px;">'+gotM.map(m=>'<div style="border-left:3px solid '+(catCol[m.cat]||'var(--accent)')+';padding:4px 0 4px 10px;"><div style="font-size:0.85rem;font-weight:700;color:'+(catCol[m.cat]||'var(--accent)')+';">🏆 '+m.title+'</div><div style="font-size:0.72rem;color:var(--text2);margin-top:1px;">'+m.mentor+'</div></div>').join('')+'</div>';
+if(missM.length)h+='<div style="font-size:0.8rem;line-height:1.7;margin-top:10px;opacity:0.7;"><span style="color:var(--gold);">Still on the table:</span> '+missM.map(m=>m.title).join(' &nbsp;·&nbsp; ')+'</div>';
 h+='</div>';return h;},
 endGame(){
 this.clearAutoSave();// the run is over — don't offer to resume it
@@ -4193,7 +4200,8 @@ document.getElementById('end-title').textContent=arch.title;document.getElementB
 this.drawRadarOn(document.getElementById('radar-canvas'),scores);
 document.getElementById('score-breakdown').innerHTML='<div class="stat-card wide"><div class="stat-value" style="color:var(--gold);font-size:1.5rem;">'+composite+' <span style="font-size:0.8rem;color:var(--text2)">/ 600</span></div><div class="stat-label">Composite Score</div></div>'+this._renderScoreCards(scores);
 document.getElementById('epilogue').textContent=arch.epilogue;
-{const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildLifeShowcase()+this.buildTrapPanel(this.state._traps_hit)+this.buildScamPanel()+this.buildDebrief()+this.buildChoiceLog(this._playLog)+this.buildStatsDump(this._statSnapshot())+'</div>');
+{const _ex=document.getElementById('end-extra');if(_ex)_ex.remove();}document.getElementById('epilogue').insertAdjacentHTML('afterend','<div id="end-extra">'+this.buildNetWorthTrendPanel()+this.buildLifeShowcase()+this.buildCharacterEpilogue()+this.buildTrapPanel(this.state._traps_hit)+this.buildScamPanel()+this.buildDebrief()+this.buildChoiceLog(this._playLog)+this.buildStatsDump(this._statSnapshot())+'</div>');
+{const _nwc=document.getElementById('nw-trend-canvas');if(_nwc)this.drawNetWorthTrendOn(_nwc,this._netWorthTrend());}
 // New Game+ is a sandbox run — not ranked on the leaderboard (custom starting hand would skew it).
 document.getElementById('end-save').innerHTML=(this.state&&this.state._ngplus)?'<div style="text-align:center;color:var(--gold);font-size:0.84rem;font-weight:600;padding:6px 0;">🔁 New Game+ — sandbox run (not ranked on the leaderboard).</div>':'<input id="player-name" class="name-input" placeholder="Enter your name for the leaderboard" maxlength="20"><button class="btn-primary" onclick="Game.saveToLeaderboard()">Save to Leaderboard</button>';
 // Ended early (before month 36)? You can pick the run back up where you left off.
@@ -4254,15 +4262,51 @@ if(m>=80)b.push({i:'🏆',n:'Renaissance Founder'});else if(m>=60)b.push({i:'⭐
 {const st=this._scamTierBadge(this._scamsSurvivedLifetime());if(st)b.push(st);}
 if(d.Body>=80)b.push({i:'💪',n:'Peak Health'});if(d.Mind>=80)b.push({i:'🧠',n:'Sage'});if(d.Spirit>=80)b.push({i:'🕊️',n:'Centered'});if(d.Heart>=80)b.push({i:'❤️',n:'Devoted'});if(d.Luxury>=80)b.push({i:'✨',n:'Lives Large'});
 if(c('private_jet'))b.push({i:'🛩️',n:'Flies Private'});if(c('superyacht_charter'))b.push({i:'🛥️',n:'Superyacht Life'});if(c('dream_car'))b.push({i:'🏎️',n:'Dream Car'});if(c('dream_home')||c('private_estate'))b.push({i:'🏡',n:'Dream Home'});
+if(c('own_yacht'))b.push({i:'⛵',n:'Yacht Owner'});if(c('art_collection'))b.push({i:'🎨',n:'Art Collector'});if(c('philanthropic_foundation_major'))b.push({i:'🏛️',n:'Named Philanthropist'});if(c('world_sabbatical'))b.push({i:'🌍',n:'World Sabbatical'});if(c('country_club'))b.push({i:'⛳',n:'Country Club'});if(c('household_staff'))b.push({i:'🛎️',n:'Full Staff'});
 return b;},
+// Icon for a marquee lifestyle purchase — a handful of iconic ones get their own emoji, everything else falls back to its theme icon so nothing shows up blank.
+_flexIcon(a){const OVR={private_jet:'🛩️',superyacht_charter:'🛥️',own_yacht:'⛵',dream_car:'🏎️',dream_home:'🏡',private_estate:'🏰',philanthropic_foundation_major:'🏛️',world_sabbatical:'🌍',art_collection:'🎨',country_club:'⛳',write_book:'📖',start_foundation:'🎗️'};if(OVR[a.id])return OVR[a.id];const SUB={health:'💪',relationships:'❤️',experiences:'🌴',spiritual:'🕊️',philanthropy:'🎗️',legacy:'📜'};return SUB[a.subcategory]||'✨';},
 buildLifeShowcase(){const d=this.lifeDims(),m=this.calcPersonalMastery(),badges=this.calcBadges();
 const bar=k=>{const v=d[k],col=v>60?'var(--accent)':v>30?'var(--gold)':'var(--red)';return '<div style="margin:5px 0;"><div style="display:flex;justify-content:space-between;font-size:0.76rem;"><span>'+this.LIFE_ICON[k]+' '+k+'</span><span style="font-weight:700;color:'+col+';">'+v+'</span></div><div class="bar-track" style="height:5px;"><div class="bar-fill" style="width:'+v+'%;background:'+col+'"></div></div></div>';};
-const seen={},marquee=[];(this.lifestyleHistory||[]).forEach(a=>{if(!a||seen[a.id])return;seen[a.id]=1;if((a.cash_cost||0)>=5000||a.one_time)marquee.push(a.label);});
+const seen={},marquee=[];(this.lifestyleHistory||[]).forEach(a=>{if(!a||seen[a.id])return;seen[a.id]=1;if((a.cash_cost||0)>=5000||a.one_time)marquee.push(a);});
 let h='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:14px;text-align:left;"><div style="font-size:0.9rem;font-weight:700;color:var(--gold);">🌴 The Life You Built</div><div style="font-size:0.72rem;color:var(--text2);margin:2px 0 8px;">Personal Mastery '+m+'/100</div>';
 h+=['Body','Mind','Spirit','Heart','Luxury'].map(bar).join('');
 if(badges.length)h+='<div style="margin-top:10px;">'+badges.map(b=>'<span title="'+b.n+'" style="display:inline-block;background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:999px;padding:3px 9px;margin:3px 4px 0 0;font-size:0.72rem;color:var(--gold);">'+b.i+' '+b.n+'</span>').join('')+'</div>';
-if(marquee.length)h+='<div style="margin-top:8px;font-size:0.72rem;color:var(--text2);">Flexes: '+marquee.join(' · ')+'</div>';
+// Marquee purchases — real cards (icon, cost, month bought) instead of a bare comma-separated label list, so the big-ticket flexes actually read as a showcase.
+if(marquee.length)h+='<div style="color:var(--text2);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.6px;margin:12px 0 5px;">Marquee Purchases</div><div style="display:flex;flex-wrap:wrap;gap:8px;">'+marquee.map(a=>'<div style="flex:1 1 45%;min-width:130px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:rgba(245,158,11,0.06);"><div style="font-size:0.8rem;font-weight:700;">'+this._flexIcon(a)+' '+a.label+'</div><div style="font-size:0.68rem;color:var(--text2);margin-top:2px;">'+this.fmtMoney(a.cash_cost||0)+(a._month?' · Month '+a._month:'')+'</div></div>').join('')+'</div>';
 return h+'</div>';},
+// ===== Net Worth trend — the whole 36-month arc, from monthlySnapshots (collected every month, previously never read anywhere) =====
+_netWorthTrend(){const snaps=this.monthlySnapshots||[];return snaps.map((st,i)=>({m:i+1,nw:this.calcNetWorth(st)}));},
+buildNetWorthTrendPanel(){const pts=this._netWorthTrend();if(pts.length<2)return '';
+ let bestI=1,worstI=1,bestD=-Infinity,worstD=Infinity;
+ for(let i=1;i<pts.length;i++){const d=pts[i].nw-pts[i-1].nw;if(d>bestD){bestD=d;bestI=i;}if(d<worstD){worstD=d;worstI=i;}}
+ const start=pts[0].nw,end=pts[pts.length-1].nw,fm=v=>this.fmtMoney(Math.round(v));
+ let h='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:14px;text-align:left;">';
+ h+='<div style="font-size:0.9rem;font-weight:700;color:var(--gold);">📈 Your Net Worth — The Whole Journey</div>';
+ h+='<div style="font-size:0.72rem;color:var(--text2);margin:2px 0 8px;">'+fm(start)+' → <strong style="color:'+(end>=start?'var(--accent)':'var(--red)')+';">'+fm(end)+'</strong> over '+pts.length+' months</div>';
+ h+='<canvas id="nw-trend-canvas" width="600" height="180" style="width:100%;height:auto;max-width:100%;display:block;"></canvas>';
+ if(bestD>0)h+='<div style="font-size:0.74rem;color:var(--accent);margin-top:8px;">📈 Best month: <strong>Month '+pts[bestI].m+'</strong> ('+fm(bestD)+')</div>';
+ if(worstD<0)h+='<div style="font-size:0.74rem;color:var(--red);margin-top:3px;">📉 Toughest month: <strong>Month '+pts[worstI].m+'</strong> ('+fm(worstD)+')</div>';
+ h+='</div>';return h;},
+// Plain canvas area+line chart — same raw-hex-color convention as drawRadarOn (canvas can't read CSS custom properties).
+drawNetWorthTrendOn(canvas,pts){if(!canvas||!pts||pts.length<2)return;const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,pad=8;
+ const vals=pts.map(p=>p.nw),lo=Math.min(0,...vals),hi=Math.max(...vals,1),range=Math.max(1,hi-lo);
+ const x=i=>pad+(w-2*pad)*(i/(pts.length-1)),y=v=>h-pad-((v-lo)/range)*(h-2*pad);
+ ctx.clearRect(0,0,w,h);
+ if(lo<0){ctx.beginPath();ctx.moveTo(0,y(0));ctx.lineTo(w,y(0));ctx.strokeStyle='#2d3a50';ctx.lineWidth=1;ctx.stroke();}
+ ctx.beginPath();ctx.moveTo(x(0),y(lo));pts.forEach((p,i)=>ctx.lineTo(x(i),y(p.nw)));ctx.lineTo(x(pts.length-1),y(lo));ctx.closePath();
+ ctx.fillStyle='rgba(16,185,129,0.15)';ctx.fill();
+ ctx.beginPath();pts.forEach((p,i)=>{i===0?ctx.moveTo(x(i),y(p.nw)):ctx.lineTo(x(i),y(p.nw));});ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.stroke();
+ const li=pts.length-1;ctx.beginPath();ctx.arc(x(li),y(pts[li].nw),3.5,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();},
+// ===== Character epilogue — the recurring cast's final relationship state, read straight from characters.json + the state machines that already drive mid-game dialogue (previously never echoed at the finale) =====
+CHAR_ICON:{mentor:'🧭',banker:'🏦',rival:'⚔️',family:'🏡'},
+buildCharacterEpilogue(){const s=this.state,C=(CONFIG.characters&&CONFIG.characters.characters)||{};if(!C.mentor)return '';
+ const roles=[['mentor',s._mentor_state],['banker',s._banker_state],['rival',s._rival_state],['family',s._family_state]];
+ const rows=roles.map(([role,state])=>{const ch=C[role];if(!ch||!state)return '';const rs=ch.relationship_states[state];if(!rs)return '';
+  const lines=(ch.lines&&ch.lines[state])||[];const line=lines.length?lines[lines.length-1]:null;
+  return '<div style="padding:8px 0;border-bottom:1px solid rgba(127,127,127,0.1);"><div style="font-size:0.82rem;font-weight:700;">'+(this.CHAR_ICON[role]||'')+' '+ch.name+' <span style="font-weight:400;color:var(--text2);font-size:0.7rem;">— '+ch.role+'</span></div><div style="font-size:0.76rem;color:var(--accent);margin:2px 0;">'+rs.description+'</div>'+(line?'<div style="font-size:0.72rem;color:var(--text2);font-style:italic;">"'+line+'"</div>':'')+'</div>';}).join('');
+ if(!rows)return '';
+ return '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:14px;text-align:left;"><div style="font-size:0.9rem;font-weight:700;color:var(--gold);">📖 The People Along The Way</div>'+rows+'</div>';},
 // Trap achievements — the traps you found and lived through. Undiscovered ones stay hidden (🔒) so finding them is part of the game. All of them = the "Trap Survivor" flex.
 buildTrapPanel(hit){hit=hit||[];const total=TRAPS.length,got=TRAPS.filter(t=>hit.includes(t)).length,all=got===total;
 const rows=TRAPS.map(t=>{const m=TRAP_META[t]||{i:'🪤',n:'Trap'},done=hit.includes(t);return '<div style="display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid rgba(127,127,127,0.1);opacity:'+(done?'1':'0.5')+';"><span style="font-size:1rem;width:20px;text-align:center;">'+(done?m.i:'🔒')+'</span><span style="flex:1;font-size:0.8rem;'+(done?'':'color:var(--text2);')+'">'+(done?m.n:'Undiscovered trap')+'</span><span style="font-size:0.74rem;font-weight:700;color:'+(done?'var(--accent)':'var(--text2)')+';">'+(done?'✓ Survived':'—')+'</span></div>';}).join('');

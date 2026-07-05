@@ -1,5 +1,17 @@
 # Release Notes
 
+## v0.68.21 — 2026-07-04 — (beta) Finale overhaul (net worth trend, marquee showcase, character epilogue, milestone trophies) + Net Worth double-count fix
+**Ask (owner):** "the 36-month end screen barely has things players would want to look at" — give suggestions, then build them.
+
+**New at the Month 36 finale** (`endGame()` in `beta/js/game.js`), all built from data the game was already tracking but never surfacing:
+- **Net Worth trend chart** (`buildNetWorthTrendPanel`/`drawNetWorthTrendOn`) — a full area chart of the 36-month arc, drawn from `monthlySnapshots` (collected every month since early in the project, read by literally nothing until now). Auto-calls out the best month and toughest month by net-worth swing.
+- **Marquee Purchases showcase** (`buildLifeShowcase` rewrite) — big lifestyle buys (private jet, dream home, art collection, etc.) now render as real cards with an icon, cost, and the month you bought them, instead of a bare comma-separated label string. Lifestyle purchases now stamp `_month` at the moment of purchase (`confirmLifestyle()`) to make this possible.
+- **"The People Along The Way" epilogue** (`buildCharacterEpilogue`) — one card per recurring character (mentor, banker, rival, family), pulled straight from `characters.json`'s existing relationship-state machine + dialogue lines. These states were already driving mid-game dialogue and then vanishing at the finale; now the ending reflects how each relationship actually turned out.
+- **Milestone trophies, promoted** (`buildDebrief()`) — unlocked milestones now render as cards with the mentor line explaining WHY each one mattered, instead of a flat comma-separated title list that discarded that text. Shared with the Month-18 Part 1 Finale screen too.
+- **6 more flex badges** (`calcBadges()`) — yacht ownership, art collection, a major philanthropic foundation, a world sabbatical, a country club membership, and full household staff now earn recognition (previously only 4 of ~11 marquee-tier lifestyle purchases did).
+
+**Net Worth double-count fixed** (`calcNetWorth()`) — `capital_account` (retained business earnings) was being summed on top of `cash`, which already reflects that same retained profit every month. This inflated the displayed Net Worth stat, the end-screen radar dimension, and the composite score — worse the longer a business stayed profitable. Removed the double-add; `capital_account` still has its own home in the Owner Equity breakdown. **Net Worth will read lower than before on existing saves** — that's the correction, not a regression.
+
 ## v0.68.20 — 2026-07-04 — (beta) Owner Capital (inject/loan/repay), Cash Services pay-down, retirement slider, policy repay, result-screen match, checkpoint cleanup
 **Ask (owner):** late-game personal cash piles up with no legal way to fund a struggling business —
 "I should be able to loan money or invest into my company," plus "pay down utilization inside cash
