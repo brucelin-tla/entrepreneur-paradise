@@ -100,6 +100,20 @@ playing skeptical CFO against your own build before it ships.
 - After code changes, reload the preview + check console for errors; verify the specific change, don't over-dump.
 - Legacy files safe to ignore: `index.html.backup`, `index_clean.html`, `deploy.zip`.
 
+## Ship-hold during active playtest (owner rule, 2026-07-04)
+
+**Do not ship back-to-back while the owner is actively playtesting and finding bugs.** He plays a
+build and fires rapid feedback messages as he hits things; if each message triggers its own
+immediate version-bump/commit/push, the build changes under him mid-session and he can't tell
+what he's actually testing anymore.
+
+When he's clearly mid-playtest (several small asks in quick succession, referencing what he's
+seeing live in a running build): implement + verify each change headlessly and STOP — leave it
+uncommitted in the working tree, tell him it's ready, and wait for an explicit go-ahead (or a
+lull / "ship it") before running the version-bump-rebuild-commit-push ceremony. Batch the
+accumulated feedback into one release once he says go — same batching principle as normal, just
+don't fire it after every single message during a live playtest run.
+
 ## Pending work
 
 - **Global leaderboard (Supabase + Google sign-in) removed, local-only for now
