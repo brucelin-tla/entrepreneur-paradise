@@ -90,6 +90,7 @@
       "id": "banking_relationship",
       "category": "finance",
       "stage": "leverage",
+      "one_time": true,
       "label": "Build a Banking Relationship",
       "description": "Open a business account, run your deposits through their bank, and meet your banker regularly — so you're a known, trusted customer before you ever need a loan. Banks lend bigger lines, and approve far more readily, to people who already bank with them.",
       "lesson": "Capital is a relationship business. Bankers fund people they know and trust — open the account, keep deposits flowing, and build the relationship BEFORE you need money. When you do apply, you'll qualify more easily and for larger amounts than a stranger walking in cold.",
@@ -146,7 +147,7 @@
       "prerequisites": { "entity_structure_in": ["llc", "s_corp", "c_corp", "multi_entity"], "personal_credit_score_gte": 600 },
       "effects": { "dscr": 0.2, "operating_expenses": -200, "personal_credit_score": 10, "business_credit_profile": "building" },
       "success_rate": 0.75,
-      "failure_effects": { "personal_credit_score": 4, "business_credit_limit": 3000 },
+      "failure_effects": { "personal_credit_score": 4 },
       "narrative_success": "",
       "narrative_failure": "The expert moved one balance and opened a starter business line, but couldn't restructure everything yet. Your file is building — reapply in a month for better terms."
     },

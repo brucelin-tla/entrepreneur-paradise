@@ -1,5 +1,49 @@
 # Release Notes
 
+## v0.68.29 — 2026-07-05 — (beta) Business + personal credit growth calibrated to real-world stacking
+
+**Ask (owner):** "check it to match real life growth for both personal and business credit stacking
+strategies," following the v0.68.28 fix. Researched real-world numbers before touching anything:
+
+- **Business credit stacking** (Fund&Grow/Credit Suite-style): $50k-150k typical first round, ~$250k
+  realistic ceiling across multiple rounds before returns diminish sharply. Re-stacking a genuine NEW
+  round takes ~6 months (fresh applications/hard inquiries; issuers also gate on application velocity,
+  e.g. Chase's unwritten "5/24" rule) — not something you do every month.
+- **Personal organic credit-limit increases**: issuers review for an automatic CLI every 6-12 months,
+  typically a ≤30% bump, conditional on utilization/payment history — not a monthly coin-flip.
+
+**What was actually wrong** (found by auditing every place `business_credit_limit`/`available_credit` can
+grow):
+1. `debt_restructure` and `business_credit_line` each granted a brand-new business line **every time they
+   succeeded**, with no cooldown and no lifetime cap — spammable every month for unlimited growth.
+2. `banking_relationship` had no `one_time` flag, so its flat +$5,000 grant was also freely repeatable.
+3. `debt_restructure`'s **failure_effects** granted +$3,000 business credit via raw config effects —
+   bypassing any cap entirely, even on a declined application.
+4. Hiring a Fractional CFO added `500 × business level` to `business_credit_limit` **every single month,
+   forever**, automatically — no real-world lending analogue (no application, no underwriting, just free
+   money appearing monthly). It also re-triggered the same "fake available_credit growth from an
+   installment swap" bug fixed in v0.68.28, in its own separate code path.
+5. The personal-credit-limit "issuer bonus" (on `build_personal_credit`) rolled 45% of the time with no
+   cooldown — far more often than the real 6-12 month review cycle.
+
+**Fix** (`beta/js/game.js`, `beta/config/actions_finance.json`):
+- New `_stackBusinessCredit(wantAmt)` helper: shared $250,000 lifetime cap + 6-month cooldown across
+  `debt_restructure` and `business_credit_line`'s "new line" grants (both success and, for
+  `debt_restructure`, the smaller failure-case starter line). Verified via direct unit calls: blocks a
+  second grant in the same month, blocks at 3 months, opens at 6 months, and clamps exactly at $250,000
+  lifetime — never over.
+- `banking_relationship` marked `"one_time": true` — verified it locks after the first success (matches
+  its own real-world framing as a single relationship you build once, not a repeatable grant).
+- Removed `business_credit_limit` from `debt_restructure`'s `failure_effects`; the JS handler now routes
+  a small capped/cooled starter-line grant through the same helper instead.
+- Removed Fractional CFO's monthly `business_credit_limit`/`available_credit` auto-growth entirely — the
+  CFO's real edge is already the existing 1.15x multiplier baked into `calcCreditCapacity()` (every
+  stacking action already pays out more with a CFO on board; a separate free monthly stream on top of
+  that was double-dipping and unrealistic). Verified flat across 4 simulated monthly ticks.
+- `build_personal_credit`'s issuer-bonus CLI: probability tuned to 50% (from 45%, now gated behind the
+  same 6-month cooldown pattern) — combined, this yields roughly 1 real bump per 12-14 months, matching
+  issuers' actual 6-12 month review cadence instead of firing almost every time the action was taken.
+
 ## v0.68.28 — 2026-07-05 — (beta) Fixed Debt Restructure → Liquidate Credit money glitch
 
 **Ask (owner):** playtest report — an interaction between Debt Restructure and liquidating personal credit
