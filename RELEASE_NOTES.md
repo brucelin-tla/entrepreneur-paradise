@@ -1,5 +1,19 @@
 # Release Notes
 
+## v0.68.27 — 2026-07-04 — (beta) Finance delegation removed — always the player's own pick
+
+**Ask (owner):** playtest report — "Run the Month" silently ran without a Finance pick while on Epic Life
+membership. Investigation found the real cause wasn't Epic Life at all: `_canDelegateFinance()` let a CFO/
+board auto-pick Finance once you reached the Wealth stage or activated passive income — but the CFO hire and
+board activation were removed from the game a while back, so that condition could still trip (Wealth stage /
+passive income) with no CFO or board actually in play, silently handing Finance off to nobody.
+
+**Fix:** `_canDelegateFinance()` in `beta/js/game.js` now always returns `false`. Finance is never auto-
+picked — Marketing and Operations still delegate to their managers once hired, but Finance stays the
+player's own call every single turn, matching the actual game (no CFO/board hire exists to delegate to).
+Verified headlessly: team mode active (both managers hired) + Wealth stage + passive income on — clicking
+"Run the Month" now redirects to the Finance tab instead of resolving the month.
+
 ## v0.68.26 — 2026-07-05 — (beta) Passive-income score fix + delegated-Finance-skip notice
 **Ask (owner):** two playtest bug reports on the same session — end-game passive income score reading 0
 despite real passive income, and a delegated Finance turn silently doing nothing with no confirmation.

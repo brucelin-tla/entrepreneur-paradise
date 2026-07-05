@@ -2653,6 +2653,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.27',d:'2026-07-04 21:08',n:[
+'Fixed Finance sometimes running itself on \'Run the Month\' once you reached the Wealth stage — Finance is the one call that\'s always yours, so it now always needs your own pick, every turn.'
+]},
 {v:'0.68.26',d:'2026-07-05 06:00',n:[
 '📈 <strong>Fixed: passive income score wasn\'t counting most passive income</strong> — the end-game "passive income" score used its own narrow estimate (real-estate door count × a flat rate, investments, pledged-line balance) instead of your ACTUAL passive income. If your passive income came from private lending, an acquired business, or anything else outside that narrow list, the score could read near 0 even with real money coming in every month. Now uses the same total shown everywhere else (Financial Health, the Epic Life Roadmap).',
 '💼 <strong>Fixed: a delegated Finance turn could silently do nothing</strong> — once your team takes over Finance (Wealth stage or passive income on), a few moves stay a player-only call on purpose (high-risk financing, character-driven hires) and are never auto-picked. If those were the only finance options left some month, your team correctly refused to touch them — but nothing told you, so the turn just passed with zero feedback. Now shows a plain "No Finance Move This Month" note on the result screen when that happens.']},
@@ -5617,9 +5620,9 @@ banner='<div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba
 let epicPanel='';
 /* Epic Life System bar removed from the game screen (owner: redundant) — it lives in the ⭐ Epic hub and the results-screen concierge card */
 document.getElementById('action-list').innerHTML=banner+epicPanel+listHtml;},
-// One button runs the month with the team's plan: fill any category the player didn't set with the exec/board pick, then resolve.
-// You can only hand FINANCE to the CFO once you've actually learned it — reached the Wealth stage in Finance, or personally switched on tax-free passive income. The money decisions are the game's core lesson, so they stay yours until then (the CFO still advises). Marketing & ops can be delegated from the day you hire the exec.
-_canDelegateFinance(){return this.getStage('finance')==='wealth'||(this.state._completed_actions||[]).includes('activate_passive_income');},
+// One button runs the month with the team's plan: fill any category the player didn't set with the exec pick, then resolve.
+// Finance is NEVER delegated — there's no CFO/board hire in the game to hand it to, and the money decisions are the game's core lesson. Marketing & Ops can be delegated from the day you hire their exec; Finance always stays the player's own pick, every turn.
+_canDelegateFinance(){return false;},
 // SILENT anti-stuck safety net (no player-facing "optional" label): is there a finance move the player is genuinely meant to pick this month? Excludes membership itself (never an action to "pick"), concierge-handled actions, completed and locked actions. (Velocity banking is no longer a pickable action at all — it switches on directly with membership — so it needs no exclusion here.) Used ONLY to avoid hard-blocking the team/board "pick a Finance move" gate when the menu has nothing pickable — the visible flow still treats Finance as a normal step.
 _hasRequiredFinance(){return this.getAvailableActions('finance').some(a=>a.id!=='epic_life_membership'&&!this._epicHandled(a)&&!this.isActionCompleted(a)&&!this.isActionLocked(a));},
 runTeamMonth(){const ac=this._activeCats||CATS;this._paymentMethods=this._paymentMethods||{};const delegFin=this._canDelegateFinance();
