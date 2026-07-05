@@ -47,6 +47,9 @@ const MILESTONES=[
 const MILES_BY_ID={};MILESTONES.forEach(m=>MILES_BY_ID[m.id]=m);
 // Patch notes — newest first. Add a new entry on every release; the title screen version + What's New derive from this.
 const PATCH_NOTES=[
+{v:'0.68.30',d:'2026-07-05 10:18',n:[
+'Build a Banking Relationship is repeatable again — up to 4 real relationships, ~6 months apart, each one genuinely raising how much business credit you can stack (scaled to your revenue), on top of the ~$250k personal-credit-gated card-stacking ceiling from the last update. Real multi-bank relationship banking, not another card-stacking round. Personal credit limit stays untouched by this — that\'s a separate system in real life (issuer-specific reviews of YOUR income/credit file), not something a business banking relationship raises.'
+]},
 {v:'0.68.29',d:'2026-07-05 10:06',n:[
 'Business + personal credit growth now matches how credit stacking actually works in real life. Business credit lines (Debt Restructure, Open a Business Credit Line, Build a Banking Relationship) used to be repeatable every single month with no limit — real business credit stacking tops out around $250k before lenders stop extending more, and a genuine new stacking round only comes every ~6 months, not monthly. Same fix for a fractional CFO\'s free monthly credit-limit growth (removed — a CFO doesn\'t manufacture new credit out of thin air) and the personal credit-limit "bonus" (was firing 45% of the time on every credit move; real card issuers review for an automatic limit increase every 6-12 months, so it now follows that same real cadence).'
 ]},
@@ -2167,12 +2170,24 @@ _restructureApprovalChance(){return Math.min(0.92,this._creditApprovalChance(tru
 _estimateScore(util,neg,histBase,inq){const fPay=this._payHistoryFactor(neg),fUtil=util===0?0.9:util<=9?1:util<=29?0.8:util<=49?0.55:util<=74?0.3:0.1,fLen=Math.min(1,histBase),fMix=0.7,fNew=Math.max(0.3,0.85-Math.min(0.45,inq*0.06));return Math.round(300+550*(0.35*fPay+0.30*fUtil+0.15*fLen+0.10*fMix+0.10*fNew));},
 // Debt-restructure fee: a lending expert charges a ~10% success fee on the credit + loan they qualify you for (~$17k × capacity here), capped at $2,000 — whichever is lower. Waived for Epic members (handled in-house).
 _debtRestructureFee(){return Math.min(2000,Math.round(0.10*17000*this.calcCreditCapacity()));},
-// Real business-credit stacking (Fund&Grow/Credit Suite-style card stacking) tops out around $50k-250k of
-// stacked lines before returns diminish sharply, and re-stacking a meaningful NEW round realistically takes
-// ~6 months (fresh applications/hard inquiries, issuer application-velocity limits) — not something you can
-// repeat every single month. This gates every "stack a new business line" grant (debt_restructure,
-// business_credit_line) through one shared cooldown + lifetime cap so the two can't compound each other.
-_stackBusinessCredit(wantAmt){const s=this.state,cap=250000,room=Math.max(0,cap-(s._stackedCredit||0)),ready=(s._lastStackMonth==null||(this.month-s._lastStackMonth)>=6);if(!ready||room<=0)return 0;const grant=Math.min(wantAmt,room);if(grant>0){s.business_credit_limit=(s.business_credit_limit||0)+grant;s._stackedCredit=(s._stackedCredit||0)+grant;s._lastStackMonth=this.month;}return grant;},
+// Real business-credit CARD stacking (Fund&Grow/Credit Suite-style — Debt Restructure, Open a Business
+// Credit Line) is personal-credit-gated: ~$50k-250k before returns diminish, because it's underwritten off
+// the owner's personal FICO/SSN, and once a personal guarantee is involved, lenders increasingly run GLOBAL
+// CASH FLOW analysis across every disclosed obligation — so guarantee-based capacity converges toward one
+// aggregate ceiling, it doesn't multiply cleanly just by applying to more banks. $250k is that base ceiling.
+// A genuine banking RELATIONSHIP (deposits + revenue history at an actual bank) is a different, additive
+// channel — real unsecured lines commonly run ~10-15% of annual revenue per relationship, and 2-4 concurrent
+// bank relationships is normal for an established small business. buildBankingRelationship() raises the
+// ceiling itself (s._bankCapBonus) each time a new one is built; re-stacking within the card-stacking ceiling
+// (debt_restructure/business_credit_line) still shares one 6-month cooldown so the two can't compound.
+_stackBusinessCredit(wantAmt){const s=this.state,cap=250000+(s._bankCapBonus||0),room=Math.max(0,cap-(s._stackedCredit||0)),ready=(s._lastStackMonth==null||(this.month-s._lastStackMonth)>=6);if(!ready||room<=0)return 0;const grant=Math.min(wantAmt,room);if(grant>0){s.business_credit_limit=(s.business_credit_limit||0)+grant;s._stackedCredit=(s._stackedCredit||0)+grant;s._lastStackMonth=this.month;}return grant;},
+// A NEW banking relationship (not another card-stacking round) — additive, revenue-scaled, capped at 4
+// concurrent relationships (the realistic norm for an established small business) with its own 6-month
+// pace (a real relationship takes time to establish before a bank extends a meaningful line off it).
+// Personal credit limit is a SEPARATE system (issuer-specific CLI reviews of personal income/DTI/utilization)
+// — a business banking relationship has no real mechanism to raise it, so this deliberately does not touch
+// available_credit/personal credit at all.
+_buildBankingRelationship(){const s=this.state,count=s._bankRelationships||0,ready=(s._lastBankRelMonth==null||(this.month-s._lastBankRelMonth)>=6);if(count>=4||!ready)return 0;const bump=Math.round(Math.max(5000,(s.monthly_revenue||0)*12*0.15));s._bankCapBonus=(s._bankCapBonus||0)+bump;s._bankRelationships=count+1;s._lastBankRelMonth=this.month;return bump;},
 // What an outside professional would charge for a service the Epic concierge performs in-house — shown to members as money saved.
 _epicServiceFee(id){const s=this.state;
 if(id==='wyoming_holding_llc')return 3000;/* formation attorney + registered agent + operating agreement */
@@ -3525,6 +3540,8 @@ if(plan==='annual'){this.payCost(3000,false);s._epic_renew_month=this.month+12;s
 else{s.operating_expenses=(s.operating_expenses||0)+(action.recurring_cost||300);s._dyn_narrative='Epic Life is active — monthly plan at '+this.fmtMoney(action.recurring_cost||300)+'/mo. Your concierge runs the single highest-priority financial move for you each month — protection, credit, banking, your policy, then passive income — and velocity banking is already sweeping your surplus at debt, starting now.';}}
 if(action.id==='build_dnb_profile'&&success){const s=this.state;s._dnb_profile=true;s._dnb_tradelines=(s._dnb_tradelines||0)+3;if(!s.business_credit_profile||s.business_credit_profile==='none')s.business_credit_profile='building';s._dyn_narrative='Your business has its own credit identity now — DUNS number, phone, address, website and socials, plus three net-30 vendor accounts reporting on-time. Your D&B score climbs as the tradelines age and you add more credit history.';}
 if(action.id==='business_credit_line'&&success){const s=this.state,cf=this.calcCreditCapacity(),wantLim=Math.round(15000*cf),lim=this._stackBusinessCredit(wantLim);s._dnb_tradelines=(s._dnb_tradelines||0)+1;s._dyn_narrative=lim>0?('Approved — a '+this.fmtMoney(lim)+' revolving line in the business name. Your credit and revenue did the talking, and the new tradeline deepens your D&B file.'):'Approved in name only for now — real stacking rounds run every ~6 months (fresh applications, not monthly), or you\'re near the realistic ceiling of what card issuers will stack for one business. The new tradeline still deepens your D&B file.';}
+// A REAL new bank relationship — separate from card-stacking, additive, revenue-scaled (see _buildBankingRelationship). Deliberately does NOT touch personal available_credit — that's a separate system (issuer CLI reviews), not something a business relationship can raise.
+if(action.id==='banking_relationship'&&success){const s=this.state,bump=this._buildBankingRelationship();s._dyn_narrative=bump>0?('Relationship #'+(s._bankRelationships)+' — this bank now backs roughly '+this.fmtMoney(bump)+' of additional real borrowing capacity as your deposits and history build, on top of whatever card-stacking room you already have.'):(((s._bankRelationships||0)>=4)?'You\'re already banking with as many institutions as makes sense to actively manage (4) — deepen the relationships you have rather than spreading thinner.':'Your existing relationships are still young — a bank wants to see real history before extending more room. Give it a little more time.');}
 // Spell out the credit bump explicitly — it lands on BUSINESS credit (company's name), not your personal limit, which is where players miss it. (Limit already applied via config effects; this only narrates it.)
 if(action.id==='wyoming_holding_llc'){this.state._naics_ok=true;/* clean entity gets the correct NAICS code assigned → underwriters stop flagging you */const bump=Math.round((effects&&effects.business_credit_limit)||0);if(bump>0)this.state._dyn_narrative='The Wyoming holding LLC is filed — clean parent entity, registered agent, operating agreement, and the <strong>correct NAICS code</strong> assigned. Underwriters read the structure as a legit, lower-risk business, so your <strong>business</strong> credit limit rose by <strong>'+this.fmtMoney(bump)+'</strong> to '+this.fmtMoney(this.state.business_credit_limit||0)+' and future funding gets easier to qualify for. (Business credit, in the company’s name — separate from your personal limit.)';}
 if(action.id==='premium_financing'&&success){const s=this.state,nw=this.calcNetWorth();

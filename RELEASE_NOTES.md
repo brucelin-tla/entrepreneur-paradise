@@ -1,5 +1,45 @@
 # Release Notes
 
+## v0.68.30 — 2026-07-05 — (beta) Multi-bank relationship banking raises the stacking ceiling
+
+**Ask (owner):** pushback on v0.68.29's flat $250k lifetime cap — "wouldn't we be able to build a
+relationship with multiple banks at a time like in real life, as long as you have cash flow? Building a
+banking relationship should lift the cap. Personal credit limit cap should also improve with more banking
+relationships." Researched before changing anything (see below) — one part of this checks out for real,
+one part doesn't.
+
+**What's actually real, researched:**
+- The $250k figure from v0.68.29 is specific to **personal-credit-gated card stacking** (Fund&Grow/Credit
+  Suite style — this is what `debt_restructure`/`business_credit_line` model): underwritten off the
+  owner's personal FICO, and once a personal guarantee is involved, lenders increasingly run **global
+  cash-flow analysis** across every disclosed obligation (SBA Form 413 requires disclosing all of them) —
+  so guarantee-based capacity converges toward one aggregate ceiling. It genuinely doesn't multiply just
+  by applying to more banks under one owner's personal guarantee.
+- **Real banking relationships are a different, additive channel.** Unsecured lines commonly run ~10-20%
+  of annual revenue *per relationship*, and 2-4 concurrent bank relationships is normal for an established
+  small business ($500k-5M revenue). This part of the pushback was correct — banking relationships should
+  scale the ceiling, revenue-gated, not be folded into the personal-credit-gated card-stacking pool.
+- **Personal credit limit is confirmed to be a separate system** — issuer-specific CLI reviews of the
+  owner's personal income/DTI/utilization/payment history, with no real mechanism for a business banking
+  relationship to raise it. This part of the ask doesn't hold up, so it wasn't implemented.
+
+**Fix** (`beta/js/game.js`, `beta/config/actions_finance.json`):
+- Reverted `banking_relationship`'s `one_time` flag from v0.68.29 — it's repeatable again, but now through
+  a real gate: new `_buildBankingRelationship()` caps at **4 concurrent relationships** (the researched
+  norm), ~6 months apart (a relationship needs real time/deposit history before a bank extends a
+  meaningful line off it), each adding **15% of current annualized revenue** to a new `_bankCapBonus`
+  pool.
+- `_stackBusinessCredit()`'s ceiling is now `$250,000 + _bankCapBonus` — the personal-credit-gated card-
+  stacking ceiling PLUS whatever real revenue-scaled banking relationships have added, instead of one flat
+  number.
+- Deliberately does NOT touch `available_credit` (personal credit) anywhere in the new relationship-
+  building code — confirmed via the research above that this would be unrealistic.
+- Verified headlessly: 4 relationships built 6 months apart at $30k/mo revenue each added exactly $54,000
+  (15% of $360k annualized) to the cap; a 5th attempt at month 25 was correctly blocked (cap of 4 hit); a
+  same-month repeat attempt was correctly blocked by the cooldown; the stacking ceiling correctly read
+  $466,000 ($250k + $216k accumulated bonus) after all 4; `available_credit` was byte-for-byte identical
+  before and after all 4 relationships were built.
+
 ## v0.68.29 — 2026-07-05 — (beta) Business + personal credit growth calibrated to real-world stacking
 
 **Ask (owner):** "check it to match real life growth for both personal and business credit stacking
