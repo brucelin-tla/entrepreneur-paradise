@@ -352,7 +352,12 @@
             <div class="control"><label>Down payment <span class="val" id="v-downPct">25%</span></label><input type="range" id="downPct" min="15" max="50" step="1" value="25"></div>
             <div class="control"><label>Loan rate <span class="val" id="v-invRate">7.00%</span></label><input type="range" id="invRate" min="2" max="9" step="0.05" value="7"></div>
             <div class="control"><label>Written off immediately (Year 1) <span class="val" id="v-writeOff">20%</span></label><input type="range" id="writeOff" min="0" max="28" step="1" value="20"></div>
-          </div>
+            <div class="control"><label>Buy at age <span class="val" id="v-buyAge1">60</span></label><input type="range" id="buyAge1" min="30" max="99" step="1" value="60"></div>
+            <div class="toggle-row" id="veh1Row">
+              <button type="button" class="toggle-btn active" id="btn-veh1-heloc">Down payment: HELOC</button>
+              <button type="button" class="toggle-btn" id="btn-veh1-policy">Down payment: policy loan</button>
+            </div>
+            <p class="way-hint show" id="afford1" style="margin-top:8px;"></p>
           <div class="side-results">
             <div class="ledger">
               <div class="lline"><span>Building value (land excluded)</span><span class="amt" id="s-buildingBasis">–</span></div>
@@ -411,6 +416,13 @@
           </div>
         </div>
       </div>
+
+      <div class="topic">
+        <div class="topic-h">Buy more properties later — from what the plan builds</div>
+        <p class="topic-exp">A property is a <b>later</b> move, not a day-one one: pick a future age, and the down payment comes out of the resources the plan has actually built by then — HELOC room against the home, or a policy loan against the cash value. Each property carries its own 30-year loan from its purchase date; the rent, the loan payment, the depreciation write-off, and the eventual value all flow through the whole plan. If the room isn't there at that age, the purchase honestly doesn't happen — the readout shows what would fit instead. Immediate write-off % and Way&nbsp;1/2/3 status follow the sliders above.</p>
+        <div id="propCards"></div>
+        <button type="button" class="toggle-btn" id="addProp" style="margin-top:10px;">+ Add a future property</button>
+      </div>
     </section>
 
     <!-- 3. TAX RESERVE POLICY -->
@@ -458,7 +470,7 @@
     <section class="sec">
       <span class="sec-num">Section 4</span>
       <h2>Retirement — how many years, same lifestyle</h2>
-      <p class="sub">Goal 4: fund one inflation-adjusted lifestyle from four sources — the Section&nbsp;2 rental's cash flow, qualified money, a HELOC, and the Section&nbsp;3 policy — then hit whichever goal you pick in the ALIS panel: <b>Max legacy</b> (leave the most behind, living on your chosen floor), <b>Max income</b> (ALIS finds the biggest lifestyle the plan can sustain), or <b>Most of both</b> (maximize total wealth — income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
+      <p class="sub">Goal 4: fund one inflation-adjusted lifestyle from four sources — the properties' cash flow (bought at the ages you picked in Section&nbsp;2, from what the plan builds), qualified money, a HELOC, and the Section&nbsp;3 policy — then hit whichever goal you pick in the ALIS panel: <b>Max legacy</b> (leave the most behind, living on your chosen floor), <b>Max income</b> (ALIS finds the biggest lifestyle the plan can sustain), or <b>Most of both</b> (maximize total wealth — income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
 
       <div class="topic">
         <div class="topic-h">Learn it one tool at a time</div>
@@ -504,11 +516,12 @@
               <div class="headline-sub" id="s-totalRetSub"></div>
             </div>
             <div class="ledger" style="margin-top:14px;">
-              <div class="lline"><span>Rental covers, year 1 <span class="lbl-sub">Tax-free after the depreciation shield</span></span><span class="amt" id="s-retRent">–</span></div>
+              <div class="lline"><span>Property cash flow, year 1 <span class="lbl-sub">Rent minus the property loans — the write-off shields the tax</span></span><span class="amt" id="s-retRent">–</span></div>
               <div class="lline"><span>Depreciation shield saves in tax <span class="lbl-sub">On the qualified withdrawals, over the horizon</span></span><span class="amt" id="s-taxSaved">–</span></div>
               <div class="lline"><span>Total income extracted <span class="lbl-sub">Net of tax — what you actually keep, not gross withdrawn</span></span><span class="amt" id="s-extracted">–</span></div>
               <div class="lline"><span>Left to the estate at the end <span class="lbl-sub">Homes + accounts + net policy − debts</span></span><span class="amt" id="s-legacy">–</span></div>
               <div class="lline total"><span>Total wealth created <span class="lbl-sub">Everything the plan delivers: income kept + legacy left</span></span><span class="amt" id="s-wealth">–</span></div>
+              <div class="lline"><span>Total tax paid <span class="lbl-sub">Informational — not part of the goal, but shows what a future tax-reducing vehicle could claw back</span></span><span class="amt" id="s-tax">–</span></div>
             </div>
           </div>
         </div>
@@ -591,14 +604,14 @@
       </div>
 
       <div class="topic">
-        <div class="topic-h">Rental income — the property pays the first slice</div>
-        <p class="topic-exp">The Section&nbsp;2 property's net cash flow (location-priced, appreciating) covers part of every year's lifestyle before any account is touched — and its depreciation keeps that income mostly tax-free.</p>
+        <div class="topic-h">The properties — cash flow after their loans</div>
+        <p class="topic-exp">Every owned property's rent, minus its own loan payment, flows into each year before any account is touched — negative while a young loan outweighs the rent, flipping positive as rents grow and loans die. The depreciation write-off (plus any suspended losses carried forward) shields the tax the whole way.</p>
         <div class="split">
           <div class="side-results">
             <div class="ledger">
-              <div class="lline"><span>Net rental cash, year 1 <span class="lbl-sub" id="s-rentLocSub">–</span></span><span class="amt" id="s-rentYr1">–</span></div>
-              <div class="lline"><span>Net rental cash, final year <span class="lbl-sub">Grown with the property</span></span><span class="amt" id="s-rentYrN">–</span></div>
-              <div class="lline subtotal"><span>Total rental cash over the horizon</span><span class="amt" id="s-rentTotal">–</span></div>
+              <div class="lline"><span>Net property cash, year 1 <span class="lbl-sub" id="s-rentLocSub">–</span></span><span class="amt" id="s-rentYr1">–</span></div>
+              <div class="lline"><span>Net property cash, final year <span class="lbl-sub">Rents grown, loans paid down or gone</span></span><span class="amt" id="s-rentYrN">–</span></div>
+              <div class="lline subtotal"><span>Total property cash over the horizon</span><span class="amt" id="s-rentTotal">–</span></div>
             </div>
           </div>
         </div>
@@ -634,6 +647,7 @@
           <div class="side-results">
             <div class="ledger">
               <div class="lline"><span>Home value at end of horizon</span><span class="amt" id="s-reValueEnd">–</span></div>
+              <div class="lline"><span>Rental mortgages still owed <span class="lbl-sub">Cleared by the properties' own value, not the lifestyle</span></span><span class="amt" id="s-rentalDebtEnd">–</span></div>
               <div class="lline total"><span>Life insurance needed — clears all home debt</span><span class="amt" id="s-lifeInsNeeded">–</span></div>
               <div class="lline"><span>Policy loan balance <span class="lbl-sub">Self-covered by the policy's own death benefit</span></span><span class="amt" id="s-p3SelfCovered">–</span></div>
             </div>
@@ -645,7 +659,7 @@
         </div>
         <div class="caveat">
           <span class="mark">!</span>
-          <p><b>Other assumptions, in the open.</b> Rental depreciation runs ~27 years and offsets qualified income up to the $25K passive allowance (unlimited if Way&nbsp;1 or&nbsp;2 is on in Section&nbsp;2). RMDs start at 73 per the IRS Uniform Lifetime Table. Qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
+          <p><b>Other assumptions, in the open.</b> Every property carries its own 30-yr fixed loan from its purchase date — the payment is a real bill in the plan, and unused paper losses (depreciation + interest beyond the rent) carry forward: they offset W-2 income up to the $25K allowance while working ($100–150K MAGI phase-out; unlimited with Way&nbsp;1/2), offset other property income without limit, and shield retirement withdrawals up to the same allowance. Down payments for future purchases draw the HELOC or a policy loan at the purchase date — if the room isn't there, the purchase honestly fails. Closing costs aren't modeled; property loan interest uses a start-of-year approximation; the home value securing the HELOC is held flat until retirement. Depreciation runs ~27 years per property. RMDs start at 73 per the IRS Uniform Lifetime Table. Qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
         </div>
       </div>
 
@@ -680,6 +694,7 @@
     <div class="float-row"><span class="float-lbl">Legacy behind</span><span class="float-val" id="float-legacy">–</span></div>
     <div class="float-row"><span class="float-lbl">Income extracted</span><span class="float-val" id="float-extracted">–</span></div>
     <div class="float-row"><span class="float-lbl">Total wealth created</span><span class="float-val" id="float-wealth">–</span></div>
+    <div class="float-row"><span class="float-lbl">Total tax paid</span><span class="float-val" id="float-tax">–</span></div>
     <div class="float-note" id="float-alloc">–</div>
     <div class="float-note" id="float-mix">–</div>
     <button type="button" class="float-cta" id="float-playbook">View year-by-year playbook →</button>
@@ -869,6 +884,77 @@
   let optimizeMode = 'legacy';
   // Headline stats of the last plan render — the journey uses this to show before→after deltas.
   let LAST_STATS = null;
+
+  // --- Investment properties: scheduled FUTURE purchases, funded from what the plan builds ---
+  // Property #1 is driven by the Section-2 sliders (price, down, rate, yield, location, write-off);
+  // extras are compact cards. At each property's purchase age the down payment draws real capacity
+  // from the chosen vehicle (HELOC room or a policy loan). If the room isn't there, the purchase
+  // honestly fails — recorded and shown, never silently pretended.
+  let veh1 = 'heloc';                       // property #1's down-payment vehicle (when bought later)
+  const EXTRA_PROPS = [];                   // {buyAge, price, downPct, ratePct, loc, vehicle}
+  const MAX_EXTRA = 3;
+
+  function renderPropCards(){
+    const wrap = $('propCards');
+    wrap.innerHTML = '';
+    EXTRA_PROPS.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'split';
+      card.style.cssText = 'border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-top:12px;';
+      card.innerHTML =
+        '<div class="side-controls">'+
+        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><b>Property '+(i+2)+'</b><button type="button" class="toggle-btn" data-del="'+i+'">Remove</button></div>'+
+        '<div class="control"><label>Buy at age <span class="val" id="v-xbuy'+i+'">'+p.buyAge+'</span></label><input type="range" id="xbuy'+i+'" min="31" max="99" step="1" value="'+p.buyAge+'"></div>'+
+        '<div class="control"><label>Purchase price (at purchase) <span class="val" id="v-xprice'+i+'">'+fmt0.format(p.price)+'</span></label><input type="range" id="xprice'+i+'" min="300000" max="3000000" step="10000" value="'+p.price+'"></div>'+
+        '<div class="control"><label>Down payment <span class="val" id="v-xdown'+i+'">'+p.downPct+'%</span></label><input type="range" id="xdown'+i+'" min="15" max="50" step="1" value="'+p.downPct+'"></div>'+
+        '<div class="control"><label>Loan rate <span class="val" id="v-xrate'+i+'">'+p.ratePct.toFixed(2)+'%</span></label><input type="range" id="xrate'+i+'" min="2" max="9" step="0.05" value="'+p.ratePct+'"></div>'+
+        '<div class="toggle-row">'+
+          '<button type="button" class="toggle-btn'+(p.loc==='hawaii'?' active':'')+'" data-xloc="'+i+':hawaii">Hawaii</button>'+
+          '<button type="button" class="toggle-btn'+(p.loc==='mainland'?' active':'')+'" data-xloc="'+i+':mainland">Mainland</button>'+
+          '<button type="button" class="toggle-btn'+(p.vehicle==='heloc'?' active':'')+'" data-xveh="'+i+':heloc">HELOC</button>'+
+          '<button type="button" class="toggle-btn'+(p.vehicle==='policy'?' active':'')+'" data-xveh="'+i+':policy">Policy loan</button>'+
+        '</div>'+
+        '</div>'+
+        '<div class="side-results"><p class="way-hint show" id="xafford'+i+'" style="margin-top:0;">–</p></div>';
+      wrap.appendChild(card);
+      const sync = () => {
+        p.buyAge = +$('xbuy'+i).value; p.price = +$('xprice'+i).value;
+        p.downPct = +$('xdown'+i).value; p.ratePct = +$('xrate'+i).value;
+        $('v-xbuy'+i).textContent = p.buyAge; $('v-xprice'+i).textContent = fmt0.format(p.price);
+        $('v-xdown'+i).textContent = p.downPct+'%'; $('v-xrate'+i).textContent = p.ratePct.toFixed(2)+'%';
+        renderSection5();
+      };
+      ['xbuy'+i,'xprice'+i,'xdown'+i,'xrate'+i].forEach(id => $(id).addEventListener('input', sync));
+    });
+    wrap.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => { EXTRA_PROPS.splice(+b.dataset.del,1); renderPropCards(); renderSection5(); }));
+    wrap.querySelectorAll('[data-xloc]').forEach(b => b.addEventListener('click', () => { const s=b.dataset.xloc.split(':'); EXTRA_PROPS[+s[0]].loc=s[1]; renderPropCards(); renderSection5(); }));
+    wrap.querySelectorAll('[data-xveh]').forEach(b => b.addEventListener('click', () => { const s=b.dataset.xveh.split(':'); EXTRA_PROPS[+s[0]].vehicle=s[1]; renderPropCards(); renderSection5(); }));
+    $('addProp').style.display = EXTRA_PROPS.length >= MAX_EXTRA ? 'none' : '';
+  }
+
+  // Build the engine-facing property definitions from the current UI state.
+  function buildProps(currentAge, planAge){
+    if (!TOOLS.rental) return [];
+    const writeOffPct = (+$('writeOff').value)/100;
+    const out = [];
+    let a1 = +$('buyAge1').value;
+    a1 = Math.min(Math.max(a1, currentAge), planAge-1);
+    const p1Price = +$('invPrice').value;
+    out.push({ idx:0, buyAge:a1, price:p1Price, downPct:(+$('downPct').value)/100, ratePct:+$('invRate').value,
+      vehicle: veh1, noi0: RE.netRent, apprec: RE.invApprec, depBonus: p1Price*writeOffPct,
+      depOngoing: RE.ongoingDep, ownedFromStart: a1 <= currentAge });
+    EXTRA_PROPS.forEach((e, i) => {
+      const buyAge = Math.min(Math.max(e.buyAge, currentAge), planAge-1);
+      const L = LOC[e.loc];
+      const gross = e.price * (L.yield/100);
+      const noi0 = gross - gross*(L.opex/100) - propertyTax(e.price, e.loc);
+      const bonus = e.price * writeOffPct;
+      out.push({ idx:i+1, buyAge, price:e.price, downPct:e.downPct/100, ratePct:e.ratePct,
+        vehicle:e.vehicle, noi0, apprec: L.apprec/100, depBonus: bonus,
+        depOngoing: Math.max(e.price*0.8 - bonus, 0)/27.5, ownedFromStart: buyAge <= currentAge });
+    });
+    return out;
+  }
 
   function renderSection1(){
     const propValue = +$('propValue').value;
@@ -1166,20 +1252,30 @@
     // keeps earning the full illustrated rate). Standard ("wash") loan: the borrowed amount actually
     // TRANSFERS to a separate Loan Account (cvLoanAcct) earning only the real, year-dependent
     // washCredited() rate — years 1-10 that's a real cost, years 11+ it's a true 0%-net wash.
-    let cvFree = inp.startCV, cvLoanAcct = 0;
-    let loanBal = 0;
-    let helocBal = 0, helocWindowEnd = null;    // window set at the first draw of each generation
-    let refiBal = 0, refiMonthlyPay = 0;
+    // Vehicle balances can arrive non-zero: accumulation-phase property purchases may have already
+    // opened the HELOC, refinanced a closed window, or borrowed against the policy.
+    let cvFree = inp.startCV, cvLoanAcct = inp.cvLoanAcct0 || 0;
+    let loanBal = inp.loanBal0 || 0;
+    let helocBal = inp.helocBal0 || 0;
+    let helocWindowEnd = (inp.helocWindowEnd0 != null) ? inp.helocWindowEnd0 : null;
+    let refiBal = inp.refiBal0 || 0, refiMonthlyPay = inp.refiMonthlyPay0 || 0;
+    // Suspended passive losses carried in from the working years — they offset property gains
+    // without limit (passive-to-passive) and shield qualified draws up to the allowance.
+    let passiveCarry = inp.passiveCarry0 || 0;
     let lifetimeTax = 0, shieldTaxSaved = 0, rmdTotal = 0;
     const refiRatePct = inp.mortRatePct || 6.5;
     // Only the tools the member has switched on may fill (education mode: ALIS plans with what's left).
     const tfOrder = strat.tf.filter(v => (v==='heloc' ? inp.toolHeloc !== false : inp.toolPolicy !== false));
     const timeline = [];  // year-by-year playbook rows
+    // Properties: local copies (the engine mutates them). buyT is retirement-relative (negative =
+    // bought during the working years; its loan state arrived via mortBal/mPay).
+    const props = (inp.props||[]).map(p => ({...p}));
     const rec = {
       qm:     { years:0, totalDrawn:0, totalTax:0 },
-      heloc:  { years:0, totalDrawn:0, capAtStart:0, refis:[], cashInterest:0 },
-      policy: { years:0, totalDrawn:0, cvAtStart:0, serviceTotal:0 },
-      rent:   { yr1:0, yrN:0, total:0 }
+      heloc:  { years:0, totalDrawn:0, purchaseDrawn:0, capAtStart:0, refis:[], cashInterest:0 },
+      policy: { years:0, totalDrawn:0, purchaseDrawn:0, cvAtStart:0, serviceTotal:0 },
+      rent:   { yr1:0, yrN:0, total:0 },
+      purchases: []
     };
     const HORIZON = Math.min(inp.horizon, RET_CAP); // years from retirement to plan-through age
     // Mortgage carried into retirement (if the accumulation plan didn't finish it): its P&I is a
@@ -1222,18 +1318,61 @@
         if (loanBal > guard){ policyService = loanBal - guard; loanBal = guard; rec.policy.serviceTotal += policyService; }
       }
 
+      // --- Scheduled property purchases due this year: capital deployment, not lifestyle income.
+      // The down payment draws real vehicle capacity (and is excluded from "income extracted");
+      // if the room isn't there, the purchase honestly fails — recorded and shown.
+      const purchEvts = [];
+      for (const p of props){
+        if (p.owned || p.buyT !== t) continue;
+        const down = p.price * p.downPct;
+        const roomHeloc = (inp.toolHeloc !== false) ? Math.max(helocCap - helocBal, 0) : 0;
+        const roomPolicy = (inp.toolPolicy !== false) ? Math.max(POLICY_DRAW_MAX*(cvFree+cvLoanAcct) - loanBal, 0) : 0;
+        const ok = (p.vehicle === 'heloc' ? roomHeloc : roomPolicy) >= down;
+        rec.purchases.push({ idx:p.idx, age, vehicle:p.vehicle, down, roomHeloc, roomPolicy, ok, phase:'retire' });
+        if (!ok){ purchEvts.push('✗ Can’t fund property #'+(p.idx+1)+' — need '+fmtCompact(down)+', '+(p.vehicle==='heloc'?'HELOC':'policy')+' room '+fmtCompact(p.vehicle==='heloc'?roomHeloc:roomPolicy)); continue; }
+        if (p.vehicle === 'heloc'){
+          if (helocWindowEnd === null) helocWindowEnd = t + HELOC_DRAW_YEARS;
+          helocBal += down; rec.heloc.purchaseDrawn += down;
+        } else {
+          if (inp.loanType === 'wash'){ cvFree -= down; cvLoanAcct += down; }
+          loanBal += down; rec.policy.purchaseDrawn += down;
+        }
+        p.owned = true; p.mortBal = p.price - down; p.mPay = monthlyPayment(p.mortBal, p.ratePct, 30);
+        p.bonusDue = true;
+        purchEvts.push('Buy property #'+(p.idx+1)+' — '+fmtCompact(down)+' down via '+(p.vehicle==='heloc'?'HELOC':'policy loan'));
+      }
+
       // --- The year's total cash need: lifestyle + every real debt-service bill ---
       let lifestyle = inp.todaySpend * Math.pow(1+inp.inflation, t);
       if (mortBal > 0.5) lifestyle += mortPay*12;
       if (refiBal > 0.5) lifestyle += refiMonthlyPay*12;
       lifestyle += helocCashInterest + policyService;
+      // Each owned property's own loan payment is a real bill the plan funds.
+      let propPI = 0;
+      for (const p of props) if (p.owned && p.mortBal > 0.5) propPI += p.mPay*12;
+      lifestyle += propPI;
 
-      const grow = Math.pow(1+inp.invApprec, t);
-      const netRent = inp.netRent0 * grow;                 // rental cash this year
-      const dep = (t < 27) ? inp.ongoingDep : 0;            // straight-line depreciation runs ~27 yrs
-      const taxableRentBase = netRent - dep;               // negative ⇒ shield surplus
-      const taxableRentPos = Math.max(taxableRentBase, 0);
-      const deductionPool = Math.min(Math.max(-taxableRentBase, 0), inp.shieldCap); // shields qualified
+      // --- Properties: cash + paper (tax) result. Cash in = NOI (rent net of operating costs);
+      // taxable = NOI − depreciation (incl. purchase-year bonus) − loan interest. Net paper losses
+      // join the passive carryforward; carried losses offset property gains without limit
+      // (passive-to-passive) and shield qualified draws up to the allowance.
+      let noiSum = 0, paperNet = 0, paperNetNoDep = 0;
+      for (const p of props){
+        if (!p.owned) continue;
+        const held = t - p.buyT;
+        const noi = p.noi0 * Math.pow(1+p.apprec, held);
+        noiSum += noi;
+        const interest = p.mortBal * (p.ratePct/100);        // start-of-year approximation
+        let dep = held < 27 ? p.depOngoing : 0;
+        if (p.bonusDue){ dep += p.depBonus; p.bonusDue = false; }
+        paperNet += noi - dep - interest;
+        paperNetNoDep += noi - interest;
+      }
+      let taxableRentPos = Math.max(paperNet, 0);
+      if (paperNet < 0) passiveCarry += -paperNet;
+      else { const off = Math.min(passiveCarry, taxableRentPos); taxableRentPos -= off; passiveCarry -= off; }
+      const deductionPool = Math.min(passiveCarry, inp.shieldCap); // shields qualified this year
+      const netRent = noiSum;   // property cash before their loan payments (those sit in `lifestyle`)
 
       // Tax on the year's total ordinary income given a qualified withdrawal Q.
       const taxFor = Q => federalTax(Math.max(taxableRentPos + Math.max(Q - deductionPool, 0), 0), inp.filingStatus);
@@ -1312,24 +1451,27 @@
 
       // Record + advance state.
       const yearTax = taxFor(Q);
-      // What the same year would owe if the property threw off no depreciation (rent fully taxable,
-      // no shield on qualified) — the difference is the depreciation shield's real tax benefit.
-      const taxNoShield = federalTax(Math.max(netRent + Q, 0), inp.filingStatus);
+      // What the same year would owe with no depreciation and no carryforward (interest still
+      // deductible) — the difference is the depreciation shield's real tax benefit.
+      const taxNoShield = federalTax(Math.max(Math.max(paperNetNoDep, 0) + Q, 0), inp.filingStatus);
       shieldTaxSaved += Math.max(taxNoShield - yearTax, 0);
       lifetimeTax += yearTax;
+      passiveCarry -= Math.min(Q, deductionPool);            // the shield actually consumed this year
+      if (passiveCarry < 0) passiveCarry = 0;
       if (Q > 1){ rec.qm.years++; rec.qm.totalDrawn += Q; rec.qm.totalTax += yearTax; }
       if (heJ > 1) rec.heloc.years++, rec.heloc.totalDrawn += heJ;
       if (poJ > 1) rec.policy.years++, rec.policy.totalDrawn += poJ;
-      if (t === 0) rec.rent.yr1 = netRent;
-      rec.rent.yrN = netRent; rec.rent.total += netRent;
+      const propNetCash = noiSum - propPI;                   // what the properties truly contribute
+      if (t === 0) rec.rent.yr1 = propNetCash;
+      rec.rent.yrN = propNetCash; rec.rent.total += propNetCash;
       // Playbook row for this year.
-      const evts = [];
+      const evts = [...purchEvts];
       const refiHere = rec.heloc.refis.find(r => r.t === t);
       if (refiHere) evts.push('Refi HELOC → 30-yr fixed ('+fmtCompact(refiHere.amount)+', '+fmtCompact(refiHere.payAnnual)+'/yr)');
       if (rmdForced) evts.push('RMD forces the 401(k) draw');
       if (policyService > 1) evts.push('Pay '+fmtCompact(policyService)+' policy loan interest (no-lapse)');
       if (helocCashInterest > 1) evts.push('Pay '+fmtCompact(helocCashInterest)+' HELOC interest in cash');
-      timeline.push({ age, need: lifestyle, rent: netRent, Q, tax: yearTax, he: heJ, po: poJ, evts });
+      timeline.push({ age, need: lifestyle, rent: propNetCash, Q, tax: yearTax, he: heJ, po: poJ, evts });
 
       qmBal -= Q; if (qmBal < 0) qmBal = 0;
       if (qmBal > 0) qmBal *= (1+inp.qmGrowth);
@@ -1339,6 +1481,13 @@
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (mortBal > 0.5){ for (let m=0; m<12 && mortBal>0.5; m++){ mortBal = mortBal*(1+mortMr) - mortPay; } if (mortBal < 0) mortBal = 0; }
       if (refiBal > 0.5){ const rr=(refiRatePct/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiMonthlyPay; } if (refiBal <= 0.5){ refiBal = 0; refiMonthlyPay = 0; } }
+      // Amortize each owned property's loan through the year.
+      for (const p of props){
+        if (!p.owned || p.mortBal <= 0.5) continue;
+        const pr = (p.ratePct/100)/12;
+        for (let m=0; m<12 && p.mortBal>0.5; m++){ p.mortBal = p.mortBal*(1+pr) - p.mPay; }
+        if (p.mortBal < 0) p.mortBal = 0;
+      }
     }
 
     const H = covered;
@@ -1346,13 +1495,20 @@
     rec.heloc.windowOpenAtEnd = (helocWindowEnd !== null && helocBal > 0.5);
     const helocEnd = helocBal, refiEnd = refiBal, policyEnd = loanBal, cvEnd = cvFree + cvLoanAcct;
     const homeEnd = inp.homeValue * Math.pow(1+inp.reGrowth, H);
-    const rentalEnd = (inp.rentalValue0||0) * Math.pow(1+inp.invApprec, H);
+    // Each owned property's end value nets against its own remaining loan — the sale/estate clears
+    // that debt from the property itself, never from the lifestyle.
+    let rentalEnd = 0, rentalDebtEnd = 0;
+    for (const p of props){
+      if (!p.owned) continue;
+      rentalEnd += p.price * Math.pow(1+p.apprec, H - p.buyT);
+      rentalDebtEnd += p.mortBal;
+    }
     const homeDebtEnd = helocEnd + refiEnd + mortBal;      // everything secured by the home at death
     const sustainable = covered >= HORIZON;         // funded the lifestyle all the way to plan-through age
     const failAge = sustainable ? null : (inp.retireAge + covered);
-    // Legacy: what the estate keeps after the debts clear — home + rental + leftover qualified +
-    // policy cash value net of its own loan (death benefit ≥ this; conservative) − all home debt.
-    const legacy = homeEnd + rentalEnd + qmBal + Math.max(cvEnd - policyEnd, 0) - homeDebtEnd;
+    // Legacy: what the estate keeps after the debts clear — home + properties net of their loans +
+    // leftover qualified + policy cash value net of its own loan (death benefit ≥ this) − home debt.
+    const legacy = homeEnd + (rentalEnd - rentalDebtEnd) + qmBal + Math.max(cvEnd - policyEnd, 0) - homeDebtEnd;
     // NET of tax, not gross withdrawn — rent/HELOC/policy are already tax-free/shielded, so the
     // qualified leg has to subtract what actually went to the IRS or this overstates real income by
     // counting tax dollars as if the member kept them (caught 2026-07-06: a strategy that draws more
@@ -1361,7 +1517,7 @@
     const totalExtracted = rec.rent.total + (rec.qm.totalDrawn - rec.qm.totalTax) + rec.heloc.totalDrawn + rec.policy.totalDrawn;
     return { strat, key:strat.key, years:H, planYears:HORIZON, sustainable, failAge, capped:(H>=RET_CAP),
              lifetimeTax, shieldTaxSaved, rmdTotal, rec, helocEnd, refiEnd, policyEnd, homeEnd, rentalEnd,
-             homeDebtEnd, qmEnd:qmBal, cvEnd, mortEnd:mortBal, legacy, totalExtracted, timeline };
+             rentalDebtEnd, homeDebtEnd, qmEnd:qmBal, cvEnd, mortEnd:mortBal, legacy, totalExtracted, timeline };
   }
 
   // --- Accumulation engine: grows today's balances to retirement under one contribution split ---
@@ -1374,12 +1530,89 @@
     let qm = acc.qm0, cv = acc.cv0, bal = acc.mortBal, refund = 0;
     const mr = (acc.mortRatePct/100)/12, mpay = acc.mortMonthlyPay;
     let freedAtYear = null, totalChunked = 0, capBound = false, refundTotal = 0, idleCash = 0;
+    // Property + funding-vehicle state through the build years (carried out to retirement).
+    const props = (acc.props||[]).map(p => ({...p, owned:false, mortBal:0, mPay:0}));
+    props.forEach(p => { if (p.ownedFromStart){ p.owned = true; p.mortBal = p.price*(1-p.downPct); p.mPay = monthlyPayment(p.mortBal, p.ratePct, 30); } });
+    let helocBal = 0, helocWindowEndY = null, refiBal = 0, refiPay = 0;
+    let polLoan = 0, cvLoanAcct = 0, passiveCarry = 0, shortfall = 0, polService = 0;
+    const purchases = [];
     const timeline = [];   // year-by-year playbook rows for the accumulation phase
     for (let y=0; y<acc.years; y++){
       const age = acc.currentAge + y;
+      const policyYear = acc.polYearsStart + y + 1;
       const justFreed = (bal <= 0.5 && freedAtYear === null);
       if (justFreed) freedAtYear = y;
-      let pool = acc.contribution + refund + (bal <= 0.5 ? mpay*12 : 0);
+      const evts = [];
+
+      // --- Scheduled purchases due this year: the down payment draws real vehicle capacity, or
+      // the purchase honestly fails (recorded + shown; never silently pretended). The home value
+      // securing the HELOC is held at the slider's value until retirement (the retirement engine
+      // grows it from there) — consistent at the boundary, conservative before it.
+      for (const p of props){
+        if (p.owned || p.buyAge !== age) continue;
+        const down = p.price * p.downPct;
+        const roomHeloc = (acc.toolHeloc !== false) ? Math.max(acc.maxLtv*acc.homeValue0 - bal - refiBal - helocBal, 0) : 0;
+        const roomPolicy = (acc.toolPolicy !== false) ? Math.max(POLICY_DRAW_MAX*(cv+cvLoanAcct) - polLoan, 0) : 0;
+        const ok = (p.vehicle === 'heloc' ? roomHeloc : roomPolicy) >= down;
+        purchases.push({ idx:p.idx, age, vehicle:p.vehicle, down, roomHeloc, roomPolicy, ok, phase:'build' });
+        if (!ok){ evts.push('✗ Can’t fund property #'+(p.idx+1)+' — need '+fmtCompact(down)+' down, '+(p.vehicle==='heloc'?'HELOC':'policy')+' room '+fmtCompact(p.vehicle==='heloc'?roomHeloc:roomPolicy)); continue; }
+        if (p.vehicle === 'heloc'){
+          if (helocWindowEndY === null) helocWindowEndY = y + HELOC_DRAW_YEARS;
+          helocBal += down;
+        } else {
+          if (acc.loanType === 'wash'){ cv -= down; cvLoanAcct += down; }
+          polLoan += down;
+        }
+        p.owned = true; p.mortBal = p.price - down; p.mPay = monthlyPayment(p.mortBal, p.ratePct, 30);
+        p.bonusDue = true;
+        evts.push('Buy property #'+(p.idx+1)+' — '+fmtCompact(down)+' down via '+(p.vehicle==='heloc'?'HELOC':'policy loan'));
+      }
+
+      // --- Property cash + paper (tax) result. Cash = NOI − loan payment. Paper = NOI − depreciation
+      // (incl. the purchase-year bonus) − loan interest; a net paper loss offsets W-2 income only up
+      // to the $25K allowance (phased out $100–150K MAGI, unlimited with Way 1/2) with the refund
+      // landing next year — the rest carries forward and shields retirement withdrawals later.
+      let propCash = 0, paperNet = 0;
+      for (const p of props){
+        if (!p.owned) continue;
+        const held = age - p.buyAge;
+        const noi = p.noi0 * Math.pow(1+p.apprec, held);
+        propCash += noi - (p.mortBal > 0.5 ? p.mPay*12 : 0);
+        const interest = p.mortBal * (p.ratePct/100);        // start-of-year approximation
+        let dep = held < 27 ? p.depOngoing : 0;
+        if (p.bonusDue){ dep += p.depBonus; p.bonusDue = false; }
+        paperNet += noi - dep - interest;
+      }
+      let purchRefund = 0;
+      if (paperNet < -0.5){
+        const usable = acc.shieldUnlimited ? -paperNet : Math.min(-paperNet, acc.allowanceNow);
+        purchRefund = usable * acc.mtr;
+        passiveCarry += (-paperNet - usable);
+      } else if (paperNet > 0.5){
+        propCash -= paperNet * acc.mtr;                       // net rental income is taxed
+      }
+
+      // --- Vehicle carrying costs are real cash bills during the build years ---
+      let carryCost = 0;
+      if (helocBal > 0.5) carryCost += helocBal * acc.helocRate;   // interest-only inside the window
+      if (helocWindowEndY !== null && y >= helocWindowEndY){
+        if (helocBal > 0.5){
+          refiBal += helocBal; refiPay += monthlyPayment(helocBal, acc.mortRatePct || 6.5, 30);
+          evts.push('HELOC window closes — '+fmtCompact(helocBal)+' refinanced to a 30-yr fixed');
+          helocBal = 0;
+        }
+        helocWindowEndY = null;
+      }
+      if (refiBal > 0.5) carryCost += refiPay*12;
+      if (polLoan > 0.5){
+        const chg = acc.loanType === 'index' ? 5.0 : washCharged(policyYear);
+        polLoan *= (1 + chg/100);
+        const guard = POLICY_LAPSE_GUARD * (cv + cvLoanAcct);
+        if (polLoan > guard){ const svc = polLoan - guard; polLoan = guard; carryCost += svc; polService += svc; }
+      }
+
+      let pool = acc.contribution + refund + purchRefund + (bal <= 0.5 ? mpay*12 : 0) + propCash - carryCost;
+      if (pool < 0){ shortfall += -pool; pool = 0; }          // bills exceed the pool → outside cash
       const cap = age >= 50 ? 31000 : 23500;                 // employee 401(k) limit (+catch-up)
       const qmWant = pool * fr.qm;
       let qmC = Math.min(qmWant, cap);
@@ -1410,7 +1643,7 @@
         }
         chunkC = 0;
       }
-      const rowChunk = chunkC, rowPol = polC, rowQm = qmC, rowRefund = refund; // capture for the playbook
+      const rowChunk = chunkC, rowPol = polC, rowQm = qmC, rowRefund = refund + purchRefund; // for the playbook
       const balBefore = bal;
       // Mortgage year: stacking lands the chunk up front (0% float), else it lands at year-end.
       if (bal > 0.5){
@@ -1420,17 +1653,29 @@
         if (bal < 0) bal = 0;
       }
       refund = qmC * acc.mtr;                                 // pre-tax refund lands next year
-      refundTotal += refund;
+      refundTotal += refund + purchRefund;
       qm = (qm + qmC) * (1+acc.qmGrowth);
-      const policyYear = acc.polYearsStart + y + 1;
       cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL, 0);
-      const evts = [];
+      if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
+      // Amortize the property loans and any refinanced HELOC through the year.
+      for (const p of props){
+        if (!p.owned || p.mortBal <= 0.5) continue;
+        const pr = (p.ratePct/100)/12;
+        for (let m=0; m<12 && p.mortBal>0.5; m++){ p.mortBal = p.mortBal*(1+pr) - p.mPay; }
+        if (p.mortBal <= 0.5){ p.mortBal = 0; evts.push('Property #'+(p.idx+1)+' loan paid off'); }
+      }
+      if (refiBal > 0.5){ const rr=((acc.mortRatePct||6.5)/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiPay; } if (refiBal <= 0.5){ refiBal = 0; refiPay = 0; } }
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
       if (acc.stacking && y < 5 && rowChunk > 1) evts.push('Chunk via 0% biz credit, pay the card down through the year');
-      timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, mortBal: bal, evts });
+      timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, propCash, mortBal: bal, evts });
     }
     if (bal <= 0.5 && freedAtYear === null) freedAtYear = acc.years;
-    return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, idleCash, timeline };
+    return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, idleCash,
+             timeline, purchases, shortfall, polServiceAcc: polService,
+             helocBal0: helocBal, helocWindowEnd0: helocWindowEndY !== null ? helocWindowEndY - acc.years : null,
+             refiBal0: refiBal, refiMonthlyPay0: refiPay, loanBal0: polLoan, cvLoanAcct0: cvLoanAcct,
+             passiveCarry0: passiveCarry,
+             propsState: props.map(p => ({ idx:p.idx, owned:p.owned, mortBal:p.mortBal, mPay:p.mPay })) };
   }
 
   function renderSection5(){
@@ -1465,18 +1710,37 @@
     const accYears = retireAge - currentAge;
     const mtr = marginalRatePct(+$('income').value, filingStatus)/100;
 
+    // Property purchase timing UI (property #1): clamp to the plan window; at today's age the
+    // purchase is treated as already made with outside cash (no vehicle draw), matching a member
+    // who owns the property now.
+    let buyAge1 = +$('buyAge1').value;
+    buyAge1 = Math.min(Math.max(buyAge1, currentAge), planAge-1);
+    $('v-buyAge1').textContent = buyAge1 <= currentAge ? currentAge+' — today' : buyAge1;
+    $('veh1Row').style.display = buyAge1 <= currentAge ? 'none' : '';
+    const propsDef = buildProps(currentAge, planAge);
+    // Passive-loss allowance at today's income — how much of a property paper loss offsets W-2
+    // income each working year (mirrors Section 2's cap math; the rest carries forward).
+    const magiNow = +$('income').value;
+    const allowanceNow = magiNow <= 100000 ? 25000 : magiNow >= 150000 ? 0 : 25000 - (magiNow-100000)*0.5;
+
     // Retirement inputs given one accumulation outcome. Policy year keeps counting from wherever
     // Section 3's "years accumulated" left off, through every accumulation year, into retirement —
     // real premium-charge and Standard-loan rates depend on this running total, not a fresh clock.
     const policyYearAtRetireStart = P.polYears + accYears;
-    const mkInp = (a, ceil, spendVal) => ({
+    const mkInp = (a, ceil, spendVal, defs) => ({
       todaySpend: spendVal, inflation, qmBalance: a.qmStart, qmGrowth, helocRate, homeValue, reGrowth, maxLtv,
       retireAge, horizon, policyYearAtRetireStart,
       startCV: a.cvStart, credRate: P.credRate/100, loanType: P.loanType, filingStatus,
       toolHeloc: TOOLS.heloc, toolPolicy: TOOLS.policy,
-      netRent0: TOOLS.rental ? RE.netRent : 0, invApprec: RE.invApprec,
-      ongoingDep: TOOLS.rental ? RE.ongoingDep : 0,
-      rentalValue0: TOOLS.rental ? RE.invPrice : 0,
+      props: (defs || propsDef).map(p => {
+        const st = (a.propsState||[]).find(s => s.idx === p.idx) || { owned:false, mortBal:0, mPay:0 };
+        return { idx:p.idx, buyT: p.buyAge - retireAge, price:p.price, downPct:p.downPct, ratePct:p.ratePct,
+                 vehicle:p.vehicle, noi0:p.noi0, apprec:p.apprec, depBonus:p.depBonus, depOngoing:p.depOngoing,
+                 owned: st.owned, mortBal: st.mortBal, mPay: st.mPay };
+      }),
+      helocBal0: a.helocBal0||0, helocWindowEnd0: (a.helocWindowEnd0 != null ? a.helocWindowEnd0 : null),
+      refiBal0: a.refiBal0||0, refiMonthlyPay0: a.refiMonthlyPay0||0,
+      loanBal0: a.loanBal0||0, cvLoanAcct0: a.cvLoanAcct0||0, passiveCarry0: a.passiveCarry0||0,
       mortBalRet: a.mortBalRet, mortRatePct: M1 ? M1.ratePct : 0, mortMonthlyPay: M1 ? M1.monthlyPay : 0,
       shieldCap: (strActive || repActive) ? Infinity : 25000,
       ceiling: { single: ceil.single, mfj: ceil.mfj }
@@ -1490,12 +1754,14 @@
     // room, no P&I, no chunk target); no policy = no Section-3 cash value; no 401(k) = no balance.
     const acc0 = {
       years: accYears, currentAge, contribution: annualContrib,
-      stacking: TOOLS.bizcredit && TOOLS.velocity, mtr, toolPolicy: TOOLS.policy,
+      stacking: TOOLS.bizcredit && TOOLS.velocity, mtr, toolPolicy: TOOLS.policy, toolHeloc: TOOLS.heloc,
       qm0: TOOLS.qualified ? qmBalance : 0, qmGrowth,
       cv0: TOOLS.policy ? P.startCV : 0, credRate: P.credRate/100, polYearsStart: P.polYears,
       mortBal: (TOOLS.mortgage && M1) ? M1.curBal : 0,
       mortRatePct: M1 ? M1.ratePct : 0,
-      mortMonthlyPay: (TOOLS.mortgage && M1) ? M1.monthlyPay : 0
+      mortMonthlyPay: (TOOLS.mortgage && M1) ? M1.monthlyPay : 0,
+      props: propsDef, homeValue0: homeValue, maxLtv, helocRate, loanType: P.loanType,
+      allowanceNow, shieldUnlimited: (strActive || repActive)
     };
 
     // Grid search: every 10%-step split of the contribution across the AVAILABLE vehicles.
@@ -1579,10 +1845,12 @@
         { label:'Legacy', val: fmtCompact(best.legacy) },
         { label:'Income extracted', val: fmtCompact(best.totalExtracted) },
         { label:'Total wealth', val: fmtCompact(best.legacy + best.totalExtracted) },
+        { label:'Total tax paid', val: fmtCompact(best.lifetimeTax) },
         payoffYear && { label:'House paid off', val: 'Yr '+payoffYear },
         allocOpt.a.capBound && { label:'Qualified', val:'IRS-capped' },
         allocOpt.a.refundTotal > 1000 && { label:'401(k) refunds reinvested', val: fmtCompact(allocOpt.a.refundTotal) },
-        allocOpt.a.idleCash > 500 && { label:'Idle cash — no tool to take it', val: fmtCompact(allocOpt.a.idleCash), risk:true }
+        allocOpt.a.idleCash > 500 && { label:'Idle cash — no tool to take it', val: fmtCompact(allocOpt.a.idleCash), risk:true },
+        allocOpt.a.shortfall > 500 && { label:'Outside cash needed (build yrs)', val: fmtCompact(allocOpt.a.shortfall), risk:true }
       ],
       // One-line takeaway: which vehicle wins and the real-rate reason, dynamically derived.
       (() => {
@@ -1618,7 +1886,7 @@
     // Everything below runs on the CHOSEN allocation's accumulation outcome.
     const results = chosenAlloc.runs;
     const byKey = k => results.find(r => r.key === k);
-    const debtOf = r => r.homeDebtEnd + r.policyEnd;
+    const debtOf = r => r.homeDebtEnd + r.policyEnd + (r.rentalDebtEnd || 0);
     const reachAge = r => retireAge + r.years;
     // Objective (honest, over ALL strategies): reach the full plan first, then maximize the chosen
     // goal (legacy or income extracted), then most years as a tie-break. Tax is never in this.
@@ -1638,11 +1906,14 @@
     renderStatCard('alis-why', [
       { label:'Outcome', val: optimal.sustainable ? 'Age '+planAge+' ✓' : 'Dry at '+reachAge(optimal), risk: !optimal.sustainable },
       { label:goalLabel, val: fmtCompact(goalVal) },
+      { label:'Total tax paid', val: fmtCompact(optimal.lifetimeTax) },
       { label:'Shield saved (tax)', val: fmtCompact(optimal.shieldTaxSaved) },
       { label:'Estate debt', val: fmtCompact(debtOf(optimal)) },
       optimal.rmdTotal > 1000 && { label:'RMDs forced', val: fmtCompact(optimal.rmdTotal) },
       refi0 && { label:'Refi at', val: 'age '+refi0.age },
-      optimal.rec.policy.serviceTotal > 1000 && { label:'Loan service', val: fmtCompact(optimal.rec.policy.serviceTotal), risk:true }
+      optimal.rec.policy.serviceTotal > 1000 && { label:'Loan service', val: fmtCompact(optimal.rec.policy.serviceTotal), risk:true },
+      (() => { const f = [...(chosenAlloc.a.purchases||[]), ...optimal.rec.purchases].filter(x=>!x.ok).length;
+               return f > 0 && { label:'Purchases that don’t fit', val: ''+f, risk:true }; })()
     ],
     // One-line takeaway — the single most decision-relevant fact, not a wall of reasoning.
     (() => {
@@ -1672,7 +1943,7 @@
     $('ret-headline-card').classList.toggle('risk', !chosen.sustainable);
     $('s-totalRetYears').textContent = chosen.sustainable ? ('age '+planAge+' ✓') : ('age '+reachAge(chosen));
     const usedParts = [];
-    if (chosen.rec.rent.total > 1) usedParts.push('rental');
+    if (Math.abs(chosen.rec.rent.total) > 1) usedParts.push('rental');
     if (chosen.rec.qm.years > 0) usedParts.push(chosen.rec.qm.years+'y qualified');
     if (chosen.rec.heloc.years > 0) usedParts.push(chosen.rec.heloc.years+'y HELOC');
     if (chosen.rec.policy.years > 0) usedParts.push(chosen.rec.policy.years+'y policy');
@@ -1687,23 +1958,66 @@
     $('float-legacy').textContent = fmtCompact(chosen.legacy);
     $('float-extracted').textContent = fmtCompact(chosen.totalExtracted);
     $('float-wealth').textContent = fmtCompact(chosen.legacy + chosen.totalExtracted);
+    $('float-tax').textContent = fmtCompact(chosen.lifetimeTax);
     $('float-alloc').innerHTML = 'Allocation: <b>'+((annualContrib>0&&accYears>0)?frLabel(chosenAlloc.fr):'—')+'</b>';
     $('float-mix').innerHTML = 'Funding mix: <b>'+chosen.strat.label+'</b>';
 
     // ---- Headline stats ----
-    $('s-retRent').textContent = chosen.rec.rent.yr1 > 1 ? fmt0.format(chosen.rec.rent.yr1)+'/yr' : '—';
+    $('s-retRent').textContent = Math.abs(chosen.rec.rent.yr1) > 1 ? fmt0.format(chosen.rec.rent.yr1)+'/yr' : '—';
+    $('s-retRent').closest('.lline').classList.toggle('risk', chosen.rec.rent.yr1 < -1);
     // The real, honest tax lever: what the depreciation shield saves (informational only — never
     // part of the optimization, per Bruce: legacy or income extracted is the only goal that matters).
     $('s-taxSaved').textContent = fmt0.format(chosen.shieldTaxSaved);
     $('s-extracted').textContent = fmt0.format(chosen.totalExtracted);
     $('s-legacy').textContent = fmt0.format(chosen.legacy);
     $('s-wealth').textContent = fmt0.format(chosen.legacy + chosen.totalExtracted);
+    $('s-tax').textContent = fmt0.format(chosen.lifetimeTax);
 
-    // ---- Rental block ----
-    $('s-rentLocSub').textContent = propLocation==='hawaii' ? 'Hawaii (Oahu) property' : 'Mainland property';
-    $('s-rentYr1').textContent = chosen.rec.rent.yr1 ? fmt0.format(chosen.rec.rent.yr1)+'/yr' : '—';
-    $('s-rentYrN').textContent = chosen.rec.rent.yrN ? fmt0.format(chosen.rec.rent.yrN)+'/yr' : '—';
+    // ---- Properties block ----
+    $('s-rentLocSub').textContent = propsDef.length > 1
+      ? propsDef.length+' properties (rent minus their loan payments)'
+      : (propLocation==='hawaii' ? 'Hawaii (Oahu) property' : 'Mainland property');
+    $('s-rentYr1').textContent = Math.abs(chosen.rec.rent.yr1) > 1 ? fmt0.format(chosen.rec.rent.yr1)+'/yr' : '—';
+    $('s-rentYrN').textContent = Math.abs(chosen.rec.rent.yrN) > 1 ? fmt0.format(chosen.rec.rent.yrN)+'/yr' : '—';
     $('s-rentTotal').textContent = fmt0.format(chosen.rec.rent.total);
+
+    // ---- Property affordability readouts (real capacity from the CHOSEN plan's records) ----
+    const allPurch = [...(chosenAlloc.a.purchases||[]), ...(chosen.rec.purchases||[])];
+    const goalWord = optimizeMode === 'legacy' ? 'legacy' : optimizeMode === 'income' ? 'income' : 'total wealth';
+    const affordText = p => {
+      if (p.ownedFromStart) return '<b>Owned today</b> — bought with outside cash; its loan and rent run through the whole plan.';
+      const r = allPurch.find(x => x.idx === p.idx);
+      if (!r) return '<b>Purchase not reached</b> — the plan '+(chosen.sustainable ? 'window' : 'runs dry')+' before age '+p.buyAge+'.';
+      const vLabel = p.vehicle==='heloc' ? 'HELOC' : 'Policy';
+      const room = p.vehicle==='heloc' ? r.roomHeloc : r.roomPolicy;
+      const otherLabel = p.vehicle==='heloc' ? 'policy' : 'HELOC';
+      const otherRoom = p.vehicle==='heloc' ? r.roomPolicy : r.roomHeloc;
+      let s = 'At age '+r.age+': needs <b>'+fmtCompact(r.down)+'</b> down · '+vLabel+' room then: <b>'+fmtCompact(room)+'</b> '+(r.ok ? '✓' : '✗');
+      if (!r.ok){
+        s += ' — <b>doesn’t fit.</b> That room funds up to a <b>'+fmtCompact(room / p.downPct)+'</b> property at this down payment';
+        s += otherRoom >= r.down ? ' — or switch the down payment to the '+otherLabel+' ('+fmtCompact(otherRoom)+' room) ✓.' : '; the '+otherLabel+' ('+fmtCompact(otherRoom)+') doesn’t fit either.';
+      } else {
+        s += ' · '+otherLabel+' room: '+fmtCompact(otherRoom)+(otherRoom >= r.down ? ' (also fits)' : ' (won’t fit)');
+        // Both vehicles fit → tell them which one actually serves the goal better (real re-run, not a guess).
+        if (otherRoom >= r.down){
+          const flipDefs = propsDef.map(x => x.idx === p.idx ? {...x, vehicle: (p.vehicle==='heloc'?'policy':'heloc')} : x);
+          const a2 = accumulate(chosenAlloc.fr, Object.assign({}, acc0, { props: flipDefs }));
+          const best2 = [...runStrategies(ceil => mkInp(a2, ceil, todaySpend, flipDefs))].sort(objSort)[0];
+          const d = modeMetric(best2) - modeMetric(optimal);
+          s += d > 25000 ? ' · <b>ALIS: the '+otherLabel+' funds this better here (+'+fmtCompact(d)+' '+goalWord+').</b>'
+             : d < -25000 ? ' · ALIS: the '+vLabel+' is the right vehicle here ✓'
+             : ' · ALIS: either vehicle works — near-identical outcome.';
+        }
+      }
+      return s;
+    };
+    $('afford1').innerHTML = (TOOLS.rental && propsDef.length) ? affordText(propsDef[0])
+      : 'Rental tool is off in Section 4 — flip it on to plan property purchases.';
+    EXTRA_PROPS.forEach((e, i) => {
+      const el = $('xafford'+i); if (!el) return;
+      const p = propsDef.find(x => x.idx === i+1);
+      el.innerHTML = p ? affordText(p) : 'Rental tool is off in Section 4.';
+    });
 
     // ---- Qualified block (blended) ----
     const qmAvg = chosen.rec.qm.years ? chosen.rec.qm.totalDrawn / chosen.rec.qm.years : 0;
@@ -1743,6 +2057,7 @@
 
     // ---- Estate ----
     $('s-reValueEnd').textContent = fmt0.format(chosen.homeEnd);
+    $('s-rentalDebtEnd').textContent = chosen.rentalDebtEnd > 1 ? fmt0.format(chosen.rentalDebtEnd) : 'none ✓';
     $('s-lifeInsNeeded').textContent = fmt0.format(chosen.homeDebtEnd);
     $('s-p3SelfCovered').textContent = fmt0.format(chosen.policyEnd);
 
@@ -1750,19 +2065,20 @@
     // ---- The year-by-year playbook: accumulation actions, then retirement funding, as a table ----
     const pb = [];
     const money = n => n > 0.5 ? fmtCompact(n) : '—';
+    const moneyN = n => Math.abs(n) > 0.5 ? (n < 0 ? '−'+fmtCompact(-n) : fmtCompact(n)) : '—';
     if (chosenAlloc.a.timeline.length){
       pb.push('<div class="pb-phase">Phase 1 — Build (age '+currentAge+' → '+retireAge+')</div>');
-      pb.push('<table class="pb"><tr><th>Age</th><th>Chunk mortgage</th><th>Policy premium</th><th>401(k)</th><th>Refund in pool</th><th>Mortgage left</th><th>Milestones</th></tr>');
+      pb.push('<table class="pb"><tr><th>Age</th><th>Chunk mortgage</th><th>Policy premium</th><th>401(k)</th><th>Refund in pool</th><th>Property cash</th><th>Mortgage left</th><th>Milestones</th></tr>');
       chosenAlloc.a.timeline.forEach(r => {
-        pb.push('<tr'+(r.evts.some(e=>e.includes('paid off'))?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.chunk)+'</td><td class="num">'+money(r.polC)+'</td><td class="num">'+money(r.qmC)+'</td><td class="num">'+money(r.refund)+'</td><td class="num">'+money(r.mortBal)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
+        pb.push('<tr'+(r.evts.some(e=>e.includes('paid off')||e.includes('Buy property'))?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.chunk)+'</td><td class="num">'+money(r.polC)+'</td><td class="num">'+money(r.qmC)+'</td><td class="num">'+money(r.refund)+'</td><td class="num">'+moneyN(r.propCash||0)+'</td><td class="num">'+money(r.mortBal)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
       });
       pb.push('</table>');
     }
     if (chosen.timeline.length){
       pb.push('<div class="pb-phase">Phase 2 — Live on it (age '+retireAge+' → '+(retireAge+chosen.years)+')</div>');
-      pb.push('<table class="pb"><tr><th>Age</th><th>Need</th><th>Rent</th><th>401(k) draw</th><th>Tax</th><th>HELOC draw</th><th>Policy draw</th><th>Events</th></tr>');
+      pb.push('<table class="pb"><tr><th>Age</th><th>Need</th><th>Property cash</th><th>401(k) draw</th><th>Tax</th><th>HELOC draw</th><th>Policy draw</th><th>Events</th></tr>');
       chosen.timeline.forEach(r => {
-        pb.push('<tr'+(r.evts.length?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.need)+'</td><td class="num">'+money(r.rent)+'</td><td class="num">'+money(r.Q)+'</td><td class="num">'+money(r.tax)+'</td><td class="num">'+money(r.he)+'</td><td class="num">'+money(r.po)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
+        pb.push('<tr'+(r.evts.length?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.need)+'</td><td class="num">'+moneyN(r.rent)+'</td><td class="num">'+money(r.Q)+'</td><td class="num">'+money(r.tax)+'</td><td class="num">'+money(r.he)+'</td><td class="num">'+money(r.po)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
       });
       pb.push('</table>');
       if (!chosen.sustainable) pb.push('<p class="way-hint show" style="margin-top:10px;"><b>The plan runs dry at age '+reachAge(chosen)+'</b> — the playbook stops where the money does.</p>');
@@ -1773,8 +2089,8 @@
                    legacy: chosen.legacy, tax: chosen.lifetimeTax, extracted: chosen.totalExtracted,
                    wealth: chosen.legacy + chosen.totalExtracted, spend: todaySpend };
 
-    window.EPIC_DEBUG = { chosen, chosenAlloc, results };
-    window.EPIC_DEBUG_FN = { simulateStrategy, washCharged, washCredited, premChargePct, federalTax, STRATS };
+    window.EPIC_DEBUG = { chosen, chosenAlloc, results, propsDef };
+    window.EPIC_DEBUG_FN = { simulateStrategy, accumulate, washCharged, washCredited, premChargePct, federalTax, STRATS };
   }
 
   $('btn-single').addEventListener('click', () => { filingStatus='single'; $('btn-single').classList.add('active'); $('btn-mfj').classList.remove('active'); renderSection2(); renderSection5(); });
@@ -1833,21 +2149,21 @@
       copy:'0% business credit lets each chunk land a year early — you pay the card down as you go. Same dollars, more punch.',
       aha:'<b>The bank’s money does the early work.</b> Every later domino falls sooner.',
       flat:'<b>An accelerator, not an engine</b> — it matters most when big chunks land early. At your numbers the boost is small.' },
-    { title:'Buy a property that pays you',
-      tools:{ velocity:true, bizcredit:true, policy:false, heloc:false, mortgage:true, rental:true, qualified:true },
-      copy:'Rent comes in every month. On paper the building “wears out” — and that write-off makes most of the rent tax-free.',
-      aha:'<b>Income that barely gets taxed.</b> The write-off is the shield.',
-      flat:'<b>The rent is modest at these numbers</b> — but the write-off shields it, and the property itself grows the legacy.' },
     { title:'Build the tax-free engine',
-      tools:{ velocity:true, bizcredit:true, policy:true, heloc:false, mortgage:true, rental:true, qualified:true },
+      tools:{ velocity:true, bizcredit:true, policy:true, heloc:false, mortgage:true, rental:false, qualified:true },
       copy:'A cash-value policy grows tax-free. In retirement it hands you income as loans — no tax bill, and nothing to repay while you live.',
       aha:'<b>Tax-free retirement income</b> — the loan settles itself from the death benefit.',
       flat:'<b>Quiet here, loud later</b> — the policy needs years to compound. Push retirement age out and watch it take over.' },
     { title:'Put the house back to work',
-      tools:{ velocity:true, bizcredit:true, policy:true, heloc:true, mortgage:true, rental:true, qualified:true },
-      copy:'The paid-off house isn’t done. In retirement you can borrow against it tax-free — the estate settles up at the end.',
+      tools:{ velocity:true, bizcredit:true, policy:true, heloc:true, mortgage:true, rental:false, qualified:true },
+      copy:'The paid-off house isn’t done. You can borrow against it tax-free — for retirement income, or to fund the next move below.',
       aha:'<b>The house funds retirement twice:</b> first its payment, now its equity.',
-      flat:'<b>ALIS didn’t need it here — that’s the point.</b> The HELOC is the safety valve. Shrink the 401(k) balance and watch it step in.' },
+      flat:'<b>ALIS didn’t need it here — that’s the point.</b> The HELOC is the safety valve — and the war chest for the next step.' },
+    { title:'Buy a property that pays you',
+      tools:{ velocity:true, bizcredit:true, policy:true, heloc:true, mortgage:true, rental:true, qualified:true },
+      copy:'Now the plan buys the rental — at the age you picked, with a down payment drawn from what you built (home equity or the policy). The rent works on the loan, and the write-off shields the tax.',
+      aha:'<b>Bought with the plan’s own money.</b> Rent, write-off, and appreciation stack from here.',
+      flat:'<b>The loan eats the rent at these numbers</b> — the wins are the write-off and the value growth. More down, a later date, or a higher-yield market flips the cash flow.' },
     { title:'The full picture',
       tools:{ velocity:true, bizcredit:true, policy:true, heloc:true, mortgage:true, rental:true, qualified:true },
       copy:'Everything working together. ALIS splits your money the best way and writes the year-by-year playbook.',
@@ -1908,6 +2224,14 @@
   // Mortgage-shape inputs feed the Section-5 allocator (via M1) as well as Section 1's own display.
   ['principal','rate','term','yearsPaid'].forEach(id => $(id).addEventListener('input', () => { renderSection1(); renderSection5(); }));
   ['income','withheld','invPrice','downPct','invRate','writeOff','otherPassive','grossYield','opex','invApprec'].forEach(id => $(id).addEventListener('input', renderSection2));
+  $('buyAge1').addEventListener('input', renderSection5);
+  $('btn-veh1-heloc').addEventListener('click', () => { veh1='heloc'; $('btn-veh1-heloc').classList.add('active'); $('btn-veh1-policy').classList.remove('active'); renderSection5(); });
+  $('btn-veh1-policy').addEventListener('click', () => { veh1='policy'; $('btn-veh1-policy').classList.add('active'); $('btn-veh1-heloc').classList.remove('active'); renderSection5(); });
+  $('addProp').addEventListener('click', () => {
+    if (EXTRA_PROPS.length >= MAX_EXTRA) return;
+    EXTRA_PROPS.push({ buyAge: 70, price: 800000, downPct: 25, ratePct: 7, loc: 'mainland', vehicle: 'heloc' });
+    renderPropCards(); renderSection5();
+  });
   ['wRedux','overfundAnnual','credRate','polYears'].forEach(id => $(id).addEventListener('input', renderSection3));
   ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
   // Remember the member's own lifestyle floor so Max-income mode (which commandeers the slider to
@@ -1934,6 +2258,7 @@
     floatPanel.classList.toggle('show', window.scrollY > 400);
   }, { passive: true });
 
+  renderPropCards();
   renderSection1();
   renderSection2();
   renderSection3();
