@@ -239,12 +239,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b10</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b11</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b11</span><p class="topic-exp" style="margin-top:2px;">Velocity banking (and 0% business-credit stacking) now works across EVERY loan you own, not just the home mortgage — it auto-optimizes by always attacking whichever loan (home or any rental) carries the highest rate first, a guaranteed-return waterfall. Also fixed a small gap: chunk dollars left over after a loan got fully paid off used to be lost for that year — they now correctly flow into the policy instead, which nudges default numbers up slightly.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b10</span><p class="topic-exp" style="margin-top:2px;">Ages and lifestyle now adjustable from Section 3 and the floating ALIS panel too (not just Section 1) — all copies stay in sync. Plan-through age can go to 120. Fixed a confusing duplicate: "Cash value at retirement start" appeared twice with different numbers — the smaller one is really today's value; relabeled it and pointed to the real (bigger) retirement-start figure.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b9</span><p class="topic-exp" style="margin-top:2px;">More room for members with less debt or savings: 401(k) balance and mortgage principal can now go all the way to $0, and property prices can go as low as $50K–$100K instead of a $300K floor.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b8</span><p class="topic-exp" style="margin-top:2px;">Whole page reorganized into the advisor flow: Section 1 your numbers, Section 2 the tools, Section 3 the optimized plan, Section 4 opportunities (a live dashboard of tax to claw back, suspended write-offs, unused room, and a real what-if for one more property). Every asset/tool now has an "In the plan / Not applicable" switch, and the ALIS panel gained an Apply button that rebuilds the year-by-year playbook.</p></div>
@@ -454,7 +455,7 @@
 
       <div class="topic" data-natopic="bizcredit">
         <div class="topic-hrow"><div class="topic-h">0% business credit — the stacking accelerator</div><button type="button" class="toggle-btn na-btn" data-natool="bizcredit">✓ In the plan</button></div>
-        <p class="topic-exp">When it's on, the first five years of chunks land at the START of each year on 0% business credit (paid down through the year) instead of at the end — the same dollars hit the mortgage a year earlier, and every later domino falls sooner. An accelerator on velocity banking, not its own engine.</p>
+        <p class="topic-exp">When it's on, the first five years of chunks land at the START of each year on 0% business credit (paid down through the year) instead of at the end — the same dollars hit whichever loan they're attacking a year earlier, and every later domino falls sooner. An accelerator on velocity banking, not its own engine.</p>
       </div>
 
       <div class="topic" data-natopic="policy">
@@ -583,7 +584,7 @@
 
       <div class="topic">
         <div class="topic-h">Funding the plan — ALIS allocates your annual contribution</div>
-        <p class="topic-exp">Set the amount to allocate above (or in the ALIS panel — same number, kept in sync). Between now and retirement, that fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that best serves your chosen goal.</p>
+        <p class="topic-exp">Set the amount to allocate above (or in the ALIS panel — same number, kept in sync). Between now and retirement, that fixed amount goes into the available vehicles each year: velocity chunking, the policy, and the qualified plan. Real mechanics included: chunking is auto-optimized across every open loan — the home mortgage AND any owned rental — always attacking whichever one carries the highest rate first (a guaranteed-return waterfall); qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); a loan paying off frees its whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early, against whichever loan is winning the waterfall that year. ALIS tries every split and keeps the one that best serves your chosen goal.</p>
         <p class="topic-exp" id="alloc-context">–</p>
         <div class="alis-rec" id="allocRec" style="margin-top:18px;">
           <div class="alis-rec-head">
@@ -672,7 +673,7 @@
         </div>
         <div class="caveat">
           <span class="mark">!</span>
-          <p><b>Other assumptions, in the open.</b> Every property carries its own 30-yr fixed loan from its purchase date — the payment is a real bill in the plan, and unused paper losses (depreciation + interest beyond the rent) carry forward: they offset W-2 income up to the $25K allowance while working ($100–150K MAGI phase-out; unlimited with Way&nbsp;1/2), offset other property income without limit, and shield retirement withdrawals up to the same allowance. Down payments for future purchases draw the HELOC or a policy loan at the purchase date — if the room isn't there, the purchase honestly fails. Closing costs aren't modeled; property loan interest uses a start-of-year approximation; the home value securing the HELOC is held flat until retirement. Depreciation runs ~27 years per property. RMDs start at 73 per the IRS Uniform Lifetime Table. Qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
+          <p><b>Other assumptions, in the open.</b> Velocity chunking is auto-optimized across every open loan (home mortgage + any owned rental) — it always attacks whichever one carries the highest rate first, a guaranteed-return waterfall, then spills to the next-highest once the first is paid off; any chunk dollars left over after every loan is cleared now flow into the policy (or qualified room) instead of being lost, same as any other year with nothing left to chunk. Every property carries its own 30-yr fixed loan from its purchase date — the payment is a real bill in the plan, and unused paper losses (depreciation + interest beyond the rent) carry forward: they offset W-2 income up to the $25K allowance while working ($100–150K MAGI phase-out; unlimited with Way&nbsp;1/2), offset other property income without limit, and shield retirement withdrawals up to the same allowance. Down payments for future purchases draw the HELOC or a policy loan at the purchase date — if the room isn't there, the purchase honestly fails. Closing costs aren't modeled; property loan interest uses a start-of-year approximation; the home value securing the HELOC is held flat until retirement. Depreciation runs ~27 years per property. RMDs start at 73 per the IRS Uniform Lifetime Table. Qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
         </div>
       </div>
 
@@ -1693,52 +1694,77 @@
       const denom = fr.chunk + fr.policy;
       let chunkC = denom > 0 ? rest * (fr.chunk/denom) : 0;
       let polC   = denom > 0 ? rest * (fr.policy/denom) : 0;
+
+      // --- Auto-optimized velocity: chunk dollars attack whichever OPEN loan — the home mortgage
+      // or any owned rental — carries the HIGHEST rate. A guaranteed-return waterfall, no search
+      // needed: paying down a certain fixed-rate debt beats any uncertain alternative, so the
+      // highest rate always wins first. 0% biz-credit stacking (front-loads years 1-5) rides
+      // whichever loan wins the waterfall — same mechanic as before, no longer locked to the home.
+      const chunkTargets = () => {
+        const list = [];
+        if (bal > 0.5) list.push({ rate: acc.mortRatePct, get:()=>bal, set:v=>{bal=v;}, label:'the home mortgage' });
+        for (const p of props) if (p.owned && p.mortBal > 0.5) list.push({ rate: p.ratePct, get:()=>p.mortBal, set:v=>{p.mortBal=v;}, label:"property #"+(p.idx+1)+"'s loan" });
+        return list.sort((a,b) => b.rate - a.rate);
+      };
+      let chunkWinner = null;
+      const runChunk = amount => {
+        let left = amount;
+        for (const t of chunkTargets()){
+          if (left <= 0.5) break;
+          const cb = t.get(), d = Math.min(left, cb);
+          t.set(cb - d); left -= d; totalChunked += d;
+          if (chunkWinner === null && d > 0.5) chunkWinner = t.label;
+        }
+        return left; // unspent — no open loan left to absorb it
+      };
+      const rerouteChunk = amt => {
+        if (acc.toolPolicy !== false) polC += amt;
+        else { const toQm = Math.min(amt, Math.max(cap - qmC, 0)); qmC += toQm; if (amt - toQm > 0.5) idleCash += amt - toQm; }
+      };
+
       if (denom === 0 && rest > 0.5){
         // Pure-qualified split that overflowed the IRS cap, with nowhere by default to land —
-        // reroute in priority order: policy (if available) → mortgage paydown (if a balance
-        // remains) → idle cash. Never let it silently vanish.
+        // reroute in priority order: policy (if available) → mortgage paydown (any open loan,
+        // home or rental) → idle cash. Never let it silently vanish.
         if (acc.toolPolicy !== false) polC = rest;
-        else if (bal > 0.5) chunkC = rest;
+        else if (chunkTargets().length) chunkC = rest;
         else idleCash += rest;
       }
-      if (bal <= 0.5){
-        // House done → this year's "chunk" share has nothing left to attack. Reroute it in
-        // priority order: policy (if available) → extra qualified room under the IRS cap →
-        // otherwise it's genuinely idle cash (tracked below, never silently dropped).
-        if (acc.toolPolicy !== false){
-          polC += chunkC;
-        } else {
-          const toQm = Math.min(chunkC, Math.max(cap - qmC, 0));
-          qmC += toQm;
-          const leftover = chunkC - toQm;
-          if (leftover > 0.5) idleCash += leftover;
-        }
+      if (!chunkTargets().length && chunkC > 0.5){
+        // Every mortgage — home AND every rental — is already paid off. Reroute the whole share.
+        rerouteChunk(chunkC);
         chunkC = 0;
       }
       const rowChunk = chunkC, rowPol = polC, rowQm = qmC, rowRefund = refund + purchRefund; // for the playbook
       const balBefore = bal;
-      // Mortgage year: stacking lands the chunk up front (0% float), else it lands at year-end.
-      if (bal > 0.5){
-        if (acc.stacking && y < 5){ totalChunked += Math.min(chunkC, bal); bal = Math.max(bal - chunkC, 0); chunkC = 0; }
-        for (let m=0; m<12 && bal>0.5; m++){ bal = bal*(1+mr) - mpay; }
-        if (bal > 0.5 && chunkC > 0){ totalChunked += Math.min(chunkC, bal); bal = Math.max(bal - chunkC, 0); }
-        if (bal < 0) bal = 0;
+      const propBalBefore = {}; for (const p of props) propBalBefore[p.idx] = p.mortBal;
+      // Stacking lands the chunk up front (0% float, years 1-5) against whichever loan wins the
+      // waterfall; otherwise it lands at year-end — same timing as before, now vehicle-agnostic.
+      if (acc.stacking && y < 5 && chunkC > 0.5){
+        const leftover = runChunk(chunkC);
+        if (leftover > 0.5) rerouteChunk(leftover);
+        chunkC = 0;
+      }
+      if (bal > 0.5){ for (let m=0; m<12 && bal>0.5; m++){ bal = bal*(1+mr) - mpay; } if (bal < 0) bal = 0; }
+      for (const p of props){
+        if (!p.owned || p.mortBal <= 0.5) continue;
+        const pr = (p.ratePct/100)/12;
+        for (let m=0; m<12 && p.mortBal>0.5; m++){ p.mortBal = p.mortBal*(1+pr) - p.mPay; }
+        if (p.mortBal < 0) p.mortBal = 0;
+      }
+      if (chunkC > 0.5){
+        const leftover = runChunk(chunkC);
+        if (leftover > 0.5) rerouteChunk(leftover);
       }
       refund = qmC * acc.mtr;                                 // pre-tax refund lands next year
       refundTotal += refund + purchRefund;
       qm = (qm + qmC) * (1+acc.qmGrowth);
       cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL, 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
-      // Amortize the property loans and any refinanced HELOC through the year.
-      for (const p of props){
-        if (!p.owned || p.mortBal <= 0.5) continue;
-        const pr = (p.ratePct/100)/12;
-        for (let m=0; m<12 && p.mortBal>0.5; m++){ p.mortBal = p.mortBal*(1+pr) - p.mPay; }
-        if (p.mortBal <= 0.5){ p.mortBal = 0; evts.push('Property #'+(p.idx+1)+' loan paid off'); }
-      }
       if (refiBal > 0.5){ const rr=((acc.mortRatePct||6.5)/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiPay; } if (refiBal <= 0.5){ refiBal = 0; refiPay = 0; } }
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
-      if (acc.stacking && y < 5 && rowChunk > 1) evts.push('Chunk via 0% biz credit, pay the card down through the year');
+      for (const p of props) if (propBalBefore[p.idx] > 0.5 && p.mortBal <= 0.5) evts.push("Property #"+(p.idx+1)+" loan paid off — "+fmtCompact(p.mPay*12)+'/yr payment joins the pool');
+      if (rowChunk > 1 && chunkWinner) evts.push('Chunk '+fmtCompact(rowChunk)+' → '+chunkWinner+((acc.stacking && y<5) ? ' via 0% biz credit' : ''));
       timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, propCash, mortBal: bal, evts });
     }
     if (bal <= 0.5 && freedAtYear === null) freedAtYear = acc.years;
@@ -1857,7 +1883,8 @@
         return [...variants].sort(objSort)[0];
       });
     }
-    const chunkAllowed = TOOLS.velocity && TOOLS.mortgage;    // chunking needs a mortgage to attack
+    // Chunking needs SOME open loan to attack — the home mortgage, or a rental (bought now or later).
+    const chunkAllowed = TOOLS.velocity && (TOOLS.mortgage || (TOOLS.rental && propsDef.length > 0));
     function gridAt(spendVal, step){
       const out = [];
       for (let q=0; q<=10; q+=step) for (let c=0; c<=10-q; c+=step){
@@ -1940,7 +1967,7 @@
       (() => {
         const mR = M1 ? M1.ratePct.toFixed(1) : '—', cR = P.credRate.toFixed(1);
         if (fr.policy >= 0.5) return '<b>Policy wins</b> — '+accYears+' yrs lets its '+cR+'% crediting outrun the '+mR+'% mortgage and the qualified tax drag.';
-        if (fr.chunk >= 0.5) return '<b>Paying down the mortgage wins</b> — a guaranteed '+mR+'% return beats the policy’s early-cost drag over this runway.';
+        if (fr.chunk >= 0.5) return '<b>Velocity chunking wins</b> — a guaranteed '+mR+'%+ return (auto-optimized to whichever loan carries the highest rate) beats the policy’s early-cost drag over this runway.';
         if (fr.qm >= 0.5) return '<b>Qualified wins here</b> — tax-deferred growth outruns the alternatives at these rates.';
         return 'A <b>blended split</b> wins — no single vehicle dominates at these rates.';
       })());
