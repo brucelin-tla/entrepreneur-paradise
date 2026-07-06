@@ -49,6 +49,11 @@
   .changelog { margin-top: 10px; }
   .changelog-entry { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--line); }
   .changelog-date { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--brass); font-weight: 700; }
+  .topic-hrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .na-btn { flex: 0 0 auto; font-size: 11px; }
+  .na-btn.off { background: transparent; color: var(--risk); border-color: var(--risk); }
+  .topic.na-off .split, .topic.na-off .topic-exp, .topic.na-off .caveat { opacity: 0.35; pointer-events: none; }
+  .float-cta.flash { background: var(--ledger); color: var(--paper-raised); }
   h1 { font-size: 29px; margin: 8px 0 8px; letter-spacing: -0.01em; }
   header p { margin: 0; color: var(--ink-soft); max-width: 74ch; font-size: 15px; }
 
@@ -234,12 +239,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b7</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b8</span>
     <h1>Epic Life Ledger</h1>
-    <p>Four things, in order: velocity-bank the mortgage to save time and interest — get a real tax break from a second property, bought now or later — put the tax savings to work in a policy — then combine qualified money, a HELOC, and that same policy to see how many years of the same lifestyle retirement can actually fund, with the debt covered.</p>
+    <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b8</span><p class="topic-exp" style="margin-top:2px;">Whole page reorganized into the advisor flow: Section 1 your numbers, Section 2 the tools, Section 3 the optimized plan, Section 4 opportunities (a live dashboard of tax to claw back, suspended write-offs, unused room, and a real what-if for one more property). Every asset/tool now has an "In the plan / Not applicable" switch, and the ALIS panel gained an Apply button that rebuilds the year-by-year playbook.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b7</span><p class="topic-exp" style="margin-top:2px;">Buying a property is now a future move, not day one: pick an age to buy (yours or up to 3 more), funded by a HELOC or policy loan against what the plan has actually built by then — the tool tells you honestly if the room isn't there yet. Every property now carries a real loan payment and a real tax write-off that carries forward, so the numbers reflect true cash flow, not just gross rent. "Total tax paid" is back as an FYI line under Total wealth.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b6</span><p class="topic-exp" style="margin-top:2px;">Three goals to choose from in the ALIS panel: Max legacy, Max income (ALIS finds your biggest sustainable lifestyle), or Most of both. Added a "Total wealth created" line (income kept + legacy left).</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 5, 2026 — b4/b5</span><p class="topic-exp" style="margin-top:2px;">Income-extracted figure fixed to be net of tax, not gross withdrawn. Tax bracket removed as something you set — ALIS searches the pacing automatically.</p></div>
@@ -250,15 +256,54 @@
 
   <div class="sheet">
 
-    <!-- 1. MORTGAGE + VELOCITY CHUNKING -->
+    <!-- 1. YOUR NUMBERS — ASSETS & VEHICLES -->
     <section class="sec">
       <span class="sec-num">Section 1</span>
-      <h2>Velocity banking — save time and interest</h2>
-      <p class="sub">Goal 1: a 0%-financed lump sum attacks the mortgage, funded by deferring real business expenses instead of paying them in cash.</p>
+      <h2>Your numbers — assets &amp; vehicles</h2>
+      <p class="sub">Everything the plan is built from: income and tax, ages, the 401(k), the home mortgage, and the rental property (bought now or at a future age you pick). Get these right first — every section below runs off them.</p>
 
       <div class="topic">
-        <div class="topic-h">The mortgage, on schedule</div>
-        <p class="topic-exp">No chunks yet — this is the baseline being attacked below.</p>
+        <div class="topic-h">Income, tax &amp; ages</div>
+        <p class="topic-exp">Your income sets the tax math everywhere — how much of a write-off you can use now, what a 401(k) withdrawal costs later. The ages set the plan's window: build until retirement, then fund the lifestyle through the plan-through age.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="toggle-row">
+              <button type="button" class="toggle-btn active" id="btn-single">Single</button>
+              <button type="button" class="toggle-btn" id="btn-mfj">Married filing jointly</button>
+            </div>
+            <div class="control"><label>Annual taxable income <span class="val" id="v-income">$180,000</span></label><input type="range" id="income" min="30000" max="700000" step="5000" value="180000"></div>
+            <div class="control"><label>Current annual tax withheld <span class="val" id="v-withheld">$32,000</span></label><input type="range" id="withheld" min="0" max="200000" step="1000" value="32000"></div>
+          </div>
+          <div class="side-controls">
+            <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="30" max="70" step="1" value="45"></div>
+            <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="50" max="75" step="1" value="65"></div>
+            <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="100" step="1" value="90"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic" data-natopic="qualified">
+        <div class="topic-hrow"><div class="topic-h" id="veh-qm-h">The 401(k) / qualified account</div><button type="button" class="toggle-btn na-btn" data-natool="qualified">✓ In the plan</button></div>
+        <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS decides how hard to draw it based on the goal you pick in Section&nbsp;3; the untouched balance keeps growing tax-deferred.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
+            <div class="control"><label>Projected growth rate <span class="val" id="v-qmGrowth">6.00%</span></label><input type="range" id="qmGrowth" min="3" max="8" step="0.25" value="6"></div>
+          </div>
+          <div class="side-results">
+            <div class="ledger">
+              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-qmYears">–</span></div>
+              <div class="lline"><span>Average annual withdrawal <span class="lbl-sub">Low early, higher once the tax-free vehicles run dry</span></span><span class="amt" id="s-qmFirstDraw">–</span></div>
+              <div class="lline"><span>Total withdrawn over the horizon</span><span class="amt" id="s-finalWithdrawal">–</span></div>
+              <div class="lline"><span>Effective tax rate on it <span class="lbl-sub" id="s-qmRateSub">Lifetime tax ÷ total withdrawn</span></span><span class="amt" id="s-finalTax">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic" data-natopic="mortgage">
+        <div class="topic-hrow"><div class="topic-h">The home mortgage, on schedule</div><button type="button" class="toggle-btn na-btn" data-natool="mortgage">✓ In the plan</button></div>
+        <p class="topic-exp">The mortgage as it stands today — Section&nbsp;2's velocity banking attacks this, and the home's equity backs the HELOC later.</p>
         <div class="split">
           <div class="side-controls">
             <div class="control"><label>Property value <span class="val" id="v-propValue">$1,100,000</span></label><input type="range" id="propValue" min="300000" max="3000000" step="10000" value="1100000"></div>
@@ -278,89 +323,12 @@
         </div>
       </div>
 
-      <div class="topic">
-        <div class="topic-h">The 0%-financed chunk</div>
-        <p class="topic-exp">A lump-sum extra principal payment, funded by moving real business expenses onto a 0% card instead of cash. Repeat rounds as later cards season.</p>
+
+      <div class="topic" data-natopic="rental">
+        <div class="topic-hrow"><div class="topic-h">The rental property — and when to buy it</div><button type="button" class="toggle-btn na-btn" data-natool="rental">✓ In the plan</button></div>
+        <p class="topic-exp">The property's numbers, the age you buy it, and which vehicle funds the down payment when it's a future purchase. Its depreciation write-off is a big deal — the tax picture on the right shows how much lands this year vs. carries forward. <b>Section&nbsp;4 shows three ways to unlock a suspended write-off.</b></p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Chunk size <span class="val" id="v-chunk">$100,000</span></label><input type="range" id="chunk" min="0" max="300000" step="5000" value="100000"></div>
-            <div class="control"><label>Applied in month (of year 1) <span class="val" id="v-chunkMonth">Month 6</span></label><input type="range" id="chunkMonth" min="1" max="12" step="1" value="6"></div>
-            <div class="control"><label>Repeat rounds <span class="val" id="v-rounds">1 round</span></label><input type="range" id="rounds" min="1" max="5" step="1" value="1"></div>
-            <div class="control"><label>Months between rounds <span class="val" id="v-gap">12 mo</span></label><input type="range" id="gap" min="6" max="24" step="1" value="12"></div>
-          </div>
-          <div class="side-results">
-            <div class="chartwrap">
-              <canvas id="chart" width="1000" height="200"></canvas>
-              <div class="legend"><span><span class="swatch" style="background:var(--chart-base)"></span> No chunks</span><span><span class="swatch" style="background:var(--chart-accel)"></span> With chunk(s)</span></div>
-            </div>
-            <div class="ledger">
-              <div class="lline"><span>Total chunked in</span><span class="amt" id="s-totalChunked">–</span></div>
-              <div class="lline"><span>New payoff time</span><span class="amt" id="s-newYears">–</span></div>
-              <div class="lline subtotal"><span>Payoff moves up by</span><span class="amt" id="s-monthsSaved">–</span></div>
-              <div class="lline total"><span>Interest saved by chunking</span><span class="amt" id="s-interestSaved">–</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="caveat mini">
-          <span class="mark">!</span>
-          <p>Every chunk still has to get repaid before its card's 0% window closes, from ordinary cash flow.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. PERSONAL INCOME + TAX -->
-    <section class="sec">
-      <span class="sec-num">Section 2</span>
-      <h2>The real estate tax break</h2>
-      <p class="sub">Goal 2: a second property's depreciation, and whether the write-off hits this year or waits.</p>
-
-      <div class="topic">
-        <div class="topic-h">How it works, and how to get it now instead of later</div>
-        <p class="topic-exp">No sliders here — the mechanism, in three steps, then the three ways around the income cap.</p>
-        <div class="explainer">
-          <div class="exp-row">
-            <div class="exp-box"><span class="exp-step">Step 1</span><p>You buy a rental house. Not the one you live in — has to be a place you rent out.</p></div>
-            <div class="exp-arrow">→</div>
-            <div class="exp-box"><span class="exp-step">Step 2</span><p>You pay for a report on the house. It unlocks a big write-off on this year's taxes.</p></div>
-            <div class="exp-arrow">→</div>
-            <div class="exp-box"><span class="exp-step">Step 3</span><p>Check your income. That decides if you use the write-off now, or it waits.</p></div>
-          </div>
-          <div class="exp-branch-row">
-            <div class="exp-branch" id="exp-now"><span class="exp-tag">If you make under $150,000</span><p>You use it right now — it lowers this year's paycheck tax bill.</p></div>
-            <div class="exp-branch" id="exp-later"><span class="exp-tag">If you make $150,000+</span><p>It waits. Nothing's lost — it banks up and pays out in full the year you sell the house.</p></div>
-          </div>
-          <p class="exp-note" id="exp-note">Either way the write-off is real — it's only ever a question of <b>now</b> or <b>later</b>.</p>
-        </div>
-        <div class="exp-row" style="align-items:stretch; margin-top:16px;">
-          <button type="button" class="exp-box exp-choice" id="btn-str" style="text-align:left; cursor:pointer; border:1px solid var(--line); font: inherit;">
-            <span class="exp-step">Way 1</span> <span class="exp-badge" id="badge-str">Would unlock the rest — only if true for you</span>
-            <p><b>Rent it out short-term.</b> Run it yourself, like an Airbnb. The IRS treats this differently — no income limit. Click to turn this on.</p>
-          </button>
-          <button type="button" class="exp-box exp-choice" id="btn-rep" style="text-align:left; cursor:pointer; border:1px solid var(--line); font: inherit;">
-            <span class="exp-step">Way 2</span> <span class="exp-badge" id="badge-rep">Would unlock the rest — only if true for you</span>
-            <p><b>Spouse works real estate full-time.</b> One spouse has to carry all 750+ hours alone — hours can't be split for this part. Once they qualify, both spouses' hours on the actual rental count together. Click to turn this on.</p>
-          </button>
-          <div class="exp-box">
-            <span class="exp-step">Way 3</span>
-            <p><b>Already own a rental making money?</b> This write-off can cancel out that income — no matter what you make at your job.</p>
-            <div class="control" style="margin-top:10px;"><label>That rental's yearly income <span class="val" id="v-otherPassive">$0</span></label><input type="range" id="otherPassive" min="0" max="500000" step="5000" value="0"></div>
-          </div>
-        </div>
-        <p class="way-hint" id="way-hint"></p>
-        <p class="topic-exp" style="margin-top:12px;">Fixing-and-flipping houses also counts toward Way 2's hours — often faster than managing rentals. But the flip itself doesn't get this write-off: no depreciation, ordinary income plus a 15.3% extra tax, no 1031.</p>
-      </div>
-
-      <div class="topic">
-        <div class="topic-h">Your numbers → the result</div>
-        <p class="topic-exp">Same income feeds both the deduction's usability and, further down, the retirement withdrawal tax in Section 4.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="toggle-row">
-              <button type="button" class="toggle-btn active" id="btn-single">Single</button>
-              <button type="button" class="toggle-btn" id="btn-mfj">Married filing jointly</button>
-            </div>
-            <div class="control"><label>Annual taxable income <span class="val" id="v-income">$180,000</span></label><input type="range" id="income" min="30000" max="700000" step="5000" value="180000"></div>
-            <div class="control"><label>Current annual tax withheld <span class="val" id="v-withheld">$32,000</span></label><input type="range" id="withheld" min="0" max="200000" step="1000" value="32000"></div>
             <div class="control"><label>Purchase price (2nd property) <span class="val" id="v-invPrice">$1,100,000</span></label><input type="range" id="invPrice" min="300000" max="3000000" step="10000" value="1100000"></div>
             <div class="control"><label>Down payment <span class="val" id="v-downPct">25%</span></label><input type="range" id="downPct" min="15" max="50" step="1" value="25"></div>
             <div class="control"><label>Loan rate <span class="val" id="v-invRate">7.00%</span></label><input type="range" id="invRate" min="2" max="9" step="0.05" value="7"></div>
@@ -371,6 +339,7 @@
               <button type="button" class="toggle-btn" id="btn-veh1-policy">Down payment: policy loan</button>
             </div>
             <p class="way-hint show" id="afford1" style="margin-top:8px;"></p>
+          </div>
           <div class="side-results">
             <div class="ledger">
               <div class="lline"><span>Building value (land excluded)</span><span class="amt" id="s-buildingBasis">–</span></div>
@@ -381,7 +350,7 @@
               <div class="lline"><span>Marginal bracket</span><span class="amt" id="s-bracket">–</span></div>
               <div class="lline"><span>Passive-loss cap status <span class="lbl-sub" id="s-capStatusSub">–</span></span><span class="amt" id="s-capStatus">–</span></div>
               <div class="lline"><span>Usable this year</span><span class="amt" id="s-usableLoss">–</span></div>
-              <div class="lline"><span>Suspended / carried forward <span class="lbl-sub">Releases $25K/yr once income drops (Section 4), fully at sale, or all at once when Way 2 kicks in</span></span><span class="amt" id="s-suspendedLoss">–</span></div>
+              <div class="lline"><span>Suspended / carried forward <span class="lbl-sub">Shields retirement withdrawals (Section 3), releases fully at sale, or all at once via Section 4's ways</span></span><span class="amt" id="s-suspendedLoss">–</span></div>
               <div class="lline total"><span>Real federal tax savings, Year 1</span><span class="amt" id="s-taxSavings">–</span></div>
             </div>
             <details class="details-toggle">
@@ -402,7 +371,7 @@
 
       <div class="topic">
         <div class="topic-h">The property also pays you rent</div>
-        <p class="topic-exp">Where the property is changes everything: Hawaii's high prices mean low rent-to-value, so depreciation shields almost all the rent (little taxable income); a mainland property yields more rent but more of it is taxable. That rental cash — and the leftover depreciation shield — carry into the retirement blend in Section&nbsp;4.</p>
+        <p class="topic-exp">Where the property is changes everything: Hawaii's high prices mean low rent-to-value, so depreciation shields almost all the rent (little taxable income); a mainland property yields more rent but more of it is taxable. That rental cash — and the leftover depreciation shield — carry into the retirement blend in Section&nbsp;3.</p>
         <div class="split">
           <div class="side-controls">
             <div class="toggle-row">
@@ -436,17 +405,59 @@
         <div id="propCards"></div>
         <button type="button" class="toggle-btn" id="addProp" style="margin-top:10px;">+ Add a future property</button>
       </div>
-    </section>
-
-    <!-- 3. TAX RESERVE POLICY -->
-    <section class="sec">
-      <span class="sec-num">Section 3</span>
-      <h2>Put the tax savings to work</h2>
-      <p class="sub">Goal 3: instead of the IRS holding your money interest-free all year, redirect it into a policy — the start of a passive-income engine that continues into retirement in Section 4.</p>
 
       <div class="topic">
-        <div class="topic-h">Fund the policy — tax reserve + intentional overfunding</div>
-        <p class="topic-exp">Two separate dollars into the same premium: the tax reserve you're redirecting (above), and anything extra you intentionally overfund to build cash value faster. Real product mechanics: a premium expense charge of 7% in year 1, 6% in years 2–10, and 2% from year 11 on eats each premium before it credits — an actual carrier's current schedule, not a guess.</p>
+        <div class="topic-h">Other debts &amp; credit</div>
+        <div class="caveat mini">
+          <span class="mark">!</span>
+          <p><b>Not modeled yet — coming.</b> The Epic Life System's Foundation starts with credit optimization and debt restructure (cards, autos, personal loans, credit score). This tool doesn't model consumer debt yet, so if there's meaningful non-mortgage debt, the real plan starts there before anything on this page — talk to the team.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. RESERVES & TOOLS -->
+    <section class="sec">
+      <span class="sec-num">Section 2</span>
+      <h2>Reserves &amp; tools</h2>
+      <p class="sub">The four tools the plan works with: velocity banking to kill mortgage interest, 0% business credit to land chunks early, a cash-value policy as the tax-free engine, and the HELOC as the equity harvester. Each one can be switched off if it doesn't apply.</p>
+
+      <div class="topic" data-natopic="velocity">
+        <div class="topic-hrow"><div class="topic-h">Velocity banking — the 0%-financed chunk</div><button type="button" class="toggle-btn na-btn" data-natool="velocity">✓ In the plan</button></div>
+        <p class="topic-exp">A lump-sum extra principal payment against the Section&nbsp;1 mortgage, funded by moving real business expenses onto a 0% card instead of cash. Repeat rounds as later cards season.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>Chunk size <span class="val" id="v-chunk">$100,000</span></label><input type="range" id="chunk" min="0" max="300000" step="5000" value="100000"></div>
+            <div class="control"><label>Applied in month (of year 1) <span class="val" id="v-chunkMonth">Month 6</span></label><input type="range" id="chunkMonth" min="1" max="12" step="1" value="6"></div>
+            <div class="control"><label>Repeat rounds <span class="val" id="v-rounds">1 round</span></label><input type="range" id="rounds" min="1" max="5" step="1" value="1"></div>
+            <div class="control"><label>Months between rounds <span class="val" id="v-gap">12 mo</span></label><input type="range" id="gap" min="6" max="24" step="1" value="12"></div>
+          </div>
+          <div class="side-results">
+            <div class="chartwrap">
+              <canvas id="chart" width="1000" height="200"></canvas>
+              <div class="legend"><span><span class="swatch" style="background:var(--chart-base)"></span> No chunks</span><span><span class="swatch" style="background:var(--chart-accel)"></span> With chunk(s)</span></div>
+            </div>
+            <div class="ledger">
+              <div class="lline"><span>Total chunked in</span><span class="amt" id="s-totalChunked">–</span></div>
+              <div class="lline"><span>New payoff time</span><span class="amt" id="s-newYears">–</span></div>
+              <div class="lline subtotal"><span>Payoff moves up by</span><span class="amt" id="s-monthsSaved">–</span></div>
+              <div class="lline total"><span>Interest saved by chunking</span><span class="amt" id="s-interestSaved">–</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="caveat mini">
+          <span class="mark">!</span>
+          <p>Every chunk still has to get repaid before its card's 0% window closes, from ordinary cash flow.</p>
+        </div>
+      </div>
+
+      <div class="topic" data-natopic="bizcredit">
+        <div class="topic-hrow"><div class="topic-h">0% business credit — the stacking accelerator</div><button type="button" class="toggle-btn na-btn" data-natool="bizcredit">✓ In the plan</button></div>
+        <p class="topic-exp">When it's on, the first five years of chunks land at the START of each year on 0% business credit (paid down through the year) instead of at the end — the same dollars hit the mortgage a year earlier, and every later domino falls sooner. An accelerator on velocity banking, not its own engine.</p>
+      </div>
+
+      <div class="topic" data-natopic="policy">
+        <div class="topic-hrow"><div class="topic-h">Fund the policy — tax reserve + intentional overfunding</div><button type="button" class="toggle-btn na-btn" data-natool="policy">✓ In the plan</button></div>
+        <p class="topic-exp">Two separate dollars into the same premium: the tax reserve you're redirecting (sized by Section&nbsp;1's tax bill), and anything extra you intentionally overfund to build cash value faster. Real product mechanics: a premium expense charge of 7% in year 1, 6% in years 2–10, and 2% from year 11 on eats each premium before it credits — an actual carrier's current schedule, not a guess.</p>
         <div class="split">
           <div class="side-controls">
             <div class="control"><label>Tax reserve redirected (monthly) <span class="val" id="v-wRedux">$800</span></label><input type="range" id="wRedux" min="0" max="10000" step="100" value="800"></div>
@@ -477,13 +488,35 @@
           </div>
         </div>
       </div>
+
+      <div class="topic" data-natopic="heloc">
+        <div class="topic-hrow"><div class="topic-h" id="veh-heloc-h">The HELOC — the equity harvester</div><button type="button" class="toggle-btn na-btn" data-natool="heloc">✓ In the plan</button></div>
+        <p class="topic-exp">The rate and the home's own numbers. It funds future property down payments and, in retirement, covers whatever the properties and low-bracket qualified money don't. Real terms: a line has a ~10-year draw window from its first draw — inside it, interest can ride on the line (while room lasts); when the window closes with a balance, ALIS rolls it into a 30-yr fixed at your mortgage rate, whose real payment the plan then funds — and a fresh line can open against the remaining equity.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>HELOC rate <span class="val" id="v-helocRate">8.00%</span></label><input type="range" id="helocRate" min="5" max="9" step="0.1" value="8"></div>
+            <div class="control"><label>Home value securing the HELOC <span class="val" id="v-reEquity">$1,100,000</span></label><input type="range" id="reEquity" min="0" max="3000000" step="25000" value="1100000"></div>
+            <div class="control"><label>Home appreciation <span class="val" id="v-reGrowth">4.00%</span></label><input type="range" id="reGrowth" min="1" max="6" step="0.25" value="4"></div>
+            <div class="control"><label>Max loan-to-value <span class="val" id="v-maxLtv">85%</span></label><input type="range" id="maxLtv" min="70" max="90" step="1" value="85"></div>
+          </div>
+          <div class="side-results">
+            <div class="ledger">
+              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-helocYears">–</span></div>
+              <div class="lline"><span>Typical annual HELOC draw <span class="lbl-sub">Tax-free</span></span><span class="amt" id="s-helocFirstDraw">–</span></div>
+              <div class="lline"><span>Borrowing cap, first draw year <span class="lbl-sub">Max LTV × appreciated home value</span></span><span class="amt" id="s-helocCap">–</span></div>
+              <div class="lline"><span>Refinance to fixed, if needed <span class="lbl-sub" id="s-helocRefiSub">Fires only when the 10-yr draw window closes with a balance</span></span><span class="amt" id="s-helocRefi">–</span></div>
+              <div class="lline subtotal"><span>Home debt at end of retirement <span class="lbl-sub">HELOC + refinanced fixed + any remaining mortgage</span></span><span class="amt" id="s-helocBalEnd">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 4. RETIREMENT: TAX-OPTIMAL BLEND OF 4 INCOME SOURCES -->
+    <!-- 3. RETIREMENT & PASSIVE INCOME -->
     <section class="sec">
-      <span class="sec-num">Section 4</span>
-      <h2>Retirement — how many years, same lifestyle</h2>
-      <p class="sub">Goal 4: fund one inflation-adjusted lifestyle from four sources — the properties' cash flow (bought at the ages you picked in Section&nbsp;2, from what the plan builds), qualified money, a HELOC, and the Section&nbsp;3 policy — then hit whichever goal you pick in the ALIS panel: <b>Max legacy</b> (leave the most behind, living on your chosen floor), <b>Max income</b> (ALIS finds the biggest lifestyle the plan can sustain), or <b>Most of both</b> (maximize total wealth — income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
+      <span class="sec-num">Section 3</span>
+      <h2>Retirement &amp; passive income — the optimized plan</h2>
+      <p class="sub">Set the yearly contribution and pick the goal; ALIS does the rest — allocating the money across the Section&nbsp;2 tools, funding one inflation-adjusted lifestyle from four sources (the properties' cash flow, qualified money, the HELOC, and the policy), and writing the year-by-year playbook. <b>Max legacy</b> leaves the most behind on your chosen floor, <b>Max income</b> finds the biggest lifestyle the plan can sustain, <b>Most of both</b> maximizes total wealth (income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
 
       <div class="topic">
         <div class="topic-h">Learn it one tool at a time</div>
@@ -511,16 +544,19 @@
         <p class="way-hint" id="tool-hint"></p>
       </div>
 
-      <div class="topic">
-        <div class="topic-h">Your timeline and lifestyle</div>
-        <p class="topic-exp">The lifestyle every source below is built to sustain (inflated forward each year), and the ages that set the retirement window. In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in.</p>
+      <div class="topic" id="setPlanTopic">
+        <div class="topic-h">Set the plan — contribution, goal &amp; lifestyle</div>
+        <p class="topic-exp">How much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year; ages are set in Section&nbsp;1). In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. The same controls live in the floating ALIS panel — they stay in sync.</p>
         <div class="split">
           <div class="side-controls">
+            <div class="control"><label>Amount to allocate/yr <span class="val" id="v-annualContrib2">$40,000</span></label><input type="range" id="annualContrib2" min="0" max="120000" step="5000" value="40000"></div>
+            <div class="toggle-row">
+              <button type="button" class="toggle-btn active sec-goal" data-goal="legacy">Max legacy</button>
+              <button type="button" class="toggle-btn sec-goal" data-goal="both">Most of both</button>
+              <button type="button" class="toggle-btn sec-goal" data-goal="income">Max income</button>
+            </div>
             <div class="control"><label><span id="todaySpend-lbl">Minimum lifestyle to keep</span> <span class="val" id="v-todaySpend">$120,000</span></label><input type="range" id="todaySpend" min="20000" max="300000" step="2000" value="120000"></div>
             <div class="control"><label>Inflation rate <span class="val" id="v-inflation">3.00%</span></label><input type="range" id="inflation" min="2" max="5" step="0.25" value="3"></div>
-            <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="30" max="70" step="1" value="45"></div>
-            <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="50" max="75" step="1" value="65"></div>
-            <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="100" step="1" value="90"></div>
           </div>
           <div class="side-results">
             <div class="headline-card" id="ret-headline-card">
@@ -541,49 +577,8 @@
       </div>
 
       <div class="topic">
-        <div class="topic-h" id="veh-qm-h">Set up: qualified money (401(k)/IRA)</div>
-        <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS decides how hard to draw it based on your goal below (legacy or income); the untouched balance keeps growing tax-deferred.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
-            <div class="control"><label>Projected growth rate <span class="val" id="v-qmGrowth">6.00%</span></label><input type="range" id="qmGrowth" min="3" max="8" step="0.25" value="6"></div>
-          </div>
-          <div class="side-results">
-            <div class="ledger">
-              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-qmYears">–</span></div>
-              <div class="lline"><span>Average annual withdrawal <span class="lbl-sub">Low early, higher once the tax-free vehicles run dry</span></span><span class="amt" id="s-qmFirstDraw">–</span></div>
-              <div class="lline"><span>Total withdrawn over the horizon</span><span class="amt" id="s-finalWithdrawal">–</span></div>
-              <div class="lline"><span>Effective tax rate on it <span class="lbl-sub" id="s-qmRateSub">Lifetime tax ÷ total withdrawn</span></span><span class="amt" id="s-finalTax">–</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="topic">
-        <div class="topic-h" id="veh-heloc-h">Set up: the HELOC (tax-free filler)</div>
-        <p class="topic-exp">The rate and the home's own numbers. In retirement this covers whatever the rental and low-bracket qualified money don't. Real terms: a line has a ~10-year draw window from its first draw — inside it, interest can ride on the line (while room lasts); when the window closes with a balance, ALIS rolls it into a 30-yr fixed at your mortgage rate, whose real payment the plan then funds — and a fresh line can open against the remaining equity.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>HELOC rate <span class="val" id="v-helocRate">8.00%</span></label><input type="range" id="helocRate" min="5" max="9" step="0.1" value="8"></div>
-            <div class="control"><label>Home value securing the HELOC <span class="val" id="v-reEquity">$1,100,000</span></label><input type="range" id="reEquity" min="0" max="3000000" step="25000" value="1100000"></div>
-            <div class="control"><label>Home appreciation <span class="val" id="v-reGrowth">4.00%</span></label><input type="range" id="reGrowth" min="1" max="6" step="0.25" value="4"></div>
-            <div class="control"><label>Max loan-to-value <span class="val" id="v-maxLtv">85%</span></label><input type="range" id="maxLtv" min="70" max="90" step="1" value="85"></div>
-          </div>
-          <div class="side-results">
-            <div class="ledger">
-              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-helocYears">–</span></div>
-              <div class="lline"><span>Typical annual HELOC draw <span class="lbl-sub">Tax-free</span></span><span class="amt" id="s-helocFirstDraw">–</span></div>
-              <div class="lline"><span>Borrowing cap, first draw year <span class="lbl-sub">Max LTV × appreciated home value</span></span><span class="amt" id="s-helocCap">–</span></div>
-              <div class="lline"><span>Refinance to fixed, if needed <span class="lbl-sub" id="s-helocRefiSub">Fires only when the 10-yr draw window closes with a balance</span></span><span class="amt" id="s-helocRefi">–</span></div>
-              <div class="lline subtotal"><span>Home debt at end of retirement <span class="lbl-sub">HELOC + refinanced fixed + any remaining mortgage</span></span><span class="amt" id="s-helocBalEnd">–</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="topic">
         <div class="topic-h">Funding the plan — ALIS allocates your annual contribution</div>
-        <p class="topic-exp">Set the amount to allocate in the ALIS panel (bottom right) — it's the same number everywhere. Between now and retirement, that fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that best serves your chosen goal.</p>
+        <p class="topic-exp">Set the amount to allocate above (or in the ALIS panel — same number, kept in sync). Between now and retirement, that fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that best serves your chosen goal.</p>
         <p class="topic-exp" id="alloc-context">–</p>
         <div class="alis-rec" id="allocRec" style="margin-top:18px;">
           <div class="alis-rec-head">
@@ -631,14 +626,14 @@
       </div>
 
       <div class="topic">
-        <div class="topic-h" id="veh-policy-h">The Section 3 policy — tax-free filler</div>
-        <p class="topic-exp">Tax-free policy loans at Section&nbsp;3's loan rate. The cash value keeps earning the crediting rate the entire time — even on the loaned amount (index loan) — so the longer it's left, the more it can lend. <b>The policy is never allowed to lapse:</b> new loans stop at 90% of cash value, and if drift ever pushes the loan toward the cash value, the plan pays loan interest in cash to hold it — a lapse would make every prior loan retroactively taxable, so the model treats it as forbidden, not just unlucky.</p>
+        <div class="topic-h" id="veh-policy-h">The policy — tax-free filler</div>
+        <p class="topic-exp">Tax-free policy loans at the loan rate set in Section&nbsp;2. The cash value keeps earning the crediting rate the entire time — even on the loaned amount (index loan) — so the longer it's left, the more it can lend. <b>The policy is never allowed to lapse:</b> new loans stop at 90% of cash value, and if drift ever pushes the loan toward the cash value, the plan pays loan interest in cash to hold it — a lapse would make every prior loan retroactively taxable, so the model treats it as forbidden, not just unlucky.</p>
         <div class="split">
           <div class="side-controls">
             <div class="linked-input">
               <div class="linked-label">Cash value at retirement start</div>
               <div class="linked-val" id="v-polStart">–</div>
-              <div class="linked-note">Pulled from Section 3 — set the withholding redirect, crediting rate, and years there. It keeps compounding at the crediting rate from here.</div>
+              <div class="linked-note">Pulled from Section 2 — set the withholding redirect, crediting rate, and years there. It keeps compounding at the crediting rate from here.</div>
             </div>
           </div>
           <div class="side-results">
@@ -686,6 +681,61 @@
       </div>
     </section>
 
+    <!-- 4. OPPORTUNITIES -->
+    <section class="sec">
+      <span class="sec-num">Section 4</span>
+      <h2>Opportunities — optimize it harder</h2>
+      <p class="sub">What ALIS sees beyond the current plan: tax paid that another write-off could claw back, suspended losses waiting on a qualifying fact, room that could fund another property, and anything the plan flagged. Every number here is a real run of your plan — illustrations to explore, not individual advice.</p>
+
+      <div class="topic">
+        <div class="topic-h">Unlock the write-off — three qualifying ways</div>
+        <p class="topic-exp">The mechanism in three steps, then the three ways around the income cap. These are real qualifying facts about how you use the property — only turn one on if it's actually true for you.</p>
+        <div class="explainer">
+          <div class="exp-row">
+            <div class="exp-box"><span class="exp-step">Step 1</span><p>You buy a rental house. Not the one you live in — has to be a place you rent out.</p></div>
+            <div class="exp-arrow">→</div>
+            <div class="exp-box"><span class="exp-step">Step 2</span><p>You pay for a report on the house. It unlocks a big write-off on this year's taxes.</p></div>
+            <div class="exp-arrow">→</div>
+            <div class="exp-box"><span class="exp-step">Step 3</span><p>Check your income. That decides if you use the write-off now, or it waits.</p></div>
+          </div>
+          <div class="exp-branch-row">
+            <div class="exp-branch" id="exp-now"><span class="exp-tag">If you make under $150,000</span><p>You use it right now — it lowers this year's paycheck tax bill.</p></div>
+            <div class="exp-branch" id="exp-later"><span class="exp-tag">If you make $150,000+</span><p>It waits. Nothing's lost — it banks up and pays out in full the year you sell the house.</p></div>
+          </div>
+          <p class="exp-note" id="exp-note">Either way the write-off is real — it's only ever a question of <b>now</b> or <b>later</b>.</p>
+        </div>
+        <div class="exp-row" style="align-items:stretch; margin-top:16px;">
+          <button type="button" class="exp-box exp-choice" id="btn-str" style="text-align:left; cursor:pointer; border:1px solid var(--line); font: inherit;">
+            <span class="exp-step">Way 1</span> <span class="exp-badge" id="badge-str">Would unlock the rest — only if true for you</span>
+            <p><b>Rent it out short-term.</b> Run it yourself, like an Airbnb. The IRS treats this differently — no income limit. Click to turn this on.</p>
+          </button>
+          <button type="button" class="exp-box exp-choice" id="btn-rep" style="text-align:left; cursor:pointer; border:1px solid var(--line); font: inherit;">
+            <span class="exp-step">Way 2</span> <span class="exp-badge" id="badge-rep">Would unlock the rest — only if true for you</span>
+            <p><b>Spouse works real estate full-time.</b> One spouse has to carry all 750+ hours alone — hours can't be split for this part. Once they qualify, both spouses' hours on the actual rental count together. Click to turn this on.</p>
+          </button>
+          <div class="exp-box">
+            <span class="exp-step">Way 3</span>
+            <p><b>Already own a rental making money?</b> This write-off can cancel out that income — no matter what you make at your job.</p>
+            <div class="control" style="margin-top:10px;"><label>That rental's yearly income <span class="val" id="v-otherPassive">$0</span></label><input type="range" id="otherPassive" min="0" max="500000" step="5000" value="0"></div>
+          </div>
+        </div>
+        <p class="way-hint" id="way-hint"></p>
+        <p class="topic-exp" style="margin-top:12px;">Fixing-and-flipping houses also counts toward Way 2's hours — often faster than managing rentals. But the flip itself doesn't get this write-off: no depreciation, ordinary income plus a 15.3% extra tax, no 1031.</p>
+      </div>
+
+      <div class="topic">
+        <div class="topic-h">What ALIS sees — computed from your plan</div>
+        <p class="topic-exp">Live readouts from the current plan: the tax bill another write-off could attack, losses waiting to be unlocked, unused borrowing room, and anything that didn't fit. Change a slider anywhere and this updates.</p>
+        <div class="alis-rec">
+          <div class="alis-rec-head">
+            <span class="alis-badge">ALIS opportunities</span>
+            <span class="alis-order" id="opps-headline">–</span>
+          </div>
+          <div class="alis-rec-why" id="oppsDash">–</div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <footer>Every figure above is illustrative and driven entirely by the sliders — replace defaults with a member's real mortgage statement, property tax assessment, and 1040 before using any of it with a client.</footer>
@@ -710,6 +760,8 @@
     <div class="float-row"><span class="float-lbl">Total tax paid</span><span class="float-val" id="float-tax">–</span></div>
     <div class="float-note" id="float-alloc">–</div>
     <div class="float-note" id="float-mix">–</div>
+    <button type="button" class="float-cta" id="float-adjust">Adjust the plan — lifestyle, goal, ages →</button>
+    <button type="button" class="float-cta" id="float-apply">Apply changes ✓ — rebuild playbook</button>
     <button type="button" class="float-cta" id="float-playbook">View year-by-year playbook →</button>
   </div>
 </div>
@@ -1066,7 +1118,7 @@
     } else {
       usableLoss = Math.min(year1Deduction, usableAllowance + otherPassive);
       capStatusText = 'Limited by your income';
-      capStatusSub = otherPassive > 0 ? 'Way 3 — other rental income is helping' : 'Pick a way above to unlock it';
+      capStatusSub = otherPassive > 0 ? 'Way 3 — other rental income is helping' : 'Section 4 shows three ways to unlock it';
     }
     const suspendedLoss = Math.max(year1Deduction - usableLoss, 0);
     $('s-capStatus').textContent = capStatusText;
@@ -1720,6 +1772,8 @@
 
     const annualContrib = +$('annualContrib').value;
     $('v-annualContrib').textContent = fmt0.format(annualContrib);
+    $('annualContrib2').value = annualContrib;
+    $('v-annualContrib2').textContent = fmt0.format(annualContrib);
     const accYears = retireAge - currentAge;
     const mtr = marginalRatePct(+$('income').value, filingStatus)/100;
 
@@ -2102,6 +2156,75 @@
                    legacy: chosen.legacy, tax: chosen.lifetimeTax, extracted: chosen.totalExtracted,
                    wealth: chosen.legacy + chosen.totalExtracted, spend: todaySpend };
 
+    // ---- Section 4: computed opportunities. Every number is a REAL run of the member's plan —
+    // illustrations to explore (education), never "you should". Tiles + short lines, not prose.
+    (function renderOpps(){
+      const el = $('oppsDash'); if (!el) return;
+      const failedCount = allPurch.filter(x => !x.ok).length;
+      const tiles = [
+        { label:'Total tax paid', val: fmtCompact(chosen.lifetimeTax) },
+        { label:'Shield already saving', val: fmtCompact(chosen.shieldTaxSaved) },
+        (R.suspendedLoss > 500 && !(strActive || repActive)) && { label:'Write-off suspended (yr 1)', val: fmtCompact(R.suspendedLoss), risk:true },
+        (chosenAlloc.a.passiveCarry0 || 0) > 500 && { label:'Losses carried to retirement', val: fmtCompact(chosenAlloc.a.passiveCarry0) },
+        failedCount > 0 && { label:'Purchases that don’t fit', val: ''+failedCount, risk:true },
+        chosenAlloc.a.idleCash > 500 && { label:'Idle cash — no vehicle', val: fmtCompact(chosenAlloc.a.idleCash), risk:true },
+        chosenAlloc.a.shortfall > 500 && { label:'Outside cash needed', val: fmtCompact(chosenAlloc.a.shortfall), risk:true }
+      ];
+      const lines = [];
+      if (!(strActive || repActive) && R.suspendedLoss > 500)
+        lines.push('<b>'+fmt0.format(R.suspendedLoss)+'</b> of the year-1 write-off is suspended at your income. Way 1 (self-run short-term rental) or Way 2 (real-estate-professional spouse) above unlocks it now — only if it’s genuinely true for you.');
+      allPurch.filter(x => !x.ok).forEach(r => {
+        const p = propsDef.find(pp => pp.idx === r.idx); if (!p) return;
+        const room = p.vehicle === 'heloc' ? r.roomHeloc : r.roomPolicy;
+        lines.push('Property #'+(r.idx+1)+' doesn’t fit at age '+r.age+' — that '+(p.vehicle==='heloc'?'HELOC':'policy')+' room ('+fmtCompact(room)+') funds up to a <b>'+fmtCompact(room / p.downPct)+'</b> property. Try a later age, more room, or the other vehicle (Section 1).');
+      });
+      // What-if: one more property, sized to the room ACTUALLY available 3 years into retirement —
+      // a probe run reads the real capacity, then the candidate runs through the full plan.
+      if (TOOLS.rental && EXTRA_PROPS.length < MAX_EXTRA && chosen.sustainable && accYears + horizon > 8){
+        const probeAge = Math.min(retireAge + 3, planAge - 5);
+        if (probeAge > currentAge){
+          const woPct = (+$('writeOff').value)/100;
+          const probe = { idx: 99, buyAge: probeAge, price: 1, downPct: 0.25, ratePct: 7, vehicle: 'heloc',
+                          noi0: 0, apprec: LOC.mainland.apprec/100, depBonus: 0, depOngoing: 0, ownedFromStart: false };
+          const defsP = [...propsDef, probe];
+          const aP = accumulate(chosenAlloc.fr, Object.assign({}, acc0, { props: defsP }));
+          const bestP = [...runStrategies(ceil => mkInp(aP, ceil, todaySpend, defsP))].sort(objSort)[0];
+          const recP = [...(aP.purchases||[]), ...bestP.rec.purchases].find(x => x.idx === 99);
+          if (recP){
+            const useHeloc = recP.roomHeloc >= recP.roomPolicy;
+            const room = useHeloc ? recP.roomHeloc : recP.roomPolicy;
+            // Try a max-room-sized property first, then smaller ones — a big property's own loan
+            // payment can sink the plan even when the down payment fits.
+            for (const frac of [0.9, 0.45, 0.2]){
+              const price = Math.floor((room*frac/0.25)/50000)*50000;
+              if (price < 300000) break;
+              const gross = price * (LOC.mainland.yield/100);
+              const cand = { idx: 99, buyAge: probeAge, price, downPct: 0.25, ratePct: 7,
+                vehicle: useHeloc ? 'heloc' : 'policy',
+                noi0: gross - gross*(LOC.mainland.opex/100) - propertyTax(price, 'mainland'),
+                apprec: LOC.mainland.apprec/100, depBonus: price*woPct,
+                depOngoing: Math.max(price*0.8 - price*woPct, 0)/27.5, ownedFromStart: false };
+              const defs2 = [...propsDef, cand];
+              const a2 = accumulate(chosenAlloc.fr, Object.assign({}, acc0, { props: defs2 }));
+              const best2 = [...runStrategies(ceil => mkInp(a2, ceil, todaySpend, defs2))].sort(objSort)[0];
+              const bought = [...(a2.purchases||[]), ...best2.rec.purchases].find(x => x.idx === 99 && x.ok);
+              if (bought && best2.sustainable){
+                const dWealth = (best2.legacy + best2.totalExtracted) - (optimal.legacy + optimal.totalExtracted);
+                const dTax = best2.lifetimeTax - optimal.lifetimeTax;
+                lines.push('<b>One more property would fit:</b> a ~'+fmtCompact(price)+' mainland rental at age '+probeAge+', 25% down via the '+(useHeloc?'HELOC':'policy')+' — total wealth '+(dWealth>=0?'+':'−')+fmtCompact(Math.abs(dWealth))+', lifetime tax '+(dTax>=0?'+':'−')+fmtCompact(Math.abs(dTax))+'. '+(dWealth > 25000 ? 'Worth a look — add it in Section 1 to make it real.' : 'At your numbers it doesn’t clearly pay — shown so you can see that honestly.'));
+                break;
+              }
+            }
+          }
+        }
+      }
+      $('opps-headline').textContent = fmtCompact(chosen.lifetimeTax)+' lifetime tax · '+lines.length+(lines.length===1?' opportunity in view':' opportunities in view');
+      el.innerHTML = '<div class="stat-grid">'+tiles.filter(Boolean).map(t =>
+        '<div class="stat-tile'+(t.risk?' risk':'')+'"><span class="stat-label">'+t.label+'</span><span class="stat-val">'+t.val+'</span></div>').join('')+'</div>'
+        + (lines.length ? lines.map(l => '<p class="takeaway" style="text-align:left;">'+l+'</p>').join('')
+                        : '<p class="takeaway">Nothing left on the table at these numbers — the plan is using what it has.</p>');
+    })();
+
     window.EPIC_DEBUG = { chosen, chosenAlloc, results, propsDef };
     window.EPIC_DEBUG_FN = { simulateStrategy, accumulate, washCharged, washCredited, premChargePct, federalTax, STRATS };
   }
@@ -2124,25 +2247,35 @@
   $('btn-loc-hi').addEventListener('click', () => applyLocation('hawaii'));
   $('btn-loc-main').addEventListener('click', () => applyLocation('mainland'));
 
-  // Toolkit toggles: flip a tool, ALIS re-plans with what's left. Manual flips exit journey mode.
-  document.querySelectorAll('#toolBar .toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const k = btn.dataset.tool;
-      TOOLS[k] = !TOOLS[k];
-      btn.classList.toggle('active', TOOLS[k]);
-      journeyIdx = null;
-      $('journeyCard').style.display = 'none';
-      document.querySelectorAll('#journeyBar .journey-step').forEach(b => { b.classList.remove('here'); b.classList.remove('done'); });
-      const off = Object.keys(TOOLS).filter(x => !TOOLS[x]);
-      const hint = $('tool-hint');
-      if (off.length){
-        const names = { velocity:'velocity chunking', bizcredit:'0% biz credit', policy:'the policy', heloc:'the HELOC', mortgage:'the mortgage', rental:'the rental', qualified:'the 401(k)' };
-        hint.innerHTML = '<b>Teaching mode:</b> planning without '+off.map(x=>names[x]).join(', ')+'. Flip a tool back on to see what it adds.';
-        hint.classList.add('show');
-      } else hint.classList.remove('show');
-      renderSection5();
+  // One source of truth for tool availability: the Section-3 tool bar AND every per-topic
+  // "In the plan / Not applicable" button flip the same TOOLS flag and stay in sync.
+  function syncToolUI(){
+    document.querySelectorAll('#toolBar .toggle-btn').forEach(b => b.classList.toggle('active', TOOLS[b.dataset.tool]));
+    document.querySelectorAll('.na-btn').forEach(b => {
+      const on = TOOLS[b.dataset.natool];
+      b.classList.toggle('off', !on);
+      b.classList.toggle('active', on);
+      b.textContent = on ? '✓ In the plan' : '✗ Not applicable';
     });
-  });
+    document.querySelectorAll('[data-natopic]').forEach(t => t.classList.toggle('na-off', !TOOLS[t.dataset.natopic]));
+    const off = Object.keys(TOOLS).filter(x => !TOOLS[x]);
+    const hint = $('tool-hint');
+    if (off.length){
+      const names = { velocity:'velocity chunking', bizcredit:'0% biz credit', policy:'the policy', heloc:'the HELOC', mortgage:'the mortgage', rental:'the rental', qualified:'the 401(k)' };
+      hint.innerHTML = '<b>Planning without:</b> '+off.map(x=>names[x]).join(', ')+'. Flip a tool back on to see what it adds.';
+      hint.classList.add('show');
+    } else hint.classList.remove('show');
+  }
+  function flipTool(k){
+    TOOLS[k] = !TOOLS[k];
+    journeyIdx = null;
+    $('journeyCard').style.display = 'none';
+    document.querySelectorAll('#journeyBar .journey-step').forEach(b => { b.classList.remove('here'); b.classList.remove('done'); });
+    syncToolUI();
+    renderSection5();
+  }
+  document.querySelectorAll('#toolBar .toggle-btn').forEach(btn => btn.addEventListener('click', () => flipTool(btn.dataset.tool)));
+  document.querySelectorAll('.na-btn').forEach(btn => btn.addEventListener('click', () => flipTool(btn.dataset.natool)));
 
   // ---- The learning journey: add tools one at a time, Foundation → Leverage → Wealth order.
   // Each step re-plans with the new toolset and shows the DELTA vs what you just saw — the aha.
@@ -2188,7 +2321,7 @@
     journeyIdx = i;
     const step = JOURNEY[i];
     Object.keys(TOOLS).forEach(k => TOOLS[k] = !!step.tools[k]);
-    document.querySelectorAll('#toolBar .toggle-btn').forEach(b => b.classList.toggle('active', TOOLS[b.dataset.tool]));
+    syncToolUI();
     $('tool-hint').classList.remove('show');
     renderSection5();
     const now = LAST_STATS;
@@ -2232,6 +2365,10 @@
     $('playbookDetails').open = true;
     $('playbookTopic').scrollIntoView({ behavior:'smooth', block:'start' });
   });
+  // Jump to the Section-3 plan controls (lifestyle, goal, contribution; ages live in Section 1).
+  $('float-adjust').addEventListener('click', () => {
+    $('setPlanTopic').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
 
   ['chunk','chunkMonth','rounds','gap','propValue'].forEach(id => $(id).addEventListener('input', renderSection1));
   // Mortgage-shape inputs feed the Section-5 allocator (via M1) as well as Section 1's own display.
@@ -2251,13 +2388,26 @@
   // display ALIS's solved maximum) can hand the slider back untouched when they switch modes again.
   let userSpendFloor = +$('todaySpend').value;
   $('todaySpend').addEventListener('input', () => { if (optimizeMode !== 'income') userSpendFloor = +$('todaySpend').value; });
-  document.querySelectorAll('.float-goal').forEach(btn => {
-    btn.addEventListener('click', () => {
-      optimizeMode = btn.dataset.goal;
-      document.querySelectorAll('.float-goal').forEach(b => b.classList.toggle('active', b === btn));
-      if (optimizeMode !== 'income') $('todaySpend').value = userSpendFloor;
-      renderSection5();
-    });
+  // Goal buttons exist in two places (Section 3 + the floating panel) — one shared handler
+  // keeps them, and the plan, in lockstep.
+  function setGoal(mode){
+    optimizeMode = mode;
+    document.querySelectorAll('.float-goal, .sec-goal').forEach(b => b.classList.toggle('active', b.dataset.goal === mode));
+    if (optimizeMode !== 'income') $('todaySpend').value = userSpendFloor;
+    renderSection5();
+  }
+  document.querySelectorAll('.float-goal, .sec-goal').forEach(btn => btn.addEventListener('click', () => setGoal(btn.dataset.goal)));
+  // The Section-3 contribution slider mirrors the floating panel's — either one drives the plan.
+  $('annualContrib2').addEventListener('input', () => { $('annualContrib').value = $('annualContrib2').value; renderSection5(); });
+  // Apply changes: recommit to ALIS's fresh picks with every current input, rebuild + open the playbook.
+  $('float-apply').addEventListener('click', () => {
+    viewOrderKey = null; viewAllocKey = null;
+    renderSection5();
+    const b = $('float-apply');
+    b.classList.add('flash'); b.textContent = 'Applied ✓ — playbook rebuilt';
+    setTimeout(() => { b.classList.remove('flash'); b.textContent = 'Apply changes ✓ — rebuild playbook'; }, 1600);
+    $('playbookDetails').open = true;
+    $('playbookTopic').scrollIntoView({ behavior:'smooth', block:'start' });
   });
 
   const floatPanel = $('floatPanel');
@@ -2272,6 +2422,7 @@
   }, { passive: true });
 
   renderPropCards();
+  syncToolUI();
   renderSection1();
   renderSection2();
   renderSection3();
