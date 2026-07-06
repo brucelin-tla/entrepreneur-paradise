@@ -191,6 +191,16 @@
   .float-row .float-val { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--go); white-space: nowrap; }
   .float-panel.collapsed .float-body { display: none; }
   .float-note { font-size: 11px; color: var(--ink-soft); padding-top: 6px; }
+  .float-control { margin-bottom: 8px; }
+  .float-control label { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); margin-bottom: 5px; }
+  .float-control label .val { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--ledger); text-transform: none; letter-spacing: 0; }
+  .float-control input[type="range"] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: var(--track); outline: none; margin: 0; }
+  .float-control input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--thumb); cursor: pointer; border: 2px solid var(--paper-raised); box-shadow: 0 0 0 1px var(--thumb); }
+  .float-control input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--thumb); cursor: pointer; border: 2px solid var(--paper-raised); box-shadow: 0 0 0 1px var(--thumb); }
+  .float-goal-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .float-goal { flex: 1; font: inherit; font-size: 11px; font-weight: 700; padding: 7px 6px; border-radius: 7px; border: 1px solid var(--line); background: var(--paper-raised); color: var(--ink-soft); cursor: pointer; }
+  .float-goal.active { background: var(--ledger); border-color: var(--ledger); color: var(--paper-raised); }
+  .float-goal:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
   .float-note b { color: var(--ledger); font-weight: 700; }
   .float-cta { display: block; width: 100%; margin-top: 9px; font: inherit; font-size: 12px; font-weight: 700; color: var(--paper-raised); background: var(--ledger); border: none; border-radius: 7px; padding: 8px 10px; cursor: pointer; }
   .float-cta:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
@@ -448,7 +458,7 @@
     <section class="sec">
       <span class="sec-num">Section 4</span>
       <h2>Retirement — how many years, same lifestyle</h2>
-      <p class="sub">Goal 4: fund one inflation-adjusted lifestyle from four sources — the Section&nbsp;2 rental's cash flow, qualified money, a HELOC, and the Section&nbsp;3 policy. The rental pays first (its depreciation keeps it tax-free); then a tax ceiling you set decides how much taxable qualified money to draw before filling the rest tax-free. Lower ceiling = more years, but more tax and more estate debt; higher = the reverse. ALIS shows the honest tradeoff, not a free lunch.</p>
+      <p class="sub">Goal 4: fund one inflation-adjusted lifestyle from four sources — the Section&nbsp;2 rental's cash flow, qualified money, a HELOC, and the Section&nbsp;3 policy — then hit whichever goal you pick in the ALIS panel: <b>Max legacy</b> (leave the most behind, living on your chosen floor), <b>Max income</b> (ALIS finds the biggest lifestyle the plan can sustain), or <b>Most of both</b> (maximize total wealth — income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
 
       <div class="topic">
         <div class="topic-h">Learn it one tool at a time</div>
@@ -478,10 +488,10 @@
 
       <div class="topic">
         <div class="topic-h">Your timeline and lifestyle</div>
-        <p class="topic-exp">The lifestyle every source below is built to sustain (inflated forward each year), and the ages that set the retirement window. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in.</p>
+        <p class="topic-exp">The lifestyle every source below is built to sustain (inflated forward each year), and the ages that set the retirement window. In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in.</p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Annual spend, in today's dollars <span class="val" id="v-todaySpend">$120,000</span></label><input type="range" id="todaySpend" min="20000" max="300000" step="2000" value="120000"></div>
+            <div class="control"><label><span id="todaySpend-lbl">Minimum lifestyle to keep</span> <span class="val" id="v-todaySpend">$120,000</span></label><input type="range" id="todaySpend" min="20000" max="300000" step="2000" value="120000"></div>
             <div class="control"><label>Inflation rate <span class="val" id="v-inflation">3.00%</span></label><input type="range" id="inflation" min="2" max="5" step="0.25" value="3"></div>
             <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="30" max="70" step="1" value="45"></div>
             <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="50" max="75" step="1" value="65"></div>
@@ -495,9 +505,10 @@
             </div>
             <div class="ledger" style="margin-top:14px;">
               <div class="lline"><span>Rental covers, year 1 <span class="lbl-sub">Tax-free after the depreciation shield</span></span><span class="amt" id="s-retRent">–</span></div>
-              <div class="lline"><span>Lifetime federal tax</span><span class="amt" id="s-lifetimeTax">–</span></div>
               <div class="lline"><span>Depreciation shield saves in tax <span class="lbl-sub">On the qualified withdrawals, over the horizon</span></span><span class="amt" id="s-taxSaved">–</span></div>
-              <div class="lline total"><span>Left to the estate at the end <span class="lbl-sub">Homes + accounts + net policy − debts</span></span><span class="amt" id="s-legacy">–</span></div>
+              <div class="lline"><span>Total income extracted <span class="lbl-sub">Net of tax — what you actually keep, not gross withdrawn</span></span><span class="amt" id="s-extracted">–</span></div>
+              <div class="lline"><span>Left to the estate at the end <span class="lbl-sub">Homes + accounts + net policy − debts</span></span><span class="amt" id="s-legacy">–</span></div>
+              <div class="lline total"><span>Total wealth created <span class="lbl-sub">Everything the plan delivers: income kept + legacy left</span></span><span class="amt" id="s-wealth">–</span></div>
             </div>
           </div>
         </div>
@@ -505,7 +516,7 @@
 
       <div class="topic">
         <div class="topic-h" id="veh-qm-h">Set up: qualified money (401(k)/IRA)</div>
-        <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS pulls only up to your tax ceiling below while the tax-free vehicles have room; the untouched balance keeps growing tax-deferred.</p>
+        <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS decides how hard to draw it based on your goal below (legacy or income); the untouched balance keeps growing tax-deferred.</p>
         <div class="split">
           <div class="side-controls">
             <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
@@ -546,15 +557,8 @@
 
       <div class="topic">
         <div class="topic-h">Funding the plan — ALIS allocates your annual contribution</div>
-        <p class="topic-exp">Between now and retirement, a fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that retires best.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>Annual amount to allocate <span class="val" id="v-annualContrib">$40,000</span></label><input type="range" id="annualContrib" min="0" max="120000" step="5000" value="40000"></div>
-          </div>
-          <div class="side-results" style="align-self:center;">
-            <p class="topic-exp" style="margin:0;" id="alloc-context">–</p>
-          </div>
-        </div>
+        <p class="topic-exp">Set the amount to allocate in the ALIS panel (bottom right) — it's the same number everywhere. Between now and retirement, that fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that best serves your chosen goal.</p>
+        <p class="topic-exp" id="alloc-context">–</p>
         <div class="alis-rec" id="allocRec" style="margin-top:18px;">
           <div class="alis-rec-head">
             <span class="alis-badge">ALIS allocation</span>
@@ -571,15 +575,7 @@
 
       <div class="topic">
         <div class="topic-h">ALIS picks the funding mix — and shows what it costs</div>
-        <p class="topic-exp">Objective: sustain the lifestyle to your plan-through age at the least tax and debt. Every year the rental pays first; ALIS withdraws qualified money up to your tax ceiling (the depreciation shield lets the first dollars out tax-free), then fills the rest from the tax-free HELOC and policy — and it compares that against simply draining qualified first. Honest result, proven below: once the plan is age-bounded, draining qualified first often wins on tax; blending only pulls ahead when the lifestyle would otherwise outrun the qualified balance.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>Keep qualified withdrawals within <span class="val" id="v-taxCeiling">the 12% bracket</span></label><input type="range" id="taxCeiling" min="0" max="2" step="1" value="0"></div>
-          </div>
-          <div class="side-results" style="align-self:center;">
-            <p class="topic-exp" style="margin:0;">A lower ceiling pays less tax but leans harder on the tax-free vehicles (more estate debt); a higher ceiling uses more qualified money now. ALIS holds the line you set.</p>
-          </div>
-        </div>
+        <p class="topic-exp">Objective: sustain the lifestyle to your plan-through age, then maximize whichever goal you picked in the ALIS panel — legacy or income extracted. Every year the rental pays first; ALIS decides how much qualified money to draw (and how much to hold back for tax-free vehicles to cover instead) automatically — no bracket to set, it just searches for whatever draw-down pace actually wins your goal, and shows you the honest tradeoff against simply draining qualified first.</p>
         <div class="alis-rec" id="alisRec" style="margin-top:18px;">
           <div class="alis-rec-head">
             <span class="alis-badge">ALIS recommends</span>
@@ -674,10 +670,16 @@
     <button type="button" class="float-toggle" id="floatToggle" aria-label="Collapse ALIS plan">–</button>
   </div>
   <div class="float-body" id="floatBody">
+    <div class="float-control"><label>Amount to allocate/yr <span class="val" id="v-annualContrib">$40,000</span></label><input type="range" id="annualContrib" min="0" max="120000" step="5000" value="40000"></div>
+    <div class="float-goal-row">
+      <button type="button" class="float-goal active" id="goal-legacy" data-goal="legacy">Max legacy</button>
+      <button type="button" class="float-goal" id="goal-both" data-goal="both">Most of both</button>
+      <button type="button" class="float-goal" id="goal-income" data-goal="income">Max income</button>
+    </div>
     <div class="float-row"><span class="float-lbl" id="float-lifestyle-lbl">Lifestyle</span><span class="float-val" id="float-outcome">–</span></div>
     <div class="float-row"><span class="float-lbl">Legacy behind</span><span class="float-val" id="float-legacy">–</span></div>
     <div class="float-row"><span class="float-lbl">Income extracted</span><span class="float-val" id="float-extracted">–</span></div>
-    <div class="float-row"><span class="float-lbl">Total tax paid</span><span class="float-val" id="float-tax">–</span></div>
+    <div class="float-row"><span class="float-lbl">Total wealth created</span><span class="float-val" id="float-wealth">–</span></div>
     <div class="float-note" id="float-alloc">–</div>
     <div class="float-note" id="float-mix">–</div>
     <button type="button" class="float-cta" id="float-playbook">View year-by-year playbook →</button>
@@ -862,6 +864,9 @@
   // The teaching toolkit: each tool can be switched off one-by-one so ALIS re-plans with what's
   // left — lets a member see exactly what each piece contributes.
   const TOOLS = { velocity:true, policy:true, bizcredit:true, heloc:true, mortgage:true, rental:true, qualified:true };
+  // What ALIS optimizes for — set by the two goal buttons on the floating panel. Tax is never the
+  // target; it's just a byproduct shown for information, never sorted or tie-broken on.
+  let optimizeMode = 'legacy';
   // Headline stats of the last plan render — the journey uses this to show before→after deltas.
   let LAST_STATS = null;
 
@@ -1126,11 +1131,14 @@
   // (the rental's leftover depreciation shields the first dollars); the tax-free HELOC + policy
   // fill the remainder. ALIS tries both tax-free orders and compares to "drain qualified first".
   const RET_CAP = 60;
-  // Bracket ceilings (top of the 12% / 22% / 24% bracket) per filing status — 2026 OBBBA table.
+  // Qualified-draw-down pace levels for blend strategies (internal only — not user-facing "tax
+  // brackets" anymore; tax isn't the objective, but HOW MUCH qualified to hold back each year still
+  // genuinely changes years/legacy/income, so ALIS searches all three paces automatically per
+  // strategy and keeps whichever wins the chosen goal — no slider, no bracket language exposed).
   const CEIL = [
-    { single: 50400,  mfj: 100800, label: 'the 12% bracket' },
-    { single: 105700, mfj: 211400, label: 'the 22% bracket' },
-    { single: 201775, mfj: 403550, label: 'the 24% bracket' }
+    { single: 50400,  mfj: 100800, label: 'cautious' },
+    { single: 105700, mfj: 211400, label: 'moderate' },
+    { single: 201775, mfj: 403550, label: 'full' }
   ];
   const STRATS = [
     { key:'blend-h', blend:true,  tf:['heloc','policy'], label:'Blend · HELOC fills first' },
@@ -1345,7 +1353,12 @@
     // Legacy: what the estate keeps after the debts clear — home + rental + leftover qualified +
     // policy cash value net of its own loan (death benefit ≥ this; conservative) − all home debt.
     const legacy = homeEnd + rentalEnd + qmBal + Math.max(cvEnd - policyEnd, 0) - homeDebtEnd;
-    const totalExtracted = rec.rent.total + rec.qm.totalDrawn + rec.heloc.totalDrawn + rec.policy.totalDrawn;
+    // NET of tax, not gross withdrawn — rent/HELOC/policy are already tax-free/shielded, so the
+    // qualified leg has to subtract what actually went to the IRS or this overstates real income by
+    // counting tax dollars as if the member kept them (caught 2026-07-06: a strategy that draws more
+    // gross qualified — and pays more tax — showed as "more income" even when every strategy funded
+    // the identical number of years at the identical lifestyle).
+    const totalExtracted = rec.rent.total + (rec.qm.totalDrawn - rec.qm.totalTax) + rec.heloc.totalDrawn + rec.policy.totalDrawn;
     return { strat, key:strat.key, years:H, planYears:HORIZON, sustainable, failAge, capped:(H>=RET_CAP),
              lifetimeTax, shieldTaxSaved, rmdTotal, rec, helocEnd, refiEnd, policyEnd, homeEnd, rentalEnd,
              homeDebtEnd, qmEnd:qmBal, cvEnd, mortEnd:mortBal, legacy, totalExtracted, timeline };
@@ -1421,7 +1434,7 @@
   }
 
   function renderSection5(){
-    const todaySpend = +$('todaySpend').value;
+    const spendInput = +$('todaySpend').value;   // slider = lifestyle floor (legacy/both modes)
     const inflation = (+$('inflation').value)/100;
     const qmBalance = +$('qmBalance').value;
     const qmGrowth = (+$('qmGrowth').value)/100;
@@ -1429,7 +1442,6 @@
     const homeValue = +$('reEquity').value;
     const reGrowth = (+$('reGrowth').value)/100;
     const maxLtv = (+$('maxLtv').value)/100;
-    const ceilIdx = +$('taxCeiling').value;
     let currentAge = +$('currentAge').value;
     let retireAge = +$('retireAge').value;
     let planAge = +$('planAge').value;
@@ -1437,7 +1449,6 @@
     if (planAge <= retireAge) planAge = retireAge + 1;      // plan must extend past retirement
     const horizon = planAge - retireAge;
 
-    $('v-todaySpend').textContent = fmt0.format(todaySpend);
     $('v-inflation').textContent = (inflation*100).toFixed(2)+'%';
     $('v-qmBalance').textContent = fmt0.format(qmBalance);
     $('v-qmGrowth').textContent = (qmGrowth*100).toFixed(2)+'%';
@@ -1445,7 +1456,6 @@
     $('v-reEquity').textContent = fmt0.format(homeValue);
     $('v-reGrowth').textContent = (reGrowth*100).toFixed(2)+'%';
     $('v-maxLtv').textContent = (maxLtv*100).toFixed(0)+'%';
-    $('v-taxCeiling').textContent = CEIL[ceilIdx].label;
     $('v-currentAge').textContent = currentAge;
     $('v-retireAge').textContent = retireAge;
     $('v-planAge').textContent = planAge;
@@ -1459,8 +1469,8 @@
     // Section 3's "years accumulated" left off, through every accumulation year, into retirement —
     // real premium-charge and Standard-loan rates depend on this running total, not a fresh clock.
     const policyYearAtRetireStart = P.polYears + accYears;
-    const mkInp = (a) => ({
-      todaySpend, inflation, qmBalance: a.qmStart, qmGrowth, helocRate, homeValue, reGrowth, maxLtv,
+    const mkInp = (a, ceil, spendVal) => ({
+      todaySpend: spendVal, inflation, qmBalance: a.qmStart, qmGrowth, helocRate, homeValue, reGrowth, maxLtv,
       retireAge, horizon, policyYearAtRetireStart,
       startCV: a.cvStart, credRate: P.credRate/100, loanType: P.loanType, filingStatus,
       toolHeloc: TOOLS.heloc, toolPolicy: TOOLS.policy,
@@ -1469,8 +1479,13 @@
       rentalValue0: TOOLS.rental ? RE.invPrice : 0,
       mortBalRet: a.mortBalRet, mortRatePct: M1 ? M1.ratePct : 0, mortMonthlyPay: M1 ? M1.monthlyPay : 0,
       shieldCap: (strActive || repActive) ? Infinity : 25000,
-      ceiling: { single: CEIL[ceilIdx].single, mfj: CEIL[ceilIdx].mfj }
+      ceiling: { single: ceil.single, mfj: ceil.mfj }
     });
+    // The chosen goal decides EVERY ranking from here down. Tax is never in this comparison.
+    // legacy = most left behind · income = most net cash taken · both = total wealth (income + legacy).
+    const modeMetric = r => optimizeMode === 'legacy' ? r.legacy
+                          : optimizeMode === 'income' ? r.totalExtracted
+                          : r.legacy + r.totalExtracted;
     // Tools off reshape the starting position too: no mortgage = home owned outright (full HELOC
     // room, no P&I, no chunk target); no policy = no Section-3 cash value; no 401(k) = no balance.
     const acc0 = {
@@ -1484,31 +1499,63 @@
     };
 
     // Grid search: every 10%-step split of the contribution across the AVAILABLE vehicles.
-    // Each split is grown to retirement, then retired under all three strategies; a split's score
-    // is its best strategy's outcome. Objective: sustainable → most years → most legacy → least tax.
-    const objSort = (a,b) => (b.sustainable - a.sustainable) || (b.years - a.years) || (a.lifetimeTax - b.lifetimeTax) || ((a.homeDebtEnd+a.policyEnd) - (b.homeDebtEnd+b.policyEnd));
-    const allocSort = (A,B) => (B.best.sustainable - A.best.sustainable) || (B.best.years - A.best.years) || (B.best.legacy - A.best.legacy) || (A.best.lifetimeTax - B.best.lifetimeTax);
+    // Each split is grown to retirement, then retired under every strategy — blend strategies are
+    // tried at all 3 internal draw-down paces and collapsed to their best pace (so the UI still
+    // shows 3 clean strategy rows, not 7). Objective: sustainable first, then the chosen goal
+    // (legacy or income extracted), then years as a final tie-break. Tax is never part of this.
+    const objSort = (a,b) => (b.sustainable - a.sustainable) || (modeMetric(b) - modeMetric(a)) || (b.years - a.years);
+    const allocSort = (A,B) => (B.best.sustainable - A.best.sustainable) || (modeMetric(B.best) - modeMetric(A.best)) || (B.best.years - A.best.years);
+    function runStrategies(inp2Builder){
+      // For each strategy type, search all paces (blend) and keep the single best-performing one.
+      return STRATS.map(s => {
+        const paces = s.blend ? CEIL : [CEIL[1]]; // naive ignores pace — it has no ceiling concept
+        const variants = paces.map(c => simulateStrategy(s, inp2Builder(c)));
+        return [...variants].sort(objSort)[0];
+      });
+    }
     const chunkAllowed = TOOLS.velocity && TOOLS.mortgage;    // chunking needs a mortgage to attack
-    const allocs = [];
-    for (let q=0; q<=10; q++) for (let c=0; c<=10-q; c++){
-      const p = 10-q-c;
-      if (q > 0 && !TOOLS.qualified) continue;
-      if (c > 0 && !chunkAllowed) continue;
-      if (p > 0 && !TOOLS.policy) continue;
-      const fr = { qm:q/10, chunk:c/10, policy:p/10 };
-      const a = accumulate(fr, acc0);
-      const inp2 = mkInp(a);
-      const runs = STRATS.map(s => simulateStrategy(s, inp2));
-      const best = [...runs].sort(objSort)[0];
-      allocs.push({ key: q+'-'+c+'-'+p, fr, a, runs, best });
+    function gridAt(spendVal, step){
+      const out = [];
+      for (let q=0; q<=10; q+=step) for (let c=0; c<=10-q; c+=step){
+        const p = 10-q-c;
+        if (q > 0 && !TOOLS.qualified) continue;
+        if (c > 0 && !chunkAllowed) continue;
+        if (p > 0 && !TOOLS.policy) continue;
+        const fr = { qm:q/10, chunk:c/10, policy:p/10 };
+        const a = accumulate(fr, acc0);
+        const runs = runStrategies(ceil => mkInp(a, ceil, spendVal));
+        const best = [...runs].sort(objSort)[0];
+        out.push({ key: q+'-'+c+'-'+p, fr, a, runs, best });
+      }
+      if (!out.length){
+        // Every contribution vehicle is switched off — run the do-nothing split so the plan renders.
+        const fr = { qm:0, chunk:0, policy:0 };
+        const a = accumulate(fr, acc0);
+        const runs = runStrategies(ceil => mkInp(a, ceil, spendVal));
+        out.push({ key:'0-0-0', fr, a, runs, best: [...runs].sort(objSort)[0] });
+      }
+      return out;
     }
-    if (!allocs.length){
-      // Every contribution vehicle is switched off — run the do-nothing split so the plan still renders.
-      const fr = { qm:0, chunk:0, policy:0 };
-      const a = accumulate(fr, acc0);
-      const runs = STRATS.map(s => simulateStrategy(s, mkInp(a)));
-      allocs.push({ key:'0-0-0', fr, a, runs, best: [...runs].sort(objSort)[0] });
+
+    // Effective lifestyle by mode. In Max-income mode ALIS SOLVES for the biggest sustainable
+    // lifestyle (binary search over spend; feasibility = "does the best coarse-grid plan sustain?" —
+    // sustainability is monotone in spend, so the search is sound). Other modes use the slider floor.
+    let todaySpend = spendInput;
+    if (optimizeMode === 'income'){
+      const feas = S => { const g = gridAt(S, 2); g.sort(allocSort); return g[0].best.sustainable; };
+      let lo = 20000, hi = 600000;
+      if (feas(lo)){
+        for (let i=0; i<9; i++){ const m = (lo+hi)/2; feas(m) ? lo = m : hi = m; }
+        todaySpend = Math.floor(lo/1000)*1000;
+      } else todaySpend = lo;   // even the floor doesn't hold — show that honestly
+      $('todaySpend').value = todaySpend;   // thumb tracks ALIS's answer (control is disabled)
     }
+    $('todaySpend').disabled = (optimizeMode === 'income');
+    $('todaySpend').style.opacity = (optimizeMode === 'income') ? 0.4 : 1;
+    $('todaySpend-lbl').textContent = optimizeMode === 'income' ? 'Lifestyle — ALIS maximizes this' : 'Minimum lifestyle to keep';
+    $('v-todaySpend').textContent = fmt0.format(todaySpend) + (optimizeMode === 'income' ? ' (ALIS max)' : '');
+
+    const allocs = gridAt(todaySpend, 1);
     allocs.sort(allocSort);
     const allocOpt = allocs[0];
     let chosenAlloc = allocOpt;
@@ -1530,7 +1577,8 @@
       renderStatCard('alloc-why', [
         { label:'Outcome', val: best.sustainable ? 'Age '+planAge+' ✓' : 'Dry at '+(retireAge+best.years), risk: !best.sustainable },
         { label:'Legacy', val: fmtCompact(best.legacy) },
-        { label:'Lifetime tax', val: fmtCompact(best.lifetimeTax) },
+        { label:'Income extracted', val: fmtCompact(best.totalExtracted) },
+        { label:'Total wealth', val: fmtCompact(best.legacy + best.totalExtracted) },
         payoffYear && { label:'House paid off', val: 'Yr '+payoffYear },
         allocOpt.a.capBound && { label:'Qualified', val:'IRS-capped' },
         allocOpt.a.refundTotal > 1000 && { label:'401(k) refunds reinvested', val: fmtCompact(allocOpt.a.refundTotal) },
@@ -1562,7 +1610,7 @@
       btn.innerHTML = '<span class="order-seq"><span class="order-rank">#'+rank+'</span>'+frLabel(A.fr)+
         (A.key===allocOpt.key?'<span class="order-tag">ALIS pick</span>':'')+
         (isPure && A.key!==allocOpt.key?'<span class="order-tag pure">Tunnel vision: 1 product</span>':'')+'</span>'+
-        '<span class="order-yrs">'+reach+'<span class="order-debt">'+fmtCompact(A.best.legacy)+' legacy · '+fmtCompact(A.best.lifetimeTax)+' tax</span></span>';
+        '<span class="order-yrs">'+reach+'<span class="order-debt">'+fmtCompact(A.best.legacy)+' legacy · '+fmtCompact(A.best.totalExtracted)+' income</span></span>';
       btn.addEventListener('click', () => { viewAllocKey = (A.key===allocOpt.key ? null : A.key); renderSection5(); });
       aList.appendChild(btn);
     });
@@ -1572,9 +1620,8 @@
     const byKey = k => results.find(r => r.key === k);
     const debtOf = r => r.homeDebtEnd + r.policyEnd;
     const reachAge = r => retireAge + r.years;
-    // Objective (honest, over ALL strategies): reach the full plan first, then most years,
-    // then least lifetime tax, then least estate debt. ALIS recommends the true winner — which is
-    // often "drain qualified first" once the plan is age-bounded, not a blend.
+    // Objective (honest, over ALL strategies): reach the full plan first, then maximize the chosen
+    // goal (legacy or income extracted), then most years as a tie-break. Tax is never in this.
     const ranked = [...results].sort(objSort);
     const optimal = ranked[0];
     const naive = byKey('naive');
@@ -1586,10 +1633,12 @@
     // ---- ALIS recommendation card (mini dashboard: tiles + one takeaway line, not prose) ----
     $('alis-order').textContent = optimal.strat.label + '  ·  ' + (optimal.sustainable ? 'lasts to age '+planAge : 'runs dry at age '+reachAge(optimal));
     const refi0 = optimal.rec.heloc.refis[0];
+    const goalLabel = optimizeMode === 'legacy' ? 'Legacy' : optimizeMode === 'income' ? 'Income extracted' : 'Total wealth';
+    const goalVal = modeMetric(optimal);
     renderStatCard('alis-why', [
       { label:'Outcome', val: optimal.sustainable ? 'Age '+planAge+' ✓' : 'Dry at '+reachAge(optimal), risk: !optimal.sustainable },
-      { label:'Lifetime tax', val: fmtCompact(optimal.lifetimeTax) },
-      { label:'Shield saved', val: fmtCompact(optimal.shieldTaxSaved) },
+      { label:goalLabel, val: fmtCompact(goalVal) },
+      { label:'Shield saved (tax)', val: fmtCompact(optimal.shieldTaxSaved) },
       { label:'Estate debt', val: fmtCompact(debtOf(optimal)) },
       optimal.rmdTotal > 1000 && { label:'RMDs forced', val: fmtCompact(optimal.rmdTotal) },
       refi0 && { label:'Refi at', val: 'age '+refi0.age },
@@ -1597,10 +1646,11 @@
     ],
     // One-line takeaway — the single most decision-relevant fact, not a wall of reasoning.
     (() => {
-      if (!optimal.sustainable) return 'Runs dry <b>'+(planAge-reachAge(optimal))+' yrs early</b> — lower the tax ceiling, add contributions, or trim the lifestyle.';
-      if (!optimal.strat.blend && bestBlend) return '<b>Draining qualified first wins</b> — blending adds tax ('+fmtCompact(bestBlend.lifetimeTax)+' vs '+fmtCompact(naive.lifetimeTax)+') with no extra years.';
-      if (optimal.strat.blend && optimal.lifetimeTax > naive.lifetimeTax + 1000) return 'This blend buys extra years for <b>'+fmtCompact(optimal.lifetimeTax-naive.lifetimeTax)+' more tax</b> than draining qualified first.';
-      return 'Raise the ceiling to cut tax; lower it to stretch the years.';
+      if (!optimal.sustainable) return 'Runs dry <b>'+(planAge-reachAge(optimal))+' yrs early</b> — add contributions or trim the lifestyle.';
+      const metric = optimizeMode === 'legacy' ? 'legacy' : optimizeMode === 'income' ? 'income extracted' : 'total wealth';
+      if (!optimal.strat.blend && bestBlend) return '<b>Draining qualified first wins</b> — blending in the tax-free vehicles earlier doesn’t add '+metric+' here.';
+      if (optimal.strat.blend) return '<b>Blending wins</b> — holding qualified back and leaning on the tax-free vehicles beats draining qualified first for '+metric+'.';
+      return 'This is the best order for '+metric+' at your current numbers.';
     })());
 
     // ---- Strategy comparison list ----
@@ -1613,7 +1663,7 @@
       const reachTxt = r.sustainable ? ('to age '+planAge+' ✓') : ('to age '+reachAge(r));
       btn.innerHTML = '<span class="order-seq"><span class="order-rank">#'+(i+1)+'</span>'+r.strat.label+
         (r.key===optimal.key?'<span class="order-tag">ALIS pick</span>':'')+'</span>'+
-        '<span class="order-yrs">'+reachTxt+'<span class="order-debt">'+fmtCompact(r.lifetimeTax)+' tax · '+fmtCompact(debtOf(r))+' debt</span></span>';
+        '<span class="order-yrs">'+reachTxt+'<span class="order-debt">'+fmtCompact(r.legacy)+' legacy · '+fmtCompact(r.totalExtracted)+' income</span></span>';
       btn.addEventListener('click', () => { viewOrderKey = (r.key===optimal.key ? null : r.key); renderSection5(); });
       list.appendChild(btn);
     });
@@ -1636,16 +1686,18 @@
     $('float-outcome').style.color = chosen.sustainable ? '' : 'var(--risk)';
     $('float-legacy').textContent = fmtCompact(chosen.legacy);
     $('float-extracted').textContent = fmtCompact(chosen.totalExtracted);
-    $('float-tax').textContent = fmtCompact(chosen.lifetimeTax);
+    $('float-wealth').textContent = fmtCompact(chosen.legacy + chosen.totalExtracted);
     $('float-alloc').innerHTML = 'Allocation: <b>'+((annualContrib>0&&accYears>0)?frLabel(chosenAlloc.fr):'—')+'</b>';
     $('float-mix').innerHTML = 'Funding mix: <b>'+chosen.strat.label+'</b>';
 
-    // ---- Headline tax stats ----
+    // ---- Headline stats ----
     $('s-retRent').textContent = chosen.rec.rent.yr1 > 1 ? fmt0.format(chosen.rec.rent.yr1)+'/yr' : '—';
-    $('s-lifetimeTax').textContent = fmt0.format(chosen.lifetimeTax);
-    // The real, honest tax lever: what the depreciation shield saves (NOT a false "vs naive" claim).
+    // The real, honest tax lever: what the depreciation shield saves (informational only — never
+    // part of the optimization, per Bruce: legacy or income extracted is the only goal that matters).
     $('s-taxSaved').textContent = fmt0.format(chosen.shieldTaxSaved);
+    $('s-extracted').textContent = fmt0.format(chosen.totalExtracted);
     $('s-legacy').textContent = fmt0.format(chosen.legacy);
+    $('s-wealth').textContent = fmt0.format(chosen.legacy + chosen.totalExtracted);
 
     // ---- Rental block ----
     $('s-rentLocSub').textContent = propLocation==='hawaii' ? 'Hawaii (Oahu) property' : 'Mainland property';
@@ -1718,7 +1770,8 @@
     $('playbook').innerHTML = pb.join('');
 
     LAST_STATS = { reach: retireAge + chosen.years, planAge, sustainable: chosen.sustainable,
-                   legacy: chosen.legacy, tax: chosen.lifetimeTax, extracted: chosen.totalExtracted };
+                   legacy: chosen.legacy, tax: chosen.lifetimeTax, extracted: chosen.totalExtracted,
+                   wealth: chosen.legacy + chosen.totalExtracted, spend: todaySpend };
 
     window.EPIC_DEBUG = { chosen, chosenAlloc, results };
     window.EPIC_DEBUG_FN = { simulateStrategy, washCharged, washCredited, premChargePct, federalTax, STRATS };
@@ -1821,7 +1874,7 @@
     const yearsDelta = (i===0 || !prev || dY===0) ? {} : { sub:(dY>0?'+':'−')+Math.abs(dY)+' yrs', subClass: dY>0?'up':'down' };
     // Honest takeaway: if the step barely moved the needle at the member's numbers, SAY so —
     // a false "aha" teaches the wrong lesson. Baseline gets its own holds/runs-dry variants.
-    const meaningful = prev && i > 0 && (Math.abs(dY) >= 1 || Math.abs(now.legacy-prev.legacy) >= 50000 || Math.abs(now.tax-prev.tax) >= 25000);
+    const meaningful = prev && i > 0 && (Math.abs(dY) >= 1 || Math.abs(now.legacy-prev.legacy) >= 50000 || Math.abs(now.extracted-prev.extracted) >= 25000);
     const takeaway = i === 0
       ? (now.sustainable && step.ahaHolds ? step.ahaHolds : step.aha)
       : ((!meaningful && step.flat) ? step.flat : step.aha);
@@ -1829,7 +1882,7 @@
       Object.assign({ label:'Lifestyle lasts', val: now.sustainable ? 'to '+now.planAge+' ✓' : 'to age '+now.reach, risk: !now.sustainable }, yearsDelta),
       Object.assign({ label:'Legacy behind', val: fmtCompact(now.legacy) }, delta(prev ? now.legacy-prev.legacy : null, true)),
       Object.assign({ label:'Income extracted', val: fmtCompact(now.extracted) }, delta(prev ? now.extracted-prev.extracted : null, true)),
-      Object.assign({ label:'Total tax', val: fmtCompact(now.tax) }, delta(prev ? now.tax-prev.tax : null, false))
+      Object.assign({ label:'Total wealth', val: fmtCompact(now.wealth) }, delta(prev ? now.wealth-prev.wealth : null, true))
     ], takeaway);
     const nxt = $('journey-next');
     nxt.textContent = (i < JOURNEY.length-1) ? 'Next: '+JOURNEY[i+1].title+' →' : 'Open the year-by-year playbook →';
@@ -1856,7 +1909,19 @@
   ['principal','rate','term','yearsPaid'].forEach(id => $(id).addEventListener('input', () => { renderSection1(); renderSection5(); }));
   ['income','withheld','invPrice','downPct','invRate','writeOff','otherPassive','grossYield','opex','invApprec'].forEach(id => $(id).addEventListener('input', renderSection2));
   ['wRedux','overfundAnnual','credRate','polYears'].forEach(id => $(id).addEventListener('input', renderSection3));
-  ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','taxCeiling','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
+  ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
+  // Remember the member's own lifestyle floor so Max-income mode (which commandeers the slider to
+  // display ALIS's solved maximum) can hand the slider back untouched when they switch modes again.
+  let userSpendFloor = +$('todaySpend').value;
+  $('todaySpend').addEventListener('input', () => { if (optimizeMode !== 'income') userSpendFloor = +$('todaySpend').value; });
+  document.querySelectorAll('.float-goal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      optimizeMode = btn.dataset.goal;
+      document.querySelectorAll('.float-goal').forEach(b => b.classList.toggle('active', b === btn));
+      if (optimizeMode !== 'income') $('todaySpend').value = userSpendFloor;
+      renderSection5();
+    });
+  });
 
   const floatPanel = $('floatPanel');
   let floatCollapsed = false;
@@ -1876,6 +1941,6 @@
 })();
 </script>
 
+
 </body>
 </html>
-
