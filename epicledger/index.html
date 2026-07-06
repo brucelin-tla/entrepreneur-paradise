@@ -172,6 +172,7 @@
   .order-row.viewing .order-yrs, .order-row.best .order-yrs { color: var(--go); }
   .order-rank { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--brass); font-weight: 700; margin-right: 8px; }
   .order-tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--go); margin-left: 8px; }
+  .order-tag.pure { color: var(--brass); }
 
   .linked-input { background: var(--ledger-soft); border: 1px dashed color-mix(in srgb, var(--ledger) 35%, var(--line)); border-radius: 8px; padding: 13px 15px; }
   .linked-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-soft); }
@@ -503,6 +504,47 @@
       </div>
 
       <div class="topic">
+        <div class="topic-h" id="veh-qm-h">Set up: qualified money (401(k)/IRA)</div>
+        <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS pulls only up to your tax ceiling below while the tax-free vehicles have room; the untouched balance keeps growing tax-deferred.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
+            <div class="control"><label>Projected growth rate <span class="val" id="v-qmGrowth">6.00%</span></label><input type="range" id="qmGrowth" min="3" max="8" step="0.25" value="6"></div>
+          </div>
+          <div class="side-results">
+            <div class="ledger">
+              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-qmYears">–</span></div>
+              <div class="lline"><span>Average annual withdrawal <span class="lbl-sub">Low early, higher once the tax-free vehicles run dry</span></span><span class="amt" id="s-qmFirstDraw">–</span></div>
+              <div class="lline"><span>Total withdrawn over the horizon</span><span class="amt" id="s-finalWithdrawal">–</span></div>
+              <div class="lline"><span>Effective tax rate on it <span class="lbl-sub" id="s-qmRateSub">Lifetime tax ÷ total withdrawn</span></span><span class="amt" id="s-finalTax">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic">
+        <div class="topic-h" id="veh-heloc-h">Set up: the HELOC (tax-free filler)</div>
+        <p class="topic-exp">The rate and the home's own numbers. In retirement this covers whatever the rental and low-bracket qualified money don't. Real terms: a line has a ~10-year draw window from its first draw — inside it, interest can ride on the line (while room lasts); when the window closes with a balance, ALIS rolls it into a 30-yr fixed at your mortgage rate, whose real payment the plan then funds — and a fresh line can open against the remaining equity.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>HELOC rate <span class="val" id="v-helocRate">8.00%</span></label><input type="range" id="helocRate" min="5" max="9" step="0.1" value="8"></div>
+            <div class="control"><label>Home value securing the HELOC <span class="val" id="v-reEquity">$1,100,000</span></label><input type="range" id="reEquity" min="0" max="3000000" step="25000" value="1100000"></div>
+            <div class="control"><label>Home appreciation <span class="val" id="v-reGrowth">4.00%</span></label><input type="range" id="reGrowth" min="1" max="6" step="0.25" value="4"></div>
+            <div class="control"><label>Max loan-to-value <span class="val" id="v-maxLtv">85%</span></label><input type="range" id="maxLtv" min="70" max="90" step="1" value="85"></div>
+          </div>
+          <div class="side-results">
+            <div class="ledger">
+              <div class="lline"><span>Years it contributes in retirement</span><span class="amt" id="s-helocYears">–</span></div>
+              <div class="lline"><span>Typical annual HELOC draw <span class="lbl-sub">Tax-free</span></span><span class="amt" id="s-helocFirstDraw">–</span></div>
+              <div class="lline"><span>Borrowing cap, first draw year <span class="lbl-sub">Max LTV × appreciated home value</span></span><span class="amt" id="s-helocCap">–</span></div>
+              <div class="lline"><span>Refinance to fixed, if needed <span class="lbl-sub" id="s-helocRefiSub">Fires only when the 10-yr draw window closes with a balance</span></span><span class="amt" id="s-helocRefi">–</span></div>
+              <div class="lline subtotal"><span>Home debt at end of retirement <span class="lbl-sub">HELOC + refinanced fixed + any remaining mortgage</span></span><span class="amt" id="s-helocBalEnd">–</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic">
         <div class="topic-h">Funding the plan — ALIS allocates your annual contribution</div>
         <p class="topic-exp">Between now and retirement, a fixed amount goes into the available vehicles each year: extra mortgage principal (chunking), the policy, and the qualified plan. Real mechanics included: qualified contributions are pre-tax (the tax refund recycles into next year's pool, but contributions cap at the IRS limit and inflate future RMDs); the policy pays the real premium expense charge (7% / 6% / 2% by policy year); paying the house off frees the whole payment into the pool; and 0% business-credit stacking lands the first five years of chunks early. ALIS tries every split and keeps the one that retires best.</p>
         <div class="split">
@@ -522,7 +564,7 @@
         </div>
         <details class="details-toggle" style="margin-top:14px;">
           <summary>Compare allocations</summary>
-          <p class="topic-exp" style="margin-top:10px;">The best splits plus the three pure plays, ranked by how they retire. Tap any row to run the whole retirement section below on that allocation.</p>
+          <p class="topic-exp" style="margin-top:10px;">The best splits, plus the three "tunnel vision" scenarios — 100% into just one product — always included no matter how they rank, so you can see exactly what going all-in on a single vehicle costs. Tap any row to run the whole retirement section below on that allocation.</p>
           <div class="order-list" id="alloc-list"></div>
         </details>
       </div>
@@ -567,47 +609,6 @@
       </div>
 
       <div class="topic">
-        <div class="topic-h" id="veh-qm-h">Qualified money — dripped to your tax ceiling</div>
-        <p class="topic-exp">A 401(k)/IRA. ALIS pulls only up to your tax ceiling while the tax-free vehicles have room — the rental's leftover depreciation shields the first dollars. Once the HELOC and policy are exhausted, it has to draw more (above the ceiling) to keep funding the lifestyle, which lifts the effective rate below. The untouched balance keeps growing tax-deferred.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
-            <div class="control"><label>Projected growth rate <span class="val" id="v-qmGrowth">6.00%</span></label><input type="range" id="qmGrowth" min="3" max="8" step="0.25" value="6"></div>
-          </div>
-          <div class="side-results">
-            <div class="ledger">
-              <div class="lline"><span>Years it contributes</span><span class="amt" id="s-qmYears">–</span></div>
-              <div class="lline"><span>Average annual withdrawal <span class="lbl-sub">Low early, higher once the tax-free vehicles run dry</span></span><span class="amt" id="s-qmFirstDraw">–</span></div>
-              <div class="lline"><span>Total withdrawn over the horizon</span><span class="amt" id="s-finalWithdrawal">–</span></div>
-              <div class="lline"><span>Effective tax rate on it <span class="lbl-sub" id="s-qmRateSub">Lifetime tax ÷ total withdrawn</span></span><span class="amt" id="s-finalTax">–</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="topic">
-        <div class="topic-h" id="veh-heloc-h">HELOC — tax-free filler</div>
-        <p class="topic-exp">Tax-free draws against home equity cover whatever the rental and low-bracket qualified money don't. Real terms: a line has a ~10-year draw window from its first draw — inside it, interest can ride on the line (while room lasts); when the window closes with a balance, ALIS rolls it into a 30-yr fixed at your mortgage rate, whose real payment the plan then funds — and a fresh line can open against the remaining equity. Lenders cap all home loans combined at the loan-to-value below.</p>
-        <div class="split">
-          <div class="side-controls">
-            <div class="control"><label>HELOC rate <span class="val" id="v-helocRate">8.00%</span></label><input type="range" id="helocRate" min="5" max="9" step="0.1" value="8"></div>
-            <div class="control"><label>Home value securing the HELOC <span class="val" id="v-reEquity">$1,100,000</span></label><input type="range" id="reEquity" min="0" max="3000000" step="25000" value="1100000"></div>
-            <div class="control"><label>Home appreciation <span class="val" id="v-reGrowth">4.00%</span></label><input type="range" id="reGrowth" min="1" max="6" step="0.25" value="4"></div>
-            <div class="control"><label>Max loan-to-value <span class="val" id="v-maxLtv">85%</span></label><input type="range" id="maxLtv" min="70" max="90" step="1" value="85"></div>
-          </div>
-          <div class="side-results">
-            <div class="ledger">
-              <div class="lline"><span>Years it contributes</span><span class="amt" id="s-helocYears">–</span></div>
-              <div class="lline"><span>Typical annual HELOC draw <span class="lbl-sub">Tax-free</span></span><span class="amt" id="s-helocFirstDraw">–</span></div>
-              <div class="lline"><span>Borrowing cap, first draw year <span class="lbl-sub">Max LTV × appreciated home value</span></span><span class="amt" id="s-helocCap">–</span></div>
-              <div class="lline"><span>Refinance to fixed, if needed <span class="lbl-sub" id="s-helocRefiSub">Fires only when the 10-yr draw window closes with a balance</span></span><span class="amt" id="s-helocRefi">–</span></div>
-              <div class="lline subtotal"><span>Home debt at end of retirement <span class="lbl-sub">HELOC + refinanced fixed + any remaining mortgage</span></span><span class="amt" id="s-helocBalEnd">–</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="topic">
         <div class="topic-h" id="veh-policy-h">The Section 3 policy — tax-free filler</div>
         <p class="topic-exp">Tax-free policy loans at Section&nbsp;3's loan rate. The cash value keeps earning the crediting rate the entire time — even on the loaned amount (index loan) — so the longer it's left, the more it can lend. <b>The policy is never allowed to lapse:</b> new loans stop at 90% of cash value, and if drift ever pushes the loan toward the cash value, the plan pays loan interest in cash to hold it — a lapse would make every prior loan retroactively taxable, so the model treats it as forbidden, not just unlucky.</p>
         <div class="split">
@@ -644,7 +645,11 @@
         </div>
         <div class="caveat">
           <span class="mark">!</span>
-          <p><b>Key assumptions, in the open.</b> Rental depreciation runs ~27 years and offsets qualified income up to the $25K passive allowance (unlimited if Way&nbsp;1 or&nbsp;2 is on in Section&nbsp;2). RMDs start at 73 per the IRS Uniform Lifetime Table. Contributions: qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); the policy takes a ~10% early-cost load and receives any overflow; a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
+          <p><b>Policy legacy numbers are an optimistic upper bound — here's the real gap.</b> This models the real premium expense charge (7% / 6% / 2% by policy year) and a real $20/mo admin fee, but does <b>not</b> yet model the age/health-based cost-of-insurance charge (a real universal life policy keeps charging this for life, funded from cash value once premiums stop — it's likely the single biggest missing cost) or check the 7-pay Modified Endowment Contract premium limit (fund a policy too heavily for its death benefit and it loses tax-free-loan status entirely). A heavy-policy allocation will look better here than a real illustration would show. Fix: bring real COI rates or an actual carrier illustration (upload feature, coming) before trusting a policy-heavy recommendation with a client.</p>
+        </div>
+        <div class="caveat">
+          <span class="mark">!</span>
+          <p><b>Other assumptions, in the open.</b> Rental depreciation runs ~27 years and offsets qualified income up to the $25K passive allowance (unlimited if Way&nbsp;1 or&nbsp;2 is on in Section&nbsp;2). RMDs start at 73 per the IRS Uniform Lifetime Table. Qualified caps at the employee 401(k) limit (no employer match modeled — if you have one, that's free money on top); a mortgage still alive in retirement costs its real P&I and reduces HELOC room (combined LTV). HELOC draw windows run 10 years; the refinance assumes a 30-yr fixed at your Section-1 mortgage rate. The policy cannot lapse in this model — draws cap at 90% of cash value and drift past 95% is serviced in cash (with a wash loan, the loaned slice really credits a lower fixed rate than shown — a licensed illustration is the authority). Federal tax only, sole-income estimate. This models cash movement — a CPA and a licensed illustration confirm the real numbers.</p>
         </div>
       </div>
 
@@ -815,6 +820,12 @@
   // --- Real AIUL product mechanics (from the carrier's producer guide, current-scale column) ---
   // Premium expense charge: 7% year 1, 6% years 2-10, 2% years 11+.
   function premChargePct(policyYear){ return policyYear<=1 ? 0.07 : policyYear<=10 ? 0.06 : 0.02; }
+  // Real, sourced, ongoing carrier charge: $20/month admin fee, EVERY policy year for as long as
+  // the policy is in force — including retirement, when no premium is being paid. NOT modeled yet:
+  // the age/health-based cost-of-insurance charge (the bigger omitted cost, no simple flat rate to
+  // source) and the 7-pay MEC premium limit. Until those are added, a heavy-policy legacy number is
+  // an optimistic upper bound, not a real illustration.
+  const POLICY_ADMIN_ANNUAL = 240;
   // Standard ("wash") loan: years 1-10 charged 3.25% / credited 2.00% (real 1.25%/yr cost —
   // NOT free); years 11+ charged 3.00% / credited 3.00% (a true wash, net 0%).
   function washCharged(policyYear){ return policyYear<=10 ? 3.25 : 3.00; }
@@ -1314,7 +1325,9 @@
 
       qmBal -= Q; if (qmBal < 0) qmBal = 0;
       if (qmBal > 0) qmBal *= (1+inp.qmGrowth);
-      cvFree *= (1+inp.credRate);
+      // Ongoing $20/mo admin charge continues in retirement too — a policy costs money to keep in
+      // force whether or not premiums are still being paid. Taken from the free bucket first.
+      cvFree = Math.max(cvFree*(1+inp.credRate) - POLICY_ADMIN_ANNUAL, 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (mortBal > 0.5){ for (let m=0; m<12 && mortBal>0.5; m++){ mortBal = mortBal*(1+mortMr) - mortPay; } if (mortBal < 0) mortBal = 0; }
       if (refiBal > 0.5){ const rr=(refiRatePct/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiMonthlyPay; } if (refiBal <= 0.5){ refiBal = 0; refiMonthlyPay = 0; } }
@@ -1347,7 +1360,7 @@
   function accumulate(fr, acc){
     let qm = acc.qm0, cv = acc.cv0, bal = acc.mortBal, refund = 0;
     const mr = (acc.mortRatePct/100)/12, mpay = acc.mortMonthlyPay;
-    let freedAtYear = null, totalChunked = 0, capBound = false, refundTotal = 0;
+    let freedAtYear = null, totalChunked = 0, capBound = false, refundTotal = 0, idleCash = 0;
     const timeline = [];   // year-by-year playbook rows for the accumulation phase
     for (let y=0; y<acc.years; y++){
       const age = acc.currentAge + y;
@@ -1356,15 +1369,32 @@
       let pool = acc.contribution + refund + (bal <= 0.5 ? mpay*12 : 0);
       const cap = age >= 50 ? 31000 : 23500;                 // employee 401(k) limit (+catch-up)
       const qmWant = pool * fr.qm;
-      const qmC = Math.min(qmWant, cap);
+      let qmC = Math.min(qmWant, cap);
       if (qmWant > cap + 1) capBound = true;
       let rest = pool - qmC;
       const denom = fr.chunk + fr.policy;
       let chunkC = denom > 0 ? rest * (fr.chunk/denom) : 0;
-      let polC   = denom > 0 ? rest * (fr.policy/denom) : (acc.toolPolicy !== false ? rest : 0);
+      let polC   = denom > 0 ? rest * (fr.policy/denom) : 0;
+      if (denom === 0 && rest > 0.5){
+        // Pure-qualified split that overflowed the IRS cap, with nowhere by default to land —
+        // reroute in priority order: policy (if available) → mortgage paydown (if a balance
+        // remains) → idle cash. Never let it silently vanish.
+        if (acc.toolPolicy !== false) polC = rest;
+        else if (bal > 0.5) chunkC = rest;
+        else idleCash += rest;
+      }
       if (bal <= 0.5){
-        // House done → chunk money keeps working in the policy (or nowhere, if policy is off).
-        if (acc.toolPolicy !== false) polC += chunkC;
+        // House done → this year's "chunk" share has nothing left to attack. Reroute it in
+        // priority order: policy (if available) → extra qualified room under the IRS cap →
+        // otherwise it's genuinely idle cash (tracked below, never silently dropped).
+        if (acc.toolPolicy !== false){
+          polC += chunkC;
+        } else {
+          const toQm = Math.min(chunkC, Math.max(cap - qmC, 0));
+          qmC += toQm;
+          const leftover = chunkC - toQm;
+          if (leftover > 0.5) idleCash += leftover;
+        }
         chunkC = 0;
       }
       const rowChunk = chunkC, rowPol = polC, rowQm = qmC, rowRefund = refund; // capture for the playbook
@@ -1380,14 +1410,14 @@
       refundTotal += refund;
       qm = (qm + qmC) * (1+acc.qmGrowth);
       const policyYear = acc.polYearsStart + y + 1;
-      cv = (cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate);
+      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL, 0);
       const evts = [];
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
       if (acc.stacking && y < 5 && rowChunk > 1) evts.push('Chunk via 0% biz credit, pay the card down through the year');
       timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, mortBal: bal, evts });
     }
     if (bal <= 0.5 && freedAtYear === null) freedAtYear = acc.years;
-    return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, timeline };
+    return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, idleCash, timeline };
   }
 
   function renderSection5(){
@@ -1503,7 +1533,8 @@
         { label:'Lifetime tax', val: fmtCompact(best.lifetimeTax) },
         payoffYear && { label:'House paid off', val: 'Yr '+payoffYear },
         allocOpt.a.capBound && { label:'Qualified', val:'IRS-capped' },
-        allocOpt.a.refundTotal > 1000 && { label:'401(k) refunds reinvested', val: fmtCompact(allocOpt.a.refundTotal) }
+        allocOpt.a.refundTotal > 1000 && { label:'401(k) refunds reinvested', val: fmtCompact(allocOpt.a.refundTotal) },
+        allocOpt.a.idleCash > 500 && { label:'Idle cash — no tool to take it', val: fmtCompact(allocOpt.a.idleCash), risk:true }
       ],
       // One-line takeaway: which vehicle wins and the real-rate reason, dynamically derived.
       (() => {
@@ -1524,11 +1555,13 @@
     shown.forEach((A) => {
       const btn = document.createElement('button');
       btn.type = 'button';
+      const isPure = pures.includes(A.key);
       btn.className = 'order-row' + (A.key===allocOpt.key?' best':'') + (A.key===chosenAlloc.key?' viewing':'');
       const rank = allocs.indexOf(A)+1;
       const reach = A.best.sustainable ? ('to age '+planAge+' ✓') : ('to age '+(retireAge+A.best.years));
       btn.innerHTML = '<span class="order-seq"><span class="order-rank">#'+rank+'</span>'+frLabel(A.fr)+
-        (A.key===allocOpt.key?'<span class="order-tag">ALIS pick</span>':'')+'</span>'+
+        (A.key===allocOpt.key?'<span class="order-tag">ALIS pick</span>':'')+
+        (isPure && A.key!==allocOpt.key?'<span class="order-tag pure">Tunnel vision: 1 product</span>':'')+'</span>'+
         '<span class="order-yrs">'+reach+'<span class="order-debt">'+fmtCompact(A.best.legacy)+' legacy · '+fmtCompact(A.best.lifetimeTax)+' tax</span></span>';
       btn.addEventListener('click', () => { viewAllocKey = (A.key===allocOpt.key ? null : A.key); renderSection5(); });
       aList.appendChild(btn);
