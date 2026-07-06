@@ -287,7 +287,7 @@
         <p class="topic-exp">Your balance and its growth rate — used both to size how much ALIS can allocate here and, in retirement, to see how it draws down. ALIS decides how hard to draw it based on the goal you pick in Section&nbsp;3; the untouched balance keeps growing tax-deferred.</p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="300000" max="3000000" step="50000" value="1500000"></div>
+            <div class="control"><label>Current balance <span class="val" id="v-qmBalance">$1,500,000</span></label><input type="range" id="qmBalance" min="0" max="3000000" step="25000" value="1500000"></div>
             <div class="control"><label>Projected growth rate <span class="val" id="v-qmGrowth">6.00%</span></label><input type="range" id="qmGrowth" min="3" max="8" step="0.25" value="6"></div>
           </div>
           <div class="side-results">
@@ -306,8 +306,8 @@
         <p class="topic-exp">The mortgage as it stands today — Section&nbsp;2's velocity banking attacks this, and the home's equity backs the HELOC later.</p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Property value <span class="val" id="v-propValue">$1,100,000</span></label><input type="range" id="propValue" min="300000" max="3000000" step="10000" value="1100000"></div>
-            <div class="control"><label>Original mortgage principal <span class="val" id="v-principal">$500,000</span></label><input type="range" id="principal" min="100000" max="2000000" step="5000" value="500000"></div>
+            <div class="control"><label>Property value <span class="val" id="v-propValue">$1,100,000</span></label><input type="range" id="propValue" min="50000" max="3000000" step="10000" value="1100000"></div>
+            <div class="control"><label>Original mortgage principal <span class="val" id="v-principal">$500,000</span></label><input type="range" id="principal" min="0" max="2000000" step="5000" value="500000"></div>
             <div class="control"><label>Interest rate <span class="val" id="v-rate">6.50%</span></label><input type="range" id="rate" min="2" max="9" step="0.05" value="6.5"></div>
             <div class="control"><label>Loan term <span class="val" id="v-term">30 yrs</span></label><input type="range" id="term" min="15" max="30" step="5" value="30"></div>
             <div class="control"><label>Years already paid <span class="val" id="v-yearsPaid">5 yrs</span></label><input type="range" id="yearsPaid" min="0" max="25" step="1" value="5"></div>
@@ -329,7 +329,7 @@
         <p class="topic-exp">The property's numbers, the age you buy it, and which vehicle funds the down payment when it's a future purchase. Its depreciation write-off is a big deal — the tax picture on the right shows how much lands this year vs. carries forward. <b>Section&nbsp;4 shows three ways to unlock a suspended write-off.</b></p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Purchase price (2nd property) <span class="val" id="v-invPrice">$1,100,000</span></label><input type="range" id="invPrice" min="300000" max="3000000" step="10000" value="1100000"></div>
+            <div class="control"><label>Purchase price (2nd property) <span class="val" id="v-invPrice">$1,100,000</span></label><input type="range" id="invPrice" min="100000" max="3000000" step="10000" value="1100000"></div>
             <div class="control"><label>Down payment <span class="val" id="v-downPct">25%</span></label><input type="range" id="downPct" min="15" max="50" step="1" value="25"></div>
             <div class="control"><label>Loan rate <span class="val" id="v-invRate">7.00%</span></label><input type="range" id="invRate" min="2" max="9" step="0.05" value="7"></div>
             <div class="control"><label>Written off immediately (Year 1) <span class="val" id="v-writeOff">20%</span></label><input type="range" id="writeOff" min="0" max="28" step="1" value="20"></div>
@@ -843,8 +843,9 @@
     const inkSoft = styles.getPropertyValue('--ink-soft').trim();
     const padL = 70, padB = 26, padT = 12, padR = 14;
     const plotW = W - padL - padR, plotH = H - padT - padB;
-    const maxMonths = Math.max(baseline.months, accel.months);
-    const maxBal = baseline.balances[0];
+    // No mortgage (principal 0) → nothing to chart; guard against 0/0 so the axes still draw clean.
+    const maxMonths = Math.max(baseline.months, accel.months, 1);
+    const maxBal = Math.max(baseline.balances[0], 1);
     ctx.strokeStyle = gridColor; ctx.lineWidth = 1; ctx.font = '11px -apple-system, sans-serif'; ctx.fillStyle = inkSoft;
     const ySteps = 4;
     for (let i=0;i<=ySteps;i++){
@@ -970,7 +971,7 @@
         '<div class="side-controls">'+
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><b>Property '+(i+2)+'</b><button type="button" class="toggle-btn" data-del="'+i+'">Remove</button></div>'+
         '<div class="control"><label>Buy at age <span class="val" id="v-xbuy'+i+'">'+p.buyAge+'</span></label><input type="range" id="xbuy'+i+'" min="31" max="99" step="1" value="'+p.buyAge+'"></div>'+
-        '<div class="control"><label>Purchase price (at purchase) <span class="val" id="v-xprice'+i+'">'+fmt0.format(p.price)+'</span></label><input type="range" id="xprice'+i+'" min="300000" max="3000000" step="10000" value="'+p.price+'"></div>'+
+        '<div class="control"><label>Purchase price (at purchase) <span class="val" id="v-xprice'+i+'">'+fmt0.format(p.price)+'</span></label><input type="range" id="xprice'+i+'" min="100000" max="3000000" step="10000" value="'+p.price+'"></div>'+
         '<div class="control"><label>Down payment <span class="val" id="v-xdown'+i+'">'+p.downPct+'%</span></label><input type="range" id="xdown'+i+'" min="15" max="50" step="1" value="'+p.downPct+'"></div>'+
         '<div class="control"><label>Loan rate <span class="val" id="v-xrate'+i+'">'+p.ratePct.toFixed(2)+'%</span></label><input type="range" id="xrate'+i+'" min="2" max="9" step="0.05" value="'+p.ratePct+'"></div>'+
         '<div class="toggle-row">'+
