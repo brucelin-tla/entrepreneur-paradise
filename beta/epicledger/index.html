@@ -239,12 +239,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b9</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b10</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b10</span><p class="topic-exp" style="margin-top:2px;">Ages and lifestyle now adjustable from Section 3 and the floating ALIS panel too (not just Section 1) — all copies stay in sync. Plan-through age can go to 120. Fixed a confusing duplicate: "Cash value at retirement start" appeared twice with different numbers — the smaller one is really today's value; relabeled it and pointed to the real (bigger) retirement-start figure.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b9</span><p class="topic-exp" style="margin-top:2px;">More room for members with less debt or savings: 401(k) balance and mortgage principal can now go all the way to $0, and property prices can go as low as $50K–$100K instead of a $300K floor.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b8</span><p class="topic-exp" style="margin-top:2px;">Whole page reorganized into the advisor flow: Section 1 your numbers, Section 2 the tools, Section 3 the optimized plan, Section 4 opportunities (a live dashboard of tax to claw back, suspended write-offs, unused room, and a real what-if for one more property). Every asset/tool now has an "In the plan / Not applicable" switch, and the ALIS panel gained an Apply button that rebuilds the year-by-year playbook.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b7</span><p class="topic-exp" style="margin-top:2px;">Buying a property is now a future move, not day one: pick an age to buy (yours or up to 3 more), funded by a HELOC or policy loan against what the plan has actually built by then — the tool tells you honestly if the room isn't there yet. Every property now carries a real loan payment and a real tax write-off that carries forward, so the numbers reflect true cash flow, not just gross rent. "Total tax paid" is back as an FYI line under Total wealth.</p></div>
@@ -278,7 +279,7 @@
           <div class="side-controls">
             <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="30" max="70" step="1" value="45"></div>
             <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="50" max="75" step="1" value="65"></div>
-            <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="100" step="1" value="90"></div>
+            <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="120" step="1" value="90"></div>
           </div>
         </div>
       </div>
@@ -546,10 +547,13 @@
       </div>
 
       <div class="topic" id="setPlanTopic">
-        <div class="topic-h">Set the plan — contribution, goal &amp; lifestyle</div>
-        <p class="topic-exp">How much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year; ages are set in Section&nbsp;1). In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. The same controls live in the floating ALIS panel — they stay in sync.</p>
+        <div class="topic-h">Set the plan — ages, contribution, goal &amp; lifestyle</div>
+        <p class="topic-exp">The retirement window, how much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year). In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. These controls mirror Section&nbsp;1 and the floating ALIS panel — all three stay in sync.</p>
         <div class="split">
           <div class="side-controls">
+            <div class="control"><label>Current age <span class="val" id="v-currentAge2">45</span></label><input type="range" id="currentAge2" min="30" max="70" step="1" value="45"></div>
+            <div class="control"><label>Retirement age <span class="val" id="v-retireAge2">65</span></label><input type="range" id="retireAge2" min="50" max="75" step="1" value="65"></div>
+            <div class="control"><label>Plan through age <span class="val" id="v-planAge2">90</span></label><input type="range" id="planAge2" min="78" max="120" step="1" value="90"></div>
             <div class="control"><label>Amount to allocate/yr <span class="val" id="v-annualContrib2">$40,000</span></label><input type="range" id="annualContrib2" min="0" max="120000" step="5000" value="40000"></div>
             <div class="toggle-row">
               <button type="button" class="toggle-btn active sec-goal" data-goal="legacy">Max legacy</button>
@@ -632,15 +636,15 @@
         <div class="split">
           <div class="side-controls">
             <div class="linked-input">
-              <div class="linked-label">Cash value at retirement start</div>
+              <div class="linked-label">Cash value today</div>
               <div class="linked-val" id="v-polStart">–</div>
-              <div class="linked-note">Pulled from Section 2 — set the withholding redirect, crediting rate, and years there. It keeps compounding at the crediting rate from here.</div>
+              <div class="linked-note">Pulled from Section 2's "years accumulated" — the starting POINT this engine grows forward. Set the withholding redirect, crediting rate, and years there. The real figure at retirement (right, after every remaining contribution year) is the bigger, more accurate number.</div>
             </div>
           </div>
           <div class="side-results">
             <div class="ledger">
               <div class="lline"><span>Years it contributes</span><span class="amt" id="s-policyYears">–</span></div>
-              <div class="lline"><span>Cash value at retirement start</span><span class="amt" id="s-p3StartValue">–</span></div>
+              <div class="lline total"><span>Cash value at retirement start <span class="lbl-sub">The real number — today's value grown through every remaining working year</span></span><span class="amt" id="s-p3StartValue">–</span></div>
               <div class="lline"><span>Typical annual policy draw <span class="lbl-sub">Tax-free</span></span><span class="amt" id="s-p3FirstDraw">–</span></div>
               <div class="lline"><span>Cash paid to prevent lapse <span class="lbl-sub">Fires only if loan drift approaches the cash value</span></span><span class="amt" id="s-polService">–</span></div>
               <div class="lline subtotal"><span>Policy loan balance at end <span class="lbl-sub">Self-covered by the policy's own death benefit</span></span><span class="amt" id="s-p3LoanBalEnd">–</span></div>
@@ -754,6 +758,7 @@
       <button type="button" class="float-goal" id="goal-both" data-goal="both">Most of both</button>
       <button type="button" class="float-goal" id="goal-income" data-goal="income">Max income</button>
     </div>
+    <div class="float-control"><label><span id="todaySpend-lbl2">Minimum lifestyle to keep</span> <span class="val" id="v-todaySpend2">$120,000</span></label><input type="range" id="todaySpend2" min="20000" max="300000" step="2000" value="120000"></div>
     <div class="float-row"><span class="float-lbl" id="float-lifestyle-lbl">Lifestyle</span><span class="float-val" id="float-outcome">–</span></div>
     <div class="float-row"><span class="float-lbl">Legacy behind</span><span class="float-val" id="float-legacy">–</span></div>
     <div class="float-row"><span class="float-lbl">Income extracted</span><span class="float-val" id="float-extracted">–</span></div>
@@ -1283,7 +1288,7 @@
   // Each year the rental pays first; qualified money is DRIPPED only up to a chosen tax ceiling
   // (the rental's leftover depreciation shields the first dollars); the tax-free HELOC + policy
   // fill the remainder. ALIS tries both tax-free orders and compares to "drain qualified first".
-  const RET_CAP = 60;
+  const RET_CAP = 75; // plan-through age now reaches 120; max horizon = 120 − 50 (min retire age) = 70
   // Qualified-draw-down pace levels for blend strategies (internal only — not user-facing "tax
   // brackets" anymore; tax isn't the objective, but HOW MUCH qualified to hold back each year still
   // genuinely changes years/legacy/income, so ALIS searches all three paces automatically per
@@ -1771,6 +1776,10 @@
     $('v-currentAge').textContent = currentAge;
     $('v-retireAge').textContent = retireAge;
     $('v-planAge').textContent = planAge;
+    // Mirror ages + lifestyle into Section 3's copies (kept in sync, same pattern as contribution).
+    $('currentAge2').value = currentAge; $('v-currentAge2').textContent = currentAge;
+    $('retireAge2').value = retireAge; $('v-retireAge2').textContent = retireAge;
+    $('planAge2').value = planAge; $('v-planAge2').textContent = planAge;
 
     const annualContrib = +$('annualContrib').value;
     $('v-annualContrib').textContent = fmt0.format(annualContrib);
@@ -1889,6 +1898,12 @@
     $('todaySpend').style.opacity = (optimizeMode === 'income') ? 0.4 : 1;
     $('todaySpend-lbl').textContent = optimizeMode === 'income' ? 'Lifestyle — ALIS maximizes this' : 'Minimum lifestyle to keep';
     $('v-todaySpend').textContent = fmt0.format(todaySpend) + (optimizeMode === 'income' ? ' (ALIS max)' : '');
+    // Mirror into the floating panel's copy — same slider, same value, kept in sync.
+    $('todaySpend2').value = todaySpend;
+    $('todaySpend2').disabled = (optimizeMode === 'income');
+    $('todaySpend2').style.opacity = (optimizeMode === 'income') ? 0.4 : 1;
+    $('todaySpend-lbl2').textContent = optimizeMode === 'income' ? 'Lifestyle — ALIS maximizes this' : 'Minimum lifestyle to keep';
+    $('v-todaySpend2').textContent = fmt0.format(todaySpend) + (optimizeMode === 'income' ? ' (ALIS max)' : '');
 
     const allocs = gridAt(todaySpend, 1);
     allocs.sort(allocSort);
@@ -2386,10 +2401,16 @@
   });
   ['wRedux','overfundAnnual','credRate','polYears'].forEach(id => $(id).addEventListener('input', renderSection3));
   ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
+  // Section-3 mirrors of the ages/lifestyle sliders: either copy drives the plan, both stay in sync
+  // (same pattern as the contribution slider — mirror writes the primary, render writes the mirror).
+  [['currentAge2','currentAge'],['retireAge2','retireAge'],['planAge2','planAge'],['todaySpend2','todaySpend']].forEach(([mirror, primary]) => {
+    $(mirror).addEventListener('input', () => { $(primary).value = $(mirror).value; renderSection5(); });
+  });
   // Remember the member's own lifestyle floor so Max-income mode (which commandeers the slider to
   // display ALIS's solved maximum) can hand the slider back untouched when they switch modes again.
   let userSpendFloor = +$('todaySpend').value;
   $('todaySpend').addEventListener('input', () => { if (optimizeMode !== 'income') userSpendFloor = +$('todaySpend').value; });
+  $('todaySpend2').addEventListener('input', () => { if (optimizeMode !== 'income') userSpendFloor = +$('todaySpend2').value; });
   // Goal buttons exist in two places (Section 3 + the floating panel) — one shared handler
   // keeps them, and the plan, in lockstep.
   function setGoal(mode){
