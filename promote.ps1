@@ -1,7 +1,7 @@
 # promote.ps1 - promote the beta/ build to the LIVE root (GitHub Pages).
-# Run from the repo root. Copies beta -> root for game.js / version.json / css / config,
-# takes beta's index.html and strips the BETA branding back to the live look, and rebuilds
-# the standalone root game.html.
+# Run from the repo root. Copies beta -> root for game.js / version.json / css / config /
+# epicledger (if present), takes beta's index.html and strips the BETA branding back to the
+# live look, and rebuilds the standalone root game.html.
 #
 # It does NOT commit or push. The /promote command orchestrates the gate (run /playtest first),
 # RELEASE_NOTES, a preview verify, the commit, and the owner-confirmed push.
@@ -23,6 +23,10 @@ Copy-Item "beta/js/game.js"   "js/game.js"   -Force
 Copy-Item "beta/version.json" "version.json" -Force
 Copy-Item "beta/css/*"        "css/"         -Recurse -Force
 Copy-Item "beta/config/*.json" "config/"     -Force
+if (Test-Path "beta/epicledger") {
+    New-Item -ItemType Directory -Force -Path "epicledger" | Out-Null
+    Copy-Item "beta/epicledger/*" "epicledger/" -Recurse -Force
+}
 
 # 2. index.html - take beta's shell (so structural changes carry over), strip BETA branding,
 #    rewrite beta-relative asset/manifest paths (../assets -> assets) for the root.
