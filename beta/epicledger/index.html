@@ -45,6 +45,10 @@
   h1, h2 { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif; font-weight: 600; text-wrap: balance; }
   header { border-bottom: 2px solid var(--ledger); padding-bottom: 22px; margin-bottom: 8px; }
   .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--brass); font-weight: 600; }
+  .ledger-version { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--ink-soft); background: var(--paper-raised); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+  .changelog { margin-top: 10px; }
+  .changelog-entry { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--line); }
+  .changelog-date { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 11px; color: var(--brass); font-weight: 700; }
   h1 { font-size: 29px; margin: 8px 0 8px; letter-spacing: -0.01em; }
   header p { margin: 0; color: var(--ink-soft); max-width: 74ch; font-size: 15px; }
 
@@ -230,9 +234,18 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b7</span>
     <h1>Epic Life Ledger</h1>
-    <p>Four things, in order: velocity-bank the mortgage to save time and interest — get a real tax break from a second property — put the tax savings to work in a policy — then combine qualified money, a HELOC, and that same policy to see how many years of the same lifestyle retirement can actually fund, with the debt covered.</p>
+    <p>Four things, in order: velocity-bank the mortgage to save time and interest — get a real tax break from a second property, bought now or later — put the tax savings to work in a policy — then combine qualified money, a HELOC, and that same policy to see how many years of the same lifestyle retirement can actually fund, with the debt covered.</p>
+    <details class="details-toggle">
+      <summary>What's changed</summary>
+      <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b7</span><p class="topic-exp" style="margin-top:2px;">Buying a property is now a future move, not day one: pick an age to buy (yours or up to 3 more), funded by a HELOC or policy loan against what the plan has actually built by then — the tool tells you honestly if the room isn't there yet. Every property now carries a real loan payment and a real tax write-off that carries forward, so the numbers reflect true cash flow, not just gross rent. "Total tax paid" is back as an FYI line under Total wealth.</p></div>
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b6</span><p class="topic-exp" style="margin-top:2px;">Three goals to choose from in the ALIS panel: Max legacy, Max income (ALIS finds your biggest sustainable lifestyle), or Most of both. Added a "Total wealth created" line (income kept + legacy left).</p></div>
+        <div class="changelog-entry"><span class="changelog-date">Jul 5, 2026 — b4/b5</span><p class="topic-exp" style="margin-top:2px;">Income-extracted figure fixed to be net of tax, not gross withdrawn. Tax bracket removed as something you set — ALIS searches the pacing automatically.</p></div>
+        <div class="changelog-entry"><span class="changelog-date">Jul 5, 2026</span><p class="topic-exp" style="margin-top:2px;">First full build: velocity banking, the real-estate tax break, the tax-reserve policy, and the retirement blend, with a guided step-by-step learning journey.</p></div>
+      </div>
+    </details>
   </header>
 
   <div class="sheet">
