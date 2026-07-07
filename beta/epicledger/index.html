@@ -242,12 +242,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b15</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b16</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b16</span><p class="topic-exp" style="margin-top:2px;">The cash-value policy now speaks plainly about its age: the slider reads "Policy in force for X years already," the ledger shows "Current cash value" (what the policy holds today), and a new "Policy year at retirement" line shows where the fee clock will stand when you retire — including when the cheap year-11 tier (2% premium charge, true 0%-net wash loans) kicks in. Also: slide your age in Section 1 and the other numbers preset to typical starting points for that life stage (they stop auto-filling the moment you customize anything; a button re-applies on demand). Typical ≠ yours — future versions will auto-fill from real member data as it's collected.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b15</span><p class="topic-exp" style="margin-top:2px;">Built for people in their 20s too, not just 40+: current age now goes down to 20, retirement age down to 40 (early-retirement plans work), and property purchase ages down to 20 — with the engine extended to handle up to an 80-year retirement window without cutting it short.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b14</span><p class="topic-exp" style="margin-top:2px;">Honest 401(k) handling when you don't have one: marked "Not applicable" now truly excludes it everywhere (fixed a leak where leftover chunk money could still slip into it), and split labels drop it entirely instead of showing "0% qualified." With a $0 balance but the tool on, splits that use it now say "(new — built from $0)" so it's clear ALIS is proposing to open one. Also: when two plans look identical on your goal after rounding, ALIS now picks the one leaving the bigger legacy — a win too small to see shouldn't beat real money left behind.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b13</span><p class="topic-exp" style="margin-top:2px;">New chronic-illness/long-term-care topic: model an accelerated draw on the Protection IUL's death benefit (1–4%/mo, capped at $30,000/mo) as a real tax-free income source — off by default, since it's a scenario, not a certainty. The trigger-age default (80) is sourced from real LTC statistics (cited in the caveat), not guessed. Every dollar drawn is shown reducing the death benefit left for the estate.</p></div>
@@ -288,6 +289,8 @@
             <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="20" max="70" step="1" value="45"></div>
             <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="40" max="75" step="1" value="65"></div>
             <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="120" step="1" value="90"></div>
+            <button type="button" class="toggle-btn" id="btn-agePreset" style="margin-top:10px;">Fill in typical numbers for my age</button>
+            <p class="way-hint show" id="agePresetHint" style="margin-top:8px;">Slide the age and the other numbers preset to typical starting points for that stage of life (they stop auto-filling once you customize anything). Typical ≠ yours — replace them with the member's real numbers. Future versions will auto-fill from real member data as it's collected.</p>
           </div>
         </div>
       </div>
@@ -473,7 +476,7 @@
             <div class="control"><label>Tax reserve redirected (monthly) <span class="val" id="v-wRedux">$800</span></label><input type="range" id="wRedux" min="0" max="10000" step="100" value="800"></div>
             <div class="control"><label>Intentional overfunding (extra $/yr) <span class="val" id="v-overfundAnnual">$0</span></label><input type="range" id="overfundAnnual" min="0" max="50000" step="1000" value="0"></div>
             <div class="control"><label>Illustrated crediting rate <span class="val" id="v-credRate">6.0%</span></label><input type="range" id="credRate" min="3" max="8" step="0.25" value="6"></div>
-            <div class="control"><label>Years accumulated <span class="val" id="v-polYears">3 yrs</span></label><input type="range" id="polYears" min="1" max="20" step="1" value="3"></div>
+            <div class="control"><label>Policy in force for — years already <span class="val" id="v-polYears">3 yrs</span></label><input type="range" id="polYears" min="1" max="20" step="1" value="3"></div>
             <div class="toggle-row">
               <button type="button" class="toggle-btn active" id="btn-indexLoan">Fixed Index loan — 5.00% guaranteed</button>
               <button type="button" class="toggle-btn" id="btn-washLoan">Standard ("wash") loan</button>
@@ -483,7 +486,8 @@
             <div class="ledger">
               <div class="lline"><span>Total annual premium <span class="lbl-sub">Tax reserve × 12 + overfunding</span></span><span class="amt" id="s-premium">–</span></div>
               <div class="lline"><span>Premium expense charge <span class="lbl-sub" id="s-premChargeSub">–</span></span><span class="amt" id="s-premCharge">–</span></div>
-              <div class="lline"><span>Cash value at Year <span id="s-polYearsLbl">3</span></span><span class="amt" id="s-cashValue">–</span></div>
+              <div class="lline subtotal"><span>Current cash value <span class="lbl-sub">After policy year <span id="s-polYearsLbl">3</span>'s premium charge and crediting — this is what the policy holds today</span></span><span class="amt" id="s-cashValue">–</span></div>
+              <div class="lline"><span>Policy year at retirement <span class="lbl-sub" id="s-polYearAtRetSub">The clock keeps running through the build years — fee tiers and wash-loan rates follow it</span></span><span class="amt" id="s-polYearAtRet">–</span></div>
               <div class="lline"><span>Tax bill this covers <span class="lbl-sub">Federal tax owed, with deduction</span></span><span class="amt" id="s-taxBillRef">–</span></div>
               <div class="lline subtotal"><span>Policy loan taken to pay taxes</span><span class="amt" id="s-loanTaken">–</span></div>
               <div class="lline"><span>Crediting on the loaned amount <span class="lbl-sub" id="s-loanCreditLbl">–</span></span><span class="amt" id="s-loanCreditRate">–</span></div>
@@ -980,6 +984,48 @@
   let loanType = 'index';
   let strActive = false;
   let ltcOn = false;   // chronic illness/LTC accelerated-benefit draw — off by default (a scenario, not a certainty)
+
+  // --- Age-based presets: typical starting points by life stage, applied when the age slider moves
+  // (only while the member hasn't customized anything) or via the explicit button. These are
+  // PLACEHOLDER "typical" values for education flow — NOT sourced member statistics. TODO (Bruce,
+  // 2026-07-06): once real member data accumulates, replace this table with most-commonly-seen
+  // values per bracket, auto-populated from the platform.
+  const AGE_PRESETS = [
+    { max: 29, label: 'starting out (20s)',
+      v: { income: 65000, withheld: 9000, qmBalance: 25000, annualContrib: 15000, propValue: 450000,
+           principal: 380000, yearsPaid: 1, invPrice: 350000, reEquity: 450000, todaySpend: 80000,
+           retireAge: 62, planAge: 90, wRedux: 300, polYears: 1, buyAgePlus: 10 } },
+    { max: 39, label: 'building (30s)',
+      v: { income: 110000, withheld: 18000, qmBalance: 100000, annualContrib: 25000, propValue: 650000,
+           principal: 520000, yearsPaid: 3, invPrice: 500000, reEquity: 650000, todaySpend: 96000,
+           retireAge: 63, planAge: 90, wRedux: 500, polYears: 2, buyAgePlus: 10 } },
+    { max: 49, label: 'established (40s)',
+      v: { income: 180000, withheld: 32000, qmBalance: 500000, annualContrib: 40000, propValue: 900000,
+           principal: 600000, yearsPaid: 5, invPrice: 800000, reEquity: 900000, todaySpend: 120000,
+           retireAge: 65, planAge: 90, wRedux: 800, polYears: 3, buyAgePlus: 8 } },
+    { max: 59, label: 'scaling (50s)',
+      v: { income: 200000, withheld: 38000, qmBalance: 900000, annualContrib: 50000, propValue: 1100000,
+           principal: 500000, yearsPaid: 10, invPrice: 1000000, reEquity: 1100000, todaySpend: 130000,
+           retireAge: 67, planAge: 92, wRedux: 1000, polYears: 5, buyAgePlus: 5 } },
+    { max: 120, label: 'preserving (60s+)',
+      v: { income: 160000, withheld: 28000, qmBalance: 1200000, annualContrib: 40000, propValue: 1100000,
+           principal: 350000, yearsPaid: 15, invPrice: 1000000, reEquity: 1100000, todaySpend: 120000,
+           retireAge: 70, planAge: 92, wRedux: 1000, polYears: 8, buyAgePlus: 3 } }
+  ];
+  // Once the member customizes any preset-controlled slider by hand, sliding the age stops
+  // overwriting their numbers (the button still re-applies on demand).
+  let presetsDirty = false;
+  function applyAgePresets(){
+    const age = +$('currentAge').value;
+    const b = AGE_PRESETS.find(p => age <= p.max);
+    if (!b) return;
+    Object.keys(b.v).forEach(k => {
+      if (k === 'buyAgePlus'){ $('buyAge1').value = Math.min(age + b.v[k], 99); return; }
+      if (k === 'retireAge'){ $('retireAge').value = Math.max(b.v[k], age); return; }
+      $(k).value = b.v[k];
+    });
+    $('btn-agePreset').textContent = 'Fill in typical numbers — ' + b.label;
+  }
   let repActive = false;
 
   const R = { taxSavings: 0, interestSaved: 0, cashValue: 0 };
@@ -1315,9 +1361,17 @@
     const netCostDollars = loanTaken * (netCostPct/100);
 
     $('s-premium').textContent = fmt0.format(annualPremium)+'/yr';
-    $('s-premChargeSub').textContent = 'Policy year '+polYears+(polYears<=1?' — first year':polYears<=10?' — years 2–10':' — years 11+');
+    $('s-premChargeSub').textContent = 'Policy year '+polYears+(polYears<=1?' — first year (7%)':polYears<=10?' — years 2–10 tier (6%); drops to 2% at year 11':' — years 11+ tier (2%, the cheapest)');
     $('s-premCharge').textContent = (thisYearCharge*100).toFixed(0)+'%';
     $('s-cashValue').textContent = fmt0.format(cashValue);
+    // Where the policy's clock will stand at retirement — fee tier and wash-loan status follow the
+    // POLICY year, not the calendar, so an older policy hits the cheap tiers sooner in the plan.
+    const yrsToRet = Math.max((+$('retireAge').value) - (+$('currentAge').value), 0);
+    const polYearAtRet = polYears + yrsToRet;
+    $('s-polYearAtRet').textContent = 'year '+polYearAtRet;
+    $('s-polYearAtRetSub').textContent = polYearAtRet >= 11
+      ? 'In force '+polYears+' yrs + '+yrsToRet+' build yrs — already past year 11 at retirement: 2% premium tier, true 0%-net wash loans'
+      : 'In force '+polYears+' yrs + '+yrsToRet+' build yrs — reaches the cheap year-11 tier (2% charge, 0%-net wash) '+(11-polYearAtRet)+' yrs into retirement';
     $('s-taxBillRef').textContent = fmt0.format(taxWithDeduction);
     $('s-loanTaken').textContent = fmt0.format(loanTaken);
     $('s-loanCreditLbl').textContent = loanType === 'index'
@@ -2549,11 +2603,30 @@
     $('btn-ltc').textContent = ltcOn ? '✓ Modeled' : '✗ Not modeled';
     renderSection5();
   });
-  ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
+  ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
+  // Ages also drive Section 2's "policy year at retirement" readout — route them through
+  // renderSection3 (which cascades into renderSection5) so everything refreshes exactly once.
+  // The current-age slider additionally applies life-stage presets while nothing's customized.
+  function rerenderAll(){ renderSection1(); renderSection2(); renderSection3(); }
+  $('currentAge').addEventListener('input', () => {
+    if (!presetsDirty){ applyAgePresets(); rerenderAll(); } else renderSection3();
+  });
+  $('retireAge').addEventListener('input', renderSection3);
+  // Any hand edit to a preset-controlled slider ends the auto-fill (the button still works).
+  ['income','withheld','qmBalance','annualContrib','annualContrib2','propValue','principal','yearsPaid',
+   'invPrice','reEquity','todaySpend','todaySpend2','wRedux','polYears','buyAge1',
+   'retireAge','retireAge2','planAge','planAge2'].forEach(id =>
+    $(id).addEventListener('input', () => { presetsDirty = true; }));
+  $('btn-agePreset').addEventListener('click', () => { applyAgePresets(); presetsDirty = false; rerenderAll(); });
   // Section-3 mirrors of the ages/lifestyle sliders: either copy drives the plan, both stay in sync
   // (same pattern as the contribution slider — mirror writes the primary, render writes the mirror).
   [['currentAge2','currentAge'],['retireAge2','retireAge'],['planAge2','planAge'],['todaySpend2','todaySpend']].forEach(([mirror, primary]) => {
-    $(mirror).addEventListener('input', () => { $(primary).value = $(mirror).value; renderSection5(); });
+    $(mirror).addEventListener('input', () => {
+      $(primary).value = $(mirror).value;
+      if (mirror === 'currentAge2'){ if (!presetsDirty){ applyAgePresets(); rerenderAll(); } else renderSection3(); }
+      else if (mirror === 'retireAge2') renderSection3();
+      else renderSection5();
+    });
   });
   // Remember the member's own lifestyle floor so Max-income mode (which commandeers the slider to
   // display ALIS's solved maximum) can hand the slider back untouched when they switch modes again.
