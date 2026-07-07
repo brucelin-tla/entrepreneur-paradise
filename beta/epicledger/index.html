@@ -16,6 +16,7 @@
     --risk: #a6503a; --risk-soft: #f5e3dd; --track: #d8dbd2; --thumb: #234b42;
     --shadow: 0 1px 2px rgba(26,36,32,0.06), 0 6px 20px rgba(26,36,32,0.06);
     --chart-base: #b7bdb2; --chart-accel: #234b42; --chart-grid: #e4e6e0;
+    --veh-qm: #3b6ea5; --veh-property: #7d4f9e;
   }
   :root[data-theme="dark"] {
     --paper: #121613; --paper-raised: #181d19; --ink: #e8e9e2; --ink-soft: #a9b3ac;
@@ -24,6 +25,7 @@
     --risk: #dd8a71; --risk-soft: #2e1e19; --track: #303a34; --thumb: #7fb89c;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
     --chart-base: #4a5650; --chart-accel: #7fb89c; --chart-grid: #232b26;
+    --veh-qm: #6a9fd8; --veh-property: #b48ad2;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -33,6 +35,7 @@
       --risk: #dd8a71; --risk-soft: #2e1e19; --track: #303a34; --thumb: #7fb89c;
       --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
       --chart-base: #4a5650; --chart-accel: #7fb89c; --chart-grid: #232b26;
+      --veh-qm: #6a9fd8; --veh-property: #b48ad2;
     }
   }
   * { box-sizing: border-box; }
@@ -242,12 +245,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b18</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b19</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b19</span><p class="topic-exp" style="margin-top:2px;">New chart at the top of the playbook: every vehicle's balance (401(k), policy cash value, HELOC, home mortgage, property value) on one age axis, build phase straight into retirement, with a marker at the retirement age. Also added an "LTC draw" column to the retirement playbook table — it was computed all along but not shown.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b18</span><p class="topic-exp" style="margin-top:2px;">Fixed a "$0" that read as a dead end: when the depreciation write-off is suspended by income (not lost — it carries forward), the journey and the Opportunities dashboard now show it as "Potential depreciation" with the real dollar value it would be worth in tax if unlocked, plus a direct pointer to Section 4's three qualifying ways to unlock it.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b17</span><p class="topic-exp" style="margin-top:2px;">Big reorder: Section 2 now runs policy → HELOC → 0% business credit → velocity banking → the rental property last (buy-age is its first input), funded from the capacity those tools just built. Chronic-illness/LTC now defaults ON when you set a Protection IUL premium (a real product feature, not an opt-in extra — click it off if you don't want it). The LTC trade-off is now ENFORCED, not just disclosed: a new Section 3 "Preserve vs. draw" choice, and any shortfall between what's left of the death benefit and what's needed to clear the debt now actually reduces legacy. "Plan through age" renamed "Age to pass down estate." The 7-step journey now itemizes the real numbers per step: interest saved + payoff time on Attack the Mortgage, the incremental stacking win on Use the Bank's Money, Protection IUL and Accumulation IUL shown as two separate line items on the tax-free engine step, the depreciation write-off clawed back on Buy a Property, and the Full Picture step compares against day one, not just the step before it.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b16</span><p class="topic-exp" style="margin-top:2px;">The cash-value policy now speaks plainly about its age: the slider reads "Policy in force for X years already," the ledger shows "Current cash value" (what the policy holds today), and a new "Policy year at retirement" line shows where the fee clock will stand when you retire — including when the cheap year-11 tier (2% premium charge, true 0%-net wash loans) kicks in. Also: slide your age in Section 1 and the other numbers preset to typical starting points for that life stage (they stop auto-filling the moment you customize anything; a button re-applies on demand). Typical ≠ yours — future versions will auto-fill from real member data as it's collected.</p></div>
@@ -745,6 +749,10 @@
       <div class="topic" id="playbookTopic">
         <div class="topic-h">The playbook — what to actually do, year by year</div>
         <p class="topic-exp">ALIS's recommended plan as a checklist: every year from now to the end of the plan, what goes where and what happens. Monthly amounts are the yearly figure ÷ 12.</p>
+        <div class="chartwrap">
+          <canvas id="pbChart" width="1000" height="260"></canvas>
+          <div class="legend" id="pbLegend"></div>
+        </div>
         <details class="details-toggle" id="playbookDetails">
           <summary>Open the full playbook</summary>
           <div class="pb-wrap" id="playbook"></div>
@@ -942,6 +950,69 @@
     }
     plot(baseline.balances, baseColor, true);
     plot(accel.balances, accelColor, false);
+  }
+
+  // Playbook chart: every vehicle's balance, one age axis, build phase into retirement — the
+  // "some visual" overview of where the money actually lives year by year, not just the tables.
+  const PB_SERIES = [
+    { key:'qmBal',     label:'401(k) / qualified',   color:'--veh-qm' },
+    { key:'cvBal',     label:'Policy cash value',    color:'--brass' },
+    { key:'helocBal',  label:'HELOC balance',        color:'--ledger' },
+    { key:'mortBal',   label:'Home mortgage',        color:'--risk' },
+    { key:'propValue', label:'Property value',       color:'--veh-property' }
+  ];
+  function drawPlaybookChart(buildTL, retTL, retireAge){
+    const canvas = $('pbChart');
+    if (!canvas) return;
+    const rows = [...buildTL, ...retTL];
+    const legendEl = $('pbLegend');
+    if (!rows.length){ canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); if (legendEl) legendEl.innerHTML=''; return; }
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const styles = getComputedStyle(document.documentElement);
+    const gridColor = styles.getPropertyValue('--chart-grid').trim();
+    const inkSoft = styles.getPropertyValue('--ink-soft').trim();
+    const padL = 74, padB = 26, padT = 12, padR = 14;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const ages = rows.map(r => r.age);
+    const minAge = ages[0], maxAge = Math.max(ages[ages.length-1], minAge+1);
+    const maxVal = Math.max(1, ...rows.flatMap(r => PB_SERIES.map(s => r[s.key]||0)));
+    ctx.lineWidth = 1; ctx.font = '11px -apple-system, sans-serif';
+    ctx.strokeStyle = gridColor; ctx.fillStyle = inkSoft;
+    const ySteps = 4;
+    for (let i=0;i<=ySteps;i++){
+      const y = padT + plotH - (plotH*i/ySteps);
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W-padR, y); ctx.stroke();
+      ctx.fillText(fmtCompact(maxVal*i/ySteps), 6, y+4);
+    }
+    const ageSpan = maxAge - minAge;
+    for (let a=minAge; a<=maxAge; a += Math.max(1, Math.round(ageSpan/8))){
+      const x = padL + plotW*((a-minAge)/ageSpan);
+      ctx.fillText('age '+a, x-14, H-8);
+    }
+    // Retirement-start marker — the one moment every series' behavior can change at once.
+    if (retireAge > minAge && retireAge < maxAge){
+      const x = padL + plotW*((retireAge-minAge)/ageSpan);
+      ctx.save(); ctx.strokeStyle = inkSoft; ctx.setLineDash([3,3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT+plotH); ctx.stroke(); ctx.restore();
+      ctx.fillText('retire →', x+4, padT+12);
+    }
+    PB_SERIES.forEach(s => {
+      const color = styles.getPropertyValue(s.color).trim();
+      ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+      rows.forEach((r, i) => {
+        const x = padL + plotW*((r.age-minAge)/ageSpan);
+        const y = padT + plotH - plotH*((r[s.key]||0)/maxVal);
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    });
+    if (legendEl){
+      legendEl.innerHTML = PB_SERIES.map(s =>
+        '<span><span class="swatch" style="background:'+styles.getPropertyValue(s.color).trim()+'"></span> '+s.label+'</span>'
+      ).join('');
+    }
   }
 
   // --- 2026 federal brackets (OBBBA-adjusted) ---
@@ -1695,8 +1766,6 @@
         evts.push('Chronic-illness/LTC draw — '+fmtCompact(ltcDraw)+' tax-free, '+fmtCompact(ltcDbRemaining)+' left of the death benefit');
         if (ltcDbRemaining <= 0.5) evts.push('Death benefit fully accelerated — nothing left for the estate from this policy');
       }
-      timeline.push({ age, need: lifestyle, rent: propNetCash, Q, tax: yearTax, he: heJ, po: poJ, ltc: ltcDraw, evts });
-
       qmBal -= Q; if (qmBal < 0) qmBal = 0;
       if (qmBal > 0) qmBal *= (1+inp.qmGrowth);
       // Ongoing $20/mo admin charge continues in retirement too — a policy costs money to keep in
@@ -1712,6 +1781,10 @@
         for (let m=0; m<12 && p.mortBal>0.5; m++){ p.mortBal = p.mortBal*(1+pr) - p.mPay; }
         if (p.mortBal < 0) p.mortBal = 0;
       }
+      // End-of-year balance snapshot for the playbook chart — every vehicle, one consistent point in time.
+      const propValueSum = props.reduce((s,p) => s + (p.owned ? p.price * Math.pow(1+p.apprec, t-p.buyT) : 0), 0);
+      timeline.push({ age, need: lifestyle, rent: propNetCash, Q, tax: yearTax, he: heJ, po: poJ, ltc: ltcDraw, evts,
+        qmBal, cvBal: cvFree+cvLoanAcct, helocBal, policyLoan: loanBal, mortBal, propValue: propValueSum });
     }
 
     const H = covered;
@@ -1927,7 +2000,10 @@
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
       for (const p of props) if (propBalBefore[p.idx] > 0.5 && p.mortBal <= 0.5) evts.push("Property #"+(p.idx+1)+" loan paid off — "+fmtCompact(p.mPay*12)+'/yr payment joins the pool');
       if (rowChunk > 1 && chunkWinner) evts.push('Chunk '+fmtCompact(rowChunk)+' → '+chunkWinner+((acc.stacking && y<5) ? ' via 0% biz credit' : ''));
-      timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, propCash, mortBal: bal, evts });
+      // End-of-year balance snapshot for the playbook chart — every vehicle, one consistent point in time.
+      const propValueSum = props.reduce((s,p) => s + (p.owned ? p.price * Math.pow(1+p.apprec, age-p.buyAge) : 0), 0);
+      timeline.push({ age, chunk: rowChunk, qmC: rowQm, polC: rowPol, refund: rowRefund, propCash, mortBal: bal, evts,
+        qmBal: qm, cvBal: cv+cvLoanAcct, helocBal, propValue: propValueSum });
     }
     if (bal <= 0.5 && freedAtYear === null) freedAtYear = acc.years;
     return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, idleCash,
@@ -2396,14 +2472,15 @@
     }
     if (chosen.timeline.length){
       pb.push('<div class="pb-phase">Phase 2 — Live on it (age '+retireAge+' → '+(retireAge+chosen.years)+')</div>');
-      pb.push('<table class="pb"><tr><th>Age</th><th>Need</th><th>Property cash</th><th>401(k) draw</th><th>Tax</th><th>HELOC draw</th><th>Policy draw</th><th>Events</th></tr>');
+      pb.push('<table class="pb"><tr><th>Age</th><th>Need</th><th>Property cash</th><th>401(k) draw</th><th>Tax</th><th>HELOC draw</th><th>Policy draw</th><th>LTC draw</th><th>Events</th></tr>');
       chosen.timeline.forEach(r => {
-        pb.push('<tr'+(r.evts.length?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.need)+'</td><td class="num">'+moneyN(r.rent)+'</td><td class="num">'+money(r.Q)+'</td><td class="num">'+money(r.tax)+'</td><td class="num">'+money(r.he)+'</td><td class="num">'+money(r.po)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
+        pb.push('<tr'+(r.evts.length?' class="milestone"':'')+'><td class="num">'+r.age+'</td><td class="num">'+money(r.need)+'</td><td class="num">'+moneyN(r.rent)+'</td><td class="num">'+money(r.Q)+'</td><td class="num">'+money(r.tax)+'</td><td class="num">'+money(r.he)+'</td><td class="num">'+money(r.po)+'</td><td class="num">'+money(r.ltc||0)+'</td><td class="evt">'+r.evts.join(' · ')+'</td></tr>');
       });
       pb.push('</table>');
       if (!chosen.sustainable) pb.push('<p class="way-hint show" style="margin-top:10px;"><b>The plan runs dry at age '+reachAge(chosen)+'</b> — the playbook stops where the money does.</p>');
     }
     $('playbook').innerHTML = pb.join('');
+    drawPlaybookChart(chosenAlloc.a.timeline, chosen.timeline, retireAge);
 
     LAST_STATS = { reach: retireAge + chosen.years, planAge, sustainable: chosen.sustainable,
                    legacy: chosen.legacy, tax: chosen.lifetimeTax, extracted: chosen.totalExtracted,
