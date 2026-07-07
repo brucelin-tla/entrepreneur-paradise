@@ -245,12 +245,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b21</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b22</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b22</span><p class="topic-exp" style="margin-top:2px;">The policy now carries its REAL costs, straight from the actual AIUL 26 contract: an age-based cost of insurance on the true net amount at risk (the contract's own rate table), face-amount charges in policy years 1–15, the new overfunding charge on premium above the contract limit, and the Fixed Index loan updated to its real terms (5.5% guaranteed charge + 0.65% guaranteed bonus on the collateral). The cost model was calibrated against a real client illustration and matches its cash values within about 1% across 20 years. Policy-heavy numbers came DOWN as a result — that's honesty arriving, not performance leaving. Set the face amounts from a real illustration in the "policy's real costs" section; face $0 switches the chassis off. Also: the "optimistic upper bound" warning is finally retired — the two pieces it flagged (no cost of insurance, no fee data) are now modeled.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b21</span><p class="topic-exp" style="margin-top:2px;">Two big additions, built together. <b>Smart 401(k) conversions:</b> before RMDs start at 73, ALIS now checks every year whether paying tax at today's rate and moving money into the policy beats leaving it to be forced out at a worse rate later — when converting genuinely wins, it happens automatically, shows up in the playbook year by year, and a card tile shows exactly what the conversions added (a real re-run without them, not an estimate). <b>The stress test (Section 4):</b> runs your exact plan through 1,000 different market histories with real S&P 500 volatility — the policy's crediting rides the same market through its real 0% floor and 11.65% cap (the current John Hancock Base Capped account), and the same 1,000 histories also run with no policy at all, so you can see what the floor is actually worth when markets misbehave. All volatility and product numbers are sourced, listed under the test.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b20</span><p class="topic-exp" style="margin-top:2px;">Section 3 reordered: "Set the plan" (ages, contribution, goal, lifestyle) now comes first, "Learn it one tool at a time" right below it — so the journey runs the member's real numbers instead of the page defaults.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b19</span><p class="topic-exp" style="margin-top:2px;">New chart at the top of the playbook: every vehicle's balance (401(k), policy cash value, HELOC, home mortgage, property value) on one age axis, build phase straight into retirement, with a marker at the retirement age. Also added an "LTC draw" column to the retirement playbook table — it was computed all along but not shown.</p></div>
@@ -369,7 +370,7 @@
             <div class="control"><label>Illustrated crediting rate <span class="val" id="v-credRate">6.0%</span></label><input type="range" id="credRate" min="3" max="8" step="0.25" value="6"></div>
             <div class="control"><label>Policy in force for — years already <span class="val" id="v-polYears">3 yrs</span></label><input type="range" id="polYears" min="1" max="20" step="1" value="3"></div>
             <div class="toggle-row">
-              <button type="button" class="toggle-btn active" id="btn-indexLoan">Fixed Index loan — 5.00% guaranteed</button>
+              <button type="button" class="toggle-btn active" id="btn-indexLoan">Fixed Index loan — 5.50% guaranteed + 0.65% bonus</button>
               <button type="button" class="toggle-btn" id="btn-washLoan">Standard ("wash") loan</button>
             </div>
           </div>
@@ -395,21 +396,26 @@
       </div>
 
       <div class="topic">
-        <div class="topic-h">Annual policy fee — protection isolated from accumulation</div>
-        <p class="topic-exp">Two different jobs, two different real costs — kept separate so the cash-value side above stays a <b>pure savings vehicle</b>, not one number quietly blending growth with insurance charges. <b>Protection IUL</b> is the policy sized to clear the debt at death (see Section&nbsp;3's "Life insurance needed") — it has its own annual premium. <b>Accumulation IUL</b> (the policy above) already pays a real premium-expense-charge and a real $20/mo admin fee — the age/health-based cost-of-insurance charge on top of that is real but has no public flat-rate table (it varies by issue age, gender, class), so enter it from an actual carrier illustration rather than a guess. Both default to $0 until you have real numbers — a $0 accumulation-IUL legacy figure is still the "optimistic upper bound" the caveat below already warns about.</p>
+        <div class="topic-h">The policy's real costs — from the actual contract</div>
+        <p class="topic-exp">The accumulation policy's full cost chassis, straight from the carrier's AIUL&nbsp;26 contract: an age-based <b>cost of insurance</b> charged on the net amount at risk (the gap between the death benefit and the cash value), <b>face-amount charges</b> in policy years 1–15, an <b>overfunding charge</b> on premium paid above the contract's advance-contribution limit, and the $20/mo admin fee (always on). Set the face amounts from a real illustration — the typical accumulation design puts total face near <b>23× the planned annual premium</b>, split roughly 20% base / 80% supplemental (supplemental face costs about half as much per $1,000). Set face to $0 to switch the whole chassis off (pure-savings shorthand). <b>Protection IUL</b> stays separate — its premium is a cash bill, sized to clear the debt at death. The %-of-maximum default (45%) was calibrated against a real 2026 AIUL&nbsp;26 illustration (male 30, standard non-smoker, $50K/yr): the full chassis reproduces that illustration's cash values within about 1% at years 1, 5, 10, 15 and 20.</p>
         <div class="split">
           <div class="side-controls">
+            <div class="control"><label>Base face amount <span class="val" id="v-polFaceBase">$50,000</span></label><input type="range" id="polFaceBase" min="0" max="2000000" step="10000" value="50000"></div>
+            <div class="control"><label>Supplemental face amount <span class="val" id="v-polFaceSuppl">$200,000</span></label><input type="range" id="polFaceSuppl" min="0" max="4000000" step="10000" value="200000"></div>
+            <div class="control"><label>Cost of insurance — % of guaranteed maximum <span class="val" id="v-coiPct">45%</span></label><input type="range" id="coiPct" min="0" max="100" step="5" value="45"></div>
+            <div class="control"><label>Advance contribution limit (contract Section 1) <span class="val" id="v-polAcl">$12,000</span></label><input type="range" id="polAcl" min="0" max="50000" step="500" value="12000"></div>
             <div class="control"><label>Protection IUL — annual premium <span class="val" id="v-protPremium">$0</span></label><input type="range" id="protPremium" min="0" max="20000" step="250" value="0"></div>
-            <div class="control"><label>Accumulation IUL — annual cost of insurance <span class="val" id="v-coiAnnual">$0</span></label><input type="range" id="coiAnnual" min="0" max="20000" step="250" value="0"></div>
           </div>
           <div class="side-results">
             <div class="ledger">
+              <div class="lline"><span>Year-1 cost of insurance <span class="lbl-sub">Age-based rate × net amount at risk × your %-of-maximum — recomputed every year as both age and cash value move</span></span><span class="amt" id="s-coiYr1">–</span></div>
+              <div class="lline"><span>Face-amount charges <span class="lbl-sub">Policy years 1–15 only, then $0 — supplemental face is charged at about half the base rate</span></span><span class="amt" id="s-faceCharge">–</span></div>
+              <div class="lline"><span>Overfunding charge, year 1 <span class="lbl-sub">0.72%/yr on cumulative premium above the limit × policy years — new on AIUL 26, it specifically taxes front-loaded funding</span></span><span class="amt" id="s-accCharge">–</span></div>
               <div class="lline"><span>Protection premium <span class="lbl-sub">A real bill every year — funded from the contribution pool while working, added to the lifestyle need in retirement</span></span><span class="amt" id="s-protPremium">–</span></div>
-              <div class="lline"><span>Accumulation COI <span class="lbl-sub">On top of the $20/mo admin fee — deducted from cash value every year the policy is in force</span></span><span class="amt" id="s-coiAnnual">–</span></div>
             </div>
             <div class="caveat mini">
               <span class="mark">!</span>
-              <p>Entering $0 does NOT mean these costs are zero in real life — it means the tool isn't asserting a number it can't source. A real quote for the protection premium and a real illustration's COI schedule replace these before showing a client.</p>
+              <p>The COI rates are the contract's <b>guaranteed maximums</b> (2017 CSO) — real charged rates are lower and class-specific, which is what the %-of-maximum slider estimates. Refine it against a real illustration's values. Not modeled: the 7-pay MEC premium limit (the carrier auto-blocks MEC-triggering premiums unless elected) and surrender charges in years 1–15 (loans avoid them; an early full surrender would net less than the cash value shown).</p>
             </div>
           </div>
         </div>
@@ -740,7 +746,7 @@
         </div>
         <div class="caveat">
           <span class="mark">!</span>
-          <p><b>Policy legacy numbers are an optimistic upper bound unless you fill in the fee section above.</b> This models the real premium expense charge (7% / 6% / 2% by policy year) and a real $20/mo admin fee, and the accumulation-IUL cost-of-insurance slider above CAN now model the age/health-based COI charge (a real universal life policy keeps charging this for life, funded from cash value once premiums stop) — but its default is $0, since no public flat-rate table exists to source a default from. At $0, this section is not yet modeled, and a heavy-policy allocation will look better than a real illustration would show. Also not checked: the 7-pay Modified Endowment Contract premium limit (fund a policy too heavily for its death benefit and it loses tax-free-loan status entirely). Fix: enter the real COI figure from an actual carrier illustration before trusting a policy-heavy recommendation with a client.</p>
+          <p><b>The policy's costs are now modeled from the actual AIUL 26 contract</b> — the premium expense charge (7% / 6% / 2% by policy year), the $20/mo admin fee, an age-based cost of insurance on the real net amount at risk (the contract's guaranteed-maximum table, scaled by the %-of-maximum slider), face-amount charges in years 1–15, and the overfunding charge on premium above the advance-contribution limit. What remains estimated: the COI %-of-maximum (real charged rates are class-specific — calibrate against an actual illustration), and the 7-pay Modified Endowment Contract premium limit is not checked (the carrier auto-blocks MEC-triggering premiums in practice, but this tool won't warn you a design is near that line). A licensed illustration remains the authority before any client conversation.</p>
         </div>
         <div class="caveat">
           <span class="mark">!</span>
@@ -834,7 +840,7 @@
           <div class="pb-legend" id="mcLegend"></div>
           <p class="topic-exp" id="mc-cred" style="margin-top:6px;"></p>
         </div>
-        <p class="topic-exp" style="margin-top:10px;">Sourced, not guessed: 19.7% stock volatility (S&P 500 annual returns, 1928–2025); the 0% floor / 11.65% cap is the current John Hancock Accumulation IUL "Base Capped" account; the market leg also earns ~1.6%/yr in dividends that index crediting doesn't (IUL credits the price index only — modeled honestly). Property values vary per scenario (±5.9%/yr, Case-Shiller 1988–2026) rather than year-by-year. The same 1,000 histories run every time — repeatable, not cherry-picked. An illustration of how volatility behaves, not a prediction or a recommendation.</p>
+        <p class="topic-exp" style="margin-top:10px;">Sourced, not guessed: 19.7% stock volatility (S&P 500 annual returns, 1928–2025); the 0% floor / 11.65% cap is the current John Hancock Accumulation IUL 26 "Base Capped" account, confirmed against the carrier's contract and launch materials; the market leg also earns ~1.6%/yr in dividends that index crediting doesn't (IUL credits the price index only — modeled honestly). Real-world reference: the carrier's first IUL averaged <b>8.56%/yr actual crediting over 2011–2025</b>, above its highest illustrated rate — floors and caps have a real track record, not just a theory. Property values vary per scenario (±5.9%/yr, Case-Shiller 1988–2026) rather than year-by-year. The same 1,000 histories run every time — repeatable, not cherry-picked. An illustration of how volatility behaves, not a prediction or a recommendation.</p>
       </div>
     </section>
 
@@ -1079,6 +1085,68 @@
   // NOT free); years 11+ charged 3.00% / credited 3.00% (a true wash, net 0%).
   function washCharged(policyYear){ return policyYear<=10 ? 3.25 : 3.00; }
   function washCredited(policyYear){ return policyYear<=10 ? 2.00 : 3.00; }
+  // Fixed Index loan on AIUL 26: 5.5% charged, GUARANTEED (was 5.0% on AIUL 24), and the loaned
+  // collateral earns a guaranteed 0.65% annual bonus on top of its indexed crediting — both from
+  // the carrier's AIUL 26 launch materials + specimen contract (extracted 2026-07-06).
+  const INDEX_LOAN_RATE = 5.5, INDEX_LOAN_BONUS = 0.0065;
+
+  // --- AIUL 26 real policy-cost chassis (specimen contract ICC25 26AIUL, extracted 2026-07-06) ---
+  // Maximum monthly Cost of Insurance rates per $1 of Net Amount at Risk, by attained age.
+  // These are the GUARANTEED CEILINGS (2017 CSO-based); real charged rates are lower and
+  // class-specific — the "COI % of maximum" slider scales them (enter from a real illustration
+  // to refine). Ages under 35 clamp to the age-35 rate (the specimen table starts at 35).
+  const COI_MAX = {
+    35:0.0001142,36:0.0001251,37:0.0001351,38:0.0001468,39:0.0001585,40:0.0001718,
+    41:0.0001844,42:0.0001952,43:0.0002002,44:0.0002061,45:0.0002119,46:0.0002178,
+    47:0.0002228,48:0.0002286,49:0.0002345,50:0.0002445,51:0.0002579,52:0.0002737,
+    53:0.0002921,54:0.0003130,55:0.0003381,56:0.0003666,57:0.0003992,58:0.0004360,
+    59:0.0004796,60:0.0005290,61:0.0005869,62:0.0006515,63:0.0007245,64:0.0008052,
+    65:0.0008910,66:0.0009828,67:0.0010797,68:0.0011852,69:0.0013035,70:0.0014414,
+    71:0.0016049,72:0.0017960,73:0.0020172,74:0.0022664,75:0.0025402,76:0.0028363,
+    77:0.0031559,78:0.0035043,79:0.0038966,80:0.0043448,81:0.0048639,82:0.0054372,
+    83:0.0061532,84:0.0069811,85:0.0079439,86:0.0090607,87:0.0103380,88:0.0117827,
+    89:0.0133495,90:0.0150248,91:0.0167571,92:0.0185002,93:0.0202435,94:0.0218961,
+    95:0.0233787,96:0.0253429,97:0.0275032,98:0.0299386,99:0.0326217,100:0.0355207,
+    101:0.0383419,102:0.0412506,103:0.0441953,104:0.0471198,105:0.0499590,106:0.0526466,
+    107:0.0566496,108:0.0610817,109:0.0660194,110:0.0715539,111:0.0778115,112:0.0833333,
+    113:0.0833333,114:0.0833333,115:0.0833333,116:0.0833333,117:0.0833333,118:0.0833333,
+    119:0.0833333,120:0.0833333
+  };
+  // Minimum Death Benefit ("corridor") factors by attained age — the IRS-required cushion of
+  // death benefit above policy value. Even a minimum-face design carries this much Net Amount
+  // at Risk, which is what COI is charged on. Same contract table as the COI rates.
+  const DBF = {
+    35:2.50,36:2.50,37:2.50,38:2.50,39:2.50,40:2.50,41:2.43,42:2.36,43:2.29,44:2.22,
+    45:2.15,46:2.09,47:2.03,48:1.97,49:1.91,50:1.85,51:1.78,52:1.71,53:1.64,54:1.57,
+    55:1.50,56:1.46,57:1.42,58:1.38,59:1.34,60:1.30,61:1.28,62:1.26,63:1.24,64:1.22,
+    65:1.20,66:1.19,67:1.18,68:1.17,69:1.16,70:1.15,71:1.13,72:1.11,73:1.09,74:1.07,
+    75:1.05,76:1.05,77:1.05,78:1.05,79:1.05,80:1.05,81:1.05,82:1.05,83:1.05,84:1.05,
+    85:1.05,86:1.05,87:1.05,88:1.05,89:1.05,90:1.05,91:1.04,92:1.03,93:1.02,94:1.01
+  };
+  function coiMaxRate(age){ if (age >= 121) return 0; return COI_MAX[Math.min(Math.max(Math.round(age),35),120)]; }
+  function dbFactor(age){ const a = Math.round(age); if (a >= 95) return 1.0; return DBF[Math.min(Math.max(a,35),94)]; }
+  // Per-$1,000 face-amount charges, policy years 1-15 then zero (specimen rates: base face
+  // 0.3002/mo, supplemental face 0.1474/mo), and the AIUL 26 Advance Contribution Charge:
+  // 0.06%/mo on cumulative premium above (limit × policy years) — a real drag that specifically
+  // hits front-loaded overfunding. All gated behind face > 0: with no face amount entered the
+  // chassis is off and the policy behaves as the pure-savings shorthand it was before.
+  const FACE_CHARGE_BASE = 0.3002, FACE_CHARGE_SUPPL = 0.1474, FACE_CHARGE_YEARS = 15;
+  const ACC_CHARGE_MONTHLY = 0.0006;
+  function policyCosts(pc, age, policyYear, cv, cumPrem){
+    if (!pc || pc.faceBase + pc.faceSuppl <= 0.5) return 0;
+    const face = pc.faceBase + pc.faceSuppl;
+    const db = Math.max(face, dbFactor(age) * cv);
+    const nar = Math.max(db - cv, 0);
+    const coi = coiMaxRate(age) * (pc.coiPct/100) * nar * 12;
+    const faceCharge = policyYear <= FACE_CHARGE_YEARS
+      ? (FACE_CHARGE_BASE * pc.faceBase/1000 + FACE_CHARGE_SUPPL * pc.faceSuppl/1000) * 12 : 0;
+    const accCharge = ACC_CHARGE_MONTHLY * 12 * Math.max(cumPrem - pc.acl * policyYear, 0);
+    return coi + faceCharge + accCharge;
+  }
+  function readPolicyCostInputs(){
+    return { faceBase: +$('polFaceBase').value, faceSuppl: +$('polFaceSuppl').value,
+             coiPct: +$('coiPct').value, acl: +$('polAcl').value };
+  }
 
   let filingStatus = 'single';
   let loanType = 'index';
@@ -1453,12 +1521,19 @@
     const annualPremium = wRedux*12 + overfundAnnual;
     const cr = credRate/100;
 
-    // Year-by-year cash value with the REAL premium expense charge schedule (7% / 6% / 2%) —
-    // no level-annuity shortcut, since the charge itself changes by policy year.
-    let cashValue = 0;
+    // Year-by-year cash value with the REAL premium expense charge schedule (7% / 6% / 2%) and
+    // the full contract cost chassis (COI on net-amount-at-risk, face charges, overfunding charge,
+    // $20/mo admin — the admin fee was previously missing from this one loop; the other engines
+    // already charged it). Ages run backward from today: policy year y happened at age
+    // currentAge − polYears + y.
+    const pc0 = readPolicyCostInputs();
+    const ageNow = +$('currentAge').value;
+    let cashValue = 0, cumPrem3 = 0;
     for (let y=1; y<=polYears; y++){
       const netPrem = annualPremium * (1 - premChargePct(y));
-      cashValue = (cashValue + netPrem) * (1+cr);
+      cumPrem3 += annualPremium;
+      const costs = policyCosts(pc0, ageNow - polYears + y, y, cashValue, cumPrem3) + POLICY_ADMIN_ANNUAL;
+      cashValue = Math.max((cashValue + netPrem) * (1+cr) - costs, 0);
     }
     const thisYearCharge = premChargePct(polYears);
 
@@ -1467,11 +1542,11 @@
     const cashRemaining = cashValue - loanTaken;
     const outOfPocket = Math.max(taxWithDeduction - loanTaken, 0);
 
-    // Real loan mechanics: Fixed Index loan is a flat 5% guaranteed charge (collateral stays
-    // invested, keeps the full illustrated crediting); Standard ("wash") loan charges/credits
-    // BOTH shift at policy year 11, where it becomes a true 0%-net wash (3% credited = 3% charged).
-    const loanRatePct = loanType === 'index' ? 5.0 : washCharged(polYears);
-    const loanCreditPct = loanType === 'index' ? credRate : washCredited(polYears);
+    // Real loan mechanics (AIUL 26): Fixed Index loan is a 5.5% GUARANTEED charge and the loaned
+    // collateral keeps its indexed crediting PLUS a guaranteed 0.65% bonus; Standard ("wash") loan
+    // charges/credits BOTH shift at policy year 11, where it becomes a true 0%-net wash.
+    const loanRatePct = loanType === 'index' ? INDEX_LOAN_RATE : washCharged(polYears);
+    const loanCreditPct = loanType === 'index' ? credRate + INDEX_LOAN_BONUS*100 : washCredited(polYears);
     const netCostPct = loanRatePct - loanCreditPct;
     const netCostDollars = loanTaken * (netCostPct/100);
 
@@ -1490,7 +1565,7 @@
     $('s-taxBillRef').textContent = fmt0.format(taxWithDeduction);
     $('s-loanTaken').textContent = fmt0.format(loanTaken);
     $('s-loanCreditLbl').textContent = loanType === 'index'
-      ? 'Fixed Index loan — collateral stays invested, keeps the full illustrated rate'
+      ? 'Fixed Index loan (AIUL 26) — collateral stays invested, keeps the full illustrated rate plus a guaranteed 0.65% bonus'
       : (polYears >= 11 ? 'Standard loan — policy year 11+: a true wash, net 0%' : 'Standard loan — years 1–10: costs '+(washCharged(polYears)-washCredited(polYears)).toFixed(2)+'%/yr net (not free yet)');
     $('s-loanCreditRate').textContent = loanCreditPct.toFixed(2)+'%';
     $('s-loanNetCost').textContent = (netCostDollars>=0 ? '' : '−') + fmt0.format(Math.abs(netCostDollars)) + (netCostDollars<0 ? ' (net gain)' : '/yr');
@@ -1501,6 +1576,7 @@
     $('btn-washLoan').textContent = 'Standard ("wash") loan — '+washCharged(polYears).toFixed(2)+'% cost / '+washCredited(polYears).toFixed(2)+'% credited'+(polYears>=11?' (true wash)':'');
 
     P.wRedux = wRedux; P.overfundAnnual = overfundAnnual; P.credRate = credRate; P.polYears = polYears; P.loanType = loanType;
+    P.cumPremStart = cumPrem3;
     // Cash value accumulated by retirement start (premiums stop at retirement; it keeps
     // compounding at crediting from here). This is the policy vehicle's starting cash value in Section 4.
     P.startCV = cashValue;
@@ -1562,6 +1638,7 @@
     // without limit (passive-to-passive) and shield qualified draws up to the allowance.
     let passiveCarry = inp.passiveCarry0 || 0;
     let lifetimeTax = 0, shieldTaxSaved = 0, rmdTotal = 0;
+    let cumPrem = inp.cumPrem0 || 0;   // total premiums ever paid into the policy (drives the overfunding charge)
     const refiRatePct = inp.mortRatePct || 6.5;
     // Only the tools the member has switched on may fill (education mode: ALIS plans with what's left).
     const tfOrder = strat.tf.filter(v => (v==='heloc' ? inp.toolHeloc !== false : inp.toolPolicy !== false));
@@ -1612,7 +1689,7 @@
       }
       // Policy loan accrues at the real rate for this loan type/year; never-lapse guard: past the
       // guard line, interest is paid in cash instead of capitalizing further onto the loan.
-      const loanChargePct = inp.loanType === 'index' ? 5.0 : washCharged(policyYear);
+      const loanChargePct = inp.loanType === 'index' ? INDEX_LOAN_RATE : washCharged(policyYear);
       let policyService = 0;
       if (loanBal > 0.5){
         loanBal *= (1 + loanChargePct/100);
@@ -1842,11 +1919,17 @@
       // Under the stress test (inp.mcSeq) the year's growth/crediting comes from the drawn market
       // path instead of the flat slider rate; without it, behavior is exactly as before.
       if (qmBal > 0) qmBal *= (1 + (inp.mcSeq ? inp.mcSeq.qm[t] : inp.qmGrowth));
-      // Ongoing $20/mo admin charge continues in retirement too — a policy costs money to keep in
-      // force whether or not premiums are still being paid. Taken from the free bucket first.
-      // Converted dollars enter before crediting (same full-year treatment premiums get in build years).
-      cvFree = Math.max((cvFree + convNet)*(1 + (inp.mcSeq ? inp.mcSeq.cred[t] : inp.credRate)) - POLICY_ADMIN_ANNUAL - (inp.coiAnnual||0), 0);
+      // Ongoing policy costs continue in retirement — admin every year, plus the contract chassis
+      // (COI on net-amount-at-risk, face charges, overfunding charge) when a face amount is set.
+      // Conversions are real premium into the policy: they raise cumPrem and enter before crediting
+      // (same full-year treatment premiums get in build years).
+      if (conv > 0.5) cumPrem += conv - convTax - convPen;
+      const polCostYr = policyCosts(inp.polCost, age, policyYear, cvFree + convNet + cvLoanAcct, cumPrem);
+      cvFree = Math.max((cvFree + convNet)*(1 + (inp.mcSeq ? inp.mcSeq.cred[t] : inp.credRate)) - POLICY_ADMIN_ANNUAL - polCostYr, 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
+      // AIUL 26 Fixed Index loan: the loaned collateral earns a guaranteed 0.65% bonus on top of
+      // its crediting (which the single-bucket model already leaves in place).
+      if (inp.loanType === 'index' && loanBal > 0.5) cvFree += INDEX_LOAN_BONUS * loanBal;
       if (mortBal > 0.5){ for (let m=0; m<12 && mortBal>0.5; m++){ mortBal = mortBal*(1+mortMr) - mortPay; } if (mortBal < 0) mortBal = 0; }
       if (refiBal > 0.5){ const rr=(refiRatePct/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiMonthlyPay; } if (refiBal <= 0.5){ refiBal = 0; refiMonthlyPay = 0; } }
       // Amortize each owned property's loan through the year.
@@ -1917,6 +2000,7 @@
     props.forEach(p => { if (p.ownedFromStart){ p.owned = true; p.mortBal = p.price*(1-p.downPct); p.mPay = monthlyPayment(p.mortBal, p.ratePct, 30); } });
     let helocBal = 0, helocWindowEndY = null, refiBal = 0, refiPay = 0;
     let polLoan = 0, cvLoanAcct = 0, passiveCarry = 0, shortfall = 0, polService = 0;
+    let cumPrem = acc.cumPrem0 || 0;   // premiums paid before today (Section 3) + each build year's
     const purchases = [];
     const timeline = [];   // year-by-year playbook rows for the accumulation phase
     for (let y=0; y<acc.years; y++){
@@ -1987,7 +2071,7 @@
       }
       if (refiBal > 0.5) carryCost += refiPay*12;
       if (polLoan > 0.5){
-        const chg = acc.loanType === 'index' ? 5.0 : washCharged(policyYear);
+        const chg = acc.loanType === 'index' ? INDEX_LOAN_RATE : washCharged(policyYear);
         polLoan *= (1 + chg/100);
         const guard = POLICY_LAPSE_GUARD * (cv + cvLoanAcct);
         if (polLoan > guard){ const svc = polLoan - guard; polLoan = guard; carryCost += svc; polService += svc; }
@@ -2070,8 +2154,14 @@
       refundTotal += refund + purchRefund;
       // Under the stress test (acc.mcSeq) growth/crediting follows the drawn market path.
       qm = (qm + qmC) * (1 + (acc.mcSeq ? acc.mcSeq.qm[y] : acc.qmGrowth));
-      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1 + (acc.mcSeq ? acc.mcSeq.cred[y] : acc.credRate)) - POLICY_ADMIN_ANNUAL - (acc.coiAnnual||0), 0);
+      // Real contract costs: premium into the policy raises cumPrem (overfunding charge base);
+      // COI/face/overfunding charges deduct alongside the admin fee when a face amount is set.
+      cumPrem += polC;
+      const polCostYr = policyCosts(acc.polCost, age, policyYear, cv + polC*(1-premChargePct(policyYear)) + cvLoanAcct, cumPrem);
+      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1 + (acc.mcSeq ? acc.mcSeq.cred[y] : acc.credRate)) - POLICY_ADMIN_ANNUAL - polCostYr, 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
+      // AIUL 26 Fixed Index loan: guaranteed 0.65% bonus on the loaned collateral.
+      if (acc.loanType === 'index' && polLoan > 0.5) cv += INDEX_LOAN_BONUS * polLoan;
       if (refiBal > 0.5){ const rr=((acc.mortRatePct||6.5)/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiPay; } if (refiBal <= 0.5){ refiBal = 0; refiPay = 0; } }
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
       for (const p of props) if (propBalBefore[p.idx] > 0.5 && p.mortBal <= 0.5) evts.push("Property #"+(p.idx+1)+" loan paid off — "+fmtCompact(p.mPay*12)+'/yr payment joins the pool');
@@ -2083,6 +2173,7 @@
     }
     if (bal <= 0.5 && freedAtYear === null) freedAtYear = acc.years;
     return { qmStart:qm, cvStart:cv, mortBalRet:bal, freedAtYear, totalChunked, capBound, refundTotal, idleCash,
+             cumPremEnd: cumPrem,
              timeline, purchases, shortfall, polServiceAcc: polService,
              helocBal0: helocBal, helocWindowEnd0: helocWindowEndY !== null ? helocWindowEndY - acc.years : null,
              refiBal0: refiBal, refiMonthlyPay0: refiPay, loanBal0: polLoan, cvLoanAcct0: cvLoanAcct,
@@ -2125,11 +2216,32 @@
     $('v-annualContrib').textContent = fmt0.format(annualContrib);
     $('annualContrib2').value = annualContrib;
     $('v-annualContrib2').textContent = fmt0.format(annualContrib);
-    const protPremium = +$('protPremium').value, coiAnnual = +$('coiAnnual').value;
+    const protPremium = +$('protPremium').value;
+    const pc = readPolicyCostInputs();
     $('v-protPremium').textContent = fmt0.format(protPremium);
-    $('v-coiAnnual').textContent = fmt0.format(coiAnnual);
+    $('v-polFaceBase').textContent = fmt0.format(pc.faceBase);
+    $('v-polFaceSuppl').textContent = fmt0.format(pc.faceSuppl);
+    $('v-coiPct').textContent = pc.coiPct + '%';
+    $('v-polAcl').textContent = fmt0.format(pc.acl);
     $('s-protPremium').textContent = protPremium > 0 ? fmt0.format(protPremium)+'/yr' : '$0 — enter a real quote';
-    $('s-coiAnnual').textContent = coiAnnual > 0 ? fmt0.format(coiAnnual)+'/yr' : '$0 — enter a real illustration figure';
+    // Live policy-cost readout at TODAY's state (current policy year, today's age and cash value).
+    {
+      const cvNow = P.startCV, pyNow = P.polYears, cumNow = P.cumPremStart || 0;
+      if (pc.faceBase + pc.faceSuppl > 0.5){
+        const db = Math.max(pc.faceBase + pc.faceSuppl, dbFactor(currentAge) * cvNow);
+        const nar = Math.max(db - cvNow, 0);
+        $('s-coiYr1').textContent = fmt0.format(coiMaxRate(currentAge) * (pc.coiPct/100) * nar * 12)+'/yr';
+        $('s-faceCharge').textContent = pyNow <= FACE_CHARGE_YEARS
+          ? fmt0.format((FACE_CHARGE_BASE*pc.faceBase/1000 + FACE_CHARGE_SUPPL*pc.faceSuppl/1000)*12)+'/yr'
+          : '$0 — past policy year 15';
+        const accC = ACC_CHARGE_MONTHLY*12*Math.max(cumNow - pc.acl*pyNow, 0);
+        $('s-accCharge').textContent = accC > 0.5 ? fmt0.format(accC)+'/yr' : 'none — premium within the limit ✓';
+      } else {
+        $('s-coiYr1').textContent = 'chassis off — face $0';
+        $('s-faceCharge').textContent = '—';
+        $('s-accCharge').textContent = '—';
+      }
+    }
     const ltcDBVal = +$('ltcDB').value, ltcRateVal = +$('ltcRate').value;
     $('v-ltcDB').textContent = fmt0.format(ltcDBVal);
     $('v-ltcRate').textContent = ltcRateVal.toFixed(1)+'%/mo';
@@ -2173,7 +2285,7 @@
       mortBalRet: a.mortBalRet, mortRatePct: M1 ? M1.ratePct : 0, mortMonthlyPay: M1 ? M1.monthlyPay : 0,
       shieldCap: (strActive || repActive) ? Infinity : 25000,
       ceiling: { single: ceil.single, mfj: ceil.mfj },
-      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value,
+      protPremium: +$('protPremium').value, polCost: pc, cumPrem0: (a.cumPremEnd || 0),
       ltcOn, ltcDB: +$('ltcDB').value, ltcRatePct: +$('ltcRate').value,
       ltcStartAge: +$('ltcStartAge').value, ltcYears: +$('ltcYears').value
     });
@@ -2194,7 +2306,8 @@
       mortMonthlyPay: (TOOLS.mortgage && M1) ? M1.monthlyPay : 0,
       props: propsDef, homeValue0: homeValue, maxLtv, helocRate, loanType: P.loanType,
       allowanceNow, shieldUnlimited: (strActive || repActive),
-      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value,
+      protPremium: +$('protPremium').value,
+      polCost: TOOLS.policy ? pc : null, cumPrem0: TOOLS.policy ? (P.cumPremStart || 0) : 0,
       toolQualified: TOOLS.qualified
     };
 
@@ -2641,7 +2754,7 @@
     })();
 
     window.EPIC_DEBUG = { chosen, chosenAlloc, results, propsDef };
-    window.EPIC_DEBUG_FN = { simulateStrategy, accumulate, washCharged, washCredited, premChargePct, federalTax, STRATS };
+    window.EPIC_DEBUG_FN = { simulateStrategy, accumulate, washCharged, washCredited, premChargePct, federalTax, STRATS, policyCosts, coiMaxRate, dbFactor };
     // --- Stress-test pack: everything the on-demand Monte Carlo needs to replay the CHOSEN plan
     // (and its honest no-policy counterpart) under random market paths. Rebuilt every render so it
     // always reflects the current sliders. The MC runner itself lives outside this closure.
@@ -2653,7 +2766,7 @@
       // Fair comparison: the no-policy world gets ITS best plan (grid re-searched with the policy
       // off), not the with-policy allocation minus one vehicle.
       replanNoPolicy: () => {
-        const acc0x = Object.assign({}, acc0, { toolPolicy:false, cv0:0 });
+        const acc0x = Object.assign({}, acc0, { toolPolicy:false, cv0:0, polCost:null, cumPrem0:0 });
         let bp = null;
         const consider = (fr2) => {
           const a2 = accumulate(fr2, acc0x);
@@ -2661,7 +2774,7 @@
             const paces = s.blend ? CEIL : [CEIL[1]];
             for (const cl of paces){
               const inp2 = mkInp(a2, cl, todaySpend);
-              inp2.toolPolicy = false; inp2.startCV = 0;
+              inp2.toolPolicy = false; inp2.startCV = 0; inp2.polCost = null; inp2.cumPrem0 = 0;
               const r = simulateStrategy(s, inp2);
               if (!bp || objSort(r, bp.r) < 0) bp = { r, fr: fr2, strat: s, pace: { single: cl.single, mfj: cl.mfj } };
             }
@@ -2674,7 +2787,9 @@
           consider({ qm: q/10, chunk: c/10, policy: 0 });
         }
         if (!bp) consider({ qm: 0, chunk: 0, policy: 0 });   // every vehicle off — do-nothing split
-        return { fr: bp.fr, strat: bp.strat, pace: bp.pace, accOv: { toolPolicy:false, cv0:0 }, inpOv: { toolPolicy:false, startCV:0 } };
+        return { fr: bp.fr, strat: bp.strat, pace: bp.pace,
+                 accOv: { toolPolicy:false, cv0:0, polCost:null, cumPrem0:0 },
+                 inpOv: { toolPolicy:false, startCV:0, polCost:null, cumPrem0:0 } };
       }
     };
   }
@@ -3047,7 +3162,7 @@
     $('btn-ltc-preserve').classList.toggle('active', !ltcOn);
     $('btn-ltc-draw').classList.toggle('active', ltcOn);
   }
-  $('coiAnnual').addEventListener('input', renderSection5);
+  ['polFaceBase','polFaceSuppl','coiPct','polAcl'].forEach(id => $(id).addEventListener('input', renderSection3));
   // Adjusting the Protection IUL premium means the member is setting up that policy, so the
   // chronic-illness/LTC rider that comes with it defaults ON — a real product feature, not an
   // opt-in extra. A manual choice (either button below) is the member's explicit override and
