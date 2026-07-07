@@ -242,12 +242,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b17</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b18</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b18</span><p class="topic-exp" style="margin-top:2px;">Fixed a "$0" that read as a dead end: when the depreciation write-off is suspended by income (not lost — it carries forward), the journey and the Opportunities dashboard now show it as "Potential depreciation" with the real dollar value it would be worth in tax if unlocked, plus a direct pointer to Section 4's three qualifying ways to unlock it.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b17</span><p class="topic-exp" style="margin-top:2px;">Big reorder: Section 2 now runs policy → HELOC → 0% business credit → velocity banking → the rental property last (buy-age is its first input), funded from the capacity those tools just built. Chronic-illness/LTC now defaults ON when you set a Protection IUL premium (a real product feature, not an opt-in extra — click it off if you don't want it). The LTC trade-off is now ENFORCED, not just disclosed: a new Section 3 "Preserve vs. draw" choice, and any shortfall between what's left of the death benefit and what's needed to clear the debt now actually reduces legacy. "Plan through age" renamed "Age to pass down estate." The 7-step journey now itemizes the real numbers per step: interest saved + payoff time on Attack the Mortgage, the incremental stacking win on Use the Bank's Money, Protection IUL and Accumulation IUL shown as two separate line items on the tax-free engine step, the depreciation write-off clawed back on Buy a Property, and the Full Picture step compares against day one, not just the step before it.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b16</span><p class="topic-exp" style="margin-top:2px;">The cash-value policy now speaks plainly about its age: the slider reads "Policy in force for X years already," the ledger shows "Current cash value" (what the policy holds today), and a new "Policy year at retirement" line shows where the fee clock will stand when you retire — including when the cheap year-11 tier (2% premium charge, true 0%-net wash loans) kicks in. Also: slide your age in Section 1 and the other numbers preset to typical starting points for that life stage (they stop auto-filling the moment you customize anything; a button re-applies on demand). Typical ≠ yours — future versions will auto-fill from real member data as it's collected.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b15</span><p class="topic-exp" style="margin-top:2px;">Built for people in their 20s too, not just 40+: current age now goes down to 20, retirement age down to 40 (early-retirement plans work), and property purchase ages down to 20 — with the engine extended to handle up to an 80-year retirement window without cutting it short.</p></div>
@@ -1252,6 +1253,10 @@
     const taxWithDeduction = federalTax(Math.max(income - usableLoss,0), filingStatus);
     const taxSavings = taxNoDeduction - taxWithDeduction;
     const refundShift = withheld - taxWithDeduction;
+    // Hypothetical: what the write-off would be worth if it were FULLY usable (Way 1/2/3 active,
+    // or income drops) — the real dollar figure behind "potential depreciation," not just the
+    // suspended deduction amount. Only ever shown as a "could be," never as cash already banked.
+    const potentialTaxSavings = taxNoDeduction - federalTax(Math.max(income - year1Deduction, 0), filingStatus);
 
     $('s-buildingBasis').textContent = fmt0.format(buildingBasis);
     $('s-depreciation').textContent = fmt0.format(year1Depreciation);
@@ -1300,6 +1305,7 @@
     $('k-refund').textContent = refundShift>=0 ? 'Estimated refund' : 'Estimated balance due';
 
     R.taxSavings = taxSavings;
+    R.potentialTaxSavings = potentialTaxSavings;
     R.income = income; R.usableLoss = usableLoss; R.suspendedLoss = suspendedLoss; R.year1Deduction = year1Deduction;
 
     // ---- Rental income (location-priced) + depreciation shield → exported to Section 4 ----
@@ -2411,7 +2417,7 @@
       const tiles = [
         { label:'Total tax paid', val: fmtCompact(chosen.lifetimeTax) },
         { label:'Shield already saving', val: fmtCompact(chosen.shieldTaxSaved) },
-        (R.suspendedLoss > 500 && !(strActive || repActive)) && { label:'Write-off suspended (yr 1)', val: fmtCompact(R.suspendedLoss), risk:true },
+        (R.suspendedLoss > 500 && !(strActive || repActive)) && { label:'Potential depreciation — suspended', val: fmtCompact(R.suspendedLoss), sub:'worth '+fmtCompact(R.potentialTaxSavings)+' in tax if unlocked', risk:true },
         (chosenAlloc.a.passiveCarry0 || 0) > 500 && { label:'Losses carried to retirement', val: fmtCompact(chosenAlloc.a.passiveCarry0) },
         failedCount > 0 && { label:'Purchases that don’t fit', val: ''+failedCount, risk:true },
         chosenAlloc.a.idleCash > 500 && { label:'Idle cash — no vehicle', val: fmtCompact(chosenAlloc.a.idleCash), risk:true },
@@ -2419,7 +2425,7 @@
       ];
       const lines = [];
       if (!(strActive || repActive) && R.suspendedLoss > 500)
-        lines.push('<b>'+fmt0.format(R.suspendedLoss)+'</b> of the year-1 write-off is suspended at your income. Way 1 (self-run short-term rental) or Way 2 (real-estate-professional spouse) above unlocks it now — only if it’s genuinely true for you.');
+        lines.push('<b>'+fmt0.format(R.suspendedLoss)+'</b> of the year-1 write-off is suspended at your income — not lost, waiting. It would be worth <b>'+fmt0.format(R.potentialTaxSavings)+'</b> in real tax savings if unlocked. Way 1 (self-run short-term rental) or Way 2 (real-estate-professional spouse) above unlocks it now — only if it’s genuinely true for you.');
       allPurch.filter(x => !x.ok).forEach(r => {
         const p = propsDef.find(pp => pp.idx === r.idx); if (!p) return;
         const room = p.vehicle === 'heloc' ? r.roomHeloc : r.roomPolicy;
@@ -2611,9 +2617,19 @@
       tiles.push({ label:'Accumulation IUL — cash value at retirement', val: fmtCompact((window.EPIC_DEBUG && window.EPIC_DEBUG.chosenAlloc.a.cvStart) || 0) });
       const ltcDBVal = +$('ltcDB').value;
       tiles.push({ label:'Protection IUL — death benefit', val: fmtCompact(ltcDBVal), sub: ltcOn ? '+ chronic illness coverage' : undefined });
-    } else if (i === 5){ // Buy a property: the depreciation write-off clawed back as real tax savings
+    } else if (i === 5){ // Buy a property: the depreciation write-off, clawed back or waiting to be
       tiles.push({ label:'Year-1 depreciation write-off', val: fmtCompact(R.year1Deduction||0) });
-      tiles.push({ label:'Tax clawed back from it', val: fmtCompact(R.taxSavings||0) });
+      if (R.taxSavings > 500){
+        tiles.push({ label:'Tax clawed back from it', val: fmtCompact(R.taxSavings) });
+      } else if (R.suspendedLoss > 500){
+        // Not lost — suspended at this income. Show it as a real, sourced dollar figure waiting to
+        // be unlocked, not a dead $0, and point straight at how (Section 4 already has the 3 ways).
+        tiles.push({ label:'Potential depreciation — suspended at your income', val: fmtCompact(R.suspendedLoss),
+                     sub: 'worth '+fmtCompact(R.potentialTaxSavings)+' in tax if unlocked', subClass:'up' });
+        tiles.push({ label:'How to unlock it', val: 'See Section 4 — 3 qualifying ways' });
+      } else {
+        tiles.push({ label:'Tax clawed back from it', val: fmtCompact(R.taxSavings||0) });
+      }
     }
     renderStatCard('journey-why', tiles, takeaway);
     const nxt = $('journey-next');
