@@ -239,12 +239,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b11</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b12</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b12</span><p class="topic-exp" style="margin-top:2px;">New "Annual policy fee" section isolates two real costs that were either missing or bundled in: a Protection IUL's own annual premium (sizes the death-benefit coverage, separate from the cash-value policy), and the Accumulation IUL's cost of insurance on top of the already-modeled admin fee. Both default to $0 (no fabricated numbers) — enter a real quote/illustration figure to see the honest impact. The cash-value policy is now a cleaner "pure savings vehicle" once fees are isolated like this.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b11</span><p class="topic-exp" style="margin-top:2px;">Velocity banking (and 0% business-credit stacking) now works across EVERY loan you own, not just the home mortgage — it auto-optimizes by always attacking whichever loan (home or any rental) carries the highest rate first, a guaranteed-return waterfall. Also fixed a small gap: chunk dollars left over after a loan got fully paid off used to be lost for that year — they now correctly flow into the policy instead, which nudges default numbers up slightly.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b10</span><p class="topic-exp" style="margin-top:2px;">Ages and lifestyle now adjustable from Section 3 and the floating ALIS panel too (not just Section 1) — all copies stay in sync. Plan-through age can go to 120. Fixed a confusing duplicate: "Cash value at retirement start" appeared twice with different numbers — the smaller one is really today's value; relabeled it and pointed to the real (bigger) retirement-start figure.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b9</span><p class="topic-exp" style="margin-top:2px;">More room for members with less debt or savings: 401(k) balance and mortgage principal can now go all the way to $0, and property prices can go as low as $50K–$100K instead of a $300K floor.</p></div>
@@ -492,6 +493,27 @@
         </div>
       </div>
 
+      <div class="topic">
+        <div class="topic-h">Annual policy fee — protection isolated from accumulation</div>
+        <p class="topic-exp">Two different jobs, two different real costs — kept separate so the cash-value side above stays a <b>pure savings vehicle</b>, not one number quietly blending growth with insurance charges. <b>Protection IUL</b> is the policy sized to clear the debt at death (see Section&nbsp;3's "Life insurance needed") — it has its own annual premium. <b>Accumulation IUL</b> (the policy above) already pays a real premium-expense-charge and a real $20/mo admin fee — the age/health-based cost-of-insurance charge on top of that is real but has no public flat-rate table (it varies by issue age, gender, class), so enter it from an actual carrier illustration rather than a guess. Both default to $0 until you have real numbers — a $0 accumulation-IUL legacy figure is still the "optimistic upper bound" the caveat below already warns about.</p>
+        <div class="split">
+          <div class="side-controls">
+            <div class="control"><label>Protection IUL — annual premium <span class="val" id="v-protPremium">$0</span></label><input type="range" id="protPremium" min="0" max="20000" step="250" value="0"></div>
+            <div class="control"><label>Accumulation IUL — annual cost of insurance <span class="val" id="v-coiAnnual">$0</span></label><input type="range" id="coiAnnual" min="0" max="20000" step="250" value="0"></div>
+          </div>
+          <div class="side-results">
+            <div class="ledger">
+              <div class="lline"><span>Protection premium <span class="lbl-sub">A real bill every year — funded from the contribution pool while working, added to the lifestyle need in retirement</span></span><span class="amt" id="s-protPremium">–</span></div>
+              <div class="lline"><span>Accumulation COI <span class="lbl-sub">On top of the $20/mo admin fee — deducted from cash value every year the policy is in force</span></span><span class="amt" id="s-coiAnnual">–</span></div>
+            </div>
+            <div class="caveat mini">
+              <span class="mark">!</span>
+              <p>Entering $0 does NOT mean these costs are zero in real life — it means the tool isn't asserting a number it can't source. A real quote for the protection premium and a real illustration's COI schedule replace these before showing a client.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="topic" data-natopic="heloc">
         <div class="topic-hrow"><div class="topic-h" id="veh-heloc-h">The HELOC — the equity harvester</div><button type="button" class="toggle-btn na-btn" data-natool="heloc">✓ In the plan</button></div>
         <p class="topic-exp">The rate and the home's own numbers. It funds future property down payments and, in retirement, covers whatever the properties and low-bracket qualified money don't. Real terms: a line has a ~10-year draw window from its first draw — inside it, interest can ride on the line (while room lasts); when the window closes with a balance, ALIS rolls it into a 30-yr fixed at your mortgage rate, whose real payment the plan then funds — and a fresh line can open against the remaining equity.</p>
@@ -669,7 +691,7 @@
         </div>
         <div class="caveat">
           <span class="mark">!</span>
-          <p><b>Policy legacy numbers are an optimistic upper bound — here's the real gap.</b> This models the real premium expense charge (7% / 6% / 2% by policy year) and a real $20/mo admin fee, but does <b>not</b> yet model the age/health-based cost-of-insurance charge (a real universal life policy keeps charging this for life, funded from cash value once premiums stop — it's likely the single biggest missing cost) or check the 7-pay Modified Endowment Contract premium limit (fund a policy too heavily for its death benefit and it loses tax-free-loan status entirely). A heavy-policy allocation will look better here than a real illustration would show. Fix: bring real COI rates or an actual carrier illustration (upload feature, coming) before trusting a policy-heavy recommendation with a client.</p>
+          <p><b>Policy legacy numbers are an optimistic upper bound unless you fill in the fee section above.</b> This models the real premium expense charge (7% / 6% / 2% by policy year) and a real $20/mo admin fee, and the accumulation-IUL cost-of-insurance slider above CAN now model the age/health-based COI charge (a real universal life policy keeps charging this for life, funded from cash value once premiums stop) — but its default is $0, since no public flat-rate table exists to source a default from. At $0, this section is not yet modeled, and a heavy-policy allocation will look better than a real illustration would show. Also not checked: the 7-pay Modified Endowment Contract premium limit (fund a policy too heavily for its death benefit and it loses tax-free-loan status entirely). Fix: enter the real COI figure from an actual carrier illustration before trusting a policy-heavy recommendation with a client.</p>
         </div>
         <div class="caveat">
           <span class="mark">!</span>
@@ -1419,7 +1441,7 @@
       let lifestyle = inp.todaySpend * Math.pow(1+inp.inflation, t);
       if (mortBal > 0.5) lifestyle += mortPay*12;
       if (refiBal > 0.5) lifestyle += refiMonthlyPay*12;
-      lifestyle += helocCashInterest + policyService;
+      lifestyle += helocCashInterest + policyService + (inp.protPremium||0);
       // Each owned property's own loan payment is a real bill the plan funds.
       let propPI = 0;
       for (const p of props) if (p.owned && p.mortBal > 0.5) propPI += p.mPay*12;
@@ -1550,7 +1572,7 @@
       if (qmBal > 0) qmBal *= (1+inp.qmGrowth);
       // Ongoing $20/mo admin charge continues in retirement too — a policy costs money to keep in
       // force whether or not premiums are still being paid. Taken from the free bucket first.
-      cvFree = Math.max(cvFree*(1+inp.credRate) - POLICY_ADMIN_ANNUAL, 0);
+      cvFree = Math.max(cvFree*(1+inp.credRate) - POLICY_ADMIN_ANNUAL - (inp.coiAnnual||0), 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (mortBal > 0.5){ for (let m=0; m<12 && mortBal>0.5; m++){ mortBal = mortBal*(1+mortMr) - mortPay; } if (mortBal < 0) mortBal = 0; }
       if (refiBal > 0.5){ const rr=(refiRatePct/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiMonthlyPay; } if (refiBal <= 0.5){ refiBal = 0; refiMonthlyPay = 0; } }
@@ -1684,7 +1706,7 @@
         if (polLoan > guard){ const svc = polLoan - guard; polLoan = guard; carryCost += svc; polService += svc; }
       }
 
-      let pool = acc.contribution + refund + purchRefund + (bal <= 0.5 ? mpay*12 : 0) + propCash - carryCost;
+      let pool = acc.contribution + refund + purchRefund + (bal <= 0.5 ? mpay*12 : 0) + propCash - carryCost - (acc.protPremium||0);
       if (pool < 0){ shortfall += -pool; pool = 0; }          // bills exceed the pool → outside cash
       const cap = age >= 50 ? 31000 : 23500;                 // employee 401(k) limit (+catch-up)
       const qmWant = pool * fr.qm;
@@ -1759,7 +1781,7 @@
       refund = qmC * acc.mtr;                                 // pre-tax refund lands next year
       refundTotal += refund + purchRefund;
       qm = (qm + qmC) * (1+acc.qmGrowth);
-      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL, 0);
+      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL - (acc.coiAnnual||0), 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (refiBal > 0.5){ const rr=((acc.mortRatePct||6.5)/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiPay; } if (refiBal <= 0.5){ refiBal = 0; refiPay = 0; } }
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
@@ -1811,6 +1833,11 @@
     $('v-annualContrib').textContent = fmt0.format(annualContrib);
     $('annualContrib2').value = annualContrib;
     $('v-annualContrib2').textContent = fmt0.format(annualContrib);
+    const protPremium = +$('protPremium').value, coiAnnual = +$('coiAnnual').value;
+    $('v-protPremium').textContent = fmt0.format(protPremium);
+    $('v-coiAnnual').textContent = fmt0.format(coiAnnual);
+    $('s-protPremium').textContent = protPremium > 0 ? fmt0.format(protPremium)+'/yr' : '$0 — enter a real quote';
+    $('s-coiAnnual').textContent = coiAnnual > 0 ? fmt0.format(coiAnnual)+'/yr' : '$0 — enter a real illustration figure';
     const accYears = retireAge - currentAge;
     const mtr = marginalRatePct(+$('income').value, filingStatus)/100;
 
@@ -1847,7 +1874,8 @@
       loanBal0: a.loanBal0||0, cvLoanAcct0: a.cvLoanAcct0||0, passiveCarry0: a.passiveCarry0||0,
       mortBalRet: a.mortBalRet, mortRatePct: M1 ? M1.ratePct : 0, mortMonthlyPay: M1 ? M1.monthlyPay : 0,
       shieldCap: (strActive || repActive) ? Infinity : 25000,
-      ceiling: { single: ceil.single, mfj: ceil.mfj }
+      ceiling: { single: ceil.single, mfj: ceil.mfj },
+      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value
     });
     // The chosen goal decides EVERY ranking from here down. Tax is never in this comparison.
     // legacy = most left behind · income = most net cash taken · both = total wealth (income + legacy).
@@ -1865,7 +1893,8 @@
       mortRatePct: M1 ? M1.ratePct : 0,
       mortMonthlyPay: (TOOLS.mortgage && M1) ? M1.monthlyPay : 0,
       props: propsDef, homeValue0: homeValue, maxLtv, helocRate, loanType: P.loanType,
-      allowanceNow, shieldUnlimited: (strActive || repActive)
+      allowanceNow, shieldUnlimited: (strActive || repActive),
+      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value
     };
 
     // Grid search: every 10%-step split of the contribution across the AVAILABLE vehicles.
@@ -2427,6 +2456,7 @@
     renderPropCards(); renderSection5();
   });
   ['wRedux','overfundAnnual','credRate','polYears'].forEach(id => $(id).addEventListener('input', renderSection3));
+  ['protPremium','coiAnnual'].forEach(id => $(id).addEventListener('input', renderSection5));
   ['todaySpend','inflation','qmBalance','qmGrowth','helocRate','reEquity','reGrowth','maxLtv','currentAge','retireAge','planAge','annualContrib'].forEach(id => $(id).addEventListener('input', renderSection5));
   // Section-3 mirrors of the ages/lifestyle sliders: either copy drives the plan, both stay in sync
   // (same pattern as the contribution slider — mirror writes the primary, render writes the mirror).
