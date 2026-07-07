@@ -245,12 +245,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b20</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b21</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b21</span><p class="topic-exp" style="margin-top:2px;">Two big additions, built together. <b>Smart 401(k) conversions:</b> before RMDs start at 73, ALIS now checks every year whether paying tax at today's rate and moving money into the policy beats leaving it to be forced out at a worse rate later — when converting genuinely wins, it happens automatically, shows up in the playbook year by year, and a card tile shows exactly what the conversions added (a real re-run without them, not an estimate). <b>The stress test (Section 4):</b> runs your exact plan through 1,000 different market histories with real S&P 500 volatility — the policy's crediting rides the same market through its real 0% floor and 11.65% cap (the current John Hancock Base Capped account), and the same 1,000 histories also run with no policy at all, so you can see what the floor is actually worth when markets misbehave. All volatility and product numbers are sourced, listed under the test.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b20</span><p class="topic-exp" style="margin-top:2px;">Section 3 reordered: "Set the plan" (ages, contribution, goal, lifestyle) now comes first, "Learn it one tool at a time" right below it — so the journey runs the member's real numbers instead of the page defaults.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b19</span><p class="topic-exp" style="margin-top:2px;">New chart at the top of the playbook: every vehicle's balance (401(k), policy cash value, HELOC, home mortgage, property value) on one age axis, build phase straight into retirement, with a marker at the retirement age. Also added an "LTC draw" column to the retirement playbook table — it was computed all along but not shown.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b18</span><p class="topic-exp" style="margin-top:2px;">Fixed a "$0" that read as a dead end: when the depreciation write-off is suspended by income (not lost — it carries forward), the journey and the Opportunities dashboard now show it as "Potential depreciation" with the real dollar value it would be worth in tax if unlocked, plus a direct pointer to Section 4's three qualifying ways to unlock it.</p></div>
@@ -813,6 +814,27 @@
           </div>
           <div class="alis-rec-why" id="oppsDash">–</div>
         </div>
+      </div>
+
+      <div class="topic">
+        <div class="topic-h">Stress-test — real market volatility</div>
+        <p class="topic-exp">Everything above assumes the same smooth return every single year. Real markets don't do that — and once you're withdrawing, the <b>order</b> of good and bad years can sink a plan whose average looks fine. This runs your exact plan through 1,000 different market histories: stocks swing ±19.7% a year around your own growth assumption (the real S&P 500 number since 1928). The policy's indexed crediting rides the <b>same market, the same years</b> — but through a guaranteed 0% floor and an 11.65% cap (the current, real John Hancock Base Capped indexed account). Then the same 1,000 histories run again with no policy at all, on <b>its</b> best possible plan — so the only difference left is the floor.</p>
+        <button type="button" class="toggle-btn" id="btn-mc">Run the stress test — 1,000 market histories</button>
+        <div id="mcResults" style="display:none; margin-top:14px;">
+          <div class="alis-rec">
+            <div class="alis-rec-head"><span class="alis-badge">With the policy</span><span class="alis-order" id="mc-headW">–</span></div>
+            <div class="alis-rec-why" id="mcDashWith">–</div>
+          </div>
+          <div class="alis-rec" style="margin-top:10px;">
+            <div class="alis-rec-head"><span class="alis-badge">No policy — its own best plan</span><span class="alis-order" id="mc-headO">–</span></div>
+            <div class="alis-rec-why" id="mcDashWithout">–</div>
+          </div>
+          <p class="takeaway" id="mc-take" style="text-align:left;"></p>
+          <canvas id="mcCanvas" style="width:100%; height:260px; margin-top:8px;"></canvas>
+          <div class="pb-legend" id="mcLegend"></div>
+          <p class="topic-exp" id="mc-cred" style="margin-top:6px;"></p>
+        </div>
+        <p class="topic-exp" style="margin-top:10px;">Sourced, not guessed: 19.7% stock volatility (S&P 500 annual returns, 1928–2025); the 0% floor / 11.65% cap is the current John Hancock Accumulation IUL "Base Capped" account; the market leg also earns ~1.6%/yr in dividends that index crediting doesn't (IUL credits the price index only — modeled honestly). Property values vary per scenario (±5.9%/yr, Case-Shiller 1988–2026) rather than year-by-year. The same 1,000 histories run every time — repeatable, not cherry-picked. An illustration of how volatility behaves, not a prediction or a recommendation.</p>
       </div>
     </section>
 
@@ -1553,6 +1575,7 @@
       policy: { years:0, totalDrawn:0, purchaseDrawn:0, cvAtStart:0, serviceTotal:0 },
       rent:   { yr1:0, yrN:0, total:0 },
       ltc:    { totalDrawn:0, dbStart: inp.ltcOn ? (inp.ltcDB||0) : 0 },
+      conv:   { total:0, tax:0, penalty:0, years:0 },
       purchases: []
     };
     let ltcDbRemaining = inp.ltcOn ? (inp.ltcDB||0) : 0;
@@ -1731,7 +1754,9 @@
       }
 
       // 3) Still short and qualified has room → raise Q above the ceiling (accept higher brackets).
+      let forcedTopUp = false;
       if (need > 1e-6 && qmBal - Q > 1e-6){
+        forcedTopUp = true;
         const target = lifestyle - heJ - poJ;
         if (nonTFCash(qmBal) >= target){ let lo=Q, hi=qmBal; for (let i=0;i<50;i++){ const m=(lo+hi)/2; nonTFCash(m) < target ? lo=m : hi=m; } Q=(lo+hi)/2; }
         else Q = qmBal;
@@ -1741,14 +1766,59 @@
       if (need > 1) break; // this year can't be funded → horizon ends
       covered = t + 1;
 
+      // --- Greedy bracket-fill conversion (always evaluated — the tool does the marginal math,
+      // the member sees every conversion it fired). Before RMDs begin at 73, compare two futures
+      // for one marginal qualified dollar: leave it (compounds at the member's growth assumption,
+      // forced out at the PROJECTED RMD-age marginal rate) vs convert now (taxed at today's rate,
+      // 10% penalty under 59½, then into the policy through the real premium expense charge,
+      // compounding at crediting, tax-free after). Fill brackets only while converting wins.
+      // The decision uses the member's flat assumptions — a real advisor can't see future returns —
+      // so under the stress test the RULE stays fixed while outcomes vary. Skipped in years the
+      // plan already had to force qualified above the ceiling just to fund the lifestyle.
+      let conv = 0, convTax = 0, convPen = 0, convNet = 0;
+      // window.EPIC_FORCE_NOCONVERT is a verification kill-switch (lets a harness reproduce the
+      // pre-conversion engine byte-for-byte); inp.noConvert is the per-run flag the delta tile uses.
+      if (window.EPIC_FORCE_NOCONVERT !== true && inp.noConvert !== true && inp.toolPolicy !== false && age < 73 && !forcedTopUp && qmBal - Q > 1000){
+        const nYrs = HORIZON - t;
+        const pen = age < 59.5 ? 0.10 : 0;
+        const chargeF = 1 - premChargePct(policyYear);
+        const growQm = Math.pow(1 + inp.qmGrowth, nYrs), growCv = Math.pow(1 + inp.credRate, nYrs);
+        const balAt73 = (qmBal - Q) * Math.pow(1 + inp.qmGrowth, Math.max(73 - age, 0));
+        const futRate = marginalRatePct(taxableRentPos + balAt73/26.5, inp.filingStatus)/100;
+        const leaveVal = growQm * (1 - futRate);
+        const winsAt = rate => (1 - rate - pen) * chargeF * growCv > leaveVal;
+        let convCap = qmBal - Q;
+        let taxableNow = Math.max(taxableRentPos + Math.max(Q - deductionPool, 0), 0);
+        // Dollars still covered by the passive-loss shield convert at a 0% rate — checked anyway
+        // (the premium charge, penalty, or a crediting-rate gap can lose even to a taxed future).
+        const shieldLeft = Math.max(deductionPool - Q, 0);
+        if (shieldLeft > 0.5 && winsAt(0)){
+          const take = Math.min(shieldLeft, convCap);
+          conv += take; convCap -= take;
+        }
+        for (const [edge, rate] of BRACKETS[inp.filingStatus]){
+          if (convCap <= 0.5) break;
+          if (taxableNow >= edge) continue;
+          if (!winsAt(rate)) break;
+          const take = Math.min(edge - taxableNow, convCap);
+          conv += take; convCap -= take; taxableNow += take;
+        }
+        if (conv > 0.5){
+          convTax = taxFor(Q + conv) - taxFor(Q);   // exact incremental tax, shield-aware
+          convPen = conv * pen;
+          convNet = (conv - convTax - convPen) * chargeF;
+          rec.conv.total += conv; rec.conv.tax += convTax; rec.conv.penalty += convPen; rec.conv.years++;
+        } else conv = 0;
+      }
+
       // Record + advance state.
       const yearTax = taxFor(Q);
       // What the same year would owe with no depreciation and no carryforward (interest still
       // deductible) — the difference is the depreciation shield's real tax benefit.
       const taxNoShield = federalTax(Math.max(Math.max(paperNetNoDep, 0) + Q, 0), inp.filingStatus);
       shieldTaxSaved += Math.max(taxNoShield - yearTax, 0);
-      lifetimeTax += yearTax;
-      passiveCarry -= Math.min(Q, deductionPool);            // the shield actually consumed this year
+      lifetimeTax += yearTax + convTax + convPen;
+      passiveCarry -= Math.min(Q + conv, deductionPool);     // the shield actually consumed this year
       if (passiveCarry < 0) passiveCarry = 0;
       if (Q > 1){ rec.qm.years++; rec.qm.totalDrawn += Q; rec.qm.totalTax += yearTax; }
       if (heJ > 1) rec.heloc.years++, rec.heloc.totalDrawn += heJ;
@@ -1761,17 +1831,21 @@
       const refiHere = rec.heloc.refis.find(r => r.t === t);
       if (refiHere) evts.push('Refi HELOC → 30-yr fixed ('+fmtCompact(refiHere.amount)+', '+fmtCompact(refiHere.payAnnual)+'/yr)');
       if (rmdForced) evts.push('RMD forces the 401(k) draw');
+      if (conv > 1) evts.push('Convert '+fmtCompact(conv)+' 401(k) → policy — '+fmtCompact(convTax+convPen)+' tax now beats the projected RMD-age rate');
       if (policyService > 1) evts.push('Pay '+fmtCompact(policyService)+' policy loan interest (no-lapse)');
       if (helocCashInterest > 1) evts.push('Pay '+fmtCompact(helocCashInterest)+' HELOC interest in cash');
       if (ltcDraw > 1){
         evts.push('Chronic-illness/LTC draw — '+fmtCompact(ltcDraw)+' tax-free, '+fmtCompact(ltcDbRemaining)+' left of the death benefit');
         if (ltcDbRemaining <= 0.5) evts.push('Death benefit fully accelerated — nothing left for the estate from this policy');
       }
-      qmBal -= Q; if (qmBal < 0) qmBal = 0;
-      if (qmBal > 0) qmBal *= (1+inp.qmGrowth);
+      qmBal -= Q + conv; if (qmBal < 0) qmBal = 0;
+      // Under the stress test (inp.mcSeq) the year's growth/crediting comes from the drawn market
+      // path instead of the flat slider rate; without it, behavior is exactly as before.
+      if (qmBal > 0) qmBal *= (1 + (inp.mcSeq ? inp.mcSeq.qm[t] : inp.qmGrowth));
       // Ongoing $20/mo admin charge continues in retirement too — a policy costs money to keep in
       // force whether or not premiums are still being paid. Taken from the free bucket first.
-      cvFree = Math.max(cvFree*(1+inp.credRate) - POLICY_ADMIN_ANNUAL - (inp.coiAnnual||0), 0);
+      // Converted dollars enter before crediting (same full-year treatment premiums get in build years).
+      cvFree = Math.max((cvFree + convNet)*(1 + (inp.mcSeq ? inp.mcSeq.cred[t] : inp.credRate)) - POLICY_ADMIN_ANNUAL - (inp.coiAnnual||0), 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (mortBal > 0.5){ for (let m=0; m<12 && mortBal>0.5; m++){ mortBal = mortBal*(1+mortMr) - mortPay; } if (mortBal < 0) mortBal = 0; }
       if (refiBal > 0.5){ const rr=(refiRatePct/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiMonthlyPay; } if (refiBal <= 0.5){ refiBal = 0; refiMonthlyPay = 0; } }
@@ -1784,7 +1858,7 @@
       }
       // End-of-year balance snapshot for the playbook chart — every vehicle, one consistent point in time.
       const propValueSum = props.reduce((s,p) => s + (p.owned ? p.price * Math.pow(1+p.apprec, t-p.buyT) : 0), 0);
-      timeline.push({ age, need: lifestyle, rent: propNetCash, Q, tax: yearTax, he: heJ, po: poJ, ltc: ltcDraw, evts,
+      timeline.push({ age, need: lifestyle, rent: propNetCash, Q, tax: yearTax, he: heJ, po: poJ, ltc: ltcDraw, conv, convTax, evts,
         qmBal, cvBal: cvFree+cvLoanAcct, helocBal, policyLoan: loanBal, mortBal, propValue: propValueSum });
     }
 
@@ -1825,7 +1899,7 @@
     const totalExtracted = rec.rent.total + (rec.qm.totalDrawn - rec.qm.totalTax) + rec.heloc.totalDrawn + rec.policy.totalDrawn + rec.ltc.totalDrawn;
     return { strat, key:strat.key, years:H, planYears:HORIZON, sustainable, failAge, capped:(H>=RET_CAP),
              lifetimeTax, shieldTaxSaved, rmdTotal, rec, helocEnd, refiEnd, policyEnd, homeEnd, rentalEnd,
-             rentalDebtEnd, homeDebtEnd, qmEnd:qmBal, cvEnd, mortEnd:mortBal, legacy, totalExtracted, timeline };
+             rentalDebtEnd, homeDebtEnd, qmEnd:qmBal, cvEnd, mortEnd:mortBal, legacy, totalExtracted, timeline, inp };
   }
 
   // --- Accumulation engine: grows today's balances to retirement under one contribution split ---
@@ -1994,8 +2068,9 @@
       }
       refund = qmC * acc.mtr;                                 // pre-tax refund lands next year
       refundTotal += refund + purchRefund;
-      qm = (qm + qmC) * (1+acc.qmGrowth);
-      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1+acc.credRate) - POLICY_ADMIN_ANNUAL - (acc.coiAnnual||0), 0);
+      // Under the stress test (acc.mcSeq) growth/crediting follows the drawn market path.
+      qm = (qm + qmC) * (1 + (acc.mcSeq ? acc.mcSeq.qm[y] : acc.qmGrowth));
+      cv = Math.max((cv + polC*(1-premChargePct(policyYear))) * (1 + (acc.mcSeq ? acc.mcSeq.cred[y] : acc.credRate)) - POLICY_ADMIN_ANNUAL - (acc.coiAnnual||0), 0);
       if (cvLoanAcct > 0.5) cvLoanAcct *= (1 + washCredited(policyYear)/100);
       if (refiBal > 0.5){ const rr=((acc.mortRatePct||6.5)/100)/12; for (let m=0; m<12 && refiBal>0.5; m++){ refiBal = refiBal*(1+rr) - refiPay; } if (refiBal <= 0.5){ refiBal = 0; refiPay = 0; } }
       if (balBefore > 0.5 && bal <= 0.5) evts.push('House paid off — '+fmtCompact(mpay*12)+'/yr payment joins the pool');
@@ -2285,12 +2360,21 @@
     const refi0 = optimal.rec.heloc.refis[0];
     const goalLabel = optimizeMode === 'legacy' ? 'Legacy' : optimizeMode === 'income' ? 'Income extracted' : 'Total wealth';
     const goalVal = modeMetric(optimal);
+    // Conversion delta — a REAL re-run of the exact same plan with conversions disabled, so the
+    // tile shows what they actually contributed (or cost), never an estimate.
+    let convDelta = 0;
+    if (optimal.rec.conv && optimal.rec.conv.total > 1000){
+      const off = simulateStrategy(optimal.strat, Object.assign({}, optimal.inp, { noConvert:true }));
+      convDelta = (optimal.legacy + optimal.totalExtracted) - (off.legacy + off.totalExtracted);
+    }
     renderStatCard('alis-why', [
       { label:'Outcome', val: optimal.sustainable ? 'Age '+planAge+' ✓' : 'Dry at '+reachAge(optimal), risk: !optimal.sustainable },
       { label:goalLabel, val: fmtCompact(goalVal) },
       { label:'Total tax paid', val: fmtCompact(optimal.lifetimeTax) },
       { label:'Shield saved (tax)', val: fmtCompact(optimal.shieldTaxSaved) },
       { label:'Estate debt', val: fmtCompact(debtOf(optimal)) },
+      optimal.rec.conv.total > 1000 && { label:'401(k)→policy conversions', val: fmtCompact(optimal.rec.conv.total),
+        sub: (convDelta>=0?'+':'−')+fmtCompact(Math.abs(convDelta))+' wealth vs none', subClass: convDelta>=0?'up':'down' },
       optimal.rmdTotal > 1000 && { label:'RMDs forced', val: fmtCompact(optimal.rmdTotal) },
       refi0 && { label:'Refi at', val: 'age '+refi0.age },
       optimal.rec.policy.serviceTotal > 1000 && { label:'Loan service', val: fmtCompact(optimal.rec.policy.serviceTotal), risk:true },
@@ -2558,6 +2642,41 @@
 
     window.EPIC_DEBUG = { chosen, chosenAlloc, results, propsDef };
     window.EPIC_DEBUG_FN = { simulateStrategy, accumulate, washCharged, washCredited, premChargePct, federalTax, STRATS };
+    // --- Stress-test pack: everything the on-demand Monte Carlo needs to replay the CHOSEN plan
+    // (and its honest no-policy counterpart) under random market paths. Rebuilt every render so it
+    // always reflects the current sliders. The MC runner itself lives outside this closure.
+    window.EPIC_MC = {
+      accYears, horizon: Math.min(horizon, RET_CAP), retireAge, planAge, currentAge, todaySpend,
+      qmGrowth, credRate: P.credRate/100, reGrowth, propsDef, acc0,
+      packWith: { fr: chosenAlloc.fr, strat: chosen.strat, pace: chosen.inp.ceiling, accOv: {}, inpOv: {} },
+      buildInp: (a, pace, defs) => mkInp(a, pace, todaySpend, defs),
+      // Fair comparison: the no-policy world gets ITS best plan (grid re-searched with the policy
+      // off), not the with-policy allocation minus one vehicle.
+      replanNoPolicy: () => {
+        const acc0x = Object.assign({}, acc0, { toolPolicy:false, cv0:0 });
+        let bp = null;
+        const consider = (fr2) => {
+          const a2 = accumulate(fr2, acc0x);
+          for (const s of STRATS){
+            const paces = s.blend ? CEIL : [CEIL[1]];
+            for (const cl of paces){
+              const inp2 = mkInp(a2, cl, todaySpend);
+              inp2.toolPolicy = false; inp2.startCV = 0;
+              const r = simulateStrategy(s, inp2);
+              if (!bp || objSort(r, bp.r) < 0) bp = { r, fr: fr2, strat: s, pace: { single: cl.single, mfj: cl.mfj } };
+            }
+          }
+        };
+        for (let q = 0; q <= 10; q++){
+          const c = 10 - q;
+          if (q > 0 && !TOOLS.qualified) continue;
+          if (c > 0 && !chunkAllowed) continue;
+          consider({ qm: q/10, chunk: c/10, policy: 0 });
+        }
+        if (!bp) consider({ qm: 0, chunk: 0, policy: 0 });   // every vehicle off — do-nothing split
+        return { fr: bp.fr, strat: bp.strat, pace: bp.pace, accOv: { toolPolicy:false, cv0:0 }, inpOv: { toolPolicy:false, startCV:0 } };
+      }
+    };
   }
 
   $('btn-single').addEventListener('click', () => { filingStatus='single'; $('btn-single').classList.add('active'); $('btn-mfj').classList.remove('active'); renderSection2(); renderSection5(); });
@@ -2566,6 +2685,178 @@
   $('btn-washLoan').addEventListener('click', () => { loanType='wash'; $('btn-washLoan').classList.add('active'); $('btn-indexLoan').classList.remove('active'); renderSection3(); });
   $('btn-str').addEventListener('click', () => { strActive = !strActive; $('btn-str').classList.toggle('active', strActive); renderSection2(); });
   $('btn-rep').addEventListener('click', () => { repActive = !repActive; $('btn-rep').classList.toggle('active', repActive); renderSection2(); });
+
+  // ================= Stress test — Monte Carlo over real market volatility =================
+  // Sourced constants (verified 2026-07-06, do not guess-edit):
+  //  · S&P 500 annual return stdev 19.7% (NYU Stern dataset, 1928–2025)
+  //  · IUL crediting = John Hancock Accumulation IUL "Base Capped" indexed account: 0% floor,
+  //    11.65% current cap, 100% participation (carrier illustration support doc)
+  //  · Dividend gap ~1.6%/yr: index crediting rides the PRICE index only; a 401(k) index fund
+  //    also earns dividends (10-yr avg yield 1.63%) — the market leg gets them, the IUL leg doesn't
+  //  · Property appreciation stdev 5.87%/yr (computed from FRED Case-Shiller national, 1988–2026)
+  // Never wired into the live grid search — runs on demand, on the ALREADY-CHOSEN plan only.
+  const MC_N = 1000, MC_EQ_SD = 0.197, MC_DIV = 0.016, MC_IUL_FLOOR = 0.0, MC_IUL_CAP = 0.1165, MC_RE_SD = 0.0587;
+  // Deterministic seeded RNG → the same 1,000 histories every run: repeatable, not cherry-picked.
+  function mulberry32(seed){ let a = seed|0; return function(){ a = (a + 0x6D2B79F5)|0; let t = Math.imul(a ^ (a>>>15), 1|a); t = (t + Math.imul(t ^ (t>>>7), 61|t)) ^ t; return ((t ^ (t>>>14))>>>0) / 4294967296; }; }
+  function gauss(rng){ let u=0, v=0; while(u===0) u=rng(); while(v===0) v=rng(); return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v); }
+
+  function mcRunOne(M, pack, seq, reShift){
+    const defs = M.propsDef.map(p => Object.assign({}, p, { apprec: p.apprec + reShift }));
+    const acc0i = Object.assign({}, M.acc0, pack.accOv, { props: defs,
+      mcSeq: { qm: seq.qm.slice(0, M.accYears), cred: seq.cred.slice(0, M.accYears) } });
+    const a = accumulate(pack.fr, acc0i);
+    const inp = M.buildInp(a, pack.pace, defs);
+    Object.assign(inp, pack.inpOv);
+    inp.reGrowth = M.reGrowth + reShift;
+    inp.mcSeq = { qm: seq.qm.slice(M.accYears), cred: seq.cred.slice(M.accYears) };
+    return simulateStrategy(pack.strat, inp);
+  }
+
+  let MC_BUSY = false;
+  function runStressTest(){
+    const M = window.EPIC_MC; if (!M || MC_BUSY) return;
+    MC_BUSY = true;
+    const btn = $('btn-mc');
+    btn.disabled = true;
+    const packW = M.packWith;
+    const packO = M.replanNoPolicy();
+    const totalYears = M.accYears + M.horizon;
+    const res = { w: { legacies: [], years: [] }, o: { legacies: [], years: [] } };
+    let credSum = 0, qSum = 0, yrN = 0;
+    let i = 0;
+    const BATCH = 25;
+    function step(){
+      const end = Math.min(i + BATCH, MC_N);
+      for (; i < end; i++){
+        const rng = mulberry32(0x51ED + i * 7919);
+        const seq = { qm: new Array(totalYears), cred: new Array(totalYears) };
+        for (let t = 0; t < totalYears; t++){
+          const z = gauss(rng);
+          // ONE market draw per year drives both legs — that's the whole comparison. The market
+          // leg keeps dividends; the IUL leg takes the price move through the real floor and cap.
+          seq.qm[t] = M.qmGrowth + MC_EQ_SD * z;
+          const price = M.qmGrowth - MC_DIV + MC_EQ_SD * z;
+          seq.cred[t] = Math.max(MC_IUL_FLOOR, Math.min(MC_IUL_CAP, price));
+          credSum += seq.cred[t]; qSum += seq.qm[t]; yrN++;
+        }
+        // Property/home appreciation varies per scenario (its long-run average), not year-by-year —
+        // disclosed simplification; property is never sold mid-plan, so its sequence matters far less.
+        const reShift = gauss(rng) * MC_RE_SD / Math.sqrt(Math.max(totalYears, 1));
+        const rw = mcRunOne(M, packW, seq, reShift);
+        const ro = mcRunOne(M, packO, seq, reShift);
+        res.w.legacies.push(rw.legacy); res.w.years.push(rw.years);
+        res.o.legacies.push(ro.legacy); res.o.years.push(ro.years);
+      }
+      btn.textContent = 'Running… ' + i + ' / ' + MC_N + ' market histories';
+      if (i < MC_N) setTimeout(step, 0);
+      else {
+        renderMcResults(M, res, credSum/yrN, qSum/yrN);
+        btn.disabled = false;
+        btn.textContent = 'Run it again — same 1,000 histories, same result';
+        MC_BUSY = false;
+      }
+    }
+    btn.textContent = 'Running… 0 / ' + MC_N;
+    setTimeout(step, 0);
+  }
+
+  function pctile(sorted, p){ const idx = (sorted.length-1) * p; const lo = Math.floor(idx), hi = Math.ceil(idx); return sorted[lo] + (sorted[hi]-sorted[lo]) * (idx-lo); }
+  function renderMcResults(M, res, credAvg, qAvg){
+    $('mcResults').style.display = '';
+    const wl = [...res.w.legacies].sort((a,b)=>a-b), ol = [...res.o.legacies].sort((a,b)=>a-b);
+    const survW = res.w.years.filter(y => y >= M.horizon).length / res.w.years.length;
+    const survO = res.o.years.filter(y => y >= M.horizon).length / res.o.years.length;
+    const p10w = pctile(wl,0.10), p50w = pctile(wl,0.50), p90w = pctile(wl,0.90);
+    const p10o = pctile(ol,0.10), p50o = pctile(ol,0.50), p90o = pctile(ol,0.90);
+    $('mc-headW').textContent = (survW*100).toFixed(1)+'% of markets reach age '+M.planAge;
+    $('mc-headO').textContent = (survO*100).toFixed(1)+'% of markets reach age '+M.planAge;
+    const tilesFor = (surv, p10, p50, p90) => [
+      { label:'Reaches age '+M.planAge, val:(surv*100).toFixed(1)+'%', risk: surv < 0.995 },
+      { label:'Worst 1-in-10 legacy', val: fmtCompact(p10), risk: p10 < 0 },
+      { label:'Median legacy', val: fmtCompact(p50) },
+      { label:'Best 1-in-10 legacy', val: fmtCompact(p90) }
+    ];
+    renderStatCard('mcDashWith', tilesFor(survW, p10w, p50w, p90w), null);
+    renderStatCard('mcDashWithout', tilesFor(survO, p10o, p50o, p90o), null);
+    // Computed-true takeaway — states only what THIS run's numbers actually show, never a script.
+    const survDiff = (survW - survO) * 100;
+    const downDiff = p10w - p10o, medDiff = p50w - p50o;
+    let take;
+    if (survDiff > 0.05 && downDiff > 0)
+      take = '<b>The floor does both jobs here:</b> '+survDiff.toFixed(1)+' more retirements per 100 reach age '+M.planAge+' with the policy, and the worst 1-in-10 outcome keeps '+fmtCompact(downDiff)+' more. Both plans fund the identical lifestyle — the difference is what the down years can no longer take away.';
+    else if (survDiff > 0.05)
+      take = '<b>'+survDiff.toFixed(1)+' more retirements per 100 reach age '+M.planAge+'</b> with the policy. Both plans fund the identical lifestyle — the floor pays for itself in the histories where the market breaks the other plan.';
+    else if (survDiff < -0.05)
+      take = '<b>Honest result: at these numbers the no-policy plan survives more markets</b> ('+(-survDiff).toFixed(1)+' more per 100). The capped crediting gave up more upside than the floor protected here.';
+    else if (downDiff > 25000)
+      take = '<b>Every history survives either way — the floor shows up in the downside:</b> the worst 1-in-10 outcome keeps '+fmtCompact(downDiff)+' more with the policy'+(medDiff < 0 ? ', while the median gives up '+fmtCompact(-medDiff)+' of upside to the cap — protection isn\'t free, and this shows its real price' : ' and the median keeps '+fmtCompact(Math.abs(medDiff))+(medDiff>=0?' more too':''))+'.';
+    else if (downDiff < -25000)
+      take = '<b>Honest result: the floor didn\'t earn its keep here</b> — the no-policy plan keeps '+fmtCompact(-downDiff)+' more even in the worst 1-in-10 outcome. At these growth assumptions the cap costs more than the floor saves.';
+    else
+      take = 'The two run nearly identical across all 1,000 histories at these numbers — the market never got bad enough for the floor to matter, and the cap never got expensive enough to hurt.';
+    $('mc-take').innerHTML = take;
+    $('mc-cred').innerHTML = 'Across all '+MC_N+' histories the floor/cap produced an average crediting of <b>'+(credAvg*100).toFixed(2)+'%/yr</b>'
+      + ' (your crediting slider assumes '+(M.credRate*100).toFixed(2)+'% — if these differ, the floor/cap math and your assumption disagree, shown honestly, not hidden)'
+      + '; the market leg averaged '+(qAvg*100).toFixed(2)+'%/yr against your '+(M.qmGrowth*100).toFixed(2)+'% assumption.';
+    drawMcChart(wl, ol);
+    window.EPIC_MC_RESULT = { survW, survO, p10w, p50w, p90w, p10o, p50o, p90o, credAvg, qAvg,
+      wYears: res.w.years, oYears: res.o.years };
+  }
+
+  function drawMcChart(wl, ol){
+    const cv = $('mcCanvas'); if (!cv) return;
+    const styles = getComputedStyle(document.documentElement);
+    const col = v => styles.getPropertyValue(v).trim();
+    const W = cv.clientWidth || 640, Hpx = 260;
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = W * dpr; cv.height = Hpx * dpr;
+    const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, W, Hpx);
+    const padL = 54, padR = 8, padT = 16, padB = 30;
+    const plotW = W - padL - padR, plotH = Hpx - padT - padB;
+    // Cap the y-scale at the 95th percentile — a handful of extreme lucky histories would
+    // otherwise flatten the whole downside story (which is the part that matters) to the floor.
+    // The clipped tail is disclosed on the chart itself.
+    let lo = Math.min(wl[0], ol[0], 0);
+    let hi = Math.max(pctile(wl, 0.95), pctile(ol, 0.95));
+    if (hi <= lo) hi = lo + 1;
+    const X = i => padL + plotW * (i / (wl.length - 1));
+    const Y = v => padT + plotH - plotH * ((Math.min(v, hi) - lo) / (hi - lo));
+    // y gridlines with values — a chart without a scale is decoration, not information
+    ctx.font = '10.5px ui-monospace, Menlo, Consolas, monospace';
+    ctx.strokeStyle = col('--line') || '#d8dbd2'; ctx.lineWidth = 1;
+    [lo, (lo + hi)/2, hi].forEach(v => {
+      ctx.beginPath(); ctx.moveTo(padL, Y(v)); ctx.lineTo(padL + plotW, Y(v)); ctx.stroke();
+      ctx.fillStyle = col('--ink-soft') || '#666';
+      ctx.fillText(fmtCompact(v), 4, Y(v) + 4);
+    });
+    if (lo < 0){ // zero line (legacy below zero = the estate owes money)
+      ctx.beginPath(); ctx.moveTo(padL, Y(0)); ctx.lineTo(padL + plotW, Y(0)); ctx.stroke();
+      ctx.fillStyle = col('--ink-soft') || '#666'; ctx.fillText('$0', 4, Y(0) + 4);
+    }
+    ctx.fillStyle = col('--ink-soft') || '#666';
+    ctx.fillText('top 5% run off-scale ↑', padL + plotW - 130, padT + 10);
+    // worst 1-in-10 marker
+    const x10 = X(Math.floor((wl.length - 1) * 0.10));
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(x10, padT); ctx.lineTo(x10, padT + plotH); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = col('--ink-soft') || '#666';
+    ctx.font = '10.5px ui-monospace, Menlo, Consolas, monospace';
+    ctx.fillText('worst 1-in-10', x10 + 4, padT + 10);
+    ctx.fillText('every outcome, sorted worst → best', padL, Hpx - 10);
+    const drawLine = (arr, color, w2) => {
+      ctx.strokeStyle = color; ctx.lineWidth = w2; ctx.beginPath();
+      arr.forEach((v, i) => { const x = X(i), y = Y(v); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.stroke();
+    };
+    drawLine(ol, col('--risk') || '#a6503a', 1.5);
+    drawLine(wl, col('--ledger') || '#234b42', 2.2);
+    const legend = $('mcLegend');
+    if (legend) legend.innerHTML =
+      '<span><span class="swatch" style="background:'+(col('--ledger')||'#234b42')+'"></span> With the policy</span>'
+      + '<span><span class="swatch" style="background:'+(col('--risk')||'#a6503a')+'"></span> No policy (its own best plan)</span>';
+  }
+  if ($('btn-mc')) $('btn-mc').addEventListener('click', runStressTest);
 
   function applyLocation(loc){
     propLocation = loc;
