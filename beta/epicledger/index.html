@@ -245,12 +245,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b23</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b24</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b24</span><p class="topic-exp" style="margin-top:2px;">Crediting assumption now comes as three labeled, defensible stories with one-click buttons: <b>6.40% honest long-run</b> (what the real 0% floor / 11.65% cap produces over the full 1928–2025 market record — the new default), <b>7.12% carrier illustration</b> (their current illustrated rate, calibrated to the stronger recent era), and <b>8.56% last-14-years actual</b> (what the carrier's first IUL really credited on average, 2011–2025). The slider still fine-tunes; the buttons make the choice of story explicit instead of hiding it in a default.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b23</span><p class="topic-exp" style="margin-top:2px;">The policy is now ONE question: how much goes in each year. Everything else designs itself the way a real accumulation case does — the death benefit auto-sizes from what each candidate plan actually pays in (23× premium, 20/80 base/supplemental, real illustration ratios), the contract's overfunding limit scales with it, and ALIS now tries BOTH loan types and keeps the winner (shown on the plan card). Crediting default raised to the carrier's current illustrated 7.12% (their 14-year actual average was 8.56%). Fixed Index loan corrected to its real current 5.00% charge. The stress test gained a full indexed-account shoot-out: all six real S&P/Nasdaq accounts — caps, multipliers, bonuses and charges exactly as published — through the same 1,000 market histories, ALIS naming the winner, with the honest note that multiplier accounts pay a certain charge for a boost that only sometimes shows up. Agent calibration (cost-of-insurance %, 45% ≈ Standard non-smoker) moved into a collapsed Agent settings block.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b22</span><p class="topic-exp" style="margin-top:2px;">The policy now carries its REAL costs, straight from the actual AIUL 26 contract: an age-based cost of insurance on the true net amount at risk (the contract's own rate table), face-amount charges in policy years 1–15, the new overfunding charge on premium above the contract limit, and the Fixed Index loan updated to its real terms (5.5% guaranteed charge + 0.65% guaranteed bonus on the collateral). The cost model was calibrated against a real client illustration and matches its cash values within about 1% across 20 years. Policy-heavy numbers came DOWN as a result — that's honesty arriving, not performance leaving. Set the face amounts from a real illustration in the "policy's real costs" section; face $0 switches the chassis off. Also: the "optimistic upper bound" warning is finally retired — the two pieces it flagged (no cost of insurance, no fee data) are now modeled.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b21</span><p class="topic-exp" style="margin-top:2px;">Two big additions, built together. <b>Smart 401(k) conversions:</b> before RMDs start at 73, ALIS now checks every year whether paying tax at today's rate and moving money into the policy beats leaving it to be forced out at a worse rate later — when converting genuinely wins, it happens automatically, shows up in the playbook year by year, and a card tile shows exactly what the conversions added (a real re-run without them, not an estimate). <b>The stress test (Section 4):</b> runs your exact plan through 1,000 different market histories with real S&P 500 volatility — the policy's crediting rides the same market through its real 0% floor and 11.65% cap (the current John Hancock Base Capped account), and the same 1,000 histories also run with no policy at all, so you can see what the floor is actually worth when markets misbehave. All volatility and product numbers are sourced, listed under the test.</p></div>
@@ -363,11 +364,17 @@
 
       <div class="topic" data-natopic="policy">
         <div class="topic-hrow"><div class="topic-h">Fund the policy — one number: the yearly premium</div><button type="button" class="toggle-btn na-btn" data-natool="policy">✓ In the plan</button></div>
-        <p class="topic-exp">One input: how much goes into the policy each year. A natural source is the tax withholding you're over-paying anyway (Section&nbsp;1's tax bill shows it) — redirect it here and let it compound instead. Real product mechanics throughout: a premium expense charge of 7% in year 1, 6% in years 2–10, 2% from year 11 (the carrier's current schedule), and the crediting default is the carrier's own current illustrated rate for its flagship S&amp;P account — their first IUL actually averaged 8.56%/yr over 2011–2025, so it's not a stretch number. Everything else about the policy — face amount, contract limits, loan type — is sized and chosen automatically the way a real accumulation design does it (details in the costs topic below).</p>
+        <p class="topic-exp">One input: how much goes into the policy each year. A natural source is the tax withholding you're over-paying anyway (Section&nbsp;1's tax bill shows it) — redirect it here and let it compound instead. Real product mechanics throughout: a premium expense charge of 7% in year 1, 6% in years 2–10, 2% from year 11 (the carrier's current schedule). The crediting assumption comes in three defensible flavors — pick one below — and defaults to the most conservative: what the real floor and cap would have produced over the full 97-year market record. Everything else about the policy — face amount, contract limits, loan type — is sized and chosen automatically the way a real accumulation design does it (details in the costs topic below).</p>
         <div class="split">
           <div class="side-controls">
             <div class="control"><label>Annual premium into the policy <span class="val" id="v-polPremiumAnnual">$10,000</span></label><input type="range" id="polPremiumAnnual" min="0" max="100000" step="1000" value="10000"></div>
-            <div class="control"><label>Illustrated crediting rate <span class="val" id="v-credRate">7.12%</span></label><input type="range" id="credRate" min="3" max="9" step="0.01" value="7.12"></div>
+            <div class="control"><label>Crediting rate assumption <span class="val" id="v-credRate">6.40%</span></label><input type="range" id="credRate" min="3" max="9" step="0.01" value="6.40"></div>
+            <div class="toggle-row" style="flex-wrap:wrap;">
+              <button type="button" class="toggle-btn cred-preset" data-cred="6.40">Honest long-run — 6.40%</button>
+              <button type="button" class="toggle-btn cred-preset" data-cred="7.12">Carrier illustration — 7.12%</button>
+              <button type="button" class="toggle-btn cred-preset" data-cred="8.56">Last 14 yrs actual — 8.56%</button>
+            </div>
+            <p class="topic-exp" style="margin-top:6px;"><b>6.40%</b> is what the real 0% floor / 11.65% cap produces if markets average their full 1928–2025 record (~10%/yr) — the defensible default. <b>7.12%</b> is the carrier's current illustrated rate, calibrated to the stronger recent era. <b>8.56%</b> is what the carrier's first IUL actually credited on average, 2011–2025. Pick the story you want the plan built on — the stress test shows the floor/cap's honest implied rate either way.</p>
             <div class="control"><label>Already have this policy? — years in force <span class="val" id="v-polYears">3 yrs</span></label><input type="range" id="polYears" min="0" max="20" step="1" value="3"></div>
             <div class="toggle-row">
               <button type="button" class="toggle-btn active" id="btn-autoLoan">ALIS picks the loan</button>
@@ -1557,6 +1564,8 @@
     const polYears = +$('polYears').value;
     $('v-polPremiumAnnual').textContent = fmt0.format(annualPremium);
     $('v-credRate').textContent = credRate.toFixed(2)+'%';
+    document.querySelectorAll('.cred-preset').forEach(b =>
+      b.classList.toggle('active', Math.abs(credRate - parseFloat(b.dataset.cred)) < 0.005));
     $('v-polYears').textContent = polYears > 0 ? polYears+' yrs' : 'starting fresh';
     $('s-polYearsLbl').textContent = polYears;
 
@@ -3275,6 +3284,9 @@
     renderPropCards(); renderSection5();
   });
   ['polPremiumAnnual','credRate','polYears'].forEach(id => $(id).addEventListener('input', renderSection3));
+  document.querySelectorAll('.cred-preset').forEach(b => b.addEventListener('click', () => {
+    $('credRate').value = b.dataset.cred; renderSection3();
+  }));
   // Section 2's setup button and Section 3's estate-topic choice are the SAME decision, kept in
   // sync (same pattern as the goal buttons) — Section 3 is where the trade-off is actually visible.
   function setLtcButton(){
