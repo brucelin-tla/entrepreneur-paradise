@@ -245,12 +245,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b19</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b20</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b20</span><p class="topic-exp" style="margin-top:2px;">Section 3 reordered: "Set the plan" (ages, contribution, goal, lifestyle) now comes first, "Learn it one tool at a time" right below it — so the journey runs the member's real numbers instead of the page defaults.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b19</span><p class="topic-exp" style="margin-top:2px;">New chart at the top of the playbook: every vehicle's balance (401(k), policy cash value, HELOC, home mortgage, property value) on one age axis, build phase straight into retirement, with a marker at the retirement age. Also added an "LTC draw" column to the retirement playbook table — it was computed all along but not shown.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b18</span><p class="topic-exp" style="margin-top:2px;">Fixed a "$0" that read as a dead end: when the depreciation write-off is suspended by income (not lost — it carries forward), the journey and the Opportunities dashboard now show it as "Potential depreciation" with the real dollar value it would be worth in tax if unlocked, plus a direct pointer to Section 4's three qualifying ways to unlock it.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b17</span><p class="topic-exp" style="margin-top:2px;">Big reorder: Section 2 now runs policy → HELOC → 0% business credit → velocity banking → the rental property last (buy-age is its first input), funded from the capacity those tools just built. Chronic-illness/LTC now defaults ON when you set a Protection IUL premium (a real product feature, not an opt-in extra — click it off if you don't want it). The LTC trade-off is now ENFORCED, not just disclosed: a new Section 3 "Preserve vs. draw" choice, and any shortfall between what's left of the death benefit and what's needed to clear the debt now actually reduces legacy. "Plan through age" renamed "Age to pass down estate." The 7-step journey now itemizes the real numbers per step: interest saved + payoff time on Attack the Mortgage, the incremental stacking win on Use the Bank's Money, Protection IUL and Accumulation IUL shown as two separate line items on the tax-free engine step, the depreciation write-off clawed back on Buy a Property, and the Full Picture step compares against day one, not just the step before it.</p></div>
@@ -585,35 +586,9 @@
       <h2>Retirement &amp; passive income — the optimized plan</h2>
       <p class="sub">Set the yearly contribution and pick the goal; ALIS does the rest — allocating the money across the Section&nbsp;2 tools, funding one inflation-adjusted lifestyle from four sources (the properties' cash flow, qualified money, the HELOC, and the policy), and writing the year-by-year playbook. <b>Max legacy</b> leaves the most behind on your chosen floor, <b>Max income</b> finds the biggest lifestyle the plan can sustain, <b>Most of both</b> maximizes total wealth (income kept plus legacy left). Tax isn't the target — ALIS just does whatever's needed to hit your real goal.</p>
 
-      <div class="topic">
-        <div class="topic-h">Learn it one tool at a time</div>
-        <p class="topic-exp">Tap the steps in order. Each one adds a tool and shows exactly what it buys you — more years, more left behind, less tax.</p>
-        <div class="journey-bar" id="journeyBar"></div>
-        <div class="alis-rec" id="journeyCard" style="display:none; margin-top:14px;">
-          <div class="alis-rec-head">
-            <span class="alis-badge" id="journey-step">Step 1</span>
-            <span class="alis-order" id="journey-title">–</span>
-          </div>
-          <p class="journey-copy" id="journey-copy">–</p>
-          <div class="alis-rec-why" id="journey-why"></div>
-          <button type="button" class="float-cta journey-next" id="journey-next">Next →</button>
-        </div>
-        <p class="topic-exp" style="margin-top:16px;">Or flip tools freely — ALIS re-plans with whatever's on:</p>
-        <div class="toggle-row" id="toolBar">
-          <button type="button" class="toggle-btn active" data-tool="velocity">Velocity chunking</button>
-          <button type="button" class="toggle-btn active" data-tool="bizcredit">0% biz credit</button>
-          <button type="button" class="toggle-btn active" data-tool="policy">Policy</button>
-          <button type="button" class="toggle-btn active" data-tool="heloc">HELOC</button>
-          <button type="button" class="toggle-btn active" data-tool="mortgage">Mortgage</button>
-          <button type="button" class="toggle-btn active" data-tool="rental">Rental property</button>
-          <button type="button" class="toggle-btn active" data-tool="qualified">401(k) / qualified</button>
-        </div>
-        <p class="way-hint" id="tool-hint"></p>
-      </div>
-
       <div class="topic" id="setPlanTopic">
         <div class="topic-h">Set the plan — ages, contribution, goal &amp; lifestyle</div>
-        <p class="topic-exp">The retirement window, how much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year). In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. These controls mirror Section&nbsp;1 and the floating ALIS panel — all three stay in sync.</p>
+        <p class="topic-exp">The retirement window, how much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year). Set these to the member's real numbers <b>first</b> — the journey below re-plans live off whatever's set here, so setting it first means every step runs the member's actual example, not the page defaults. In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. These controls mirror Section&nbsp;1 and the floating ALIS panel — all three stay in sync.</p>
         <div class="split">
           <div class="side-controls">
             <div class="control"><label>Current age <span class="val" id="v-currentAge2">45</span></label><input type="range" id="currentAge2" min="20" max="70" step="1" value="45"></div>
@@ -644,6 +619,32 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="topic">
+        <div class="topic-h">Learn it one tool at a time</div>
+        <p class="topic-exp">Tap the steps in order. Each one adds a tool and shows exactly what it buys you — more years, more left behind, less tax. Runs on the plan you just set above.</p>
+        <div class="journey-bar" id="journeyBar"></div>
+        <div class="alis-rec" id="journeyCard" style="display:none; margin-top:14px;">
+          <div class="alis-rec-head">
+            <span class="alis-badge" id="journey-step">Step 1</span>
+            <span class="alis-order" id="journey-title">–</span>
+          </div>
+          <p class="journey-copy" id="journey-copy">–</p>
+          <div class="alis-rec-why" id="journey-why"></div>
+          <button type="button" class="float-cta journey-next" id="journey-next">Next →</button>
+        </div>
+        <p class="topic-exp" style="margin-top:16px;">Or flip tools freely — ALIS re-plans with whatever's on:</p>
+        <div class="toggle-row" id="toolBar">
+          <button type="button" class="toggle-btn active" data-tool="velocity">Velocity chunking</button>
+          <button type="button" class="toggle-btn active" data-tool="bizcredit">0% biz credit</button>
+          <button type="button" class="toggle-btn active" data-tool="policy">Policy</button>
+          <button type="button" class="toggle-btn active" data-tool="heloc">HELOC</button>
+          <button type="button" class="toggle-btn active" data-tool="mortgage">Mortgage</button>
+          <button type="button" class="toggle-btn active" data-tool="rental">Rental property</button>
+          <button type="button" class="toggle-btn active" data-tool="qualified">401(k) / qualified</button>
+        </div>
+        <p class="way-hint" id="tool-hint"></p>
       </div>
 
       <div class="topic">
