@@ -242,12 +242,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b13</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b14</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b14</span><p class="topic-exp" style="margin-top:2px;">Honest 401(k) handling when you don't have one: marked "Not applicable" now truly excludes it everywhere (fixed a leak where leftover chunk money could still slip into it), and split labels drop it entirely instead of showing "0% qualified." With a $0 balance but the tool on, splits that use it now say "(new — built from $0)" so it's clear ALIS is proposing to open one. Also: when two plans look identical on your goal after rounding, ALIS now picks the one leaving the bigger legacy — a win too small to see shouldn't beat real money left behind.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b13</span><p class="topic-exp" style="margin-top:2px;">New chronic-illness/long-term-care topic: model an accelerated draw on the Protection IUL's death benefit (1–4%/mo, capped at $30,000/mo) as a real tax-free income source — off by default, since it's a scenario, not a certainty. The trigger-age default (80) is sourced from real LTC statistics (cited in the caveat), not guessed. Every dollar drawn is shown reducing the death benefit left for the estate.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b12</span><p class="topic-exp" style="margin-top:2px;">New "Annual policy fee" section isolates two real costs that were either missing or bundled in: a Protection IUL's own annual premium (sizes the death-benefit coverage, separate from the cash-value policy), and the Accumulation IUL's cost of insurance on top of the already-modeled admin fee. Both default to $0 (no fabricated numbers) — enter a real quote/illustration figure to see the honest impact. The cash-value policy is now a cleaner "pure savings vehicle" once fees are isolated like this.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b11</span><p class="topic-exp" style="margin-top:2px;">Velocity banking (and 0% business-credit stacking) now works across EVERY loan you own, not just the home mortgage — it auto-optimizes by always attacking whichever loan (home or any rental) carries the highest rate first, a guaranteed-return waterfall. Also fixed a small gap: chunk dollars left over after a loan got fully paid off used to be lost for that year — they now correctly flow into the policy instead, which nudges default numbers up slightly.</p></div>
@@ -1794,7 +1795,8 @@
       };
       const rerouteChunk = amt => {
         if (acc.toolPolicy !== false) polC += amt;
-        else { const toQm = Math.min(amt, Math.max(cap - qmC, 0)); qmC += toQm; if (amt - toQm > 0.5) idleCash += amt - toQm; }
+        else if (acc.toolQualified !== false){ const toQm = Math.min(amt, Math.max(cap - qmC, 0)); qmC += toQm; if (amt - toQm > 0.5) idleCash += amt - toQm; }
+        else idleCash += amt;   // 401(k) marked N/A — never route money into an account they don't have
       };
 
       if (denom === 0 && rest > 0.5){
@@ -1955,7 +1957,8 @@
       mortMonthlyPay: (TOOLS.mortgage && M1) ? M1.monthlyPay : 0,
       props: propsDef, homeValue0: homeValue, maxLtv, helocRate, loanType: P.loanType,
       allowanceNow, shieldUnlimited: (strActive || repActive),
-      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value
+      protPremium: +$('protPremium').value, coiAnnual: +$('coiAnnual').value,
+      toolQualified: TOOLS.qualified
     };
 
     // Grid search: every 10%-step split of the contribution across the AVAILABLE vehicles.
@@ -1963,8 +1966,13 @@
     // tried at all 3 internal draw-down paces and collapsed to their best pace (so the UI still
     // shows 3 clean strategy rows, not 7). Objective: sustainable first, then the chosen goal
     // (legacy or income extracted), then years as a final tie-break. Tax is never part of this.
-    const objSort = (a,b) => (b.sustainable - a.sustainable) || (modeMetric(b) - modeMetric(a)) || (b.years - a.years);
-    const allocSort = (A,B) => (B.best.sustainable - A.best.sustainable) || (modeMetric(B.best) - modeMetric(A.best)) || (B.best.years - A.best.years);
+    // The goal metric is QUANTIZED to the same precision the display shows ($0.1M / $1K steps)
+    // before ranking: a "win" too small to survive display rounding shouldn't outrank a visibly
+    // bigger legacy — when two plans look identical on the goal, the one leaving more behind wins.
+    // (Quantizing — rather than an epsilon comparison — keeps the sort transitive and stable.)
+    const quant = v => v >= 1e6 || v <= -1e6 ? Math.round(v/1e5)*1e5 : Math.round(v/1e3)*1e3;
+    const objSort = (a,b) => (b.sustainable - a.sustainable) || (quant(modeMetric(b)) - quant(modeMetric(a))) || (b.legacy - a.legacy) || (b.years - a.years);
+    const allocSort = (A,B) => (B.best.sustainable - A.best.sustainable) || (quant(modeMetric(B.best)) - quant(modeMetric(A.best))) || (B.best.legacy - A.best.legacy) || (B.best.years - A.best.years);
     function runStrategies(inp2Builder){
       // For each strategy type, search all paces (blend) and keep the single best-performing one.
       return STRATS.map(s => {
@@ -2027,11 +2035,22 @@
     const allocOpt = allocs[0];
     let chosenAlloc = allocOpt;
     if (viewAllocKey){ const f = allocs.find(x => x.key === viewAllocKey); if (f) chosenAlloc = f; }
-    const frLabel = fr => (fr.chunk*100).toFixed(0)+'% mortgage · '+(fr.policy*100).toFixed(0)+'% policy · '+(fr.qm*100).toFixed(0)+'% qualified';
+    // Split labels tell the truth about the 401(k)'s state: dropped entirely when it's marked
+    // Not applicable (it's excluded from every split, not "0%"), and flagged as a NEW account
+    // when there's no balance today but the split routes fresh dollars into one.
+    const frLabel = fr => {
+      const parts = [(fr.chunk*100).toFixed(0)+'% mortgage', (fr.policy*100).toFixed(0)+'% policy'];
+      if (TOOLS.qualified) parts.push((fr.qm*100).toFixed(0)+'% qualified'+((fr.qm > 0 && qmBalance <= 0.5) ? ' (new — built from $0)' : ''));
+      return parts.join(' · ');
+    };
 
     // ---- Allocation card + list ----
     $('alloc-context').textContent = accYears > 0
-      ? accYears+' years to retirement × '+fmt0.format(annualContrib)+' = '+fmtCompact(annualContrib*accYears)+' to allocate. Qualified caps at $23.5K/yr ($31K from age 50); its tax refund recycles into the next year’s pool.'
+      ? accYears+' years to retirement × '+fmt0.format(annualContrib)+' = '+fmtCompact(annualContrib*accYears)+' to allocate. '
+        + (!TOOLS.qualified
+            ? '401(k) is marked not applicable — every split excludes it entirely.'
+            : 'Qualified caps at $23.5K/yr ($31K from age 50); its tax refund recycles into the next year’s pool.'
+              + (qmBalance <= 0.5 ? ' No 401(k) balance today — any qualified share means opening one and funding it from $0.' : ''))
       : 'Already at retirement age — nothing left to allocate; the plan runs on today’s balances.';
     $('alloc-pick').textContent = (annualContrib <= 0 || accYears <= 0)
       ? 'nothing to allocate'
