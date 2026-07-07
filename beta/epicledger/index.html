@@ -242,12 +242,13 @@
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b14</span>
+    <span class="eyebrow">Team Life Academy · Interactive Ledger</span><span class="ledger-version" id="ledgerVersion">v2026.07.06-b15</span>
     <h1>Epic Life Ledger</h1>
     <p>Four sections, in order: <b>your numbers</b> (income, tax, ages, 401(k), mortgage, property — switch off anything that doesn't apply) — <b>the tools</b> (velocity banking, 0% business credit, the policy, the HELOC) — <b>the optimized plan</b> (ALIS allocates, funds the lifestyle, writes the year-by-year playbook) — then <b>opportunities</b> to push it harder.</p>
     <details class="details-toggle">
       <summary>What's changed</summary>
       <div class="changelog">
+        <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b15</span><p class="topic-exp" style="margin-top:2px;">Built for people in their 20s too, not just 40+: current age now goes down to 20, retirement age down to 40 (early-retirement plans work), and property purchase ages down to 20 — with the engine extended to handle up to an 80-year retirement window without cutting it short.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b14</span><p class="topic-exp" style="margin-top:2px;">Honest 401(k) handling when you don't have one: marked "Not applicable" now truly excludes it everywhere (fixed a leak where leftover chunk money could still slip into it), and split labels drop it entirely instead of showing "0% qualified." With a $0 balance but the tool on, splits that use it now say "(new — built from $0)" so it's clear ALIS is proposing to open one. Also: when two plans look identical on your goal after rounding, ALIS now picks the one leaving the bigger legacy — a win too small to see shouldn't beat real money left behind.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b13</span><p class="topic-exp" style="margin-top:2px;">New chronic-illness/long-term-care topic: model an accelerated draw on the Protection IUL's death benefit (1–4%/mo, capped at $30,000/mo) as a real tax-free income source — off by default, since it's a scenario, not a certainty. The trigger-age default (80) is sourced from real LTC statistics (cited in the caveat), not guessed. Every dollar drawn is shown reducing the death benefit left for the estate.</p></div>
         <div class="changelog-entry"><span class="changelog-date">Jul 6, 2026 — b12</span><p class="topic-exp" style="margin-top:2px;">New "Annual policy fee" section isolates two real costs that were either missing or bundled in: a Protection IUL's own annual premium (sizes the death-benefit coverage, separate from the cash-value policy), and the Accumulation IUL's cost of insurance on top of the already-modeled admin fee. Both default to $0 (no fabricated numbers) — enter a real quote/illustration figure to see the honest impact. The cash-value policy is now a cleaner "pure savings vehicle" once fees are isolated like this.</p></div>
@@ -284,8 +285,8 @@
             <div class="control"><label>Current annual tax withheld <span class="val" id="v-withheld">$32,000</span></label><input type="range" id="withheld" min="0" max="200000" step="1000" value="32000"></div>
           </div>
           <div class="side-controls">
-            <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="30" max="70" step="1" value="45"></div>
-            <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="50" max="75" step="1" value="65"></div>
+            <div class="control"><label>Current age <span class="val" id="v-currentAge">45</span></label><input type="range" id="currentAge" min="20" max="70" step="1" value="45"></div>
+            <div class="control"><label>Retirement age <span class="val" id="v-retireAge">65</span></label><input type="range" id="retireAge" min="40" max="75" step="1" value="65"></div>
             <div class="control"><label>Plan through age <span class="val" id="v-planAge">90</span></label><input type="range" id="planAge" min="78" max="120" step="1" value="90"></div>
           </div>
         </div>
@@ -342,7 +343,7 @@
             <div class="control"><label>Down payment <span class="val" id="v-downPct">25%</span></label><input type="range" id="downPct" min="15" max="50" step="1" value="25"></div>
             <div class="control"><label>Loan rate <span class="val" id="v-invRate">7.00%</span></label><input type="range" id="invRate" min="2" max="9" step="0.05" value="7"></div>
             <div class="control"><label>Written off immediately (Year 1) <span class="val" id="v-writeOff">20%</span></label><input type="range" id="writeOff" min="0" max="28" step="1" value="20"></div>
-            <div class="control"><label>Buy at age <span class="val" id="v-buyAge1">60</span></label><input type="range" id="buyAge1" min="30" max="99" step="1" value="60"></div>
+            <div class="control"><label>Buy at age <span class="val" id="v-buyAge1">60</span></label><input type="range" id="buyAge1" min="20" max="99" step="1" value="60"></div>
             <div class="toggle-row" id="veh1Row">
               <button type="button" class="toggle-btn active" id="btn-veh1-heloc">Down payment: HELOC</button>
               <button type="button" class="toggle-btn" id="btn-veh1-policy">Down payment: policy loan</button>
@@ -606,8 +607,8 @@
         <p class="topic-exp">The retirement window, how much goes in each year, what ALIS optimizes for, and the lifestyle to sustain (inflated forward each year). In <b>Max income</b> mode ALIS sets the lifestyle for you — the biggest one the plan can sustain; in the other modes the slider is the floor you must keep. From age 73 the IRS forces a minimum withdrawal from qualified money — that's built in. These controls mirror Section&nbsp;1 and the floating ALIS panel — all three stay in sync.</p>
         <div class="split">
           <div class="side-controls">
-            <div class="control"><label>Current age <span class="val" id="v-currentAge2">45</span></label><input type="range" id="currentAge2" min="30" max="70" step="1" value="45"></div>
-            <div class="control"><label>Retirement age <span class="val" id="v-retireAge2">65</span></label><input type="range" id="retireAge2" min="50" max="75" step="1" value="65"></div>
+            <div class="control"><label>Current age <span class="val" id="v-currentAge2">45</span></label><input type="range" id="currentAge2" min="20" max="70" step="1" value="45"></div>
+            <div class="control"><label>Retirement age <span class="val" id="v-retireAge2">65</span></label><input type="range" id="retireAge2" min="40" max="75" step="1" value="65"></div>
             <div class="control"><label>Plan through age <span class="val" id="v-planAge2">90</span></label><input type="range" id="planAge2" min="78" max="120" step="1" value="90"></div>
             <div class="control"><label>Amount to allocate/yr <span class="val" id="v-annualContrib2">$40,000</span></label><input type="range" id="annualContrib2" min="0" max="120000" step="5000" value="40000"></div>
             <div class="toggle-row">
@@ -1032,7 +1033,7 @@
       card.innerHTML =
         '<div class="side-controls">'+
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;"><b>Property '+(i+2)+'</b><button type="button" class="toggle-btn" data-del="'+i+'">Remove</button></div>'+
-        '<div class="control"><label>Buy at age <span class="val" id="v-xbuy'+i+'">'+p.buyAge+'</span></label><input type="range" id="xbuy'+i+'" min="31" max="99" step="1" value="'+p.buyAge+'"></div>'+
+        '<div class="control"><label>Buy at age <span class="val" id="v-xbuy'+i+'">'+p.buyAge+'</span></label><input type="range" id="xbuy'+i+'" min="20" max="99" step="1" value="'+p.buyAge+'"></div>'+
         '<div class="control"><label>Purchase price (at purchase) <span class="val" id="v-xprice'+i+'">'+fmt0.format(p.price)+'</span></label><input type="range" id="xprice'+i+'" min="100000" max="3000000" step="10000" value="'+p.price+'"></div>'+
         '<div class="control"><label>Down payment <span class="val" id="v-xdown'+i+'">'+p.downPct+'%</span></label><input type="range" id="xdown'+i+'" min="15" max="50" step="1" value="'+p.downPct+'"></div>'+
         '<div class="control"><label>Loan rate <span class="val" id="v-xrate'+i+'">'+p.ratePct.toFixed(2)+'%</span></label><input type="range" id="xrate'+i+'" min="2" max="9" step="0.05" value="'+p.ratePct+'"></div>'+
@@ -1344,7 +1345,7 @@
   // Each year the rental pays first; qualified money is DRIPPED only up to a chosen tax ceiling
   // (the rental's leftover depreciation shields the first dollars); the tax-free HELOC + policy
   // fill the remainder. ALIS tries both tax-free orders and compares to "drain qualified first".
-  const RET_CAP = 75; // plan-through age now reaches 120; max horizon = 120 − 50 (min retire age) = 70
+  const RET_CAP = 80; // plan-through age reaches 120; max horizon = 120 − 40 (min retire age) = 80
   // Qualified-draw-down pace levels for blend strategies (internal only — not user-facing "tax
   // brackets" anymore; tax isn't the objective, but HOW MUCH qualified to hold back each year still
   // genuinely changes years/legacy/income, so ALIS searches all three paces automatically per
