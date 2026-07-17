@@ -185,6 +185,22 @@
       "success_rate": 1,
       "narrative_success": "He starts immediately and the work sharpens overnight — cleaner delivery, fewer dropped balls. Impressive. You catch yourself hoping he sticks around... and notice he hasn't asked a single question about where the company's headed.",
       "narrative_failure": ""
+    },
+    {
+      "id": "hire_asset_operator",
+      "category": "operations",
+      "stage": "leverage",
+      "label": "Hire an Asset Operator",
+      "description": "Bring on a dedicated operator to run your income assets — a property manager for your rentals, a route tech for financed equipment. Each operator safely covers 2 income assets. Pair it with Insure Your Operators (Finance) so a lost operator is covered, not just replaced. Repeatable as your portfolio grows.",
+      "lesson": "Every income asset needs someone actually running it. Skip the operator and you're not just short-staffed — the asset itself underperforms (an unmanaged property or route earns less even before anything goes wrong). Staff ahead of what you buy, not after, and insure the operators once they're on.",
+      "cash_cost": 500,
+      "recurring_cost": 4000,
+      "energy_cost": 3,
+      "prerequisites": { "needs": ["establish_business"] },
+      "effects": { "_operator_count": 1 },
+      "success_rate": 1,
+      "narrative_success": "Onboarded — your operator capacity is up, so more of your income assets are safely staffed instead of running unmanaged.",
+      "narrative_failure": ""
     }
   ]
 }

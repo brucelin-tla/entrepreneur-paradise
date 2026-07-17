@@ -1,5 +1,51 @@
 # Release Notes
 
+## v0.68.31 — 2026-07-17 — 🚀 PROMOTED TO LIVE (v0.68.7 → v0.68.31)
+Owner-approved promote. Everything from the 2026-07-04/05 beta run is now the public game at
+game.teamlife.ai — 24 beta releases across dashboard clarity, finale depth, and real-world money
+fidelity.
+
+- **Dashboard overhaul:** collapsed from 7 scattered per-section toggles to one per column, then
+  reordered/regrouped around clear headlines (Capital, Cash Flow/mo, Credit Score/D&B, Founder
+  Freedom, Systems Maturity) with hidden breakdowns one tap behind each — Energy/Customers/Systems
+  Maturity and Credit Score/D&B are now tappable straight into a real explainer (the actual weighted
+  FICO/D&B formula, not an approximation). Global Supabase-backed leaderboard removed — local-only
+  ("📱 This Device") for now, honest "coming soon" state on Global.
+- **Action menu:** cards collapse to title-only until selected, with a no-commitment "preview" peek,
+  a "last pick" badge, and an Untried/Opens-more filter.
+- **New Owner Capital hub:** inject personal cash into the business, or a real shareholder loan
+  (~4.5%, callable early) — the legitimate way to fund a struggling business without the game
+  silently reaching into whichever cash pocket had more money. Cash Services gained the inverse
+  (pay down utilization with cash).
+- **Epic Life panel reorg** (Cash-Value Policy / Velocity Banking / Financial Health / Owner Capital)
+  into a consistent Dashboard → controls → Confirm shape; tax reserve now folds into the policy from
+  its own panel instead of a monthly popup, and a folded reserve can still bail you out via a
+  tax-free policy loan. New Operator Capacity system extends key-man coverage to income-producing
+  equipment, not just real estate.
+- **Finale overhaul:** a real 36-month net worth trend chart, a Marquee Purchases showcase, a
+  "People Along The Way" character epilogue, and promoted milestone trophies with the mentor's
+  reasoning attached. Fixed a Net Worth double-count that was inflating the end-screen and score the
+  longer a business stayed profitable.
+- **Real-world money fidelity, several real fixes:**
+  - Closed a Debt Restructure → Liquidate Credit exploit that was fabricating personal credit
+    headroom and paying out real cash for it (reproduced at $288k from a single restructure before
+    the fix).
+  - Business credit stacking now capped at a researched $250k lifetime ceiling with a 6-month
+    cooldown (was unlimited/monthly); personal credit-limit bumps now match real 6-12 month issuer
+    review cadence (was firing almost every time).
+  - New relationship-banking channel: up to 4 concurrent bank relationships, ~6 months apart, each
+    adding 15% of annualized revenue to the stacking ceiling — modeled as additive to the
+    personal-credit-gated cap, not a multiplier of it, matching how commercial lending actually works.
+  - Real estate leverage now has real consequences: down-payment floor raised 10% → 20% (matching
+    real DSCR/conventional investment loans), a PMI-style monthly surcharge once portfolio LTV
+    crosses 80%, and downturn margin-calls that scale severity to how reckless the portfolio actually
+    is instead of always force-selling exactly one property.
+  - Fixed Finance silently auto-resolving with no player pick under a stale delegation condition, a
+    passive-income end-score bug reading 0 despite real passive income, and one-shot update detection
+    (the "🔄 Update now" banner now polls every 30s + on tab focus, not just at page load).
+
+Full detail on every change above: the `(beta)` entries below, v0.68.8 through v0.68.31.
+
 ## v0.68.31 — 2026-07-05 — (beta) Real estate leverage has real consequences now
 
 **Ask (owner):** "I was spamming buying real estate with 10% down only and never really got punished in the
